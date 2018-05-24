@@ -1,13 +1,12 @@
 # Converted from RDS_with_DBParameterGroup.template located at:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
-from troposphere import Parameter, Ref, Template
+from troposphere import Parameter, Ref
 from troposphere.rds import DBInstance
-import sys
-import os
 
+from template import t
 
-t = Template()
+print('Adding hyp3 rds ')
 
 t.add_description(
     "AWS CloudFormation Sample Template RDS_with_DBParameterGroup: Sample "
@@ -52,6 +51,3 @@ mydb = t.add_resource(DBInstance(
     MasterUsername=Ref(dbuser),
     MasterUserPassword=Ref(dbpassword),
 ))
-
-with open(sys.argv[1], 'w') as f:
-    f.write(t.to_json())
