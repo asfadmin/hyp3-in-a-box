@@ -6,7 +6,6 @@ from troposphere.rds import DBInstance
 
 from template import t
 
-print('Adding hyp3 rds ')
 
 t.add_description(
     "AWS CloudFormation Sample Template RDS_with_DBParameterGroup: Sample "
