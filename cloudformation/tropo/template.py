@@ -8,3 +8,7 @@
 from troposphere import Template
 
 t = Template()
+
+
+def disable_title_validation(cl):
+    cl.validate_title = lambda self: None

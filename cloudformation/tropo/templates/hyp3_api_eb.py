@@ -7,7 +7,8 @@
 # Converted from ElasticBeanstalk_Nodejs.template located at:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
-from troposphere import GetAtt, Join, Output, Parameter, Ref, Template
+from template import disable_title_validation, t
+from troposphere import GetAtt, Join, Output, Parameter, Ref
 from troposphere.elasticbeanstalk import (
     Application,
     ApplicationVersion,
@@ -17,7 +18,9 @@ from troposphere.elasticbeanstalk import (
     SourceBundle
 )
 
-t = Template()
+disable_title_validation(Application)
+disable_title_validation(ApplicationVersion)
+disable_title_validation(ConfigurationTemplate)
 
 t.add_version()
 
@@ -44,7 +47,6 @@ app = t.add_resource(Application(
 app_version = t.add_resource(ApplicationVersion(
     "hyp3-api-test-0",
     Description="Version 1.0",
-    VersionLabel="Inigial version",
     ApplicationName=Ref(app),
     SourceBundle=SourceBundle(
         S3Bucket=Join("-", ["elasticbeanstalk-samples", Ref("AWS::Region")]),
