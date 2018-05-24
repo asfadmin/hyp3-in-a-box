@@ -1,3 +1,5 @@
+#!/bin/bash
+
 RDS_TEMPLATE=template/rds.json
 
 python3 hyp3_rds.py $RDS_TEMPLATE
