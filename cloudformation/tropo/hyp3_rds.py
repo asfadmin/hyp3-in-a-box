@@ -4,7 +4,6 @@
 from troposphere import Parameter, Ref, Template
 from troposphere.rds import DBInstance
 import sys
-import os
 
 
 t = Template()
