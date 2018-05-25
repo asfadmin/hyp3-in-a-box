@@ -21,14 +21,14 @@ hyp3_vpc = t.add_resource(ec2.VPC(
 
 public_net = t.add_resource(ec2.Subnet(
     'Hyp3PublicSubnet',
-    CidrBlock='10.0.1.0',
+    CidrBlock='10.0.1.0/24',
     MapPublicIpOnLaunch=True,
     VpcId=ts.Ref(hyp3_vpc),
 ))
 
 private_net = t.add_resource(ec2.Subnet(
     'Hyp3PrivateSubnet',
-    CidrBlock='10.0.2.0',
+    CidrBlock='10.0.2.0/24',
     MapPublicIpOnLaunch=False,
     VpcId=ts.Ref(hyp3_vpc),
 ))
