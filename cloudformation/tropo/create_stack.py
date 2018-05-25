@@ -1,15 +1,16 @@
 # create_stack.py
-# Rohan Weeden
+# Rohan Weeden, William Horn
 # Created: May 24, 2018
 
 # Generates the CloudFormation stack json
 
 import argparse
 
-"""Add values here for new sections"""
+# Add values here for new sections
 TEMPLATE_SECTIONS = {
     'rds': 'from templates import hyp3_rds',
-    'eb': 'from templates import hyp3_api_eb'
+    'eb': 'from templates import hyp3_api_eb',
+    'vpc': 'from templates import hyp3_vpc'
 }
 
 
