@@ -1,15 +1,13 @@
 # Converted from RDS_with_DBParameterGroup.template located at:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
-# Parameter, Ref, Template
 import troposphere as ts
-# import DBInstance
 import troposphere.rds as rds
 import troposphere.ec2 as ec2
-import sys
 
+from template import t
 
-t = ts.Template()
+print('Adding hyp3 rds ')
 
 t.add_description(
     "AWS CloudFormation Sample Template RDS_with_DBParameterGroup: Sample "
@@ -49,21 +47,20 @@ vpcid_param = t.add_parameter(ts.Parameter(
     Type="String",
 ))
 
-inrule = ec2.SecurityGroupRule(
-    "InPostgresTcpRule",
-    IpProtocol="tcp",
-    FromPort="5432",
-    ToPort="5432",
-    CidrIp="0.0.0.0/0"
-)
-outrule = ec2.SecurityGroupRule(
-    "OutPostgresTcpRule",
-    IpProtocol="tcp",
-    FromPort="5432",
-    ToPort="5432",
-    CidrIp="0.0.0.0/0"
-)
 
+def get_security_group(name: str):
+    return ec2.SecurityGroupRule(
+        name,
+        IpProtocol="tcp",
+        FromPort="5432",
+        ToPort="5432",
+        CidrIp="0.0.0.0/0"
+    )
+
+
+inrule, outrule = [
+    get_security_group(n+'PostgresTcpRule') for n in ('In', 'Out')
+]
 
 security_group = t.add_resource(ec2.SecurityGroup(
     "TCPAll",
@@ -89,6 +86,3 @@ mydb = t.add_resource(rds.DBInstance(
     MasterUsername=ts.Ref(dbuser),
     MasterUserPassword=ts.Ref(dbpassword),
 ))
-
-with open(sys.argv[1], 'w') as f:
-    f.write(t.to_json())

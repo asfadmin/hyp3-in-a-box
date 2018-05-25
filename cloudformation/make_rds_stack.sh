@@ -1,3 +1,5 @@
+#!/bin/bash
+
 RDS_TEMPLATE=templates/rds.json
 
 PASS=$(pwgen 13 1)
