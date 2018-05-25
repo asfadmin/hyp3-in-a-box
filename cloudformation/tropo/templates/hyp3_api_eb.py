@@ -23,6 +23,21 @@ from troposphere.iam import InstanceProfile
 from troposphere.iam import PolicyType as IAMPolicy
 from troposphere.iam import Role
 
+import json
+import os
+import pathlib as pl
+
+
+def get_region2principal_map():
+    file_path = pl.Path(os.path.dirname(os.path.abspath(__file__)))
+    r2p_path = file_path / 'data' / 'region2principal.json'
+
+    with r2p_path.open('r') as f:
+        region2principal_map = json.load(f)
+
+    return region2principal_map
+
+
 keyname = t.add_parameter(Parameter(
     "KeyName",
     Description="Name of an existing EC2 KeyPair to enable SSH access to "
@@ -31,39 +46,8 @@ keyname = t.add_parameter(Parameter(
     ConstraintDescription="must be the name of an existing EC2 KeyPair."
 ))
 
-t.add_mapping("Region2Principal", {
-    'ap-northeast-1': {
-        'EC2Principal': 'ec2.amazonaws.com',
-        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
-    'ap-southeast-1': {
-        'EC2Principal': 'ec2.amazonaws.com',
-        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
-    'ap-southeast-2': {
-        'EC2Principal': 'ec2.amazonaws.com',
-        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
-    'cn-north-1': {
-        'EC2Principal': 'ec2.amazonaws.com.cn',
-        'OpsWorksPrincipal': 'opsworks.amazonaws.com.cn'},
-    'eu-central-1': {
-        'EC2Principal': 'ec2.amazonaws.com',
-        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
-    'eu-west-1': {
-        'EC2Principal': 'ec2.amazonaws.com',
-        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
-    'sa-east-1': {
-        'EC2Principal': 'ec2.amazonaws.com',
-        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
-    'us-east-1': {
-        'EC2Principal': 'ec2.amazonaws.com',
-        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
-    'us-west-1': {
-        'EC2Principal': 'ec2.amazonaws.com',
-        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
-    'us-west-2': {
-        'EC2Principal': 'ec2.amazonaws.com',
-        'OpsWorksPrincipal': 'opsworks.amazonaws.com'}
-    }
-)
+
+t.add_mapping("Region2Principal", get_region2principal_map())
 
 t.add_resource(Role(
     "WebServerRole",
@@ -105,7 +89,8 @@ role = t.add_resource(InstanceProfile(
 app = t.add_resource(Application(
     "Hyp3Api",
     ApplicationName="hyp3-api",
-    Description="AWS Elastic Beanstalk API for interacting with the HyP3 system"
+    Description=("AWS Elastic Beanstalk API for "
+                 "interacting with the HyP3 system")
 ))
 
 app_version = t.add_resource(ApplicationVersion(
