@@ -7,8 +7,10 @@
 # Converted from ElasticBeanstalk_Nodejs.template located at:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
+from awacs.aws import Action, Allow, Policy, Principal, Statement
+from awacs.sts import AssumeRole
 from template import t
-from troposphere import GetAtt, Join, Output, Parameter, Ref
+from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref
 from troposphere.elasticbeanstalk import (
     Application,
     ApplicationVersion,
@@ -17,7 +19,9 @@ from troposphere.elasticbeanstalk import (
     OptionSettings,
     SourceBundle
 )
-
+from troposphere.iam import InstanceProfile
+from troposphere.iam import PolicyType as IAMPolicy
+from troposphere.iam import Role
 
 keyname = t.add_parameter(Parameter(
     "KeyName",
@@ -25,6 +29,77 @@ keyname = t.add_parameter(Parameter(
                 "the AWS Elastic Beanstalk instance",
     Type="AWS::EC2::KeyPair::KeyName",
     ConstraintDescription="must be the name of an existing EC2 KeyPair."
+))
+
+t.add_mapping("Region2Principal", {
+    'ap-northeast-1': {
+        'EC2Principal': 'ec2.amazonaws.com',
+        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
+    'ap-southeast-1': {
+        'EC2Principal': 'ec2.amazonaws.com',
+        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
+    'ap-southeast-2': {
+        'EC2Principal': 'ec2.amazonaws.com',
+        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
+    'cn-north-1': {
+        'EC2Principal': 'ec2.amazonaws.com.cn',
+        'OpsWorksPrincipal': 'opsworks.amazonaws.com.cn'},
+    'eu-central-1': {
+        'EC2Principal': 'ec2.amazonaws.com',
+        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
+    'eu-west-1': {
+        'EC2Principal': 'ec2.amazonaws.com',
+        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
+    'sa-east-1': {
+        'EC2Principal': 'ec2.amazonaws.com',
+        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
+    'us-east-1': {
+        'EC2Principal': 'ec2.amazonaws.com',
+        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
+    'us-west-1': {
+        'EC2Principal': 'ec2.amazonaws.com',
+        'OpsWorksPrincipal': 'opsworks.amazonaws.com'},
+    'us-west-2': {
+        'EC2Principal': 'ec2.amazonaws.com',
+        'OpsWorksPrincipal': 'opsworks.amazonaws.com'}
+    }
+)
+
+t.add_resource(Role(
+    "WebServerRole",
+    AssumeRolePolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow, Action=[AssumeRole],
+                Principal=Principal(
+                    "Service", [
+                        FindInMap(
+                            "Region2Principal",
+                            Ref("AWS::Region"), "EC2Principal")
+                    ]
+                )
+            )
+        ]
+    ),
+    Path="/"
+))
+
+t.add_resource(IAMPolicy(
+    "WebServerRolePolicy",
+    PolicyName="WebServerRole",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(Effect=Allow, NotAction=Action("iam", "*"),
+                      Resource=["*"])
+        ]
+    ),
+    Roles=[Ref("WebServerRole")]
+))
+
+role = t.add_resource(InstanceProfile(
+    "WebServerInstanceProfile",
+    Path="/",
+    Roles=[Ref("WebServerRole")]
 ))
 
 app = t.add_resource(Application(
@@ -47,7 +122,7 @@ config_template = t.add_resource(ConfigurationTemplate(
     "Hyp3ApiConfigurationTemplate",
     ApplicationName=Ref(app),
     Description="",
-    SolutionStackName="Python 3.4 running on 64bit Amazon Linux/2.7.0",
+    SolutionStackName="64bit Amazon Linux 2015.03 v2.0.0 running Python 3.4",
     OptionSettings=[
         OptionSettings(
             Namespace="aws:autoscaling:launchconfiguration",
@@ -57,13 +132,13 @@ config_template = t.add_resource(ConfigurationTemplate(
         OptionSettings(
             Namespace="aws:autoscaling:launchconfiguration",
             OptionName="IamInstanceProfile",
-            Value=Ref("aws-elasticbeanstalk-ec2-role")
+            Value=Ref(role)
         )
     ]
 ))
 
 test_environment = t.add_resource(Environment(
-    "test",
+    "Hyp3ApiTestEnvironment",
     Description="HyP3 API maturity: 'test'",
     ApplicationName=Ref(app),
     TemplateName=Ref(config_template),

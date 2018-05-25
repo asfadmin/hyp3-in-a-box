@@ -6,7 +6,7 @@
 
 import sys
 
-from templates import *
+from templates import hyp3_api_eb
 from template import t
 
 
