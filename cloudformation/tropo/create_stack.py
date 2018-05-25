@@ -4,11 +4,13 @@
 
 # Generates the CloudFormation stack json
 
-import sys
 import argparse
 
-
-TEMPLATE_SECTIONS = ['rds', 'eb']
+"""Add values here for new sections"""
+TEMPLATE_SECTIONS = {
+    'rds': 'from templates import hyp3_rds',
+    'eb': 'from templates import hyp3_api_eb'
+}
 
 
 def get_parser():
@@ -19,7 +21,7 @@ def get_parser():
 
     add_output_folder(parser)
 
-    for section_name in TEMPLATE_SECTIONS:
+    for section_name in TEMPLATE_SECTIONS.keys():
         add_flag_argument(parser, section_name)
 
     return parser
@@ -56,10 +58,9 @@ def get_should_make_all(args):
 
 
 def add_sections_to_template(should_make_all, args):
-    if should_make_all or args['rds']:
-        from templates import hyp3_rds
-    if should_make_all or args['eb']:
-        from templates import hyp3_api_eb
+    for section, import_stmt in TEMPLATE_SECTIONS.items():
+        if should_make_all or args[section]:
+            exec(import_stmt)
 
 
 def generate_template(output_path):
@@ -76,4 +77,5 @@ def write_file(t, file_name):
 if __name__ == '__main__':
     parser = get_parser()
     args = parser.parse_args()
+
     add_templates(vars(args))
