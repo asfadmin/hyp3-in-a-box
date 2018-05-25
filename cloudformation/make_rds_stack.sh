@@ -2,6 +2,9 @@ RDS_TEMPLATE=templates/rds.json
 
 PASS=$(pwgen 13 1)
 
+$PASS > dbpass.txt
+
+read -p 'VpcId: ' VPCID
 read -p 'Admin Username: ' USERNAME
 echo    'Admin Password: '$PASS
 
@@ -13,3 +16,4 @@ python3 -m awscli cloudformation create-stack  \
     --parameters  \
         ParameterKey=DBUser,ParameterValue=$USERNAME \
         ParameterKey=DBPassword,ParameterValue=$PASS
+        ParameterKey=MyVpcId,ParameterValue=$VPCID

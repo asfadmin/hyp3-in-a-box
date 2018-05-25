@@ -49,19 +49,28 @@ vpcid_param = t.add_parameter(ts.Parameter(
     Type="String",
 ))
 
-rule = ec2.SecurityGroupRule(
+inrule = ec2.SecurityGroupRule(
+    "InPostgresTcpRule",
+    IpProtocol="tcp",
+    FromPort="5432",
+    ToPort="5432",
+    CidrIp="0.0.0.0/0"
+)
+outrule = ec2.SecurityGroupRule(
+    "OutPostgresTcpRule",
     IpProtocol="tcp",
     FromPort="5432",
     ToPort="5432",
     CidrIp="0.0.0.0/0"
 )
 
-t.add_resource(ec2.SecurityGroup(
+
+security_group = t.add_resource(ec2.SecurityGroup(
     "TCPAll",
     GroupDescription="Allow for all tcp traffic through port 5432",
     VpcId=ts.Ref(vpcid_param),
-    SecurityGroupEgress=[rule],
-    SecurityGroupIngress=[rule]
+    SecurityGroupIngress=[inrule],
+    SecurityGroupEgress=[outrule]
 ))
 
 
@@ -74,6 +83,9 @@ mydb = t.add_resource(rds.DBInstance(
     DBName="hyp3db",
     Engine="postgres",
     EngineVersion="9.5.10",
+    VPCSecurityGroups=[
+        ts.Ref(security_group)
+    ],
     MasterUsername=ts.Ref(dbuser),
     MasterUserPassword=ts.Ref(dbpassword),
 ))
