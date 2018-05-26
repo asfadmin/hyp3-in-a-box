@@ -17,7 +17,7 @@ t.add_description(
 
 
 dbuser = t.add_parameter(ts.Parameter(
-    "DBUser",
+    "Hyp3DBUser",
     NoEcho=False,
     Description="The database admin account username",
     Type="String",
@@ -29,7 +29,7 @@ dbuser = t.add_parameter(ts.Parameter(
 ))
 
 dbpassword = t.add_parameter(ts.Parameter(
-    "DBPassword",
+    "Hyp3DBPassword",
     NoEcho=True,
     Description="The database admin account password",
     Type="String",
@@ -62,7 +62,7 @@ inrule, outrule = [
 ]
 
 security_group = t.add_resource(ec2.SecurityGroup(
-    "TCPAll",
+    "Hyp3TCPAll",
     GroupDescription="Allow for all tcp traffic through port 5432",
     VpcId=ts.Ref(vpcid_param),
     SecurityGroupIngress=[inrule],
@@ -73,7 +73,7 @@ security_group = t.add_resource(ec2.SecurityGroup(
 # Only certain versions of postgres are supported on the smaller instance types
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html
 mydb = t.add_resource(rds.DBInstance(
-    "MyDB",
+    "Hyp3DB",
     AllocatedStorage="5",
     DBInstanceClass="db.t2.micro",
     DBName="hyp3db",
