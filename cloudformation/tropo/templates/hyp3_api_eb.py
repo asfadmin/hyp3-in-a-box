@@ -122,7 +122,7 @@ config_template = t.add_resource(ConfigurationTemplate(
     "Hyp3ApiConfigurationTemplate",
     ApplicationName=Ref(app),
     Description="",
-    SolutionStackName="64bit Amazon Linux 2015.03 v2.0.0 running Python 3.4",
+    SolutionStackName="64bit Amazon Linux 2018.03 v2.7.0 running Python 3.6",
     OptionSettings=[
         OptionSettings(
             Namespace="aws:autoscaling:launchconfiguration",
@@ -139,6 +139,7 @@ config_template = t.add_resource(ConfigurationTemplate(
 
 test_environment = t.add_resource(Environment(
     "Hyp3ApiTestEnvironment",
+    EnvironmentName="test",
     Description="HyP3 API maturity: 'test'",
     ApplicationName=Ref(app),
     TemplateName=Ref(config_template),
