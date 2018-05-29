@@ -1,16 +1,15 @@
 #!/bin/bash
 
-RDS_TEMPLATE=outputs/rds.json
+RDS_TEMPLATE=tropo/outputs/rds.json
 
 PASS=$(pwgen 13 1)
 
 $PASS > dbpass.txt
 
-read -p 'VpcId: ' VPCID
 read -p 'Admin Username: ' USERNAME
 echo    'Admin Password: '$PASS
 
-python3 tropo/hyp3_rds.py $RDS_TEMPLATE
+python tropo/create_stack.py  --rds --vpc $RDS_TEMPLATE
 
 python3 -m awscli cloudformation create-stack  \
     --stack-name hyp3dbtest  \
@@ -18,4 +17,3 @@ python3 -m awscli cloudformation create-stack  \
     --parameters  \
         ParameterKey=DBUser,ParameterValue=$USERNAME \
         ParameterKey=DBPassword,ParameterValue=$PASS
-        ParameterKey=MyVpcId,ParameterValue=$VPCID
