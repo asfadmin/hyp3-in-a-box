@@ -60,7 +60,7 @@ security_group = t.add_resource(ec2.SecurityGroup(
 mydbsubnetgroup = t.add_resource(rds.DBSubnetGroup(
     "MyDBSubnetGroup",
     DBSubnetGroupDescription="Subnets available for the RDS DB Instance",
-    SubnetIds=[ts.Ref(sn) for sn in get_public_subnets()],
+    SubnetIds=[ts.Ref(subnet) for subnet in get_public_subnets()],
 ))
 
 # Only certain versions of postgres are supported on the smaller instance types
@@ -76,4 +76,5 @@ mydb = t.add_resource(rds.DBInstance(
     DBSubnetGroupName=ts.Ref(mydbsubnetgroup),
     MasterUsername=ts.Ref(dbuser),
     MasterUserPassword=ts.Ref(dbpassword),
+    DependsOn=ts.Ref(hyp3_vpc),
 ))

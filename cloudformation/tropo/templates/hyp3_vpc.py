@@ -11,7 +11,9 @@ print('adding vpc')
 hyp3_vpc = t.add_resource(ec2.VPC(
     'Hyp3VPC',
     CidrBlock='10.0.0.0/16',
-    InstanceTenancy='default'
+    InstanceTenancy='default',
+    EnableDnsSupport=True,
+    EnableDnsHostnames=True
 ))
 
 igw = t.add_resource(ec2.InternetGateway('Hyp3InternetGateway',))
@@ -37,11 +39,12 @@ default_public_route = t.add_resource(ec2.Route(
     RouteTableId=ts.Ref(public_route_table),
     DestinationCidrBlock='0.0.0.0/0',
     GatewayId=ts.Ref(igw),
+    DependsOn='Hyp3NatAttachment'
 ))
 
 public_net_1 = t.add_resource(ec2.Subnet(
     'Hyp3PublicSubnet1',
-    AvailabilityZone='us-west-1',
+    AvailabilityZone='us-west-2b',
     CidrBlock='10.0.1.0/24',
     MapPublicIpOnLaunch=True,
     VpcId=ts.Ref(hyp3_vpc)
@@ -50,12 +53,12 @@ public_net_1 = t.add_resource(ec2.Subnet(
 public_route_association_1 = t.add_resource(ec2.SubnetRouteTableAssociation(
     'Hyp3PublicRouteAssociation1',
     SubnetId=ts.Ref(public_net_1),
-    RouteTableId=ts.Ref(public_route_table),
+    RouteTableId=ts.Ref(public_route_table)
 ))
 
 public_net_2 = t.add_resource(ec2.Subnet(
     'Hyp3PublicSubnet2',
-    AvailabilityZone='us-west-2',
+    AvailabilityZone='us-west-2a',
     CidrBlock='10.0.2.0/24',
     MapPublicIpOnLaunch=True,
     VpcId=ts.Ref(hyp3_vpc)
@@ -64,7 +67,7 @@ public_net_2 = t.add_resource(ec2.Subnet(
 public_route_association_2 = t.add_resource(ec2.SubnetRouteTableAssociation(
     'Hyp3PublicRouteAssociation2',
     SubnetId=ts.Ref(public_net_2),
-    RouteTableId=ts.Ref(public_route_table),
+    RouteTableId=ts.Ref(public_route_table)
 ))
 
 
@@ -84,7 +87,7 @@ private_net = t.add_resource(ec2.Subnet(
 private_route_association = t.add_resource(ec2.SubnetRouteTableAssociation(
     'Hyp3PrivateRouteAssociation',
     SubnetId=ts.Ref(private_net),
-    RouteTableId=ts.Ref(private_route_table),
+    RouteTableId=ts.Ref(private_route_table)
 ))
 
 t.add_output(ts.Output(
