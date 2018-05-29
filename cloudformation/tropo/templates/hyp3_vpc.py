@@ -1,17 +1,12 @@
+# Example modified from:
+# https://github.com/cloudtools/troposphere/blob/master/examples/NatGateway.py
 
 import troposphere as ts
 import troposphere.ec2 as ec2
 
 from template import t
 
-"""
-AWS CloudFormation Sample Template NatGateway: Sample template showing
-how to create a public NAT gateway.
-**WARNING** This template creates an Amazon NAT gateway.
-You will be billed for the AWS resources used if you create
-a stack from this template.
-"""
-
+print('adding vpc')
 
 hyp3_vpc = t.add_resource(ec2.VPC(
     'Hyp3VPC',
@@ -61,7 +56,7 @@ public_route_association_1 = t.add_resource(ec2.SubnetRouteTableAssociation(
 public_net_2 = t.add_resource(ec2.Subnet(
     'Hyp3PublicSubnet2',
     AvailabilityZone='us-west-2',
-    CidrBlock='10.0.1.0/24',
+    CidrBlock='10.0.2.0/24',
     MapPublicIpOnLaunch=True,
     VpcId=ts.Ref(hyp3_vpc)
 ))
@@ -72,9 +67,16 @@ public_route_association_2 = t.add_resource(ec2.SubnetRouteTableAssociation(
     RouteTableId=ts.Ref(public_route_table),
 ))
 
+
+def get_public_subnets():
+    return [
+        public_net_1, public_net_2
+    ]
+
+
 private_net = t.add_resource(ec2.Subnet(
     'Hyp3PrivateSubnet',
-    CidrBlock='10.0.2.0/24',
+    CidrBlock='10.0.3.0/24',
     MapPublicIpOnLaunch=False,
     VpcId=ts.Ref(hyp3_vpc)
 ))

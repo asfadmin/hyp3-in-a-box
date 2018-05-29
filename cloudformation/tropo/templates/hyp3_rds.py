@@ -1,4 +1,4 @@
-# Converted from RDS_with_DBParameterGroup.template located at:
+# Example modified from:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
 import troposphere as ts
@@ -6,16 +6,9 @@ import troposphere.rds as rds
 import troposphere.ec2 as ec2
 
 from template import t
-from .hyp3_vpc import hyp3_vpc, public_net_1
+from .hyp3_vpc import hyp3_vpc, get_public_subnets
 
-
-t.add_description(
-    "AWS CloudFormation Sample Template RDS_with_DBParameterGroup: Sample "
-    "template showing how to create an Amazon RDS Database Instance with "
-    "a DBParameterGroup.**WARNING** This template creates an Amazon "
-    "Relational Database Service database instance. You will be billed for "
-    "the AWS resources used if you create a stack from this template.")
-
+print('adding rds')
 
 dbuser = t.add_parameter(ts.Parameter(
     "Hyp3DBUser",
@@ -67,7 +60,7 @@ security_group = t.add_resource(ec2.SecurityGroup(
 mydbsubnetgroup = t.add_resource(rds.DBSubnetGroup(
     "MyDBSubnetGroup",
     DBSubnetGroupDescription="Subnets available for the RDS DB Instance",
-    SubnetIds=[ts.Ref(public_net_1)],
+    SubnetIds=[ts.Ref(sn) for sn in get_public_subnets()],
 ))
 
 # Only certain versions of postgres are supported on the smaller instance types
