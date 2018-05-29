@@ -10,6 +10,8 @@ import pathlib as pl
 import re
 from importlib import import_module
 
+from template import t
+
 # Add values here for new sections
 TEMPLATE_DIR = 'templates'
 
@@ -99,11 +101,10 @@ def get_should_make_all(args):
 def add_sections_to_template(should_make_all, args):
     for section, module_name in TEMPLATE_SECTIONS.items():
         if should_make_all or args[section]:
-            import_module('templates.' + module_name)
+            import_module('templates.{}'.format(module_name))
 
 
 def generate_template(output_path, debug):
-    from template import t
     write_file(t, output_path, debug)
 
 
