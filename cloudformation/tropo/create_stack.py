@@ -5,6 +5,7 @@
 # Generates the CloudFormation stack json
 
 import argparse
+from importlib import import_module
 
 """Add values here for new sections"""
 TEMPLATE_SECTIONS = {
