@@ -1,4 +1,4 @@
-# Converted from RDS_with_DBParameterGroup.template located at:
+# Example modified from:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
 import troposphere as ts
@@ -6,15 +6,9 @@ import troposphere.rds as rds
 import troposphere.ec2 as ec2
 
 from template import t
+from .hyp3_vpc import hyp3_vpc, get_public_subnets
 
-
-t.add_description(
-    "AWS CloudFormation Sample Template RDS_with_DBParameterGroup: Sample "
-    "template showing how to create an Amazon RDS Database Instance with "
-    "a DBParameterGroup.**WARNING** This template creates an Amazon "
-    "Relational Database Service database instance. You will be billed for "
-    "the AWS resources used if you create a stack from this template.")
-
+print('adding rds')
 
 dbuser = t.add_parameter(ts.Parameter(
     "Hyp3DBUser",
@@ -40,12 +34,6 @@ dbpassword = t.add_parameter(ts.Parameter(
                            "and be from 8-41 characters in length.")
 ))
 
-vpcid_param = t.add_parameter(ts.Parameter(
-    "MyVpcId",
-    Description="VpcId of your existing Virtual Private Cloud (VPC)",
-    Type="String",
-))
-
 
 def get_security_group(name: str):
     return ec2.SecurityGroupRule(
@@ -64,11 +52,16 @@ inrule, outrule = [
 security_group = t.add_resource(ec2.SecurityGroup(
     "Hyp3TCPAll",
     GroupDescription="Allow for all tcp traffic through port 5432",
-    VpcId=ts.Ref(vpcid_param),
+    VpcId=ts.Ref(hyp3_vpc),
     SecurityGroupIngress=[inrule],
     SecurityGroupEgress=[outrule]
 ))
 
+mydbsubnetgroup = t.add_resource(rds.DBSubnetGroup(
+    "MyDBSubnetGroup",
+    DBSubnetGroupDescription="Subnets available for the RDS DB Instance",
+    SubnetIds=[ts.Ref(sn) for sn in get_public_subnets()],
+))
 
 # Only certain versions of postgres are supported on the smaller instance types
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html
@@ -79,9 +72,8 @@ mydb = t.add_resource(rds.DBInstance(
     DBName="hyp3db",
     Engine="postgres",
     EngineVersion="9.5.10",
-    VPCSecurityGroups=[
-        ts.Ref(security_group)
-    ],
+    VPCSecurityGroups=[ts.Ref(security_group)],
+    DBSubnetGroupName=ts.Ref(mydbsubnetgroup),
     MasterUsername=ts.Ref(dbuser),
     MasterUserPassword=ts.Ref(dbpassword),
 ))

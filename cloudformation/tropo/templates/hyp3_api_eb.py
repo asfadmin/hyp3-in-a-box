@@ -26,6 +26,8 @@ import json
 import os
 import pathlib as pl
 
+print('adding api_eb')
+
 
 def get_region2principal_map():
     file_path = pl.Path(os.path.dirname(os.path.abspath(__file__)))
