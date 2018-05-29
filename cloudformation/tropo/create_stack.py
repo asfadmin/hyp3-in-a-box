@@ -5,18 +5,16 @@
 # Generates the CloudFormation stack json
 
 import argparse
-import os
 import re
 import pathlib as pl
 
-# Add values here for new sections
 TEMPLATE_DIR = 'templates'
 
 
 def pattern_match_hyp3_files():
     sections = {}
 
-    templates_path = pl.Path(os.path.dirname(os.path.realpath(__file__))) / TEMPLATE_DIR
+    templates_path = pl.Path(__file__).parent / TEMPLATE_DIR
 
     for f in templates_path.iterdir():
         hyp3_file_match = re.match(r'hyp3_(.*)\.py', f.name)
@@ -34,6 +32,7 @@ def pattern_match_hyp3_files():
         sections[core_name] = import_stmt
 
     return sections
+
 
 TEMPLATE_SECTIONS = pattern_match_hyp3_files()
 
