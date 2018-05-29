@@ -7,7 +7,7 @@
 # Converted from ElasticBeanstalk_Nodejs.template located at:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
-from awacs.aws import Action, Allow, Policy, Principal, Statement
+from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.sts import AssumeRole
 from template import t
 from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref
@@ -20,7 +20,6 @@ from troposphere.elasticbeanstalk import (
     SourceBundle
 )
 from troposphere.iam import InstanceProfile
-from troposphere.iam import PolicyType as IAMPolicy
 from troposphere.iam import Role
 
 import json
@@ -49,7 +48,7 @@ keyname = t.add_parameter(Parameter(
 
 t.add_mapping("Region2Principal", get_region2principal_map())
 
-t.add_resource(Role(
+role = t.add_resource(Role(
     "WebServerRole",
     AssumeRolePolicyDocument=Policy(
         Statement=[
@@ -65,25 +64,16 @@ t.add_resource(Role(
             )
         ]
     ),
-    Path="/"
+    Path="/",
+    ManagedPolicyArns=[
+        "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
+    ]
 ))
 
-t.add_resource(IAMPolicy(
-    "WebServerRolePolicy",
-    PolicyName="WebServerRole",
-    PolicyDocument=Policy(
-        Statement=[
-            Statement(Effect=Allow, NotAction=Action("iam", "*"),
-                      Resource=["*"])
-        ]
-    ),
-    Roles=[Ref("WebServerRole")]
-))
-
-role = t.add_resource(InstanceProfile(
+instance_profile = t.add_resource(InstanceProfile(
     "WebServerInstanceProfile",
     Path="/",
-    Roles=[Ref("WebServerRole")]
+    Roles=[Ref(role)]
 ))
 
 app = t.add_resource(Application(
@@ -117,7 +107,7 @@ config_template = t.add_resource(ConfigurationTemplate(
         OptionSettings(
             Namespace="aws:autoscaling:launchconfiguration",
             OptionName="IamInstanceProfile",
-            Value=Ref(role)
+            Value=Ref(instance_profile)
         )
     ]
 ))
