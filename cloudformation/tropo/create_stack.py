@@ -5,13 +5,44 @@
 # Generates the CloudFormation stack json
 
 import argparse
+import os
+import re
+import pathlib as pl
 
 # Add values here for new sections
-TEMPLATE_SECTIONS = {
-    'rds': 'from templates import hyp3_rds',
-    'eb': 'from templates import hyp3_api_eb',
-    'vpc': 'from templates import hyp3_vpc'
-}
+TEMPLATE_DIR = 'templates'
+
+
+def pattern_match_hyp3_files():
+    sections = {}
+
+    templates_path = pl.Path(os.path.dirname(os.path.realpath(__file__))) / TEMPLATE_DIR
+
+    for f in templates_path.iterdir():
+        hyp3_file_match = re.match(r'hyp3_(.*)\.py', f.name)
+
+        if not hyp3_file_match:
+            continue
+
+        core_name = hyp3_file_match[1]
+
+        import_stmt = 'from {templates} import hyp3_{name}'.format(
+            templates=TEMPLATE_DIR,
+            name=core_name
+        )
+
+        sections[core_name] = import_stmt
+
+    return sections
+
+TEMPLATE_SECTIONS = pattern_match_hyp3_files()
+
+
+def main():
+    parser = get_parser()
+    args = parser.parse_args()
+
+    add_templates(vars(args))
 
 
 def get_parser():
@@ -39,7 +70,7 @@ def add_output_folder(parser):
 
 def add_flag_argument(parser, name, desc=None):
     if desc is None:
-        'Build the {} portion of the template'.format(name)
+        desc = 'Build the {} portion of the template'.format(name)
 
     parser.add_argument(
         '--' + name, help=desc,
@@ -86,7 +117,4 @@ def write_file(t, file_name, debug):
 
 
 if __name__ == '__main__':
-    parser = get_parser()
-    args = parser.parse_args()
-
-    add_templates(vars(args))
+    main()
