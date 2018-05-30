@@ -8,3 +8,6 @@
 from troposphere import Template
 
 t = Template()
+t.add_description(
+    "ASF HyP3 system"
+)

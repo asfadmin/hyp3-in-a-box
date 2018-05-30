@@ -5,8 +5,11 @@
 # Generates the CloudFormation stack json
 
 import argparse
-import re
 import pathlib as pl
+import re
+from importlib import import_module
+
+from template import t
 
 TEMPLATE_DIR = 'templates'
 
@@ -22,14 +25,13 @@ def pattern_match_hyp3_files():
         if not hyp3_file_match:
             continue
 
-        core_name = hyp3_file_match[1]
+        core_name = hyp3_file_match.groups()[0]
 
-        import_stmt = 'from {templates} import hyp3_{name}'.format(
-            templates=TEMPLATE_DIR,
+        module_name = 'hyp3_{name}'.format(
             name=core_name
         )
 
-        sections[core_name] = import_stmt
+        sections[core_name] = module_name
 
     return sections
 
@@ -87,21 +89,16 @@ def add_templates(args):
 
 
 def get_should_make_all(args):
-    for section in TEMPLATE_SECTIONS:
-        if args[section]:
-            return False
-
-    return True
+    return not any(args[s] for s in TEMPLATE_SECTIONS)
 
 
 def add_sections_to_template(should_make_all, args):
-    for section, import_stmt in TEMPLATE_SECTIONS.items():
+    for section, module_name in TEMPLATE_SECTIONS.items():
         if should_make_all or args[section]:
-            exec(import_stmt)
+            import_module('templates.{}'.format(module_name))
 
 
 def generate_template(output_path, debug):
-    from template import t
     write_file(t, output_path, debug)
 
 
