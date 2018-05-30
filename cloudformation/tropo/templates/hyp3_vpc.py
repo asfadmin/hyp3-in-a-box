@@ -19,7 +19,7 @@ hyp3_vpc = t.add_resource(ec2.VPC(
 igw = t.add_resource(ec2.InternetGateway('Hyp3InternetGateway',))
 
 net_gw_vpc_attachment = t.add_resource(ec2.VPCGatewayAttachment(
-    "Hyp3NatAttachment",
+    "Hyp3GatewayAttachment",
     VpcId=ts.Ref(hyp3_vpc),
     InternetGatewayId=ts.Ref(igw),
 ))
@@ -39,7 +39,7 @@ default_public_route = t.add_resource(ec2.Route(
     RouteTableId=ts.Ref(public_route_table),
     DestinationCidrBlock='0.0.0.0/0',
     GatewayId=ts.Ref(igw),
-    DependsOn='Hyp3NatAttachment'
+    DependsOn='Hyp3GatewayAttachment'
 ))
 
 public_net_1 = t.add_resource(ec2.Subnet(

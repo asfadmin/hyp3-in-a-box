@@ -72,9 +72,10 @@ mydb = t.add_resource(rds.DBInstance(
     DBName="hyp3db",
     Engine="postgres",
     EngineVersion="9.5.10",
+    PubliclyAccessible=True,
     VPCSecurityGroups=[ts.Ref(security_group)],
     DBSubnetGroupName=ts.Ref(mydbsubnetgroup),
     MasterUsername=ts.Ref(dbuser),
     MasterUserPassword=ts.Ref(dbpassword),
-    DependsOn=ts.Ref(hyp3_vpc),
+    DependsOn=('Hyp3VPC'),
 ))
