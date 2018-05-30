@@ -2,11 +2,10 @@
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
 import troposphere as ts
-import troposphere.rds as rds
-import troposphere.ec2 as ec2
-
 from template import t
-from .hyp3_vpc import hyp3_vpc, get_public_subnets
+from troposphere import ec2, rds
+
+from .hyp3_vpc import get_public_subnets, hyp3_vpc
 
 print('adding rds')
 

@@ -2,9 +2,8 @@
 # https://github.com/cloudtools/troposphere/blob/master/examples/NatGateway.py
 
 import troposphere as ts
-import troposphere.ec2 as ec2
-
 from template import t
+from troposphere import ec2
 
 print('adding vpc')
 
