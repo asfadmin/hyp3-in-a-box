@@ -7,6 +7,10 @@
 # Converted from ElasticBeanstalk_Nodejs.template located at:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
+import json
+import os
+import pathlib as pl
+
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.sts import AssumeRole
 from template import t
@@ -19,12 +23,9 @@ from troposphere.elasticbeanstalk import (
     OptionSettings,
     SourceBundle
 )
-from troposphere.iam import InstanceProfile
-from troposphere.iam import Role
+from troposphere.iam import InstanceProfile, Role
 
-import json
-import os
-import pathlib as pl
+from .hyp3_vpc import get_public_subnets, hyp3_vpc
 
 print('adding api_eb')
 
@@ -97,6 +98,7 @@ app_version = t.add_resource(ApplicationVersion(
 
 config_template = t.add_resource(ConfigurationTemplate(
     "Hyp3ApiConfigurationTemplate",
+    DependsOn="Hyp3VPC",
     ApplicationName=Ref(app),
     Description="",
     SolutionStackName="64bit Amazon Linux 2018.03 v2.7.0 running Python 3.6",
@@ -110,6 +112,31 @@ config_template = t.add_resource(ConfigurationTemplate(
             Namespace="aws:autoscaling:launchconfiguration",
             OptionName="IamInstanceProfile",
             Value=Ref(instance_profile)
+        ),
+        OptionSettings(
+            Namespace="aws:ec2:vpc",
+            OptionName="VPCId",
+            Value=Ref(hyp3_vpc)
+        ),
+        OptionSettings(
+            Namespace="aws:ec2:vpc",
+            OptionName="AssociatePublicIpAddress",
+            Value="true"
+        ),
+        OptionSettings(
+            Namespace="aws:ec2:vpc",
+            OptionName="ELBScheme",
+            Value="public"
+        ),
+        OptionSettings(
+            Namespace="aws:ec2:vpc",
+            OptionName="ELBSubnets",
+            Value=Ref(get_public_subnets()[0])
+        ),
+        OptionSettings(
+            Namespace="aws:ec2:vpc",
+            OptionName="Subnets",
+            Value=Ref(get_public_subnets()[0])
         )
     ]
 ))
