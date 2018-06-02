@@ -25,10 +25,9 @@ def cmr_requests_get(*args, **kwargs):
         def text(self):
             return json.dumps(self.json_data)
 
-    if 'https://cmr.earthdata.nasa.gov/search/granules.json' in args[0]:
+    if 'https://api.daac.asf.alaska.edu/services/search/param' in args[0]:
         test_file_path = pl.Path(os.path.dirname(os.path.abspath(__file__)))
-        fake_response_path = test_file_path / 'data' / 'cmr-response.json'
-        print(fake_response_path)
+        fake_response_path = test_file_path / 'data' / 'api-response.json'
 
         with fake_response_path.open() as f:
             data = json.load(f)
