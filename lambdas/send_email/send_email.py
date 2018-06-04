@@ -1,5 +1,4 @@
-import jinja2 as j2
-import pathlib as pl
+import notify_only as no
 
 
 def render():
@@ -13,30 +12,11 @@ def render():
 
     }
 
-    email = render_template('email.html.j2', **params)
+    email = no.Email('email.html.j2') \
+        .render(**params)
 
     with open('output.html', 'w') as f:
         f.write(email)
-
-
-def render_template(template_name, **kwargs):
-    env = get_env()
-
-    temp = env.get_template(template_name)
-
-    return temp.render(kwargs)
-
-
-def get_env():
-    path = pl.Path(__file__).parent
-    print(path.absolute())
-
-    env = j2.Environment(
-        loader=j2.FileSystemLoader('templates'),
-        autoescape=j2.select_autoescape(['html', 'xml'])
-    )
-
-    return env
 
 
 if __name__ == "__main__":
