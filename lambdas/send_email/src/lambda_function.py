@@ -19,18 +19,18 @@ def render():
     return email
 
 
-def lambda_handler(event, context):
-    message = render()
+def lambda_handler(event, aws_context):
+    context = event['body']['context']
+    to_addresses = event['body']['to_addresses']
+    message = Email('email.html.j2').render(**context)
     ses.send_email(
         Source='reweeden@alaska.edu',
         Destination={
-            'ToAddresses': [
-                'reweeden@alaska.edu',
-            ]
+            'ToAddresses': to_addresses
         },
         Message={
             'Subject': {
-                'Data': "The actual subject"
+                'Data': context['subject']
             },
             'Body': {
                 'Html': {
