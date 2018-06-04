@@ -7,10 +7,6 @@
 # Converted from ElasticBeanstalk_Nodejs.template located at:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
-import json
-import os
-import pathlib as pl
-
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.sts import AssumeRole
 from template import t
@@ -26,18 +22,9 @@ from troposphere.elasticbeanstalk import (
 from troposphere.iam import InstanceProfile, Role
 
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
+from .utils import get_map
 
 print('adding api_eb')
-
-
-def get_region2principal_map():
-    file_path = pl.Path(os.path.dirname(os.path.abspath(__file__)))
-    r2p_path = file_path / 'data' / 'region2principal.json'
-
-    with r2p_path.open('r') as f:
-        region2principal_map = json.load(f)
-
-    return region2principal_map
 
 
 keyname = t.add_parameter(Parameter(
@@ -48,8 +35,7 @@ keyname = t.add_parameter(Parameter(
     ConstraintDescription="must be the name of an existing EC2 KeyPair."
 ))
 
-
-t.add_mapping("Region2Principal", get_region2principal_map())
+t.add_mapping("Region2Principal", get_map('region2principal'))
 
 role = t.add_resource(Role(
     "WebServerRole",
