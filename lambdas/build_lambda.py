@@ -58,6 +58,8 @@ def make_zip(path, zip_name):
         dependencies = os.path.join(path, 'dependencies')
         for dep_dir in os.listdir(dependencies):
             full_path = os.path.join(dependencies, dep_dir)
+            if '.dist-info' in full_path:
+                continue
             if os.path.isdir(full_path):
                 add_folder_to_zip(dependencies, dep_dir, zf)
             else:
