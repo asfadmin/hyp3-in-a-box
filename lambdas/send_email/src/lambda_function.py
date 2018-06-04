@@ -16,23 +16,11 @@ def render():
     }
 
     email = Email('email.html.j2').render(**params)
-
-    with open('output.html', 'w') as f:
-        f.write(email)
+    return email
 
 
 def lambda_handler(event, context):
-    params = {
-        'download_url': 'www.hello.html',
-        'subject': 'New Data For Subscription',
-        'browse_url': 'https://hyp3-download.asf.alaska.edu/hyp3/browse/dis_mag+S1_20180504T033546_S1_20180528T033547+256-64_50-10_0.00-0.08_2_geo.png',
-        'additional_info': [
-            {'name': 'granule name', 'value': '777778'}
-        ]
-
-    }
-
-    message = Email('email.html.j2').render(**params)
+    message = render()
     ses.send_email(
         Source='reweeden@alaska.edu',
         Destination={
@@ -42,7 +30,7 @@ def lambda_handler(event, context):
         },
         Message={
             'Subject': {
-                'Data': params['subject']
+                'Data': "The actual subject"
             },
             'Body': {
                 'Html': {
@@ -55,4 +43,5 @@ def lambda_handler(event, context):
 
 
 if __name__ == "__main__":
-    render()
+    with open('output.html', 'w') as f:
+        f.write(render())
