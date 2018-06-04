@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 templates/*
+Pipfile.lock
 
 # C extensions
 *.so
