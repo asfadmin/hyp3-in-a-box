@@ -1,6 +1,8 @@
 import json
 import pathlib as pl
 
+from src.find_new.previous_time import TIME_FILE_PATH
+
 
 def asf_api_requests_get(*args, **kwargs):
     """This method will be used by the mock to replace requests.get"""
@@ -30,3 +32,13 @@ def asf_api_requests_get(*args, **kwargs):
 def s3_upload(*args, **kwargs):
     """used to mock s3.upload"""
     return True
+
+
+def get_s3_download_func(time):
+    def s3_download(*args, **kwargs):
+        time_dict = json.dumps({'previous': time.timestamp()})
+
+        with open(TIME_FILE_PATH, 'w') as f:
+            f.write(time_dict)
+
+    return s3_download

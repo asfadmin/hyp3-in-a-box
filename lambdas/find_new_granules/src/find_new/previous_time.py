@@ -1,9 +1,10 @@
 from . import s3
 import json
 import datetime as dt
+import pathlib as pl
 
 
-TIME_FILE_NAME = 'previous-time.find-new.json'
+TIME_FILE_PATH = str(pl.Path(__file__).parent / 'previous-time.find-new.json')
 
 
 def get():
@@ -11,9 +12,9 @@ def get():
 
         :returns: datetime.datetime
     """
-    s3.download(TIME_FILE_NAME)
+    s3.download(TIME_FILE_PATH)
 
-    with open(TIME_FILE_NAME, 'r') as f:
+    with open(TIME_FILE_PATH, 'r') as f:
         prev_state = json.load(f)
 
     prev_timestamp = prev_state['previous']
@@ -34,7 +35,7 @@ def set(new_time):
         "previous": new_time.timestamp()
     }
 
-    with open(TIME_FILE_NAME, 'w') as f:
+    with open(TIME_FILE_PATH, 'w') as f:
         json.dump(update_runtime, f)
 
-    s3.upload(TIME_FILE_NAME)
+    s3.upload(TIME_FILE_PATH)
