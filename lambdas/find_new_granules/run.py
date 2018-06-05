@@ -1,9 +1,9 @@
 
-from find_new_granules.find_new_granules import get_new
+from src import find_new as fn
 
 
 def main():
-    get_new()
+    fn.get_new()
 
 
 if __name__ == "__main__":

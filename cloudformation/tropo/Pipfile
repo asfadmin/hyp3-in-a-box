@@ -4,8 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests = "*"
-"boto3" = "*"
+troposphere = {extras = ["policy"]}
 
 [dev-packages]
 
