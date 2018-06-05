@@ -14,10 +14,15 @@ def download(key):
     try:
         dl(key)
     except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == "404":
-            print(get_no_object_error_msg(key))
-        else:
-            raise
+        handle_client_error(e, key)
+
+
+def handle_client_error(e, key):
+    if e.response['Error']['Code'] == "404":
+        error_msg = get_no_object_error_msg(key)
+        print(error_msg)
+    else:
+        raise
 
 
 def get_no_object_error_msg(key):
