@@ -16,7 +16,7 @@ def lambda_handler(event, context):
 
 
 def get_new():
-    request_time = dt.datetime.now()
+    request_time = dt.datetime.utcnow()
 
     prev_time = get_formatted_previous_time()
     check_for_new_granules_after(prev_time)
@@ -26,13 +26,22 @@ def get_new():
 
 def check_for_new_granules_after(prev_time):
     print('making asf api request with: {}'.format(prev_time))
-    api = SearchAPI(API_URL)
+    # api = SearchAPI(API_URL)
+    #
+    # resp = api.query({
+    #     'output': 'JSON',
+    #     'processingDate': prev_time,
+    #     'platform': 'Sentinel-1A,Sentinel-1B',
+    #     'maxResults': 5
+    # })
+
+    api = CmrSearchApi()
 
     resp = api.query({
-        'output': 'JSON',
-        'processingDate': prev_time,
-        'platform': 'Sentinel-1A,Sentinel-1B',
-        'maxResults': 5
+        'provider': 'ASF',
+        'created_at[]': ["{},".format(prev_time)],
+        'platform[]': ['Sentinel-1A', 'Sentinel-1B'],
+        'page_size': 5
     })
 
     data = resp.json()
@@ -52,6 +61,12 @@ class SearchAPI:
     def query(self, params):
         with timing('request took {} secs to complete'):
             return requests.get(self.api_url, params=params)
+
+
+class CmrSearchApi(SearchAPI):
+    """docstring for CmrSearchApi."""
+    def __init__(self):
+        self.api_url = "https://cmr.earthdata.nasa.gov/search/granules.json"
 
 
 @cl.contextmanager
