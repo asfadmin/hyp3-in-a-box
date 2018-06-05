@@ -1,5 +1,5 @@
 
-import find_new as fn
+from src import find_new as fn
 
 
 def main():

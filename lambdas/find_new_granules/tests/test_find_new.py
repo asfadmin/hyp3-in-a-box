@@ -4,7 +4,7 @@ import os
 import pathlib as pl
 import json
 
-from find_new import get_new
+from src.find_new import get_new
 
 
 def cmr_requests_get(*args, **kwargs):
@@ -37,7 +37,7 @@ def cmr_requests_get(*args, **kwargs):
 
 class TestFindNewGranules(unittest.TestCase):
     @mock.patch(
-        'find_new.find_new.requests.get',
+        'src.find_new.find_new.requests.get',
         side_effect=cmr_requests_get
     )
     def test_cmr_get(self, mock_get):
