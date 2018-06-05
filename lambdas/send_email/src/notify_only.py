@@ -21,5 +21,3 @@ class Email(abc.ABC):
         )
 
         return env
-
-
