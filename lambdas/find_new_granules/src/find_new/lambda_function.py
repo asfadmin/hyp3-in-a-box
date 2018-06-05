@@ -11,6 +11,10 @@ from . import previous_time
 API_URL = 'https://api.daac.asf.alaska.edu/services/search/param'
 
 
+def lambda_handler(event, context):
+    get_new()
+
+
 def get_new():
     request_time = dt.datetime.now()
 
