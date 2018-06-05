@@ -6,13 +6,15 @@ s3 = boto3.resource('s3')
 LAMBDA_BUCKET = 'hyp3-in-a-box-lambdas'
 
 
-def download(key):
+def download(path):
     """Try and download a file from s3
 
         :param key: str
     """
+    key = pl.Path(path).name
+
     try:
-        dl(key)
+        do_download(key, path)
     except botocore.exceptions.ClientError as e:
         handle_client_error(e, key)
 
@@ -31,13 +33,13 @@ def get_no_object_error_msg(key):
     )
 
 
-def dl(key):
+def do_download(key, path):
     """Make the boto3 call to download the file from s3
 
         :param key: str
     """
     s3.Bucket(LAMBDA_BUCKET) \
-        .download_file(key, key)
+        .download_file(key, path)
 
 
 def upload(file_path):
@@ -47,10 +49,10 @@ def upload(file_path):
 
         :returns: s3.Object
     """
-    key = pl.Pathlib(file_path).name
+    key = pl.Path(file_path).name
     bucket = s3.Bucket(LAMBDA_BUCKET)
 
-    with open(key, 'rb') as f:
+    with open(file_path, 'rb') as f:
         return bucket.put_object(
             Key=key,
             Body=f

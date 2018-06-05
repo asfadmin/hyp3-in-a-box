@@ -2,11 +2,15 @@ import unittest
 from unittest import mock
 import datetime as dt
 
-from src.find_new import get_new_granules_after
+from src import find_new as fn
+from src.find_new import previous_time
 from . import mocks
 
 
 class TestFindNewGranules(unittest.TestCase):
+    def setUp(self):
+        previous_time.set_is_production(False)
+
     @mock.patch(
         'src.find_new.find_new.requests.get',
         side_effect=mocks.asf_api_requests_get
@@ -14,10 +18,17 @@ class TestFindNewGranules(unittest.TestCase):
     def test_get_new(self, mock_get):
         prev_time = dt.datetime.now()
 
-        granules = get_new_granules_after(prev_time)
+        granules = fn.get_new_granules_after(prev_time)
 
         self.assertIsInstance(granules, list)
         self.assertIsInstance(granules.pop(), dict)
+
+    @mock.patch(
+        'src.find_new.find_new.get_new_granules_after',
+        side_effect=mocks.asf_api_requests_get
+    )
+    def test_s3_upload(self, mock_find_new):
+        fn.get_new()
 
 
 if __name__ == "__main__":

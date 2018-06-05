@@ -4,6 +4,10 @@ import pathlib as pl
 from src.find_new.previous_time import get_time_file_path
 
 
+def find_new(*args, **kwargs):
+    pass
+
+
 def asf_api_requests_get(*args, **kwargs):
     """This method will be used by the mock to replace requests.get"""
 
