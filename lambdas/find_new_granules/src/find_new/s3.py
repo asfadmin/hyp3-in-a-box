@@ -15,9 +15,15 @@ def download(key):
         dl(key)
     except botocore.exceptions.ClientError as e:
         if e.response['Error']['Code'] == "404":
-            print("S3 DOWNLOAD WARNING: The object {} does not exist.".format(key))
+            print(get_no_object_error_msg(key))
         else:
             raise
+
+
+def get_no_object_error_msg(key):
+    return "S3 DOWNLOAD WARNING: The object {} does not exist.".format(
+        key
+    )
 
 
 def dl(key):
