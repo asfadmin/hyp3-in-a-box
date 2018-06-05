@@ -2,14 +2,15 @@ import unittest
 from unittest import mock
 import datetime as dt
 
-from src import find_new as fn
-from src.find_new import previous_time
 from . import mocks
+
+from src.find_new import environment as env
+from src import find_new as fn
 
 
 class TestFindNewGranules(unittest.TestCase):
     def setUp(self):
-        previous_time.set_is_production(False)
+        env.set_is_production(False)
 
     @mock.patch(
         'src.find_new.find_new.requests.get',

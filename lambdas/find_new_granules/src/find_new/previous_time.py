@@ -3,17 +3,7 @@ import datetime as dt
 import pathlib as pl
 
 from . import s3
-
-IS_PRODUCTION = True
-
-
-def set_is_production(val):
-    global IS_PRODUCTION
-
-    if not isinstance(val, bool):
-        raise Exception('is_production can only be a boolean value')
-
-    IS_PRODUCTION = val
+from . import environment as env
 
 
 def get():
@@ -54,10 +44,13 @@ def set(new_time):
 def get_time_file_path():
     key_name = get_s3_key_name()
 
-    return str(pl.Path(__file__).parent / key_name)
+    path = pl.Path('/tmp/') if env.IS_PRODUCTION \
+        else pl.Path(__file__).parent
+
+    return str(path / key_name)
 
 
 def get_s3_key_name():
-    materity = 'prod' if IS_PRODUCTION else 'test'
+    materity = 'prod' if env.IS_PRODUCTION else 'test'
 
     return 'previous-time.{}.json'.format(materity)

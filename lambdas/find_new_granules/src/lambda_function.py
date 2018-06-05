@@ -1,4 +1,4 @@
-from . import find_new as fn
+import find_new as fn
 
 
 def lambda_handler(event, context):

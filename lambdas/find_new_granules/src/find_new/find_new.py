@@ -7,6 +7,7 @@ import time
 import logging
 
 from . import previous_time
+from . import environment as env
 
 
 def get_new():
@@ -62,7 +63,9 @@ def make_asf_api_query(prev_time):
     })
 
     data = resp.json()
-    cache_output(data)
+
+    if not env.IS_PRODUCTION:
+        cache_output(data)
 
     return data[0]
 
@@ -78,7 +81,9 @@ def make_cmr_query(prev_time):
     })
 
     data = resp.json()
-    cache_output(data)
+
+    if not env.IS_PRODUCTION:
+        cache_output(data)
 
     return data['feed']['entry']
 
