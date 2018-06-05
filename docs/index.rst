@@ -10,10 +10,12 @@ Welcome to Hyp3 In A Box's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   _static/cloudformation
+   _static/lambdas-main
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

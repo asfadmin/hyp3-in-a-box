@@ -17,9 +17,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../lambdas/find_new_granules/src'))
+sys.path.insert(0, os.path.abspath('../lambdas/send_email/src'))
 
 
 # -- General configuration ------------------------------------------------
@@ -31,8 +32,10 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-    'sphinx.ext.coverage']
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.coverage'
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -90,7 +93,22 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    'logo': 'satellite.png',
+    'logo_name': True,
+    'description': "Portable version of asf's HyP3 procecssing system",
+    'github_user': 'asfadmin',
+    'github_repo': 'hyp3-in-a-box',
+    'extra_nav_links': {
+        'HyP3 On-Demand Processing': 'http://hyp3.asf.alaska.edu/',
+        'HyP3 API': 'http://hyp3.asf.alaska.edu://api.hyp3.asf.alaska.edu/',
+        'Find Granules': 'https://vertex.daac.asf.alaska.edu/',
+        'ASF Website': 'https://www.asf.alaska.edu/'
+    },
+    'sidebar_width': '240px',
+    'page_width': '1150px',
+    'show_related': True
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -104,11 +122,13 @@ html_static_path = ['_static']
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
 html_sidebars = {
     '**': [
-        'relations.html',  # needs 'show_related': True theme option to display
+        'about.html',
+        'navigation.html',
+        'relations.html',
         'searchbox.html',
+        'donate.html',
     ]
 }
-
 
 # -- Options for HTMLHelp output ------------------------------------------
 
@@ -165,6 +185,3 @@ texinfo_documents = [
      author, 'Hyp3InABox', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-
