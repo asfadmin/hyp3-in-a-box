@@ -1,7 +1,7 @@
 import json
 import pathlib as pl
 
-from src.find_new.previous_time import TIME_FILE_PATH
+from src.find_new.previous_time import get_time_file_path
 
 
 def asf_api_requests_get(*args, **kwargs):
@@ -38,7 +38,7 @@ def get_s3_download_func(time):
     def s3_download(*args, **kwargs):
         time_dict = json.dumps({'previous': time.timestamp()})
 
-        with open(TIME_FILE_PATH, 'w') as f:
+        with open(get_time_file_path(), 'w') as f:
             f.write(time_dict)
 
     return s3_download

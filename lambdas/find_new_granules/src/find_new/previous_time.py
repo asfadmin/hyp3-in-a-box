@@ -1,10 +1,10 @@
-from . import s3
 import json
 import datetime as dt
 import pathlib as pl
 
+from . import s3
 
-TIME_FILE_PATH = str(pl.Path(__file__).parent / 'previous-time.find-new.json')
+IS_PRODUCTION = True
 
 
 def get():
@@ -12,9 +12,10 @@ def get():
 
         :returns: datetime.datetime
     """
-    s3.download(TIME_FILE_PATH)
+    key_name, download_path = get_s3_key_name(), get_time_file_path()
+    s3.download(key_name)
 
-    with open(TIME_FILE_PATH, 'r') as f:
+    with open(download_path, 'r') as f:
         prev_state = json.load(f)
 
     prev_timestamp = prev_state['previous']
@@ -30,12 +31,24 @@ def set(new_time):
 
         :returns: s3.Object
     """
-
     update_runtime = {
         "previous": new_time.timestamp()
     }
 
-    with open(TIME_FILE_PATH, 'w') as f:
+    time_file_path = get_time_file_path()
+    with open(time_file_path, 'w') as f:
         json.dump(update_runtime, f)
 
-    s3.upload(TIME_FILE_PATH)
+    s3.upload(time_file_path)
+
+
+def get_time_file_path():
+    key_name = get_s3_key_name()
+
+    return str(pl.Path(__file__).parent / key_name)
+
+
+def get_s3_key_name():
+    materity = 'prod' if IS_PRODUCTION else 'test'
+
+    return 'previous-time.{}.json'.format(materity)
