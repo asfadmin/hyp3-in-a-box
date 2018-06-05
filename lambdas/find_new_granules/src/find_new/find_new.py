@@ -12,15 +12,29 @@ API_URL = 'https://api.daac.asf.alaska.edu/services/search/param'
 
 
 def get_new():
-    request_time = dt.datetime.now()
+    """Get new granules using the asf api and return query results
+    also save/load the previous runtimes to s3.
 
+        :returns: dict
+    """
     prev_time = get_formatted_previous_time()
-    check_for_new_granules_after(prev_time)
+
+    request_time = dt.datetime.now()
+    results = get_new_granules_after(prev_time)
 
     previous_time.set(request_time)
 
+    return results
 
-def check_for_new_granules_after(prev_time):
+
+def get_new_granules_after(prev_time):
+    """Make the asf api request and return.
+
+        :param prev_time: datetime.datetime
+
+        :returns: dict
+    """
+
     print('making asf api request with: {}'.format(prev_time))
     api = SearchAPI(API_URL)
 
@@ -32,20 +46,35 @@ def check_for_new_granules_after(prev_time):
     })
 
     data = resp.json()
-    save_output(data)
+
+    cache_output(data)
+
+    return data[0]
 
 
 def get_formatted_previous_time():
+    """Get previous lambda runtime from s3 and format it as asf api compatible
+    string.
+
+        :returns: str
+    """
     prev_time = previous_time.get()
 
     return prev_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 class SearchAPI:
+    """Class to wrap searching an generic api"""
     def __init__(self, api_url):
         self.api_url = api_url
 
     def query(self, params):
+        """Make a search query to an api
+
+            :param params: dict
+
+            :returns: requests.Response
+        """
         with timing('request took {} secs to complete'):
             return requests.get(self.api_url, params=params)
 
@@ -58,7 +87,7 @@ def timing(print_str):
     print(print_str.format(time.time() - start))
 
 
-def save_output(data):
+def cache_output(data):
     """Save output from query for debugging"""
     output_path = pl.Path('cached')
     output_path.mkdir(parents=True, exist_ok=True)

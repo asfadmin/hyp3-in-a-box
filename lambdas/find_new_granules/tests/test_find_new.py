@@ -1,7 +1,8 @@
 import unittest
 from unittest import mock
+import datetime as dt
 
-from src.find_new import get_new
+from src.find_new import get_new_granules_after
 from . import mocks
 
 
@@ -11,7 +12,12 @@ class TestFindNewGranules(unittest.TestCase):
         side_effect=mocks.asf_api_requests_get
     )
     def test_get_new(self, mock_get):
-        get_new()
+        prev_time = dt.datetime.now()
+
+        granules = get_new_granules_after(prev_time)
+
+        self.assertIsInstance(granules, list)
+        self.assertIsInstance(granules.pop(), dict)
 
 
 if __name__ == "__main__":

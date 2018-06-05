@@ -37,4 +37,4 @@ def set(new_time):
     with open(TIME_FILE_NAME, 'w') as f:
         json.dump(update_runtime, f)
 
-    return s3.upload(TIME_FILE_NAME)
+    s3.upload(TIME_FILE_NAME)
