@@ -4,7 +4,6 @@ import json
 import pathlib as pl
 import contextlib as cl
 import time
-import logging
 
 from . import previous_time
 from . import environment as env
@@ -16,25 +15,15 @@ def get_new():
 
         :returns: dict
     """
-    config_logger()
-
     prev_time = get_formatted_previous_time()
 
     request_time = dt.datetime.utcnow()
-    logging.info('time-range: %s -> %s', str(prev_time), str(request_time))
+    print(f'time-range: {prev_time} -> {request_time}')
     results = get_new_granules_after(prev_time)
 
     previous_time.set(request_time)
 
     return results
-
-
-def config_logger():
-    logging.basicConfig(
-        filename='find_new.log',
-        format='%(levelname)s: %(message)s',
-        level=logging.INFO
-    )
 
 
 def get_new_granules_after(prev_time):
@@ -44,10 +33,10 @@ def get_new_granules_after(prev_time):
 
         :returns: dict
     """
-    logging.info('making api request with: %s', prev_time)
+    print('making api request with: {prev_time}')
     cmr_data = make_cmr_query(prev_time)
 
-    logging.info("cmr returned %s results", len(cmr_data))
+    print(f"cmr returned {len(cmr_data)} results")
 
     return cmr_data
 
@@ -112,7 +101,7 @@ class SearchAPI:
 
             :returns: requests.Response
         """
-        with timing('request took %s secs to complete'):
+        with timing('request took {runtime} secs to complete'):
             return requests.get(self.api_url, params=params)
 
 
@@ -131,8 +120,10 @@ def timing(print_str):
     """print a string formatted with timing information"""
     start = time.time()
     yield
-    timing_msg = print_str.format(time.time() - start)
-    logging.info(timing_msg)
+    runtime = time.time() - start
+    timing_msg = print_str.format(runtime=runtime)
+
+    print(timing_msg)
 
 
 def cache_output(data):
