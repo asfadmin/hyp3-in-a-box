@@ -4,11 +4,9 @@ import json
 import pathlib as pl
 import contextlib as cl
 import time
+import logging
 
 from . import previous_time
-
-
-API_URL = 'https://api.daac.asf.alaska.edu/services/search/param'
 
 
 def get_new():
@@ -17,14 +15,25 @@ def get_new():
 
         :returns: dict
     """
+    config_logger()
+
     prev_time = get_formatted_previous_time()
 
-    request_time = dt.datetime.now()
+    request_time = dt.datetime.utcnow()
+    logging.info('time-range: %s -> %s', str(prev_time), str(request_time))
     results = get_new_granules_after(prev_time)
 
     previous_time.set(request_time)
 
     return results
+
+
+def config_logger():
+    logging.basicConfig(
+        filename='find_new.log',
+        format='%(levelname)s: %(message)s',
+        level=logging.INFO
+    )
 
 
 def get_new_granules_after(prev_time):
@@ -34,22 +43,44 @@ def get_new_granules_after(prev_time):
 
         :returns: dict
     """
+    logging.info('making api request with: %s', prev_time)
+    cmr_data = make_cmr_query(prev_time)
 
-    print('making asf api request with: {}'.format(prev_time))
-    api = SearchAPI(API_URL)
+    logging.info("cmr returned %s results", len(cmr_data))
+
+    return cmr_data
+
+
+def make_asf_api_query(prev_time):
+    api = ASFSearchAPI()
 
     resp = api.query({
         'output': 'JSON',
         'processingDate': prev_time,
         'platform': 'Sentinel-1A,Sentinel-1B',
-        'maxResults': 5
+        'maxResults': 50
     })
 
     data = resp.json()
-
     cache_output(data)
 
     return data[0]
+
+
+def make_cmr_query(prev_time):
+    api = CMRSearchAPI()
+
+    resp = api.query({
+        'provider': 'ASF',
+        'created_at[]': ["{},".format(prev_time)],
+        'platform[]': ['Sentinel-1A', 'Sentinel-1B'],
+        'page_size': 50
+    })
+
+    data = resp.json()
+    cache_output(data)
+
+    return data['feed']['entry']
 
 
 def get_formatted_previous_time():
@@ -65,6 +96,7 @@ def get_formatted_previous_time():
 
 class SearchAPI:
     """Class to wrap searching an generic api"""
+
     def __init__(self, api_url):
         self.api_url = api_url
 
@@ -75,8 +107,18 @@ class SearchAPI:
 
             :returns: requests.Response
         """
-        with timing('request took {} secs to complete'):
+        with timing('request took %s secs to complete'):
             return requests.get(self.api_url, params=params)
+
+
+class ASFSearchAPI(SearchAPI):
+    def __init__(self):
+        self.api_url = "https://api.daac.asf.alaska.edu/services/search/param"
+
+
+class CMRSearchAPI(SearchAPI):
+    def __init__(self):
+        self.api_url = "https://cmr.earthdata.nasa.gov/search/granules.json"
 
 
 @cl.contextmanager
@@ -84,7 +126,8 @@ def timing(print_str):
     """print a string formatted with timing information"""
     start = time.time()
     yield
-    print(print_str.format(time.time() - start))
+    timing_msg = print_str.format(time.time() - start)
+    logging.info(timing_msg)
 
 
 def cache_output(data):

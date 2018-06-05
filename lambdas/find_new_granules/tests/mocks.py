@@ -23,7 +23,7 @@ def asf_api_requests_get(*args, **kwargs):
         def text(self):
             return json.dumps(self.json_data)
 
-    if 'https://api.daac.asf.alaska.edu/services/search/param' in args[0]:
+    if is_api_url(args[0]):
         test_file_path = pl.Path(__file__).parent
         fake_response_path = test_file_path / 'data' / 'api-response.json'
 
@@ -31,6 +31,13 @@ def asf_api_requests_get(*args, **kwargs):
             data = json.load(f)
 
         return MockResponse(data, 200)
+
+
+def is_api_url(url):
+    return url in (
+        "https://api.daac.asf.alaska.edu/services/search/param",
+        "https://cmr.earthdata.nasa.gov/search/granules.json"
+    )
 
 
 def s3_upload(*args, **kwargs):
