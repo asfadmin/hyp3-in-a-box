@@ -21,8 +21,8 @@ def get():
 
         :returns: datetime.datetime
     """
-    key_name, download_path = get_s3_key_name(), get_time_file_path()
-    s3.download(key_name)
+    download_path = get_time_file_path()
+    s3.download(download_path)
 
     with open(download_path, 'r') as f:
         prev_state = json.load(f)
