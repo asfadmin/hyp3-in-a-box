@@ -14,7 +14,7 @@ def download(key):
         dl(key)
     except botocore.exceptions.ClientError as e:
         if e.response['Error']['Code'] == "404":
-            print("The object does not exist.")
+            print("S3 DOWNLOAD: The object {} does not exist.".format(key))
         else:
             raise
 
