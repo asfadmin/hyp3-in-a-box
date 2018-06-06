@@ -33,7 +33,7 @@ def get_new_granules_after(prev_time):
 
         :returns: dict
     """
-    print('making api request with: {prev_time}')
+    print(f'making api request with: {prev_time}')
     cmr_data = make_cmr_query(prev_time)
 
     print(f"cmr returned {len(cmr_data)} results")
