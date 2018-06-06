@@ -12,8 +12,8 @@ phases:
     commands:
       - mkdir build
       - python3 cloudformation/tropo/create_stack.py build/template.json
-      - python3 lambdas/build_lambda.py send_email -o build/send_email_$CODEBUILD_RESOLVED_SOURCE_VERSION.zip
-      - python3 lambdas/build_lambda.py find_new_granules -o build/find_new_granules_$CODEBUILD_RESOLVED_SOURCE_VERSION.zip
+      - python3 lambdas/build_lambda.py lambdas/send_email -o build/send_email_$CODEBUILD_RESOLVED_SOURCE_VERSION.zip
+      - python3 lambdas/build_lambda.py lambdas/find_new_granules -o build/find_new_granules_$CODEBUILD_RESOLVED_SOURCE_VERSION.zip
   post_build:
     commands:
       - aws s3 cp build/send_email_$CODEBUILD_RESOLVED_SOURCE_VERSION.zip s3://$S3_SOURCE_BUCKET/$MATURITY/
