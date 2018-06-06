@@ -16,9 +16,8 @@ phases:
       - python3 lambdas/build_lambda.py find_new_granules -o build/find_new_granules_$CODEBUILD_RESOLVED_SOURCE_VERSION.zip
   post_build:
     commands:
-      - echo $CODEBUILD_SOURCE_VERSION
-      - aws s3 cp build/send_email_$CODEBUILD_RESOLVED_SOURCE_VERSION.zip s3://$CODEBUILD_SOURCE_VERSION/
-      - aws s3 cp build/find_new_granules_$CODEBUILD_RESOLVED_SOURCE_VERSION.zip s3://$CODEBUILD_SOURCE_VERSION/
+      - aws s3 cp build/send_email_$CODEBUILD_RESOLVED_SOURCE_VERSION.zip s3://$S3_SOURCE_BUCKET/$MATURITY/
+      - aws s3 cp build/find_new_granules_$CODEBUILD_RESOLVED_SOURCE_VERSION.zip s3://$S3_SOURCE_BUCKET/$MATURITY/
 artifacts:
   files:
     - template.json
