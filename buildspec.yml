@@ -18,7 +18,7 @@ phases:
   post_build:
     commands:
       - aws s3 cp s3://$S3_SOURCE_BUCKET/$MATURITY/config/configuration.json build/
-      - aws s3 cp --include "*" build/lambdas/ s3://$S3_SOURCE_BUCKET/$MATURITY/
+      - aws s3 cp build/lambdas/ s3://$S3_SOURCE_BUCKET/$MATURITY/ --recursive --include "*"
 artifacts:
   files:
     - template.json
