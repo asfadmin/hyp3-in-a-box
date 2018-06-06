@@ -13,8 +13,8 @@ print('adding find_new lambda')
 find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
     Code=awslambda.Code(
-        S3Bucket='hyp3-in-a-box-lambdas',
-        S3Key='find_new_granules.zip'
+        S3Bucket="hyp3-in-a-box-source",
+        S3Key="test/find_new_granules.zip"
     ),
     Handler='lambda_function.lambda_handler',
     Role=ts.GetAtt('LambdaExecutionRole', 'Arn'),

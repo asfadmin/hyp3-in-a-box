@@ -37,11 +37,11 @@ def install_dependencies(path):
             package = line.strip()
 
             log.debug('Installing {}'.format(package))
-            install_package(path, package)
+            install_package(path, package, os.path.join(path, 'dependencies'))
 
 
-def install_package(path, package_name):
-    subprocess.call([sys.executable, '-m', 'pip', 'install', '--compile', '--upgrade', package_name, '-t', os.path.join(path, 'dependencies')])
+def install_package(path, package_name, output_dir):
+    subprocess.call([sys.executable, '-m', 'pip', 'install', '--compile', '--upgrade', package_name, '-t', output_dir])
 
 
 def make_zip(path, zip_name):
@@ -89,6 +89,7 @@ def build_lambda(path, zip_name):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("source_path", help="path to the function to build")
+    parser.add_argument("-o", "--outfile", help="name of the zip file to produce")
     parser.add_argument("-v", "--verbose", help="enable additional debug output", action="store_true")
     args = parser.parse_args()
 
@@ -97,12 +98,16 @@ if __name__ == "__main__":
 
     try:
         path = args.source_path
-        if path[-1] == '/':
-            path = path[:-1]
-        zip_name = path.split("/")[-1].lower() + ".zip"
+        zip_name = args.outfile
+
+        if zip_name is None:
+            if path[-1] == '/':
+                path = path[:-1]
+            zip_name = path.split("/")[-1].lower() + ".zip"
 
         build_lambda(path, zip_name)
     except FileNotFoundError as e:
         log.info("Missing file or directory: {}".format(e.filename))
+        sys.exit(-1)
     except KeyboardInterrupt:
         log.debug("Quitting...")

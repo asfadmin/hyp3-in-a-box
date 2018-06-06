@@ -98,7 +98,7 @@ class SearchAPI:
 
 class CMRSearchAPI(SearchAPI):
     def __init__(self):
-        self.api_url = "https://cmr.earthdata.nasa.gov/search/granules.json"
+        super().__init__("https://cmr.earthdata.nasa.gov/search/granules.json")
 
 
 @cl.contextmanager

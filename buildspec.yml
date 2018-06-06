@@ -1,0 +1,27 @@
+version: 0.2
+
+env:
+  variables:
+    S3_SOURCE_BUCKET: "hyp3-in-a-box-source"
+
+phases:
+  install:
+    commands:
+      - pip install -U -r build_requirements.txt
+  build:
+    commands:
+      - mkdir build
+      - mkdir build/lambdas
+      - python3 cloudformation/tropo/create_stack.py build/template.json
+      - python3 lambdas/build_lambda.py lambdas/send_email -o build/lambdas/send_email.zip
+      - python3 lambdas/build_lambda.py lambdas/find_new_granules -o build/lambdas/find_new_granules.zip
+  post_build:
+    commands:
+      - aws s3 cp s3://$S3_SOURCE_BUCKET/$MATURITY/config/configuration.json build/
+      - aws s3 cp build/lambdas/ s3://$S3_SOURCE_BUCKET/$MATURITY/ --recursive --include "*"
+artifacts:
+  files:
+    - template.json
+    - configuration.json
+  discard-paths: yes
+  base-directory: build

@@ -3,7 +3,7 @@ import json
 
 
 def get_map(name):
-    return load_json_from('map', name)
+    return load_json_from('maps', name)
 
 
 def get_policy(name):

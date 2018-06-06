@@ -5,6 +5,7 @@
 # Generates the CloudFormation stack json
 
 import argparse
+import json
 import pathlib as pl
 import re
 from importlib import import_module
@@ -45,6 +46,9 @@ def main():
 
     add_templates(vars(args))
 
+    if args.config:
+        generate_config_template(args.config, args.debug)
+
 
 def get_parser():
     parser = argparse.ArgumentParser(
@@ -56,6 +60,9 @@ def get_parser():
     add_flag_argument(
         parser, 'debug',
         desc='print out the generated template.'
+    )
+    parser.add_argument(
+        '--config', help="generate a configuration template with the provided name"
     )
 
     for section_name in TEMPLATE_SECTIONS.keys():
@@ -100,6 +107,21 @@ def add_sections_to_template(should_make_all, args):
 
 def generate_template(output_path, debug):
     write_file(t, output_path, debug)
+
+
+def generate_config_template(output_path, debug):
+    params = {}
+    for (param_name, param_value) in t.parameters.items():
+        print("{}: ".format(param_name), end='')
+        params[param_name] = input()
+    config = {
+        "Parameters": params
+    }
+    if debug:
+        print(json.dumps(config, indent=4))
+    else:
+        with open(output_path, "w") as f:
+            json.dump(config, f, indent=4)
 
 
 def write_file(t, file_name, debug):
