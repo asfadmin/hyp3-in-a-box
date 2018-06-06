@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - pip install -U -r build_requirements.txt
+  build:
+    commands:
+      - mkdir build
+      - python3 cloudformation/tropo/create_stack.py build/template.json
+  post_build:
+    commands:
+      - echo 'post_build'
+artifacts:
+  files:
+    - template.json
+  discard-paths: yes
+  base-directory: build
