@@ -85,10 +85,6 @@ def make_cmr_query(prev_time):
 
 class SearchAPI:
     """Class to wrap searching an generic api"""
-
-    def __init__(self, api_url):
-        self.api_url = api_url
-
     def query(self, params):
         """Make a search query to an api
 
