@@ -108,5 +108,6 @@ if __name__ == "__main__":
         build_lambda(path, zip_name)
     except FileNotFoundError as e:
         log.info("Missing file or directory: {}".format(e.filename))
+        sys.exit(-1)
     except KeyboardInterrupt:
         log.debug("Quitting...")
