@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
     try:
         path = args.source_path
-        zip_name = parser.outfile
+        zip_name = args.outfile
 
         if zip_name is None:
             if path[-1] == '/':
