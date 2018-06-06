@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 requests = "*"
 "boto3" = "*"
+asf-granule-util = "*"
 
 [dev-packages]
 

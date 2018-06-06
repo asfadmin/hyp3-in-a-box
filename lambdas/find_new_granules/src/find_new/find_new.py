@@ -7,6 +7,7 @@ import time
 
 from . import previous_time
 from . import environment as env
+from . import s3
 
 MAX_RESULTS = 2000
 
@@ -17,7 +18,7 @@ def granules():
 
         :returns: dict
     """
-    prev_time = get_formatted_previous_time()
+    prev_time = get_previous_time_formatted()
 
     request_time = dt.datetime.utcnow()
     print(f'time-range: {prev_time} -> {cmr_date_format(request_time)}')
@@ -26,6 +27,28 @@ def granules():
     previous_time.set(request_time)
 
     return results
+
+
+def get_previous_time_formatted():
+    """Get previous lambda runtime from s3 and format it as asf api compatible
+    string.
+
+        :returns: str
+    """
+    try:
+        prev_time = previous_time.get()
+    except s3.ObjectDoesntExist:
+        prev_time = get_init_prev_time()
+
+    return cmr_date_format(prev_time)
+
+
+def get_init_prev_time():
+    return dt.datetime.now() - dt.timedelta(minutes=5)
+
+
+def cmr_date_format(date):
+    return date.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 def get_new_granules_after(prev_time):
@@ -58,21 +81,6 @@ def make_cmr_query(prev_time):
         cache_output(data)
 
     return data['feed']['entry']
-
-
-def get_formatted_previous_time():
-    """Get previous lambda runtime from s3 and format it as asf api compatible
-    string.
-
-        :returns: str
-    """
-    prev_time = previous_time.get()
-
-    return cmr_date_format(prev_time)
-
-
-def cmr_date_format(date):
-    return date.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 class SearchAPI:
