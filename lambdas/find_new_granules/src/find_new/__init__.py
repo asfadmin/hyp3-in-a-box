@@ -1,6 +1,6 @@
-from .find_new import get_new, get_new_granules_after
+from .find_new import granules, get_new_granules_after
 from . import previous_time, s3, environment
 
 __all__ = [
-    'get_new', 'get_new_granules_after', 'previous_time', 's3', 'environment'
+    'granules', 'get_new_granules_after', 'previous_time', 's3', 'environment'
 ]

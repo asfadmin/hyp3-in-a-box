@@ -1,7 +1,6 @@
-import find_new as fn
+import find_new
 
 
 def lambda_handler(event, context):
-    granules = fn.get_new()
+    return find_new.granules()
 
-    print(granules)

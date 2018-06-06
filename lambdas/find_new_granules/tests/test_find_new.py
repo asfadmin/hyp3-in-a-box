@@ -5,7 +5,7 @@ import datetime as dt
 from . import mocks
 
 from src.find_new import environment as env
-from src import find_new as fn
+from src import find_new
 
 
 class TestFindNewGranules(unittest.TestCase):
@@ -19,7 +19,7 @@ class TestFindNewGranules(unittest.TestCase):
     def test_get_new(self, mock_get):
         prev_time = dt.datetime.now()
 
-        granules = fn.get_new_granules_after(prev_time)
+        granules = find_new.get_new_granules_after(prev_time)
 
         self.assertIsInstance(granules, list)
         self.assertIsInstance(granules.pop(), dict)
@@ -29,7 +29,7 @@ class TestFindNewGranules(unittest.TestCase):
         side_effect=mocks.asf_api_requests_get
     )
     def test_s3_upload(self, mock_find_new):
-        fn.get_new()
+        find_new.granules()
 
 
 if __name__ == "__main__":

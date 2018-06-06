@@ -9,7 +9,7 @@ from . import previous_time
 from . import environment as env
 
 
-def get_new():
+def granules():
     """Get new granules using the asf api and return query results
     also save/load the previous runtimes to s3.
 
@@ -48,7 +48,7 @@ def make_asf_api_query(prev_time):
         'output': 'JSON',
         'processingDate': prev_time,
         'platform': 'Sentinel-1A,Sentinel-1B',
-        'maxResults': 50
+        'maxResults': 500
     })
 
     data = resp.json()
