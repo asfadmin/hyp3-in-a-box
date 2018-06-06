@@ -3,23 +3,24 @@ from template import t
 import troposphere as ts
 from troposphere import awslambda
 from troposphere import iam
+from troposphere import events
 
 from . import utils
 
 print('adding find_new lambda')
 
 
-AppendItemToListFunction = t.add_resource(awslambda.Function(
+find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
     Code=awslambda.Code(
-        S3Bucket="hyp3-in-a-box-lambdas",
-        S3Key="find_new_granules.zip"
+        S3Bucket='hyp3-in-a-box-lambdas',
+        S3Key='find_new_granules.zip'
     ),
-    Handler="lambda_function.lambda_handler",
-    Role=ts.GetAtt("LambdaExecutionRole", "Arn"),
-    Runtime="python3.6",
+    Handler='lambda_function.lambda_handler',
+    Role=ts.GetAtt('LambdaExecutionRole', 'Arn'),
+    Runtime='python3.6',
     MemorySize=128,
-    Timeout=60
+    Timeout=300
 ))
 
 logs_policy = iam.Policy(
@@ -33,9 +34,22 @@ prev_time_s3_policy = iam.Policy(
 )
 
 
-LambdaExecutionRole = t.add_resource(iam.Role(
+lambda_exe_role = t.add_resource(iam.Role(
     "LambdaExecutionRole",
     Path="/",
     Policies=[logs_policy, prev_time_s3_policy],
     AssumeRolePolicyDocument=utils.get_policy('lambda-policy-doc'),
+))
+
+find_new_target = events.Target(
+    "FindNewTarget",
+    Arn=ts.GetAtt("Hyp3FindNewGranulesFunction", 'Arn'),
+    Id="FindNewFunction1"
+)
+
+find_new_event_rule = t.add_resource(events.Rule(
+    "FindNewSchedule",
+    ScheduleExpression="rate(10 minutes)",
+    State="ENABLED",
+    Targets=[find_new_target]
 ))
