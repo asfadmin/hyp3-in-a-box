@@ -18,7 +18,7 @@ def granules():
     prev_time = get_formatted_previous_time()
 
     request_time = dt.datetime.utcnow()
-    print(f'time-range: {prev_time} -> {request_time}')
+    print(f'time-range: {prev_time} -> {cmr_date_format(request_time)}')
     results = get_new_granules_after(prev_time)
 
     previous_time.set(request_time)
@@ -85,7 +85,11 @@ def get_formatted_previous_time():
     """
     prev_time = previous_time.get()
 
-    return prev_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+    return cmr_date_format(prev_time)
+
+
+def cmr_date_format(date):
+    return date.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 class SearchAPI:
