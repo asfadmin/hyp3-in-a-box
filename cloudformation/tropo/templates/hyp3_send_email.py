@@ -4,13 +4,19 @@
 
 # Troposphere template for send_email lambda
 
-import troposphere as ts
 from template import t
+from troposphere import GetAtt, Parameter, Ref
 from troposphere.awslambda import Code, Function
 from troposphere.iam import Policy, Role
 
 print('adding send_email lambda')
 
+lambda_name = t.add_parameter(Parameter(
+    "SendEmailName",
+    Description="Name of the SendEmail lambda function",
+    Default="hyp3_send_email",
+    Type="String"
+))
 
 lambda_policy = Policy(
     PolicyName="SESSendEmail",
@@ -44,12 +50,12 @@ send_email_role = t.add_resource(Role(
 
 send_email = t.add_resource(Function(
     "SendEmailFunction",
-    FunctionName="hyp3_send_email",
+    FunctionName=Ref(lambda_name),
     Code=Code(
-        S3Bucket="some-bucket",
-        S3Key="my-code.zip"
+        ZipFile="def lambda_haneler(event, context):\n"
+                "    print('Send Email Called')"
     ),
     Handler="lambda_function.lambda_handler",
-    Role=ts.GetAtt(send_email_role, "Arn"),
+    Role=GetAtt(send_email_role, "Arn"),
     Runtime="python3.6"
 ))
