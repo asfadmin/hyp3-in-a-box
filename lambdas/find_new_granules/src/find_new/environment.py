@@ -1,5 +1,5 @@
 
-IS_PRODUCTION = True
+IS_PRODUCTION = False
 
 
 def set_is_production(val):
