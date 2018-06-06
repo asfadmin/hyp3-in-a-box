@@ -37,11 +37,11 @@ def install_dependencies(path):
             package = line.strip()
 
             log.debug('Installing {}'.format(package))
-            install_package(path, package)
+            install_package(path, package, os.path.join(path, 'dependencies'))
 
 
-def install_package(path, package_name):
-    subprocess.call([sys.executable, '-m', 'pip', 'install', '--compile', '--upgrade', package_name, '-t', os.path.join(path, 'dependencies')])
+def install_package(path, package_name, output_dir):
+    subprocess.call([sys.executable, '-m', 'pip', 'install', '--compile', '--upgrade', package_name, '-t', output_dir])
 
 
 def make_zip(path, zip_name):
