@@ -28,7 +28,7 @@ print('adding api_eb')
 
 
 keyname = t.add_parameter(Parameter(
-    "KeyName",
+    "KeyPairName",
     Description="Name of an existing EC2 KeyPair to enable SSH access to "
                 "the AWS Elastic Beanstalk instance",
     Type="AWS::EC2::KeyPair::KeyName",
