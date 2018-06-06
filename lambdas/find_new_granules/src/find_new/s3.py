@@ -16,15 +16,18 @@ def download(path):
     try:
         do_download(key, path)
     except botocore.exceptions.ClientError as e:
-        handle_client_error(e, key)
+        raise handle_client_error(e, key)
 
 
 def handle_client_error(e, key):
-    if e.response['Error']['Code'] == "404":
+    if e.response['Error']['Code'] != "404":
         error_msg = get_no_object_error_msg(key)
         print(error_msg)
+
+        return ObjectDoesntExist(error_msg)
+
     else:
-        raise
+        return e
 
 
 def get_no_object_error_msg(key):
@@ -57,3 +60,7 @@ def upload(file_path):
             Key=key,
             Body=f
         )
+
+
+class ObjectDoesntExist(Exception):
+    pass
