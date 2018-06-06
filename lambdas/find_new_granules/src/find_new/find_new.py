@@ -8,6 +8,8 @@ import time
 from . import previous_time
 from . import environment as env
 
+MAX_RESULTS = 2000
+
 
 def granules():
     """Get new granules using the asf api and return query results
@@ -41,32 +43,14 @@ def get_new_granules_after(prev_time):
     return cmr_data
 
 
-def make_asf_api_query(prev_time):
-    api = ASFSearchAPI()
-
-    resp = api.query({
-        'output': 'JSON',
-        'processingDate': prev_time,
-        'platform': 'Sentinel-1A,Sentinel-1B',
-        'maxResults': 500
-    })
-
-    data = resp.json()
-
-    if not env.IS_PRODUCTION:
-        cache_output(data)
-
-    return data[0]
-
-
 def make_cmr_query(prev_time):
     api = CMRSearchAPI()
 
     resp = api.query({
         'provider': 'ASF',
-        'created_at[]': ["{},".format(prev_time)],
+        'created_at[]': [f"{prev_time},"],
         'platform[]': ['Sentinel-1A', 'Sentinel-1B'],
-        'page_size': 50
+        'page_size': MAX_RESULTS
     })
 
     data = resp.json()
@@ -109,11 +93,6 @@ class SearchAPI:
             return requests.get(self.api_url, params=params)
 
 
-class ASFSearchAPI(SearchAPI):
-    def __init__(self):
-        self.api_url = "https://api.daac.asf.alaska.edu/services/search/param"
-
-
 class CMRSearchAPI(SearchAPI):
     def __init__(self):
         self.api_url = "https://cmr.earthdata.nasa.gov/search/granules.json"
@@ -140,4 +119,4 @@ def cache_output(data):
 
 
 if __name__ == "__main__":
-    new_time = get_new()
+    new_time = granules()
