@@ -52,8 +52,8 @@ send_email = t.add_resource(Function(
     "SendEmailFunction",
     FunctionName=Ref(lambda_name),
     Code=Code(
-        ZipFile="def lambda_haneler(event, context):\n"
-                "    print('Send Email Called')"
+        S3Bucket="hyp3-in-a-box-source",
+        S3Key="test/send_email.zip"
     ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(send_email_role, "Arn"),
