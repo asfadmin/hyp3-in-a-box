@@ -3,11 +3,19 @@ import json
 
 
 def get_map(name):
+    return load_json_from('map', name)
+
+
+def get_policy(name):
+    return load_json_from('policies', name)
+
+
+def load_json_from(directory, name):
     file_path, file_name = pl.Path(__file__).parent, name + '.json'
 
-    map_path = file_path / 'maps' / file_name
+    path = file_path / directory / file_name
 
-    with map_path.open('r') as f:
-        template_map = json.load(f)
+    with path.open('r') as f:
+        loaded_json = json.load(f)
 
-    return template_map
+    return loaded_json

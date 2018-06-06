@@ -1,3 +1,6 @@
-from .lambda_function import get_new
+from .find_new import granules, get_new_granules_after
+from . import previous_time, s3, environment
 
-__all__ = ['get_new']
+__all__ = [
+    'granules', 'get_new_granules_after', 'previous_time', 's3', 'environment'
+]

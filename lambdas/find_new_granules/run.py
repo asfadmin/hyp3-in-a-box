@@ -1,9 +1,11 @@
 
-from src import find_new as fn
+from src import find_new
+from src.find_new import environment as env
 
 
 def main():
-    fn.get_new()
+    env.set_is_production(False)
+    find_new.granules()
 
 
 if __name__ == "__main__":
