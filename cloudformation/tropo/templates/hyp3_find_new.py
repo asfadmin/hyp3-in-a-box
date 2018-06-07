@@ -47,7 +47,7 @@ prev_time_s3_policy = iam.Policy(
 )
 
 lambda_exe_role = t.add_resource(iam.Role(
-    "LambdaExecutionRole",
+    "FindNewExecutionRole",
     Path="/",
     Policies=[logs_policy, prev_time_s3_policy],
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
