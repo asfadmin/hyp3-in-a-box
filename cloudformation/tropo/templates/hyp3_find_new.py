@@ -57,13 +57,6 @@ find_new_granules_function = t.add_resource(awslambda.Function(
     Timeout=300
 ))
 
-lambda_exe_role = t.add_resource(iam.Role(
-    "FindNewExecutionRole",
-    Path="/",
-    Policies=[logs_policy, prev_time_s3_policy],
-    AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
-))
-
 find_new_target = events.Target(
     "FindNewTarget",
     Arn=ts.GetAtt("Hyp3FindNewGranulesFunction", 'Arn'),
