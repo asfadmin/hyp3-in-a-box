@@ -1,11 +1,21 @@
 import asf_granule_util as gu
 
+types = set()
+
 
 def package(search_results):
+    """Filters out irrelevant granules and packages only relevant
+    metadata for the HyP3 scheduler lambda
+
+       :param search_results: list[dict]
+
+       :returns: list[dict]
+    """
     hyp3_granules = [
-        get_relevant_metadata_from(result) for result in search_results[:5]
+        get_relevant_metadata_from(result) for result in search_results
         if is_relevant(result)
     ]
+    print(types)
 
     return hyp3_granules
 
@@ -22,6 +32,7 @@ def is_relevant(result):
 
     granule = make_granule_from(title)
 
+    types.add(granule.prod_type)
     return is_relevant_type(granule.prod_type)
 
 

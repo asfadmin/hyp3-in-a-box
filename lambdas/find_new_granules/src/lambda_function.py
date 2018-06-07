@@ -6,6 +6,15 @@ import results
 
 
 def lambda_handler(event, context):
+    """Entry point for the lambda to run.
+
+       :param event: lambda event data
+       :param context: lambda runtime info
+
+       :returns: new granules from cmr
+       :rtype: list[dict]
+    """
+
     env_setup()
 
     search_results = find_new.granules()

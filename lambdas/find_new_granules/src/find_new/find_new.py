@@ -13,10 +13,9 @@ MAX_RESULTS = 2000
 
 
 def granules():
-    """Get new granules using the asf api and return query results
-    also save/load the previous runtimes to s3.
-
-        :returns: dict
+    """
+        :returns: new granules before previous runtime
+        :rtype: list[dict]
     """
     prev_time = get_previous_time_formatted()
 
@@ -30,10 +29,9 @@ def granules():
 
 
 def get_previous_time_formatted():
-    """Get previous lambda runtime from s3 and format it as asf api compatible
-    string.
-
-        :returns: str
+    """
+        :returns: cmr compatible previous time
+        :rtype: str
     """
     try:
         prev_time = previous_time.get()
@@ -52,11 +50,11 @@ def cmr_date_format(date):
 
 
 def get_new_granules_after(prev_time):
-    """Make the asf api request and return.
+    """
+        :param datetime.datetime prev_time: previous lambda runtime
 
-        :param prev_time: datetime.datetime
-
-        :returns: dict
+        :returns: response from cmr
+        :rtype: dict
     """
     print(f'making api request with: {prev_time}')
     cmr_data = make_cmr_query(prev_time)
@@ -89,11 +87,12 @@ class SearchAPI:
         self.api_url = api_url
 
     def query(self, params):
-        """Make a search query to an api
-
+        """
             :param params: dict
 
-            :returns: requests.Response
+            :returns: response from cmr
+            :rtype: requests.Response
+
         """
         with timing('request took {runtime} secs to complete'):
             return requests.get(self.api_url, params=params)
