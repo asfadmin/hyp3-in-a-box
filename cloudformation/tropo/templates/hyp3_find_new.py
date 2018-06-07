@@ -11,23 +11,6 @@ from .hyp3_s3_buckets import previous_time_bucket
 print('adding find_new lambda')
 
 
-find_new_granules_function = t.add_resource(awslambda.Function(
-    "Hyp3FindNewGranulesFunction",
-    FunctionName="hyp3-find-new-granules",
-    Code=awslambda.Code(
-        S3Bucket="hyp3-in-a-box-lambdas",
-        S3Key="find_new_granules.zip"
-    ),
-    Handler='lambda_function.lambda_handler',
-    Environment=awslambda.Environment(
-        Variables={'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket)}
-    ),
-    Role=ts.GetAtt('LambdaExecutionRole', 'Arn'),
-    Runtime='python3.6',
-    MemorySize=128,
-    Timeout=300
-))
-
 logs_policy = iam.Policy(
     PolicyName="LogAccess",
     PolicyDocument=utils.get_static_policy('logs-policy')
@@ -49,6 +32,30 @@ prev_time_s3_policy = iam.Policy(
         ])
     }
 )
+
+lambda_exe_role = t.add_resource(iam.Role(
+    "FindNewExecutionRole",
+    Path="/",
+    Policies=[logs_policy, prev_time_s3_policy],
+    AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
+))
+
+find_new_granules_function = t.add_resource(awslambda.Function(
+    "Hyp3FindNewGranulesFunction",
+    FunctionName="hyp3-find-new-granules",
+    Code=awslambda.Code(
+        S3Bucket="hyp3-in-a-box-lambdas",
+        S3Key="find_new_granules.zip"
+    ),
+    Handler='lambda_function.lambda_handler',
+    Environment=awslambda.Environment(
+        Variables={'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket)}
+    ),
+    Role=ts.GetAtt(lambda_exe_role, 'Arn'),
+    Runtime='python3.6',
+    MemorySize=128,
+    Timeout=300
+))
 
 lambda_exe_role = t.add_resource(iam.Role(
     "FindNewExecutionRole",
