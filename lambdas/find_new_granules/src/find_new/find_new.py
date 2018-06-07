@@ -6,7 +6,7 @@ import contextlib as cl
 import time
 
 from . import previous_time
-from . import environment as env
+from .environment import environment
 from . import s3
 
 MAX_RESULTS = 2000
@@ -77,7 +77,7 @@ def make_cmr_query(prev_time):
 
     data = resp.json()
 
-    if not env.IS_PRODUCTION:
+    if not environment.is_production:
         cache_output(data)
 
     return data['feed']['entry']
@@ -85,6 +85,9 @@ def make_cmr_query(prev_time):
 
 class SearchAPI:
     """Class to wrap searching an generic api"""
+    def __init__(self, api_url):
+        self.api_url = api_url
+
     def query(self, params):
         """Make a search query to an api
 

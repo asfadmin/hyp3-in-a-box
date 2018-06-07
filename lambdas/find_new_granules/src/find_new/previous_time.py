@@ -3,7 +3,7 @@ import datetime as dt
 import pathlib as pl
 
 from . import s3
-from . import environment as env
+from .environment import environment
 
 
 def get():
@@ -44,13 +44,13 @@ def set(new_time):
 def get_time_file_path():
     key_name = get_s3_key_name()
 
-    path = pl.Path('/tmp/') if env.IS_PRODUCTION \
+    path = pl.Path('/tmp/') if environment.is_production \
         else pl.Path(__file__).parent
 
     return str(path / key_name)
 
 
 def get_s3_key_name():
-    materity = 'prod' if env.IS_PRODUCTION else 'test'
+    materity = 'prod' if environment.is_production else 'test'
 
     return f'previous-time.{materity}.json'

@@ -1,9 +1,9 @@
 import boto3
 import botocore
 import pathlib as pl
+from .environment import environment as env
 
 s3 = boto3.resource('s3')
-LAMBDA_BUCKET = 'hyp3-in-a-box-lambdas'
 
 
 def download(path):
@@ -41,7 +41,7 @@ def do_download(key, path):
 
         :param key: str
     """
-    s3.Bucket(LAMBDA_BUCKET) \
+    s3.Bucket(env.bucket) \
         .download_file(key, path)
 
 
@@ -53,7 +53,7 @@ def upload(file_path):
         :returns: s3.Object
     """
     key = pl.Path(file_path).name
-    bucket = s3.Bucket(LAMBDA_BUCKET)
+    bucket = s3.Bucket(env.bucket)
 
     with open(file_path, 'rb') as f:
         return bucket.put_object(
