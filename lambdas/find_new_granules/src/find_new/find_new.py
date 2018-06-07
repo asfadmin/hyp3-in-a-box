@@ -6,18 +6,18 @@ import contextlib as cl
 import time
 
 from . import previous_time
-from . import environment as env
+from .environment import environment
+from . import s3
 
 MAX_RESULTS = 2000
 
 
 def granules():
-    """Get new granules using the asf api and return query results
-    also save/load the previous runtimes to s3.
-
-        :returns: dict
     """
-    prev_time = get_formatted_previous_time()
+        :returns: new granules before previous runtime
+        :rtype: list[dict]
+    """
+    prev_time = get_previous_time_formatted()
 
     request_time = dt.datetime.utcnow()
     print(f'time-range: {prev_time} -> {cmr_date_format(request_time)}')
@@ -28,16 +28,36 @@ def granules():
     return results
 
 
+def get_previous_time_formatted():
+    """
+        :returns: cmr compatible previous time
+        :rtype: str
+    """
+    try:
+        prev_time = previous_time.get()
+    except s3.ObjectDoesntExist:
+        prev_time = get_init_prev_time()
+
+    return cmr_date_format(prev_time)
+
+
+def get_init_prev_time():
+    return dt.datetime.now() - dt.timedelta(minutes=5)
+
+
+def cmr_date_format(date):
+    return date.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+
 def get_new_granules_after(prev_time):
-    """Make the asf api request and return.
+    """
+        :param datetime.datetime prev_time: previous lambda runtime
 
-        :param prev_time: datetime.datetime
-
-        :returns: dict
+        :returns: response from cmr
+        :rtype: dict
     """
     print(f'making api request with: {prev_time}')
     cmr_data = make_cmr_query(prev_time)
-
     print(f"cmr returned {len(cmr_data)} results")
 
     return cmr_data
@@ -55,39 +75,24 @@ def make_cmr_query(prev_time):
 
     data = resp.json()
 
-    if not env.IS_PRODUCTION:
+    if not environment.is_production:
         cache_output(data)
 
     return data['feed']['entry']
 
 
-def get_formatted_previous_time():
-    """Get previous lambda runtime from s3 and format it as asf api compatible
-    string.
-
-        :returns: str
-    """
-    prev_time = previous_time.get()
-
-    return cmr_date_format(prev_time)
-
-
-def cmr_date_format(date):
-    return date.strftime('%Y-%m-%dT%H:%M:%SZ')
-
-
 class SearchAPI:
     """Class to wrap searching an generic api"""
-
     def __init__(self, api_url):
         self.api_url = api_url
 
     def query(self, params):
-        """Make a search query to an api
-
+        """
             :param params: dict
 
-            :returns: requests.Response
+            :returns: response from cmr
+            :rtype: requests.Response
+
         """
         with timing('request took {runtime} secs to complete'):
             return requests.get(self.api_url, params=params)

@@ -6,7 +6,7 @@ PASS=$(pwgen 13 1)
 
 echo $PASS > dbpass.txt
 
-read -p 'Admin Username: ' USERNAME
+read -r -p 'Admin Username: ' USERNAME
 echo    'Admin Password: '$PASS
 
 python tropo/create_stack.py --rds --vpc $RDS_TEMPLATE

@@ -2,6 +2,14 @@
 Lambda: Find New Granules
 =========================
 
+Entrypoint: Lambda Handle
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autofunction:: find_new_granules.src.lambda_function.lambda_handler
+
+Module: Find New
+~~~~~~~~~~~~~~~~
+
 .. automodule:: find_new
    :members:
 

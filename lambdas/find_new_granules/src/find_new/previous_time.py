@@ -3,13 +3,14 @@ import datetime as dt
 import pathlib as pl
 
 from . import s3
-from . import environment as env
+from .environment import environment
 
 
 def get():
     """Get the last time the find_new lambda was executed.
 
-        :returns: datetime.datetime
+        :returns: previous lambda runtime
+        :rtype: datetime.datetime
     """
     download_path = get_time_file_path()
     s3.download(download_path)
@@ -23,12 +24,12 @@ def get():
 
 
 def set(new_time):
-    """Sets a timestamp representing the last time the find_new lambda
-    was run.
+    """Sets a timestamp representing the last time the find_new lambda was run.
 
         :param new_time: datetime.datetime
 
-        :returns: s3.Object
+        :returns: s3 Object representing uploaded to s3
+        :rtype: s3.Object
     """
     update_runtime = {
         "previous": new_time.timestamp()
@@ -44,13 +45,13 @@ def set(new_time):
 def get_time_file_path():
     key_name = get_s3_key_name()
 
-    path = pl.Path('/tmp/') if env.IS_PRODUCTION \
+    path = pl.Path('/tmp/') if environment.is_production \
         else pl.Path(__file__).parent
 
     return str(path / key_name)
 
 
 def get_s3_key_name():
-    materity = 'prod' if env.IS_PRODUCTION else 'test'
+    materity = 'prod' if environment.is_production else 'test'
 
     return f'previous-time.{materity}.json'
