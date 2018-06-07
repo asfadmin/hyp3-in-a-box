@@ -6,6 +6,7 @@ from troposphere import iam
 from troposphere import events
 
 from . import utils
+from .hyp3_s3_buckets import previous_time_bucket
 
 print('adding find_new lambda')
 
@@ -17,6 +18,9 @@ find_new_granules_function = t.add_resource(awslambda.Function(
         S3Key="test/find_new_granules.zip"
     ),
     Handler='lambda_function.lambda_handler',
+    Environment=awslambda.Environment(
+        Variables={'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket)}
+    ),
     Role=ts.GetAtt('LambdaExecutionRole', 'Arn'),
     Runtime='python3.6',
     MemorySize=128,
@@ -30,7 +34,18 @@ logs_policy = iam.Policy(
 
 prev_time_s3_policy = iam.Policy(
     PolicyName='PreviousTimeS3ReadWriteAccess',
-    PolicyDocument=utils.get_policy('previous-time-read-write')
+    PolicyDocument={
+        "Version": "2012-10-17",
+        "Statement": [{
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:HeadObject"
+            ],
+            "Resource": ts.GetAtt(previous_time_bucket, "Arn")
+        }]
+    }
 )
 
 
