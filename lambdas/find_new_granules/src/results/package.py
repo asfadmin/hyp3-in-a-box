@@ -1,6 +1,6 @@
-import asf_granule_util as gu
+import json
 
-types = set()
+import asf_granule_util as gu
 
 
 def package(search_results):
@@ -15,7 +15,6 @@ def package(search_results):
         get_relevant_metadata_from(result) for result in search_results
         if is_relevant(result)
     ]
-    print(types)
 
     return hyp3_granules
 
@@ -30,9 +29,8 @@ def is_relevant(result):
     if not is_correct_format(title):
         return False
 
-    granule = make_granule_from(title)
+    granule = make_granule_from(result)
 
-    types.add(granule.prod_type)
     return is_relevant_type(granule.prod_type)
 
 
@@ -41,14 +39,14 @@ def is_correct_format(title):
 
 
 def is_granule_in(title):
-    result = gu.SentinelGranule.is_valid(title) \
-        and 'METADATA' not in title
+    result = gu.SentinelGranule.pattern.search(title) \
+            and 'METADATA' not in title
 
     return result
 
 
-def make_granule_from(title):
-    name, granule_type = title.split('-')
+def make_granule_from(result):
+    name = result['producer_granule_id']
 
     return gu.SentinelGranule(name)
 
