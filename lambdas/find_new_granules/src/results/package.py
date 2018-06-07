@@ -22,7 +22,36 @@ def package(search_results):
 
 
 def get_relevant_metadata_from(result):
-    return result
+    polygons, name, links = [
+        result[k] for k in ('polygons', 'producer_granule_id', 'links')
+    ]
+
+    polygon_str = get_polygon_str(polygons)
+    polygon = parse_points(polygon_str)
+
+    download_url = get_download_url(links)
+
+    return gp.GranulePackage(name, polygon, download_url)
+
+
+def get_polygon_str(polygons):
+    return polygons.pop().pop()
+
+
+def parse_points(points_str):
+    points = points_str.strip().split(' ')
+
+    return [float(p) for p in points]
+
+
+def get_download_url(links):
+    for link in links:
+        url = link['href']
+
+        if not url.endswith('.zip'):
+            continue
+
+        return url
 
 
 def is_relevant(result):
@@ -42,7 +71,7 @@ def is_correct_format(title):
 
 def is_granule_in(title):
     result = gu.SentinelGranule.pattern.search(title) \
-            and 'METADATA' not in title
+        and 'METADATA' not in title
 
     return result
 
