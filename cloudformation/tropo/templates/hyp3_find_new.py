@@ -7,8 +7,11 @@ Resources
 * **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
 * **S3 Bucket:** Used to store the previous runtimes of the lambda.
 * **Cloudwatch Event:** Triggers the lambda after a scheduled amount of time.
-* **IAM Policies:** Allows the lambda to read from the bucket and the event to
-  trigger the lambda
+* **IAM Policies:**
+
+  * Give lambda to read/write to the s3 bucket
+  * Allow cloudwatch event to trigger the lambda
+
 """
 
 from template import t
