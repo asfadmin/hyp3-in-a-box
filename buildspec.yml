@@ -8,8 +8,6 @@ phases:
   install:
     commands:
       - pip install -U -r build_requirements.txt
-      - pip install sphinx
-      - chmod +x upload.sh
   build:
     commands:
       - mkdir -p build/lambdas
@@ -19,7 +17,6 @@ phases:
     commands:
       - aws s3 cp s3://$S3_SOURCE_BUCKET/$MATURITY/config/configuration.json build/
       - aws s3 cp build/lambdas/ s3://$S3_SOURCE_BUCKET/$MATURITY/ --recursive --include "*"
-      - ./upload.sh docs
 artifacts:
   files:
     - template.json
