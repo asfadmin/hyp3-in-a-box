@@ -4,12 +4,13 @@ import troposphere as ts
 from troposphere import awslambda
 from troposphere import iam
 from troposphere import events
+from troposphere import s3
 
 from . import utils
-from .hyp3_s3_buckets import previous_time_bucket
 
 print('adding find_new lambda')
 
+previous_time_bucket = t.add_resource(s3.Bucket("S3Bucket"))
 
 find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
