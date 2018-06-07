@@ -1,5 +1,3 @@
-import json
-
 import asf_granule_util as gu
 
 from . import granule_package as gp
