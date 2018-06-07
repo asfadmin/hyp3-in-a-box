@@ -9,6 +9,8 @@ from troposphere import GetAtt, Parameter, Ref
 from troposphere.awslambda import Code, Function
 from troposphere.iam import Policy, Role
 
+from . import utils
+
 print('adding send_email lambda')
 
 lambda_name = t.add_parameter(Parameter(
@@ -20,14 +22,7 @@ lambda_name = t.add_parameter(Parameter(
 
 lambda_policy = Policy(
     PolicyName="SESSendEmail",
-    PolicyDocument={
-        "Version": "2012-10-17",
-        "Statement": [{
-            "Action": ["ses:SendEmail"],
-            "Resource": "*",
-            "Effect": "Allow"
-        }]
-    })
+    PolicyDocument=utils.get_static_policy('ses-send-email'))
 
 send_email_role = t.add_resource(Role(
     "SendEmailExecutionRole",
@@ -36,16 +31,7 @@ send_email_role = t.add_resource(Role(
         "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
     ],
     Policies=[lambda_policy],
-    AssumeRolePolicyDocument={
-        "Version": "2012-10-17",
-        "Statement": [{
-            "Action": ["sts:AssumeRole"],
-            "Effect": "Allow",
-            "Principal": {
-                "Service": ["lambda.amazonaws.com"]
-            }
-        }]
-    },
+    AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
 send_email = t.add_resource(Function(

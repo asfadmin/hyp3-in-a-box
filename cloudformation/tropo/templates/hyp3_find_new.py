@@ -15,8 +15,8 @@ find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
     FunctionName="hyp3-find-new-granules",
     Code=awslambda.Code(
-        S3Bucket="hyp3-in-a-box-source",
-        S3Key="test/find_new_granules.zip"
+        S3Bucket="hyp3-in-a-box-lambdas",
+        S3Key="find_new_granules.zip"
     ),
     Handler='lambda_function.lambda_handler',
     Environment=awslambda.Environment(
@@ -30,7 +30,7 @@ find_new_granules_function = t.add_resource(awslambda.Function(
 
 logs_policy = iam.Policy(
     PolicyName="LogAccess",
-    PolicyDocument=utils.get_policy('logs-policy')
+    PolicyDocument=utils.get_static_policy('logs-policy')
 )
 
 prev_time_s3_policy = iam.Policy(
@@ -44,17 +44,19 @@ prev_time_s3_policy = iam.Policy(
                 "s3:GetObject",
                 "s3:HeadObject"
             ],
-            "Resource": ts.GetAtt(previous_time_bucket, "Arn")
+            "Resource": ts.Join("/", [
+                ts.GetAtt(previous_time_bucket, "Arn"),
+                '*'
+            ])
         }]
     }
 )
-
 
 lambda_exe_role = t.add_resource(iam.Role(
     "LambdaExecutionRole",
     Path="/",
     Policies=[logs_policy, prev_time_s3_policy],
-    AssumeRolePolicyDocument=utils.get_policy('lambda-policy-doc'),
+    AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
 find_new_target = events.Target(

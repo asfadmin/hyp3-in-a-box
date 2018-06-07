@@ -6,7 +6,7 @@ def get_map(name):
     return load_json_from('maps', name)
 
 
-def get_policy(name):
+def get_static_policy(name):
     return load_json_from('policies', name)
 
 
