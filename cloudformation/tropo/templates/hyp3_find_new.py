@@ -43,11 +43,10 @@ prev_time_s3_policy = iam.Policy(
                 "s3:PutObject",
                 "s3:GetObject",
                 "s3:HeadObject"
-            ]
-        }], "Resource": ts.Join("/", [
-            ts.GetAtt(previous_time_bucket, "Arn"), '*'
-        ])
-    }
+            ], "Resource": ts.Join("/", [
+                ts.GetAtt(previous_time_bucket, "Arn"), '*'
+            ])
+        }]}
 )
 
 lambda_exe_role = t.add_resource(iam.Role(
@@ -64,8 +63,16 @@ find_new_target = events.Target(
 )
 
 find_new_event_rule = t.add_resource(events.Rule(
-    "FindNewSchedule",
-    ScheduleExpression="rate(10 minutes)",
+    "FindNewGranulesSchedule",
+    ScheduleExpression="rate(1 minute)",
     State="ENABLED",
     Targets=[find_new_target]
+))
+
+PermissionForEventsToInvokeLambda = t.add_resource(awslambda.Permission(
+    "SchedulePermissions",
+    FunctionName=ts.Ref("Hyp3FindNewGranulesFunction"),
+    Action="lambda:InvokeFunction",
+    Principal="events.amazonaws.com",
+    SourceArn=ts.GetAtt("FindNewGranulesSchedule", "Arn")
 ))
