@@ -26,10 +26,7 @@ def get():
 def set(new_time):
     """Sets a timestamp representing the last time the find_new lambda was run.
 
-        :param new_time: datetime.datetime
-
-        :returns: s3 Object representing uploaded to s3
-        :rtype: s3.Object
+        :param datetime.datetime new_time: runtime to set
     """
     update_runtime = {
         "previous": new_time.timestamp()

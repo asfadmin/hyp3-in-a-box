@@ -29,10 +29,6 @@ def granules():
 
 
 def get_previous_time_formatted():
-    """
-        :returns: cmr compatible previous time
-        :rtype: str
-    """
     try:
         prev_time = previous_time.get()
     except s3.ObjectDoesntExist:

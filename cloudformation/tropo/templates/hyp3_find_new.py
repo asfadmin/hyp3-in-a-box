@@ -35,15 +35,19 @@ logs_policy = iam.Policy(
 
 prev_time_s3_policy = iam.Policy(
     PolicyName='PreviousTimeS3ReadWriteAccess',
-    PolicyDocument=utils.get_static_policy(
-        'previous-time-s3-rw',
-        update_with={
-            "Resource": ts.Join("/", [
-                ts.GetAtt(previous_time_bucket, "Arn"),
-                '*'
-            ])
-        }
-    )
+    PolicyDocument={
+        "Version": "2012-10-17",
+        "Statement": [{
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:HeadObject"
+            ]
+        }], "Resource": ts.Join("/", [
+            ts.GetAtt(previous_time_bucket, "Arn"), '*'
+        ])
+    }
 )
 
 lambda_exe_role = t.add_resource(iam.Role(
