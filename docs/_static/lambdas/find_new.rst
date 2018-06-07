@@ -2,6 +2,11 @@
 Lambda: Find New Granules
 =========================
 
+.. image:: ../lambda.png
+   :scale: 3 %
+   :alt: alternate text
+   :align: right
+
 Entrypoint: Lambda Handle
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -24,5 +29,11 @@ Submodule: S3
 ~~~~~~~~~~~~~
 
 .. automodule:: find_new.s3
+   :members:
+
+Module: Package
+~~~~~~~~~~~~~~~
+
+.. automodule:: results
    :members:
 

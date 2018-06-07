@@ -2,14 +2,16 @@ import json
 
 import asf_granule_util as gu
 
+from . import granule_package as gp
+
 
 def package(search_results):
-    """Filters out irrelevant granules and packages only relevant
-    metadata for the HyP3 scheduler lambda
+    """Filters out irrelevant granules and packages only relevant metadata.
 
-       :param search_results: list[dict]
+       :param list[dict] search_results: package results from cmr
 
-       :returns: list[dict]
+       :returns: List of new granule packages
+       :rtype: list[GranulePackage]
     """
     hyp3_granules = [
         get_relevant_metadata_from(result) for result in search_results

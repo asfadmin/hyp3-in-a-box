@@ -9,7 +9,7 @@ s3 = boto3.resource('s3')
 def download(path):
     """Try and download a file from s3
 
-        :param path: str
+        :param str path: path of object to download
     """
     key = pl.Path(path).name
 
@@ -37,11 +37,6 @@ def get_no_object_error_msg(key):
 
 
 def do_download(key, path_to_download):
-    """Make the boto3 call to download the file from s3 to a specified path.
-
-        :param key: str
-        :param path_to_download: str
-    """
     s3.Bucket(env.bucket) \
         .download_file(key, path_to_download)
 
@@ -49,9 +44,10 @@ def do_download(key, path_to_download):
 def upload(file_path):
     """Upload a file to s3 lambda bucket
 
-        :param file_path: str
+        :param str file_path: path of file to upload
 
-        :returns: s3.Object
+        :rtype: s3.Object
+        :returns: object of the uploaded file
     """
     key = pl.Path(file_path).name
     bucket = s3.Bucket(env.bucket)
@@ -64,4 +60,5 @@ def upload(file_path):
 
 
 class ObjectDoesntExist(Exception):
+    """Thrown when a key doesn't exist in s3"""
     pass
