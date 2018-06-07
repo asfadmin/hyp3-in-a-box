@@ -1,3 +1,4 @@
+.. _send_email:
 
 Lambda: Send Email
 =========================

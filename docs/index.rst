@@ -17,7 +17,7 @@ Welcome to Hyp3 In A Box's documentation!
 The Hybrid Pluggable Procecssing (HyP3) System
 ----------------------------------------------
 
-.. figure:: _static/diagram.png
+.. figure:: _static/images/diagram.png
    :scale: 80 %
    :alt: flowchart of the hyp3 system
 
