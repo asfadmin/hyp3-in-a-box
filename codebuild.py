@@ -31,7 +31,6 @@ GITHUB_COMMIT_HASH = os.environ["CODEBUILD_RESOLVED_SOURCE_VERSION"]
 BUCKET_BASE_DIR = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
 
 build_step_failure_message = None
-test_result_summary = ""
 
 
 def install():
@@ -41,7 +40,6 @@ def install():
 
 
 def pre_build():
-    global test_result_summary
     global build_step_failure_message
 
     try:
@@ -56,6 +54,7 @@ def pre_build():
             r.get("errors")
         )
         build_step_failure_message = test_result_summary
+        os.environ["TEST_RESULT_SUMMARY"] = test_result_summary
 
 
 def build():
@@ -68,7 +67,7 @@ def build():
 def post_build():
     subprocess.check_call(["aws", "s3", "cp", "s3://{}".format(os.path.join(BUCKET_BASE_DIR, "config/configuration.json")), "build/"])
     subprocess.check_call(["aws", "s3", "cp", "build/lambdas/", "s3://{}".format(BUCKET_BASE_DIR), "--recursive", "--include", '"*"'])
-    set_github_ci_status("success", description="Build completed")
+    set_github_ci_status("success", description=os.environ["TEST_RESULT_SUMMARY"])
 
 
 def install_all_requirements_txts(root_path):
