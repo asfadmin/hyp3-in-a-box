@@ -1,7 +1,8 @@
+#! /bin/bash
 
 docs() {
-    cd docs && make html && cd ..
-    aws s3 cp --recursive docs/_build/html s3://asf-docs/hyp3-in-a-box
+    cd docs && make clean html && cd ..
+    aws s3 cp docs/_build/html s3://asf-docs/hyp3-in-a-box --recursive
 }
 
 if [ "$1" = "docs" ]
