@@ -1,3 +1,4 @@
+#! /bin/bash
 
 docs() {
     cd docs && make clean html && cd ..
