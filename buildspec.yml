@@ -10,6 +10,9 @@ phases:
       - pip install -U -r build_requirements.txt
       - pip install sphinx
       - chmod +x upload.sh
+  prebuild:
+    commands:
+      - python -m pytest
   build:
     commands:
       - mkdir -p build/lambdas

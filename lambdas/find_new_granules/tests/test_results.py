@@ -1,11 +1,12 @@
+import import_path
 
-import unittest
-import pathlib as pl
 import json
+import pathlib as pl
+import unittest
 
 import asf_granule_util as gu
-from src import results
-from src.results import granule_package as gp
+import results
+from results import granule_package as gp
 
 
 class TestFindNewGranules(unittest.TestCase):

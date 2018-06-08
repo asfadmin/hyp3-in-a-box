@@ -20,7 +20,7 @@ def granules():
     prev_time = get_previous_time_formatted()
 
     request_time = dt.datetime.utcnow()
-    print(f'time-range: {prev_time} -> {cmr_date_format(request_time)}')
+    print('time-range: {} -> {}'.format(prev_time, cmr_date_format(request_time)))
     results = get_new_granules_after(prev_time)
 
     previous_time.set(request_time)
@@ -52,9 +52,9 @@ def get_new_granules_after(prev_time):
         :returns: response from cmr
         :rtype: dict
     """
-    print(f'making api request with: {prev_time}')
+    print('making api request with: {}'.format(prev_time))
     cmr_data = make_cmr_query(prev_time)
-    print(f"cmr returned {len(cmr_data)} results")
+    print("cmr returned {} results".format(len(cmr_data)))
 
     return cmr_data
 
@@ -64,7 +64,7 @@ def make_cmr_query(prev_time):
 
     resp = api.query({
         'provider': 'ASF',
-        'created_at[]': [f"{prev_time},"],
+        'created_at[]': ["{},".format(prev_time)],
         'platform[]': ['Sentinel-1A', 'Sentinel-1B'],
         'page_size': MAX_RESULTS
     })

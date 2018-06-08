@@ -49,6 +49,6 @@ def get_time_file_path():
 
 
 def get_s3_key_name():
-    materity = 'prod' if environment.is_production else 'test'
+    maturity = 'prod' if environment.is_production else 'test'
 
-    return f'previous-time.{materity}.json'
+    return 'previous-time.{}.json'.format(maturity)
