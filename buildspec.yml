@@ -7,8 +7,7 @@ env:
 phases:
   install:
     commands:
-      - printenv
-      - curl -X POST $CODEBUILD_SOURCE_REPO_URL/statuses/$CODEBUILD_SOURCE_VERSION?access_token=$GITHUB_STATUS_TOKEN -d '{"state":"pending", "context", "continuous-integration/codebuild"}'
+      - curl -X POST https://api.github.com/repos/asfadmin/hyp3-in-a-box/statuses/$CODEBUILD_RESOLVED_SOURCE_VERSION?access_token=$GITHUB_STATUS_TOKEN -d '{"state":"pending", "context", "continuous-integration/codebuild"}'
       - pip install -U -r build_requirements.txt
       - pip install -r requirements.txt
       - pip install sphinx
@@ -25,7 +24,7 @@ phases:
     commands:
       - aws s3 cp s3://$S3_SOURCE_BUCKET/$MATURITY/config/configuration.json build/
       - aws s3 cp build/lambdas/ s3://$S3_SOURCE_BUCKET/$MATURITY/ --recursive --include "*"
-      - curl -X POST $CODEBUILD_SOURCE_REPO_URL/statuses/$CODEBUILD_SOURCE_VERSION?access_token=$GITHUB_STATUS_TOKEN -d '{"state":"success", "context", "continuous-integration/codebuild"}'
+      - curl -X POST https://api.github.com/repos/asfadmin/hyp3-in-a-box/statuses/$CODEBUILD_RESOLVED_SOURCE_VERSION?access_token=$GITHUB_STATUS_TOKEN -d '{"state":"success", "context", "continuous-integration/codebuild"}'
 artifacts:
   files:
     - template.json
