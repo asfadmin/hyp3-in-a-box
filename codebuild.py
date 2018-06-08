@@ -13,6 +13,7 @@ import stat
 import subprocess
 import sys
 from urllib.parse import urljoin
+from xml.etree import ElementTree
 
 import requests
 
@@ -26,6 +27,9 @@ MATURITY = os.environ["MATURITY"]
 GITHUB_STATUS_TOKEN = os.environ["GITHUB_STATUS_TOKEN"]
 GITHUB_COMMIT_HASH = os.environ["CODEBUILD_RESOLVED_SOURCE_VERSION"]
 
+build_step_failure_message = None
+test_result_summary = ""
+
 
 def install():
     update_github_status("pending", description="Build in progress")
@@ -34,7 +38,21 @@ def install():
 
 
 def pre_build():
-    subprocess.check_call(["python3", "-m", "pytest"])
+    global test_result_summary
+    global build_step_failure_message
+
+    try:
+        subprocess.check_call(["python3", "-m", "pytest", "--junitxml=/tmp/test_results.xml"])
+    except subprocess.CalledProcessError as e:
+        raise e
+    finally:
+        r = ElementTree.parse("/tmp/test_results.xml").getroot()
+        test_result_summary = "{} Tests, {} Failed, {} Errors".format(
+            r.get("tests"),
+            r.get("failed"),
+            r.get("errors")
+        )
+        build_step_failure_message = test_result_summary
 
 
 def build():
@@ -95,7 +113,11 @@ def main(step=None):
         else:
             return
     except subprocess.CalledProcessError as e:
-        update_github_status("failure", description=step)
+        desc = step
+        global build_step_failure_message
+        if build_step_failure_message is not None:
+            desc = build_step_failure_message
+        update_github_status("failure", description=desc)
         write_tmp_status(e.returncode)
         raise
     except Exception:
