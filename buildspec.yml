@@ -8,7 +8,7 @@ phases:
   install:
     commands:
       - pip install -U -r build_requirements.txt
-      - pip install -U requirements.txt
+      - pip install -r requirements.txt
       - pip install sphinx
       - chmod +x upload.sh
   pre_build:
