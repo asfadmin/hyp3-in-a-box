@@ -64,7 +64,10 @@ def update_github_status(state, description=None):
         "context": GITHUB_STATUS_CONTEXT,
         "description": description
     }
-    requests.get(url, params={"access_token": GITHUB_STATUS_TOKEN}, data=data)
+    resp = requests.get(url, params={"access_token": GITHUB_STATUS_TOKEN}, data=data)
+    if resp.status_code != 200:
+        print("GitHub API error")
+        print(resp.text)
 
 
 def write_tmp_status(code):
