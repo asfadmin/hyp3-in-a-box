@@ -1,0 +1,25 @@
+{% macro color_background() -%}
+  background-color:#eaeaea;background:#eaeaea;
+{%- endmacro %}
+
+{% macro std_table(width="100%", override_style='border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;', style='') -%}
+  <table width="{{ width }}" style="{{override_style}}{{style}}" border="0" cellpadding="0" cellspacing="0" >
+{%- endmacro %}
+
+{% macro img(src, alt, width="", style="") -%}
+  <img alt="{{ alt }}" src="{{ src }}" style="display:block;border:none;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;{% if width != "" %}max-width:{{ width }}{% endif%};{{ style }}" width="100%" border="0"/>
+{%- endmacro %}
+
+{% macro hr(height="1") -%}
+  <hr style="border: 0px;border-top: {{ height }}px solid; border-color: #D4D3D3"/>
+{%- endmacro %}
+
+{% macro info_row(info) -%}
+<tr align="left" style="color:#444; text-align:left">
+  <td><b>{{ info.name }}:</b></td>
+  <td><div style="width: 10px"></div></td>
+  <td>{{ info.value }}</td>
+  <td width="50%"></td>
+</tr>
+{%- endmacro %}
+

@@ -1,0 +1,12 @@
+
+Template: Find New
+==================
+
+.. automodule:: cloudformation.tropo.templates.hyp3_find_new
+
+.. figure:: ../images/find_new.png
+   :scale: 80 %
+   :alt: flowchart of the find_new granule lambda
+
+   Diagram of the find_new lambda.
+

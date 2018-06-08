@@ -1,1 +1,3 @@
-python3 -m unittest discover -v
+#!/bin/bash
+
+pipenv run python -m unittest discover
