@@ -30,6 +30,10 @@ class TestFindNewGranules(unittest.TestCase):
         'find_new.find_new.get_new_granules_after',
         side_effect=mocks.asf_api_requests_get
     )
+    @mock.patch(
+        's3.upload',
+        side_effect=mocks.s3_upload
+    )
     def test_s3_upload(self, mock_find_new):
         find_new.granules()
 
