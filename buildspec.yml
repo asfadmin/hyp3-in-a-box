@@ -11,7 +11,7 @@ phases:
       - pip install -U requirements.txt
       - pip install sphinx
       - chmod +x upload.sh
-  prebuild:
+  pre_build:
     commands:
       - python -m pytest
   build:
