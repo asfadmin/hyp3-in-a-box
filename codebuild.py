@@ -34,19 +34,19 @@ def install():
 
 
 def pre_build():
-    subprocess.call(["python3", "-m", "pytest"])
+    subprocess.check_call(["python3", "-m", "pytest"])
 
 
 def build():
     os.makedirs("build/lambdas")
-    subprocess.call(["python3", "cloudformation/tropo/create_stack.py", "build/template.json", "--maturity", MATURITY])
-    subprocess.call(["python3", "lambdas/build_lambda.py", "-a", "-o", "build/lambdas/ lambdas/"])
+    subprocess.check_call(["python3", "cloudformation/tropo/create_stack.py", "build/template.json", "--maturity", MATURITY])
+    subprocess.check_call(["python3", "lambdas/build_lambda.py", "-a", "-o", "build/lambdas/", "lambdas/"])
 
 
 def post_build():
     bucket_base_dir = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
-    subprocess.call(["aws", "s3", "cp", "s3://{}".format(os.path.join(bucket_base_dir, "config/configuration.json")), "build/"])
-    subprocess.call(["aws", "s3", "cp", "build/lambdas/", "s3://{}".format(bucket_base_dir), "--recursive", "--include", '"*"'])
+    subprocess.check_call(["aws", "s3", "cp", "s3://{}".format(os.path.join(bucket_base_dir, "config/configuration.json")), "build/"])
+    subprocess.check_call(["aws", "s3", "cp", "build/lambdas/", "s3://{}".format(bucket_base_dir), "--recursive", "--include", '"*"'])
     update_github_status("success", description="Build completed")
 
 
@@ -54,7 +54,7 @@ def install_all_requirements_txts(root_path):
     for (path, dirs, files) in os.walk(root_path):
         for name in files:
             if name == "requirements.txt":
-                subprocess.call(["pip", "install", "-U", "-r", os.path.join(path, name)])
+                subprocess.check_call(["pip", "install", "-U", "-r", os.path.join(path, name)])
 
 
 def update_github_status(state, description=None):
@@ -93,7 +93,7 @@ def main(step=None):
             write_tmp_status(0)
         else:
             return
-    except subprocess.CalledProcessError as e:
+    except subprocess.check_calledProcessError as e:
         update_github_status("failure", description=step)
         write_tmp_status(e.returncode)
         raise
