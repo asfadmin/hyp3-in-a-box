@@ -7,11 +7,15 @@ Resources
 * **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
 * **S3 Bucket:** Used to store the previous runtimes of the lambda.
 * **Cloudwatch Event:** Triggers the lambda after a scheduled amount of time.
-* **IAM Policies:** Allows the lambda to read from the bucket and the event to
-  trigger the lambda
+* **IAM Policies:**
+
+  * Give lambda to read/write to the s3 bucket
+  * Allow cloudwatch event to trigger the lambda
+
 """
 
 from template import t
+from envirnoment import envirnoment
 
 import troposphere as ts
 from troposphere import awslambda
@@ -57,8 +61,10 @@ find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
     FunctionName="hyp3-find-new-granules",
     Code=awslambda.Code(
-        S3Bucket="hyp3-in-a-box-lambdas",
-        S3Key="find_new_granules.zip"
+        S3Bucket=envirnoment.lambda_bucket,
+        S3Key="{maturity}/find_new_granules.zip".format(
+            maturity=envirnoment.maturity
+        )
     ),
     Handler='lambda_function.lambda_handler',
     Environment=awslambda.Environment(

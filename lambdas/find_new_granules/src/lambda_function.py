@@ -12,7 +12,7 @@ def lambda_handler(event, context):
        :param context: lambda runtime info
 
        :returns: new granules from cmr
-       :rtype: list[dict]
+       :rtype: list[GranulePackage]
     """
 
     env_setup()
