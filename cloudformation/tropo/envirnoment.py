@@ -2,14 +2,14 @@ class Envirnoment:
     """Envirnoment variables for the troposphere templates"""
     def __init__(self):
         self.lambda_bucket = "hyp3-in-a-box-source"
-        self.is_production = True
+        self.maturity = "test"
 
     def maturity(self):
-        return "prod" if self.is_production else "test"
+        return self.maturity
 
     def get_variables(self):
         return [
-            ("is_production", bool),
+            ("maturity", str),
             ("lambda_bucket", str)
         ]
 

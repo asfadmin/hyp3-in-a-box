@@ -114,7 +114,7 @@ def add_env_var_to(parser, var_name, var_type):
 
     parser.add_argument(
         '--' + var_name, type=var_type,
-        help="Set envirnoment varibable {}".format(var_name)
+        help="Set environment variable {}".format(var_name)
     )
 
 
