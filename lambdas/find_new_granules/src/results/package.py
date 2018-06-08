@@ -26,8 +26,9 @@ def get_relevant_metadata_from(result):
 
     polygon_str = get_polygon_str(polygons)
     polygon = parse_points(polygon_str)
+    download_url = get_download_url(links)
 
-    return gp.GranulePackage(name, polygon)
+    return gp.GranulePackage(name, polygon, download_url)
 
 
 def get_polygon_str(polygons):
@@ -38,6 +39,16 @@ def parse_points(points_str):
     points = points_str.strip().split(' ')
 
     return [float(p) for p in points]
+
+
+def get_download_url(links):
+    for link in links:
+        url = link['href']
+
+        if not url.endswith('.zip'):
+            continue
+
+        return url
 
 
 def is_relevant(result):
