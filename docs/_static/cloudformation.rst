@@ -44,7 +44,7 @@ the maturity of the template to ``test`` while only making :ref:`send_email_lamb
    python create_stack.py                  \
        --send_email                        \
        --lambda_bucket some-s3-bucket-name \
-       --maturity test
+       --maturity test                     \
        outputs/template.json
 
 To add environment variables to the Environment class's __init__ function
