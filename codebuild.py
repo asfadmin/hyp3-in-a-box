@@ -85,7 +85,7 @@ def set_github_ci_status(status, description=None):
     with open("build/status.svg", "w") as f:
         f.write(get_svg_status(svg_status))
 
-    subprocess.check_call(["aws", "s3", "cp", "build/status.svg", "s3://{}".format(os.path.join(S3_STATUS_BUCKET, "build_status.svg")), "--acl", "public-read"])
+    subprocess.check_call(["aws", "s3", "cp", "build/status.svg", "s3://{}".format(os.path.join(S3_STATUS_BUCKET, "build_status.svg")), "--acl", "public-read", "--cache-control", "no-cache"])
 
     update_github_status(status, description=description)
 
