@@ -67,7 +67,7 @@ def build():
 def post_build():
     subprocess.check_call(["aws", "s3", "cp", "s3://{}".format(os.path.join(BUCKET_BASE_DIR, "config/configuration.json")), "build/"])
     subprocess.check_call(["aws", "s3", "cp", "build/lambdas/", "s3://{}".format(BUCKET_BASE_DIR), "--recursive", "--include", '"*"'])
-    set_github_ci_status("success", description=os.environ["TEST_RESULT_SUMMARY"])
+    set_github_ci_status("success", description=os.environ.get("TEST_RESULT_SUMMARY", "Build completed")
 
 
 def install_all_requirements_txts(root_path):
