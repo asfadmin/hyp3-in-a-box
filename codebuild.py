@@ -58,7 +58,7 @@ def install_all_requirements_txts(root_path):
 
 
 def update_github_status(state, description=None):
-    url = urljoin(GITHUB_API_ENDPOINT, "repos", GITHUB_REPOSITORY_NAME, "statuses", GITHUB_COMMIT_HASH)
+    url = urljoin(GITHUB_API_ENDPOINT, "repos/{}/statuses/{}".format(GITHUB_REPOSITORY_NAME, GITHUB_COMMIT_HASH))
     data = {
         "state": state,
         "context": GITHUB_STATUS_CONTEXT,
