@@ -29,8 +29,7 @@ GITHUB_COMMIT_HASH = os.environ["CODEBUILD_RESOLVED_SOURCE_VERSION"]
 
 def install():
     update_github_status("pending", description="Build in progress")
-    subprocess.call(["pip", "install", "-U", "-r", "build_requirements.txt"])
-    subprocess.call(["pip", "install", "-U", "-r", "build_requirements.txt"])
+    install_all_requirements_txts(".")
     os.chmod("upload.sh", stat.S_IEXEC)
 
 
@@ -49,6 +48,13 @@ def post_build():
     subprocess.call(["aws", "s3", "cp", "s3://{}".format(os.path.join(bucket_base_dir, "config/configuration.json")), "build/"])
     subprocess.call(["aws", "s3", "cp", "build/lambdas/", "s3://{}".format(bucket_base_dir), "--recursive", "--include", '"*"'])
     update_github_status("success", description="Build completed")
+
+
+def install_all_requirements_txts(root_path):
+    for (path, dirs, files) in os.walk(root_path):
+        for name in files:
+            if name == "requirements.txt":
+                subprocess.call(["pip", "install", "-U", "-r", os.path.join(path, name)])
 
 
 def update_github_status(state, description=None):
@@ -73,6 +79,7 @@ def main(step=None):
             s = f.read()
             if s != "0":
                 build_ok = False
+
     step_function_table = {
         "install": install,
         "pre_build": pre_build,
