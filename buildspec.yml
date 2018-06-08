@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - pip install -U requests sphinx
+      - pip install -U requests sphinx pytest
       - python3 codebuild.py install
   pre_build:
     commands:
