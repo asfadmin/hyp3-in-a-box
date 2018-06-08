@@ -118,7 +118,7 @@ def main(step=None):
     }
 
     try:
-        if get_status == "0":
+        if get_status() == "0":
             return step_function_table.get(step, lambda: None)()
             save_status(0)
         else:
