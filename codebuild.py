@@ -41,7 +41,7 @@ def build():
     os.makedirs("build/lambdas")
     subprocess.check_call(["python3", "cloudformation/tropo/create_stack.py", "build/template.json", "--maturity", MATURITY])
     subprocess.check_call(["python3", "lambdas/build_lambda.py", "-a", "-o", "build/lambdas/", "lambdas/"])
-    subprocess.check_call(["upload.sh", "docs"])
+    subprocess.check_call(["./upload.sh", "docs"])
 
 
 def post_build():
@@ -97,7 +97,7 @@ def main(step=None):
             write_tmp_status(0)
         else:
             return
-    except subprocess.check_calledProcessError as e:
+    except subprocess.CalledProcessError as e:
         update_github_status("failure", description=step)
         write_tmp_status(e.returncode)
         raise
