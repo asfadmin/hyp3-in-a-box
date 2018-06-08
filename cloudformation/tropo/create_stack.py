@@ -11,6 +11,7 @@ import re
 from importlib import import_module
 
 from template import t
+from envirnoment import envirnoment
 
 TEMPLATE_DIR = 'templates'
 
@@ -42,12 +43,27 @@ TEMPLATE_SECTIONS = pattern_match_hyp3_files()
 
 def main():
     parser = get_parser()
-    args = parser.parse_args()
+    args = vars(parser.parse_args())
 
-    add_templates(vars(args))
+    set_environment_variables(args)
+    make_template(args)
 
-    if args.config:
-        generate_config_template(args.config, args.debug)
+    if args['config']:
+        generate_config_template(args['config'], args['debug'])
+
+
+def set_environment_variables(args):
+    for arg_name, arg_value in args.items():
+
+        if arg_value is None or not is_env_arg(arg_name):
+            continue
+
+        print("setting ", arg_name, " to ", arg_value)
+        setattr(envirnoment, arg_name, arg_value)
+
+
+def is_env_arg(arg_name):
+    return arg_name in envirnoment.__dict__
 
 
 def get_parser():
@@ -57,16 +73,21 @@ def get_parser():
     )
 
     add_output_folder(parser)
+
     add_flag_argument(
         parser, 'debug',
         desc='print out the generated template.'
     )
     parser.add_argument(
-        '--config', help="generate a configuration template with the provided name"
+        '--config',
+        help="generate a configuration template with the provided name"
     )
 
     for section_name in TEMPLATE_SECTIONS.keys():
         add_flag_argument(parser, section_name)
+
+    for var_name, var_type in envirnoment.get_variables():
+        add_env_var_to(parser, var_name, var_type)
 
     return parser
 
@@ -87,7 +108,26 @@ def add_flag_argument(parser, name, desc=None):
     )
 
 
-def add_templates(args):
+def add_env_var_to(parser, var_name, var_type):
+    if var_type is bool:
+        var_type = str2bool
+
+    parser.add_argument(
+        '--' + var_name, type=var_type,
+        help="Set envirnoment varibable {}".format(var_name)
+    )
+
+
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
+def make_template(args):
     should_make_all = get_should_make_all(args)
 
     add_sections_to_template(should_make_all, args)

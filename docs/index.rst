@@ -39,8 +39,7 @@ general job info (also connected to job entry).
 Admin API
 ~~~~~~~~~
 
-A `Flask`_ app that uses `Zappa`_ to make a serverless API that
-interfaces with the database.
+A python module responsible for interfacing with the database.
 
 **Responsibilities:**
 
