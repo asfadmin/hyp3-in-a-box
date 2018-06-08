@@ -1,5 +1,6 @@
 class Envirnoment:
     """Envirnoment variables for the troposphere templates"""
+
     def __init__(self):
         self.lambda_bucket = "hyp3-in-a-box-source"
         self.maturity = "test"
@@ -9,8 +10,7 @@ class Envirnoment:
 
     def get_variables(self):
         return [
-            ("maturity", str),
-            ("lambda_bucket", str)
+            (k, type(v)) for k, v in self.__dict__.items()
         ]
 
 
