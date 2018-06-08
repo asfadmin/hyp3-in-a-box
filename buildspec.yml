@@ -7,6 +7,7 @@ env:
 phases:
   install:
     commands:
+      - printenv
       - curl -X POST $CODEBUILD_SOURCE_REPO_URL/statuses/$CODEBUILD_SOURCE_VERSION?access_token=$GITHUB_STATUS_TOKEN -d '{"state":"pending", "context", "continuous-integration/codebuild"}'
       - pip install -U -r build_requirements.txt
       - pip install -r requirements.txt
