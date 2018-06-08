@@ -68,7 +68,7 @@ def build():
 def post_build():
     subprocess.check_call(["aws", "s3", "cp", "s3://{}".format(os.path.join(BUCKET_BASE_DIR, "config/configuration.json")), "build/"])
     subprocess.check_call(["aws", "s3", "cp", "build/lambdas/", "s3://{}".format(BUCKET_BASE_DIR), "--recursive", "--include", '"*"'])
-    update_github_status("success", description="Build completed")
+    set_github_ci_status("success", description="Build completed")
 
 
 def install_all_requirements_txts(root_path):
@@ -128,11 +128,11 @@ def main(step=None):
         global build_step_failure_message
         if build_step_failure_message is not None:
             desc = build_step_failure_message
-        update_github_status("failure", description=desc)
+        set_github_ci_status("failure", description=desc)
         save_status(e.returncode)
         raise
     except Exception:
-        update_github_status("error")
+        set_github_ci_status("error")
         save_status(-1337)
         raise
 
