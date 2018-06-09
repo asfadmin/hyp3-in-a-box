@@ -32,6 +32,9 @@ class TestFindNewGranules(unittest.TestCase):
             self.assertIsInstance(point, float)
 
         self.assertTrue(
+            result.download_url.endswith('.zip')
+        )
+        self.assertTrue(
             gu.SentinelGranule.is_valid(result.name)
         )
 

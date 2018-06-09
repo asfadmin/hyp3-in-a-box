@@ -35,9 +35,25 @@ template.
 This command makes a template with the :ref:`find_new_lambda` lambda and the elastic beanstalk
 application that runs the API.
 
+Environment variables can also be dynamically set using the ``create_stack`` script.
+This is an example of changing what bucket lambda functions get pulled from and setting
+the maturity of the template to ``test`` while only making :ref:`send_email_lambda`.
+
+.. code-block:: bash
+
+   python create_stack.py                  \
+       --send_email                        \
+       --lambda_bucket some-s3-bucket-name \
+       --maturity test                     \
+       outputs/template.json
+
+To add environment variables to the Environment class's __init__ function
+
 Troposphere Templates
 ---------------------
 
 Each file in ``cloudformation/tropo/templates`` directory is responsible for creating a
 logical portion of the Hy3P-In-A-Box infrastructure. Each flag in the ``create_stack.py``
 corresponds to one of these file.
+
+
