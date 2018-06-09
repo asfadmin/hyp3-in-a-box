@@ -107,10 +107,10 @@ def save_config(key, value):
             config = json.load(f)
             config[key] = value
             f.seek(0)
-            json.dump(f, config)
+            json.dump(config, f)
     else:
         with open("/tmp/config.json", "w") as f:
-            json.dump(f, {key: value})
+            json.dump({key: value}, f)
 
 
 def get_config(key, default=None):
