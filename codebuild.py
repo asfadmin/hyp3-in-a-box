@@ -102,7 +102,7 @@ def update_github_status(state, description=None):
 
 
 def save_config(key, value):
-    with open("/tmp/config.json", "rw") as f:
+    with open("/tmp/config.json", "r+") as f:
         config = json.load(f)
         config[key] = value
         f.seek(0)
@@ -110,7 +110,7 @@ def save_config(key, value):
 
 
 def get_config(key, default=None):
-    with open("/tmp/config.json", "rw") as f:
+    with open("/tmp/config.json", "r") as f:
         config = json.load(f)
         return config.get(key, default)
 
