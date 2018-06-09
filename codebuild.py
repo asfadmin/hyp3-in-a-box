@@ -131,7 +131,7 @@ def main(step=None):
     }
 
     try:
-        if get_config("BUILD_STATUS") == 0:
+        if get_config("BUILD_STATUS", 0) == 0:
             save_config("BUILD_STATUS", 0)
             return step_function_table.get(step, lambda: None)()
         else:
