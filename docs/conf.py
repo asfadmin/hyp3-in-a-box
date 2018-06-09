@@ -26,6 +26,10 @@ sys.path.insert(0, os.path.abspath('../cloudformation/tropo'))
 sys.path.insert(0, os.path.abspath('..'))
 
 
+def setup(app):
+    app.add_stylesheet('css/no-bullet-lists.css')
+
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -97,7 +101,7 @@ html_theme = 'alabaster'
 # documentation.
 #
 html_theme_options = {
-    'logo': 'satellite.png',
+    'logo': 'images/satellite.png',
     'logo_name': True,
     'description': "Portable version of asf's HyP3 procecssing system",
     'github_user': 'asfadmin',
