@@ -8,6 +8,7 @@
 # - Stop doing build actions when a step fails
 # - Update GitHub status appropriately
 
+import json
 import os
 import stat
 import subprocess
@@ -54,7 +55,7 @@ def pre_build():
             r.get("errors")
         )
         build_step_failure_message = test_result_summary
-        os.environ["TEST_RESULT_SUMMARY"] = test_result_summary
+        save_config("TEST_RESULT_SUMMARY", test_result_summary)
 
 
 def build():
@@ -67,7 +68,7 @@ def build():
 def post_build():
     subprocess.check_call(["aws", "s3", "cp", "s3://{}".format(os.path.join(BUCKET_BASE_DIR, "config/configuration.json")), "build/"])
     subprocess.check_call(["aws", "s3", "cp", "build/lambdas/", "s3://{}".format(BUCKET_BASE_DIR), "--recursive", "--include", '"*"'])
-    set_github_ci_status("success", description=os.environ.get("TEST_RESULT_SUMMARY", "Build completed"))
+    set_github_ci_status("success", description=get_config("TEST_RESULT_SUMMARY", "Build completed"))
 
 
 def install_all_requirements_txts(root_path):
@@ -100,12 +101,18 @@ def update_github_status(state, description=None):
     requests.post(url, params={"access_token": GITHUB_STATUS_TOKEN}, json=data)
 
 
-def save_status(code):
-    os.environ["BUILD_STATUS"] = str(code)
+def save_config(key, value):
+    with open("/tmp/config.json", "rw") as f:
+        config = json.load(f)
+        config[key] = value
+        f.seek(0)
+        json.dump(f, config)
 
 
-def get_status():
-    return os.environ.get("BUILD_STATUS", "0")
+def get_config(key, default=None):
+    with open("/tmp/config.json", "rw") as f:
+        config = json.load(f)
+        return config.get(key, default)
 
 
 def main(step=None):
@@ -117,9 +124,9 @@ def main(step=None):
     }
 
     try:
-        if get_status() == "0":
+        if get_config("BUILD_STATUS") == 0:
+            save_config("BUILD_STATUS", 0)
             return step_function_table.get(step, lambda: None)()
-            save_status(0)
         else:
             return
     except subprocess.CalledProcessError as e:
@@ -128,11 +135,11 @@ def main(step=None):
         if build_step_failure_message is not None:
             desc = build_step_failure_message
         set_github_ci_status("failure", description=desc)
-        save_status(e.returncode)
+        save_config("BUILD_STATUS", e.returncode)
         raise
     except Exception:
         set_github_ci_status("error")
-        save_status(-1337)
+        save_config("BUILD_STATUS", -1337)
         raise
 
 
