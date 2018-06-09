@@ -51,7 +51,7 @@ def pre_build():
         r = ElementTree.parse("/tmp/test_results.xml").getroot()
         test_result_summary = "{} Tests, {} Failed, {} Errors".format(
             r.get("tests"),
-            r.get("failed"),
+            r.get("failures"),
             r.get("errors")
         )
         build_step_failure_message = test_result_summary
