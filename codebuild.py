@@ -123,6 +123,9 @@ def get_config(key, default=None):
 
 
 def main(step=None):
+    if not os.path.exists("build"):
+        os.mkdir("build")
+
     step_function_table = {
         "install": install,
         "pre_build": pre_build,
