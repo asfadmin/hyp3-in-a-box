@@ -3,13 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Hyp3 In A Box's documentation!
+Hyp3 In A Box's Documentation
 =========================================
 
 .. cssclass:: badge-margin
 
    .. image:: https://s3-us-west-2.amazonaws.com/asf-docs/hyp3-in-a-box/build_status.svg
+      :target: https://github.com/asfadmin/hyp3-in-a-box
+
    .. image:: https://img.shields.io/badge/python-3.6-blue.svg
+      :target: https://www.python.org/
+
+   .. image:: https://img.shields.io/badge/cloud%20provider-aws-FF9900.svg
+      :target: https://aws.amazon.com/
+
+   .. image:: https://img.shields.io/badge/license-LGPL--3.0-blue.svg
+      :target: https://www.gnu.org/licenses/lgpl-3.0.en.html
 
 
 .. toctree::
