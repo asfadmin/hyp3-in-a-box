@@ -102,17 +102,24 @@ def update_github_status(state, description=None):
 
 
 def save_config(key, value):
-    with open("/tmp/config.json", "r+") as f:
-        config = json.load(f)
-        config[key] = value
-        f.seek(0)
-        json.dump(f, config)
+    if os.path.exists("/tmp/config.json"):
+        with open("/tmp/config.json", "r+") as f:
+            config = json.load(f)
+            config[key] = value
+            f.seek(0)
+            json.dump(f, config)
+    else:
+        with open("/tmp/config.json", "w") as f:
+            json.dump(f, {key: value})
 
 
 def get_config(key, default=None):
-    with open("/tmp/config.json", "r") as f:
-        config = json.load(f)
-        return config.get(key, default)
+    try:
+        with open("/tmp/config.json", "r") as f:
+            config = json.load(f)
+            return config.get(key, default)
+    except FileNotFoundError:
+        return default
 
 
 def main(step=None):
