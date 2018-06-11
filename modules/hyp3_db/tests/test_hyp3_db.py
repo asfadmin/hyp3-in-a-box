@@ -21,6 +21,7 @@ def test_get_enabled_subs():
     db = Hyp3DB()
     enabled_subs = db.get_enabled_subs()
 
+    assert enabled_subs
     for sub in enabled_subs:
         assert sub.enabled is True
 
