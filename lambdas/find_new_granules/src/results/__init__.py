@@ -1,3 +1,3 @@
-from .package import package
+from .package import package, format_into_json
 
-__all__ = ['package']
+__all__ = ['package', 'format_into_json']

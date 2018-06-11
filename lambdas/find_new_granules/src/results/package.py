@@ -1,3 +1,4 @@
+import json
 import asf_granule_util as gu
 
 from . import granule_package as gp
@@ -81,3 +82,11 @@ def make_granule_from(result):
 
 def is_relevant_type(granule_type):
     return granule_type in ('SLC', 'GRD')
+
+
+def format_into_json(granule_packages):
+    package_dicts = [gran.__dict__ for gran in granule_packages]
+
+    return json.dumps({
+        'new_granules': package_dicts
+    })
