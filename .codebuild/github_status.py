@@ -50,6 +50,6 @@ def get_svg_status(status):
     if status == "failing":
         color = "#e05d44"
 
-    with open('icon.svg', 'r') as f:
+    with open('.codebuild/icon.svg', 'r') as f:
         svg = f.read().format(status=status, color=color)
     return svg
