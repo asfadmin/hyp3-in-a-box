@@ -4,16 +4,16 @@ phases:
   install:
     commands:
       - pip install -U requests sphinx pytest
-      - python3 codebuild.py install
+      - python3 .codebuild/codebuild.py install
   pre_build:
     commands:
-      - python3 codebuild.py pre_build
+      - python3 .codebuild/codebuild.py pre_build
   build:
     commands:
-      - python3 codebuild.py build
+      - python3 .codebuild/codebuild.py build
   post_build:
     commands:
-      - python3 codebuild.py post_build
+      - python3 .codebuild/codebuild.py post_build
 artifacts:
   files:
     - template.json
