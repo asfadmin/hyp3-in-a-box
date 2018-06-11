@@ -21,8 +21,7 @@ import requests
 GITHUB_API_ENDPOINT = "https://api.github.com"
 GITHUB_STATUS_CONTEXT = "continuous-integration/codebuild"
 GITHUB_REPOSITORY_NAME = "asfadmin/hyp3-in-a-box"
-GITHUB_BRANCH = "dev"
-S3_SOURCE_BUCKET = "hyp3-in-a-box-source"
+S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
 S3_STATUS_BUCKET = "asf-docs/hyp3-in-a-box"
 
 MATURITY = os.environ["MATURITY"]
