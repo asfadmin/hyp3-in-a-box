@@ -27,7 +27,7 @@ def load_creds(cred_file):
 
 
 def get_connection_str(user, password, host):
-    return f'postgresql://{user}:{password}@{host}:5432/hyp3db'
+    return 'postgresql://{}:{}@{}:5432/hyp3db'.format(user, password, host)
 
 
 session = make_session()
