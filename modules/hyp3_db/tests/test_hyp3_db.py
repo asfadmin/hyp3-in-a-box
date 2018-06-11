@@ -4,14 +4,16 @@ import pathlib as pl
 from hyp3_db import Hyp3DB
 
 
-def run_if_creds(func):
-    def wrapper():
-        if not creds_file_exists():
-            return
+def creds_file_exists():
+    creds_path = pl.Path(__file__).parent / '..' / 'hyp3_db' / 'creds.json'
 
-        func()
+    return creds_path.is_file()
 
-    return wrapper
+
+run_if_creds = pytest.mark.skipif(
+    not creds_file_exists(),
+    reason='Test require database creds'
+)
 
 
 @run_if_creds
@@ -63,9 +65,3 @@ def test_set_job_status_bad_status():
             job=job_id,
             status=bad_status
         )
-
-
-def creds_file_exists():
-    creds_path = pl.Path(__file__).parent / '..' / 'hyp3_db' / 'creds.json'
-
-    return creds_path.is_file()
