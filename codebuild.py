@@ -21,8 +21,7 @@ import requests
 GITHUB_API_ENDPOINT = "https://api.github.com"
 GITHUB_STATUS_CONTEXT = "continuous-integration/codebuild"
 GITHUB_REPOSITORY_NAME = "asfadmin/hyp3-in-a-box"
-GITHUB_BRANCH = "dev"
-S3_SOURCE_BUCKET = "hyp3-in-a-box-source"
+S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
 S3_STATUS_BUCKET = "asf-docs/hyp3-in-a-box"
 
 MATURITY = os.environ["MATURITY"]
@@ -86,7 +85,7 @@ def set_github_ci_status(status, description=None):
     with open("build/status.svg", "w") as f:
         f.write(get_svg_status(svg_status))
 
-    subprocess.check_call(["aws", "s3", "cp", "build/status.svg", "s3://{}".format(os.path.join(S3_STATUS_BUCKET, "build_status.svg")), "--acl", "public-read", "--cache-control", "no-cache"])
+    subprocess.check_call(["aws", "s3", "cp", "build/status.svg", "s3://{}".format(os.path.join(S3_STATUS_BUCKET, MATURITY + "-build-status.svg")), "--acl", "public-read", "--cache-control", "no-cache"])
 
     update_github_status(status, description=description)
 
@@ -98,7 +97,7 @@ def update_github_status(state, description=None):
         "context": GITHUB_STATUS_CONTEXT,
         "description": description
     }
-    requests.post(url, params={"access_token": GITHUB_STATUS_TOKEN}, json=data)
+    print(requests.post(url, params={"access_token": GITHUB_STATUS_TOKEN}, json=data).text)
 
 
 def save_config(key, value):
