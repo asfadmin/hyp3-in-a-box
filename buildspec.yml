@@ -3,6 +3,7 @@ version: 0.2
 phases:
   install:
     commands:
+      - printenv
       - pip install -U requests sphinx pytest
       - python3 .codebuild/codebuild.py install
   pre_build:
