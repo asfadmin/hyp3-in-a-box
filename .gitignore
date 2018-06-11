@@ -5,6 +5,7 @@ __pycache__/
 
 templates/*
 Pipfile.lock
+creds.json
 
 # C extensions
 *.so
