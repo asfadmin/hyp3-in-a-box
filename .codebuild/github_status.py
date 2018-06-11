@@ -19,6 +19,8 @@ MATURITY = os.environ["MATURITY"]
 GITHUB_STATUS_TOKEN = os.environ.get("GITHUB_STATUS_TOKEN", "")
 GITHUB_COMMIT_HASH = os.environ["CODEBUILD_RESOLVED_SOURCE_VERSION"]
 
+print(os.environ)
+
 
 def set_github_ci_status(status, description=None):
     svg_status = "passing"
