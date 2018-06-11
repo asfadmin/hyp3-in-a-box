@@ -22,7 +22,14 @@ class LocalQueue(Base):
     __tablename__ = 'local_queue'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+
     sub_id = Column(ForeignKey('subscriptions.id'))
+    user_id = Column(ForeignKey('users.id'), nullable=False)
+    process_id = Column(ForeignKey('processes.id'), nullable=False)
+
+    process = orm.relationship('Process')
+    sub = orm.relationship('Subscription')
+    user = orm.relationship('User')
 
     granule = Column(Text, nullable=False)
     granule_url = Column(Text, nullable=False)
@@ -39,13 +46,6 @@ class LocalQueue(Base):
     )
     message = Column(Text)
     processed_time = Column(DateTime(True))
-
-    user_id = Column(ForeignKey('users.id'), nullable=False)
-    process_id = Column(ForeignKey('processes.id'), nullable=False)
-
-    process = orm.relationship('Process')
-    sub = orm.relationship('Subscription')
-    user = orm.relationship('User')
 
 
 class TimeSeriesData(Base):
