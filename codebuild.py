@@ -74,7 +74,7 @@ def post_build():
 def install_all_requirements_txts(root_path):
     for (path, dirs, files) in os.walk(root_path):
         for name in files:
-            if name == "requirements.txt":
+            if "requirements" in name:
                 subprocess.check_call(["pip", "install", "-U", "-r", os.path.join(path, name)])
 
 
