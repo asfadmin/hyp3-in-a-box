@@ -16,7 +16,7 @@ GITHUB_REPOSITORY_NAME = "asfadmin/hyp3-in-a-box"
 S3_STATUS_BUCKET = "asf-docs/hyp3-in-a-box"
 
 MATURITY = os.environ["MATURITY"]
-GITHUB_STATUS_TOKEN = os.environ["GITHUB_STATUS_TOKEN"]
+GITHUB_STATUS_TOKEN = os.environ.get("GITHUB_STATUS_TOKEN", "")
 GITHUB_COMMIT_HASH = os.environ["CODEBUILD_RESOLVED_SOURCE_VERSION"]
 
 
