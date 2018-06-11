@@ -1,7 +1,6 @@
 import pytest
 import pathlib as pl
 
-import import_path
 from hyp3_db import Hyp3DB
 
 
