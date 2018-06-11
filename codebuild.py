@@ -97,7 +97,7 @@ def update_github_status(state, description=None):
         "context": GITHUB_STATUS_CONTEXT,
         "description": description
     }
-    requests.post(url, params={"access_token": GITHUB_STATUS_TOKEN}, json=data)
+    print(requests.post(url, params={"access_token": GITHUB_STATUS_TOKEN}, json=data).text)
 
 
 def save_config(key, value):
