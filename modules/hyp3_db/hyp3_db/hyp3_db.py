@@ -24,7 +24,7 @@ class Hyp3DB:
     def get_enabled_subs(self):
         subs = session                            \
             .query(Subscription)                  \
-            .filter(Subscription.enabled is True) \
+            .filter(Subscription.enabled == True) \
             .all()
 
         return subs
