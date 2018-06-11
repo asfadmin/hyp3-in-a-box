@@ -15,7 +15,7 @@ Resources
 """
 
 from template import t
-from envirnoment import envirnoment
+from environment import environment
 
 import troposphere as ts
 from troposphere import awslambda
@@ -24,6 +24,9 @@ from troposphere import events
 from troposphere import s3
 
 from . import utils
+
+source_zip = "find_new_granules.zip"
+
 
 print('adding find_new lambda')
 
@@ -61,9 +64,10 @@ find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
     FunctionName="hyp3-find-new-granules",
     Code=awslambda.Code(
-        S3Bucket=envirnoment.lambda_bucket,
-        S3Key="{maturity}/find_new_granules.zip".format(
-            maturity=envirnoment.maturity
+        S3Bucket=environment.lambda_bucket,
+        S3Key="{maturity}/{zip}".format(
+            maturity=environment.maturity,
+            zip=source_zip
         )
     ),
     Handler='lambda_function.lambda_handler',

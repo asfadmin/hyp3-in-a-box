@@ -1,8 +1,9 @@
-class Envirnoment:
-    """Envirnoment variables for the troposphere templates"""
+class Environment:
+    """Environment variables for the troposphere templates"""
 
     def __init__(self):
-        self.lambda_bucket = "hyp3-in-a-box-source"
+        self.lambda_bucket = "asf-hyp3-in-a-box-source"
+        self.eb_bucket = "asf-hyp3-in-a-box-source"
         self.maturity = "test"
 
     def maturity(self):
@@ -14,4 +15,4 @@ class Envirnoment:
         ]
 
 
-envirnoment = Envirnoment()
+environment = Environment()

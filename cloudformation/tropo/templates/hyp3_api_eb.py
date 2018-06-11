@@ -9,6 +9,7 @@
 
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.sts import AssumeRole
+from environment import environment
 from template import t
 from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref
 from troposphere.elasticbeanstalk import (
@@ -23,6 +24,9 @@ from troposphere.iam import InstanceProfile, Role
 
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
+
+source_zip = "hyp3_api.zip"
+
 
 print('adding api_eb')
 
@@ -77,8 +81,11 @@ app_version = t.add_resource(ApplicationVersion(
     Description="Version 1.0",
     ApplicationName=Ref(app),
     SourceBundle=SourceBundle(
-        S3Bucket=Join("-", ["elasticbeanstalk-samples", Ref("AWS::Region")]),
-        S3Key="python-sample-20150402.zip"
+        S3Bucket=environment.eb_bucket,
+        S3Key="{maturity}/{zip}".format(
+            maturity=environment.maturity,
+            zip=source_zip
+        )
     )
 ))
 
