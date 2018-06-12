@@ -19,11 +19,27 @@ class TestFindNewGranules(unittest.TestCase):
         self.search_results = results['feed']['entry']
 
     def test_package(self):
-        packaged_results = results.package(self.search_results)
+        new_grans = results.package(self.search_results)
 
-        self.assertIsInstance(packaged_results, list)
-        for result in packaged_results:
+        self.assertIsInstance(new_grans, list)
+        for result in new_grans:
             self.package_test(result)
+
+    def test_format_as_json(self):
+        new_grans = results.package(self.search_results)
+        new_grans_json = results.format_into_json(new_grans)
+
+        formatted_new_grans = json.loads(new_grans_json)
+
+        self.assertIn('new_granules', formatted_new_grans)
+        self.assertIsInstance(
+            formatted_new_grans['new_granules'],
+            list
+        )
+
+        path = pl.Path(__file__).parent / 'new_granules.package.json'
+        with path.open('w') as f:
+            f.write(new_grans_json)
 
     def package_test(self, result):
         self.assertIsInstance(result, gp.GranulePackage)

@@ -1,6 +1,6 @@
 from sqlalchemy import sql
 
-from .session import session
+from .session import make_session
 from .hyp3_models import Subscription, LocalQueue
 
 
@@ -18,11 +18,11 @@ class Hyp3DB:
         'CANCELLED'
     ]
 
-    def __init__(self):
-        pass
+    def __init__(self, host, user, password):
+        self.session = make_session(host, user, password)
 
     def get_enabled_subs(self):
-        subs = session                            \
+        subs = self.session                       \
             .query(Subscription)                  \
             .filter(Subscription.enabled == True) \
             .all()
@@ -30,7 +30,7 @@ class Hyp3DB:
         return subs
 
     def get_job(self, job_id):
-        return session                       \
+        return self.session                       \
             .query(LocalQueue)               \
             .filter(LocalQueue.id == job_id) \
             .one()
@@ -51,7 +51,7 @@ class Hyp3DB:
             message=message
         )
 
-        session.add(new_job)
+        self.session.add(new_job)
         return new_job
 
     def set_job_status(self, job, status):
@@ -62,11 +62,11 @@ class Hyp3DB:
             job.status = status
         else:
             job_id = job
-            session.query(LocalQueue) \
+            self.session.query(LocalQueue) \
                 .filter(LocalQueue.id == job_id) \
                 .update({'status': status})
 
-        session.commit()
+        self.session.commit()
 
     def add_products(self):
         pass
