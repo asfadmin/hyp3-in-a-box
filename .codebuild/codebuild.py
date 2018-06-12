@@ -55,7 +55,7 @@ def build():
     os.makedirs("build/lambdas")
     subprocess.check_call(["python3", "cloudformation/tropo/create_stack.py", "build/template.json", "--maturity", MATURITY])
     subprocess.check_call(["python3", "lambdas/build_lambda.py", "-a", "-o", "build/lambdas/", "lambdas/"])
-    subprocess.check_call(["cd", "docs", "&&", "make", "clean", "html"])
+    subprocess.check_call(["make", "clean", "html"], cwd="docs")
 
 
 def post_build():
