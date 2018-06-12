@@ -117,7 +117,10 @@ def main(args):
     if args.all:
         for d in os.listdir(path):
             if os.path.isdir(d):
-                build_lambda_from_path(os.path.join(path, d), outfile=os.path.join(outfile, d) + ".zip")
+                try:
+                    build_lambda_from_path(os.path.join(path, d), outfile=os.path.join(outfile, d) + ".zip")
+                except FileNotFoundError:
+                    continue
     else:
         build_lambda_from_path(path, outfile=outfile)
 
