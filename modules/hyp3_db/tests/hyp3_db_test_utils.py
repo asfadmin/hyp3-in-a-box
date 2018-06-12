@@ -15,7 +15,7 @@ def creds_file_exists():
 
 
 def get_creds_path():
-    return pl.Path(__file__).parent / '..' / 'hyp3_db' / 'creds.json'
+    return pl.Path(__file__).parent / 'data' / 'creds.json'
 
 
 def load_creds_from_env():
