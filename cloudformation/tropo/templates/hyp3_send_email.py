@@ -2,7 +2,19 @@
 # Rohan Weeden
 # Created: June 5, 2018
 
-# Troposphere template for send_email lambda
+"""
+Troposphere template responsible for generating :ref:`send_email_lambda`
+
+Resources
+~~~~~~~~~
+
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
+* **IAM Policies:**
+
+  * Lambda basic execution
+  * Allow lambda to trigger SES send email
+
+"""
 
 from template import t
 from environment import environment

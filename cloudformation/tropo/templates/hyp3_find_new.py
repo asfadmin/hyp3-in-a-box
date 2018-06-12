@@ -1,5 +1,5 @@
 """
-Troposphere template responsible for generating the :ref:`find_new_lambda`
+Troposphere template responsible for generating :ref:`find_new_lambda`
 
 Resources
 ~~~~~~~~~
