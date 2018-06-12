@@ -7,7 +7,7 @@ from .environment import environment
 
 
 def get():
-    """Get the last time the find_new lambda was executed.
+    """ Get the last time the find_new lambda was executed.
 
         :returns: previous lambda runtime
         :rtype: datetime.datetime
@@ -24,7 +24,7 @@ def get():
 
 
 def set(new_time):
-    """Sets a timestamp representing the last time the find_new lambda was run.
+    """ Sets a timestamp representing the last time the find_new lambda was run.
 
         :param datetime.datetime new_time: runtime to set
     """

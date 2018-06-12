@@ -1,5 +1,5 @@
 class GranulePackage:
-    """Object to hold relevant granule information for the scheduler lambda"""
+    """ Object to hold relevant granule information for the scheduler lambda"""
     def __init__(self, name, polygon, download_url):
         """
             :param str name: name of the granule

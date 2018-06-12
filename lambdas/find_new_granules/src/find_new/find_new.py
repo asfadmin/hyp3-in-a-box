@@ -78,7 +78,7 @@ def make_cmr_query(prev_time):
 
 
 class SearchAPI:
-    """Class to wrap searching an generic api"""
+    """ Class to wrap searching an generic api"""
     def __init__(self, api_url):
         self.api_url = api_url
 
@@ -101,7 +101,7 @@ class CMRSearchAPI(SearchAPI):
 
 @cl.contextmanager
 def timing(print_str):
-    """print a string formatted with timing information"""
+    """ Print a string formatted with timing information"""
     start = time.time()
     yield
     runtime = time.time() - start
@@ -111,7 +111,7 @@ def timing(print_str):
 
 
 def cache_output(data):
-    """Save output from query for debugging"""
+    """ Save output from query for debugging"""
     output_path = pl.Path('cached')
     output_path.mkdir(parents=True, exist_ok=True)
 

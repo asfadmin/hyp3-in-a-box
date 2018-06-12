@@ -5,12 +5,12 @@ from . import granule_package as gp
 
 
 def package(search_results):
-    """Filters out irrelevant granules and packages only relevant metadata.
+    """ Filters out irrelevant granules and packages only relevant metadata.
 
-       :param list[dict] search_results: package results from cmr
+        :param list[dict] search_results: package results from cmr
 
-       :returns: List of new granule packages
-       :rtype: list[GranulePackage]
+        :returns: List of new granule packages
+        :rtype: list[GranulePackage]
     """
     hyp3_granules = [
         get_relevant_metadata_from(result) for result in search_results

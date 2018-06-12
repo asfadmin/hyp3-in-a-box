@@ -7,7 +7,7 @@ import abc
 
 
 class Email(abc.ABC):
-    '''Email object for generating an HTML email from Jinja2 template'''
+    ''' Email object for generating an HTML email from Jinja2 template'''
     def __init__(self, template_name):
         self.template_name = template_name
 
