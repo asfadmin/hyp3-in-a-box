@@ -1,6 +1,6 @@
 import pytest
 
-from . import hyp3_db_test_utils as tu
+import hyp3_db_test_utils as tu
 
 
 @tu.run_if_creds
