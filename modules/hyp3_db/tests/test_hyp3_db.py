@@ -1,24 +1,17 @@
 import pytest
-import pathlib as pl
 
-from hyp3_db import Hyp3DB
-
-
-def creds_file_exists():
-    creds_path = pl.Path(__file__).parent / '..' / 'hyp3_db' / 'creds.json'
-
-    return creds_path.is_file()
+from . import hyp3_db_test_utils as tu
 
 
-run_if_creds = pytest.mark.skipif(
-    not creds_file_exists(),
-    reason='Test require database creds'
-)
+@tu.run_if_creds
+@tu.with_db
+def test_db_creation(db):
+    assert db is not None
 
 
-@run_if_creds
-def test_get_enabled_subs():
-    db = Hyp3DB()
+@tu.run_if_creds
+@tu.with_db
+def test_get_enabled_subs(db):
     enabled_subs = db.get_enabled_subs()
 
     assert enabled_subs
@@ -26,19 +19,19 @@ def test_get_enabled_subs():
         assert sub.enabled is True
 
 
-@run_if_creds
-def test_get_jobs():
+@tu.run_if_creds
+@tu.with_db
+def test_get_jobs(db):
     job_id = 2670
-    db = Hyp3DB()
     job = db.get_job(job_id)
 
     assert job.id == job_id
 
 
-@run_if_creds
-def test_set_job():
+@tu.run_if_creds
+@tu.with_db
+def test_set_job(db):
     job_id, new_status = 2670, 'QUEUED'
-    db = Hyp3DB()
 
     job = db.get_job(job_id)
     old_status = job.status
@@ -55,10 +48,10 @@ def check_status(db, job, new_status):
     assert job_with_new_status.status == new_status
 
 
-@run_if_creds
-def test_set_job_status_bad_status():
+@tu.run_if_creds
+@tu.with_db
+def test_set_job_status_bad_status(db):
     job_id = 2670
-    db = Hyp3DB()
     bad_status = 'blablabla'
 
     with pytest.raises(ValueError):
