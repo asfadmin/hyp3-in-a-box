@@ -115,6 +115,7 @@ def main(args):
     outfile = args.outfile
 
     if args.all:
+        log.info("Building all lambdas")
         for d in os.listdir(path):
             if os.path.isdir(d):
                 try:
