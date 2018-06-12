@@ -24,7 +24,7 @@ class Hyp3DB:
     def get_enabled_subs(self):
         subs = self.session                       \
             .query(Subscription)                  \
-            .filter(Subscription.enabled == True) \
+            .filter(Subscription.enabled is True) \
             .all()
 
         return subs
@@ -56,7 +56,7 @@ class Hyp3DB:
 
     def set_job_status(self, job, status):
         if status not in Hyp3DB.valid_job_status:
-            raise ValueError(f'{status} not a valid job_status.')
+            raise ValueError('{} not a valid job_status.'.format(status))
 
         if isinstance(job, LocalQueue):
             job.status = status

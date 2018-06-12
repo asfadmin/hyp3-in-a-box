@@ -1,4 +1,4 @@
-import import_path
+import import_find_new
 
 import unittest
 from unittest import mock

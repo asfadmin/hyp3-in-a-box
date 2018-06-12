@@ -1,11 +1,11 @@
+import import_scheduler
 
-import pytest
 import json
 import pathlib as pl
 
-import src.schedule
-from src.schedule.environment import environment
-
+import pytest
+import schedule
+from schedule.environment import environment
 
 path = pl.Path(__file__).parent / 'creds.json'
 if path.exists():

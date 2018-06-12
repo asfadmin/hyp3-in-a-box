@@ -1,6 +1,6 @@
 # HyP3 in a Box !
 
-| Build Status ||
+| Build Status          |                                       |
 | --------------------- | ------------------------------------- |
 | **Test** | ![Build Status](https://s3-us-west-2.amazonaws.com/asf-docs/hyp3-in-a-box/test-build-status.svg) |
 | **Prod** | ![Build Status](https://s3-us-west-2.amazonaws.com/asf-docs/hyp3-in-a-box/prod-build-status.svg) |
@@ -30,7 +30,7 @@ process. Each build will perform the following steps:
 2.  Run Unit Tests
 3.  Generate CloudFormation template
 4.  Bundle lambda zip files
-5.  Generate and upload sphynx documentation
+5.  Generate and upload sphinx documentation
 
 We also set up some GitHub status reporting using the GitHub API. This requires
 a GitHub access token for any user with access to the repository. You can
@@ -46,4 +46,36 @@ The best way to keep this token secure is to use the `Parameter Store` option.
 | Name                | Description                                            |
 | ------------------- | ------------------------------------------------------ |
 | MATURITY            | Used for bucket folder names and file name prefixes    |
-| GITHUB_STATUS_TOKEN | Used to set commit status. Omitting this will not change the result of the build, API calls will fail silently  |
+| GITHUB_STATUS_TOKEN | Used to set commit status. Omitting this will not change the result of the build, API calls will fail silently |
+
+### Build Scripts
+There are a few scripts in this repository that CodeBuild uses to build certain
+elements of the project. These scripts can also be used manually (outside of the
+CI context).
+
+#### build_lambda.py
+**located in:** lambdas/
+
+Creates a zip file containing lambda function source code and dependencies.
+Assumes that lambda function directories follow a particular structure:
+
+1.  Must contain a `src` directory
+2.  Must contain a `requirements.txt` file
+
+Requirements will be pre-compiled and installed with pip to a `dependencies`
+folder in the lambda function directory. Any modules installed to the
+`dependencies` folder will be included in the final zip file, so if you need to
+include modules which cannot be installed with pip, just drop the files in there.
+
+#### create_stack.py
+**located in:** cloudformation/tropo/
+
+Generates a CloudFormation json template from the troposphere files. Can be used
+to include only some of the HyP3 components (use `--help` for more information).
+
+#### upload.sh
+**located in:** /
+
+A slightly misleading name. This script actually generates the sphinx
+documentation and uploads it to the asf-docs s3 bucket using the aws cli. You
+will need to have the cli installed and bucket write permissions.

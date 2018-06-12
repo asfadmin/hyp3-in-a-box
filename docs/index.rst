@@ -8,7 +8,7 @@ Hyp3 In A Box's Documentation
 
 .. cssclass:: badge-margin
 
-   .. image:: https://s3-us-west-2.amazonaws.com/asf-docs/hyp3-in-a-box/build_status.svg
+   .. image:: https://s3-us-west-2.amazonaws.com/asf-docs/hyp3-in-a-box/test-build-status.svg
       :target: https://github.com/asfadmin/hyp3-in-a-box
 
    .. image:: https://img.shields.io/badge/python-3.6-blue.svg
