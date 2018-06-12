@@ -9,4 +9,4 @@ def hyp3_jobs(new_granule_packages):
 
     subs = db.get_enabled_subs()
 
-    print(subs[0].__dict__)
+    print(subs[0].__dict__['location'])
