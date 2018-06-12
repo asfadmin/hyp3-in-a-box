@@ -12,7 +12,7 @@ import find_new
 
 class TestFindNewGranules(unittest.TestCase):
     def setUp(self):
-        env.set_is_production(False)
+        env.maturity = 'test'
 
     @mock.patch(
         'find_new.find_new.requests.get',

@@ -42,13 +42,11 @@ def set(new_time):
 def get_time_file_path():
     key_name = get_s3_key_name()
 
-    path = pl.Path('/tmp/') if environment.is_production \
+    path = pl.Path('/tmp/') if environment.maturity == 'prod' \
         else pl.Path(__file__).parent
 
     return str(path / key_name)
 
 
 def get_s3_key_name():
-    maturity = 'prod' if environment.is_production else 'test'
-
-    return 'previous-time.{}.json'.format(maturity)
+    return 'previous-time.{}.json'.format(environment.maturity)

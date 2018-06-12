@@ -13,7 +13,7 @@ TESTING_TIME = dt.datetime(2017, 12, 6, 15, 29, 43, 79060)
 
 class TestPreviousTime(unittest.TestCase):
     def setUp(self):
-        env.set_is_production(False)
+        env.maturity = 'test'
 
     @mock.patch(
         'find_new.previous_time.s3.upload',
@@ -32,7 +32,7 @@ class TestPreviousTime(unittest.TestCase):
         self.assertEqual(t, TESTING_TIME)
 
     def test_prod_file_name(self):
-        env.set_is_production(True)
+        env.maturity = 'prod'
         prod_file_path = previous_time.get_time_file_path()
 
         # only tmp directory is writable in aws lambdas
