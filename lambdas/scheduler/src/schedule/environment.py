@@ -1,15 +1,13 @@
 class Environment:
     def __init__(self):
-        self.db_creds = {
-            'host': 'some-url',
-            'user': 'hyp3',
-            'pass': 'db pass here'
-        }
+        self.db_creds = [
+            'db host',
+            'db user',
+            'db pass'
+        ]
 
     def get_db_creds(self):
-        return [
-            self.db_creds[k] for k in ['host', 'user', 'pass']
-        ]
+        return self.db_creds
 
     def set_db_creds(self, creds):
         self.db_creds = creds
