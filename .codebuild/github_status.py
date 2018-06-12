@@ -44,9 +44,9 @@ def update_github_status(state, description=None):
 
 
 def get_svg_status(status):
-    color = "#4c1"
+    color = "brightgreen"
     if status == "failing":
-        color = "#e05d44"
+        color = "red"
 
     url = 'https://img.shields.io/badge/build-{status}-{color}.svg'.format(
         status=status, color=color
