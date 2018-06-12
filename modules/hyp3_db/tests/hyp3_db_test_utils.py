@@ -18,6 +18,12 @@ def get_creds_path():
     return pl.Path(__file__).parent / '..' / 'hyp3_db' / 'creds.json'
 
 
+def load_creds_from_env():
+    return [
+        os.environ.get(k, False) for k in ['DB_HOST', 'DB_USER', 'DB_PASS']
+    ]
+
+
 run_if_creds = pytest.mark.skipif(
     not creds_file_exists(),
     reason='Test requires database creds'
@@ -49,9 +55,3 @@ def load_creds():
 def load_creds_from_path(path):
     with path.open('r') as f:
         return json.load(f)
-
-
-def load_creds_from_env():
-    return [
-        os.environ.get(k, False) for k in ['DB_HOST', 'DB_USER', 'DB_PASS']
-    ]
