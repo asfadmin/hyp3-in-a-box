@@ -56,7 +56,7 @@ def get_new_granules_after(prev_time):
     cmr_data = make_cmr_query(prev_time)
     print("cmr returned {} results".format(len(cmr_data)))
 
-    return cmr_data
+    return cmr_data['feed']['entry']
 
 
 def make_cmr_query(prev_time):
@@ -74,7 +74,7 @@ def make_cmr_query(prev_time):
     if not environment.is_production:
         cache_output(data)
 
-    return data['feed']['entry']
+    return data
 
 
 class SearchAPI:

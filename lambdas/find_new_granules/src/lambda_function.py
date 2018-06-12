@@ -13,7 +13,7 @@ def lambda_handler(event, context):
         :param context: lambda runtime info
     """
 
-    env_setup()
+    setup_env()
 
     search_results = find_new.granules()
 
@@ -31,7 +31,7 @@ def start_scheduler_with(new_granules_json):
     )
 
 
-def env_setup():
+def setup_env():
     env.set_is_production(True)
 
     env.bucket = os.environ['PREVIOUS_TIME_BUCKET']

@@ -7,7 +7,7 @@ from . import granule_package as gp
 def package(search_results):
     """ Filters out irrelevant granules and packages only relevant metadata.
 
-        :param list[dict] search_results: package results from cmr
+        :param list[dict] search_results: package results from CMR
 
         :returns: List of new granule packages
         :rtype: list[GranulePackage]
