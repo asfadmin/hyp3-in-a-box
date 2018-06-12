@@ -132,11 +132,11 @@ def make_template(args):
 
     add_sections_to_template(should_make_all, args)
 
-    generate_template(args['output'], args['debug'])
+    generate_template(args['output'], args.get('debug', False))
 
 
 def get_should_make_all(args):
-    return not any(args[s] for s in TEMPLATE_SECTIONS)
+    return not any(args.get(s, False) for s in TEMPLATE_SECTIONS)
 
 
 def add_sections_to_template(should_make_all, args):
