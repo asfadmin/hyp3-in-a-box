@@ -6,6 +6,8 @@ class Environment:
             'db pass'
         ]
 
+        self.sns_arn = 'arn:aws:sns:us-west-2:765666652335:hyp3_finish_events_test'
+
     def get_db_creds(self):
         return self.db_creds
 
