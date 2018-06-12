@@ -11,7 +11,7 @@ import re
 from importlib import import_module
 
 from template import t
-from envirnoment import envirnoment
+from environment import environment
 
 TEMPLATE_DIR = 'templates'
 
@@ -59,11 +59,11 @@ def set_environment_variables(args):
             continue
 
         print("setting ", arg_name, " to ", arg_value)
-        setattr(envirnoment, arg_name, arg_value)
+        setattr(environment, arg_name, arg_value)
 
 
 def is_env_arg(arg_name):
-    return arg_name in envirnoment.__dict__
+    return arg_name in environment.__dict__
 
 
 def get_parser():
@@ -86,7 +86,7 @@ def get_parser():
     for section_name in TEMPLATE_SECTIONS.keys():
         add_flag_argument(parser, section_name)
 
-    for var_name, var_type in envirnoment.get_variables():
+    for var_name, var_type in environment.get_variables():
         add_env_var_to(parser, var_name, var_type)
 
     return parser
