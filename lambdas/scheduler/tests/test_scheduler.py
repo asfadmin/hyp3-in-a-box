@@ -3,6 +3,13 @@ import pathlib as pl
 
 import import_path
 import schedule
+from schedule.environment import environment
+
+path = pl.Path(__file__).parent / 'creds.json'
+with path.open('r') as f:
+    creds = json.load(f)
+
+environment.set_db_creds(creds)
 
 
 def test_scheduler():

@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 "3da5cae" = {path = "./../../modules/hyp3_db", editable = true}
+"psycopg2-binary" = "*"
 
 [dev-packages]
 pytest = "*"

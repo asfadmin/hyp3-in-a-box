@@ -13,7 +13,7 @@ def main():
 
 
 def load_creds():
-    with open('creds.json', 'r') as f:
+    with open('tests/creds.json', 'r') as f:
         return json.load(f)
 
 
