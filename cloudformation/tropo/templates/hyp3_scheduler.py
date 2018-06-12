@@ -26,7 +26,7 @@ lambda_name = t.add_parameter(Parameter(
 ))
 
 lambda_role = t.add_resource(Role(
-    "SendEmailExecutionRole",
+    "SchedulerExecutionRole",
     Path="/service-role/",
     ManagedPolicyArns=[
         "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
@@ -35,7 +35,7 @@ lambda_role = t.add_resource(Role(
 ))
 
 lambda_function = t.add_resource(Function(
-    "SendEmailFunction",
+    "SchedulerFunction",
     FunctionName=Ref(lambda_name),
     Code=Code(
         S3Bucket=environment.lambda_bucket,
