@@ -50,6 +50,9 @@ def get_svg_status(status):
     if status == "failing":
         color = "#e05d44"
 
-    with open('.codebuild/icon.svg', 'r') as f:
-        svg = f.read().format(status=status, color=color)
-    return svg
+    url = 'https://img.shields.io/badge/build-{status}-{color}.svg'.format(
+        status=status, color=color
+    )
+    r = requests.get(url)
+
+    return r.text
