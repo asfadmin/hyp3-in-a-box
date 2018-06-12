@@ -59,7 +59,7 @@ def build():
 
 
 def post_build():
-    subprocess.check_call(["ls", "-a", "build"])
+    subprocess.check_call(["ls", "-a", "build/lambdas"])
     subprocess.check_call(["aws", "s3", "cp", "s3://{}".format(os.path.join(BUCKET_BASE_DIR, "config/configuration.json")), "build/"])
     subprocess.check_call(["aws", "s3", "cp", "build/lambdas", "s3://{}".format(BUCKET_BASE_DIR), "--recursive", "--include", '"*"'])
     subprocess.check_call(["aws", "s3", "cp", "docs/_build/html", "s3://asf-docs/hyp3-in-a-box", "--recursive", "--acl", "public-read"])
