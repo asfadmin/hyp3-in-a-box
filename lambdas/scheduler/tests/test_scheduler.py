@@ -1,11 +1,11 @@
-import pytest
+import import_scheduler
+
 import json
 import pathlib as pl
 
-import import_path
+import pytest
 import schedule
 from schedule.environment import environment
-
 
 path = pl.Path(__file__).parent / 'creds.json'
 print(path)
