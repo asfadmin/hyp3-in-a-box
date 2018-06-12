@@ -43,7 +43,7 @@ def pre_build():
     finally:
         r = ElementTree.parse("/tmp/test_results.xml").getroot()
         test_result_summary = "{} Tests, {} Failed, {} Errors".format(
-            r.get("tests") - r.get("skips", 0),
+            int(r.get("tests", 0)) - int(r.get("skips", 0)),
             r.get("failures"),
             r.get("errors")
         )
