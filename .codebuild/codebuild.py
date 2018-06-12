@@ -55,12 +55,13 @@ def build():
     os.makedirs("build/lambdas")
     subprocess.check_call(["python3", "cloudformation/tropo/create_stack.py", "build/template.json", "--maturity", MATURITY])
     subprocess.check_call(["python3", "lambdas/build_lambda.py", "-a", "-o", "build/lambdas/", "lambdas/"])
-    subprocess.check_call(["./upload.sh", "docs"])
+    subprocess.check_call(["cd", "docs", "&&", "make", "clean", "html"])
 
 
 def post_build():
     subprocess.check_call(["aws", "s3", "cp", "s3://{}".format(os.path.join(BUCKET_BASE_DIR, "config/configuration.json")), "build/"])
-    subprocess.check_call(["aws", "s3", "cp", "build/lambdas/", "s3://{}".format(BUCKET_BASE_DIR), "--recursive", "--include", '"*"'])
+    subprocess.check_call(["aws", "s3", "cp", "build/lambdas", "s3://{}".format(BUCKET_BASE_DIR), "--recursive", "--include", '"*"'])
+    subprocess.check_call(["aws", "s3", "cp", "docs/_build/html", "s3://asf-docs/hyp3-in-a-box", "--recursive", "--acl", "public-read"])
     set_github_ci_status("success", description=get_config("TEST_RESULT_SUMMARY", "Build completed"))
 
 
