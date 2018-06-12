@@ -3,4 +3,18 @@
 Lambda: Send Email
 =========================
 
-Stuff about send email lambda here
+.. image:: ../images/lambda.png
+   :scale: 3 %
+   :alt: alternate text
+   :align: right
+
+Entrypoint: Lambda Handle
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autofunction:: send_email.src.lambda_function.lambda_handler
+
+Module: notify_only
+~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: notify_only
+   :members:
