@@ -8,8 +8,8 @@ Lambda: Scheduler
    :alt: alternate text
    :align: right
 
-Entrypoint: Lambda Handle
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Entrypoint: Lambda Handler
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autofunction:: scheduler.src.lambda_function.lambda_handler
 
@@ -29,5 +29,5 @@ Submodule: HyP3 Jobs
 Submodule: Environment
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: find_new.environment
+.. automodule:: schedule.environment
    :members:

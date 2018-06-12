@@ -8,8 +8,8 @@ Lambda: Send Email
    :alt: alternate text
    :align: right
 
-Entrypoint: Lambda Handle
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Entrypoint: Lambda Handler
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autofunction:: send_email.src.lambda_function.lambda_handler
 
