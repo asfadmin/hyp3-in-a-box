@@ -24,7 +24,8 @@ class Email(abc.ABC):
                 * download_url - URL where the processed data can be downloaded from
                 * unsubscribe_url - URL to disable email notifications of this type
 
-            :return: A string containing the rendered message
+            :returns: The rendered message
+            :rtype: string
         '''
         env = self.get_env()
 
@@ -35,7 +36,8 @@ class Email(abc.ABC):
     def get_env(self):
         ''' Get the Jinja2 environment for rendering emails
 
-            :return: The Jinja2 Environment
+            :returns: The Jinja2 Environment
+            :rtype: `jinja2.Environment <http://jinja.pocoo.org/docs/latest/api/#jinja2.Environment>`_
         '''
         env = j2.Environment(
             loader=j2.FileSystemLoader('templates'),
