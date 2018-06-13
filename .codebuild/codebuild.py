@@ -53,8 +53,11 @@ def pre_build():
 
 def build():
     os.makedirs("build/lambdas")
-    build_lambdas()
-    subprocess.check_call(["python3", "cloudformation/tropo/create_stack.py", "build/template.json", "--maturity", MATURITY])
+    object_versions = build_lambdas()
+    version_options = []
+    for v in object_versions:
+        version_options += ["--{}_version".format(v[0]), v[1]]
+    subprocess.check_call(["python3", "cloudformation/tropo/create_stack.py", "build/template.json", "--maturity", MATURITY] + version_options)
     subprocess.check_call(["make", "clean", "html"], cwd="docs")
 
 
@@ -62,7 +65,9 @@ def build_lambdas():
     subprocess.check_call(["python3", "lambdas/build_lambda.py", "-a", "-o", "build/lambdas/", "lambdas/"])
     subprocess.check_call(["aws", "s3", "cp", "build/lambdas", "s3://{}".format(BUCKET_BASE_DIR), "--recursive", "--include", '"*"'])
     print("Latest Source Versions:")
-    print(get_latest_lambda_versions())
+    versions = get_latest_lambda_versions()
+    print(versions)
+    return versions
 
 
 def get_latest_lambda_versions():
@@ -76,9 +81,10 @@ def get_latest_lambda_versions():
             Prefix="{}/{}".format(MATURITY, "send_email.zip"),
             MaxKeys=1
         )[0]
-        versions.append({
-            lambda_zip: latest_version.id
-        })
+        versions.append((
+            lambda_zip[:-4],
+            latest_version.id
+        ))
 
 
 def post_build():
