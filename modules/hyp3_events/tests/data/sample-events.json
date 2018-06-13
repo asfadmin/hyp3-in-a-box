@@ -1,0 +1,12 @@
+{
+    "notify-only": {
+        "subject" : "New Sentinel Data!",
+        "additional_info": [{
+             "name" : "Subscription",
+             "value" : "Test Name"
+        }],
+        "browse_url" : "www.google.com",
+        "download_url" : "www.google.com",
+        "unsubscribe_url" : "www.google.com"
+    }
+}
