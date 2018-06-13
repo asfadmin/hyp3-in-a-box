@@ -17,8 +17,8 @@ Resources
 from template import t
 from environment import environment
 
-from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Code, Function
+from troposphere import GetAtt, Ref
+from troposphere.awslambda import Code, Function, Environment
 from troposphere.iam import Role, Policy
 
 from .hyp3_sns import finish_sns
@@ -30,13 +30,6 @@ source_zip = "scheduler.zip"
 print('  adding scheduler lambda')
 
 
-lambda_name = t.add_parameter(Parameter(
-    "SchedulerName",
-    Description="Name of the Scheduler lambda function",
-    Default="hyp3_scheduler",
-    Type="String"
-))
-
 sns_policy = Policy(
     PolicyName='FinishEventSNSPublish',
     PolicyDocument={
@@ -44,7 +37,7 @@ sns_policy = Policy(
         "Statement": [{
             "Effect": "Allow",
             "Action": "sns:Publish",
-            "Resource": GetAtt(finish_sns, "Arn")
+            "Resource": Ref(finish_sns)
         }]
     }
 )
@@ -61,7 +54,6 @@ lambda_role = t.add_resource(Role(
 
 scheduler = t.add_resource(Function(
     "SchedulerFunction",
-    FunctionName=Ref(lambda_name),
     Code=Code(
         S3Bucket=environment.lambda_bucket,
         S3Key="{maturity}/{zip}".format(
@@ -71,6 +63,11 @@ scheduler = t.add_resource(Function(
     ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(lambda_role, "Arn"),
-    Runtime="python3.6"
+    Runtime="python3.6",
+    Environment=Environment(
+        Variables={'SNS_ARN': Ref(finish_sns)}
+    ),
+    MemorySize=128,
+    Timeout=300
 ))
 

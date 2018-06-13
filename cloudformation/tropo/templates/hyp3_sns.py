@@ -14,16 +14,15 @@ finish_sns = t.add_resource(Topic(
     Subscription=[
         Subscription(
             Protocol="lambda",
-            Endpoint=GetAtt(send_email, "Arn"),
-            DependsOn=Ref(send_email)
+            Endpoint=GetAtt(send_email, "Arn")
         )
     ]
 ))
 
 sns_invoke_permissions = t.add_resource(Permission(
     "SNSSchedulerInvokePermissions",
-    FunctionName=Ref(send_email),
     Action="lambda:InvokeFunction",
     Principal="sns.amazonaws.com",
-    SourceArn=GetAtt(finish_sns, "Arn")
+    SourceArn=Ref(finish_sns),
+    FunctionName=GetAtt(send_email, "Arn")
 ))

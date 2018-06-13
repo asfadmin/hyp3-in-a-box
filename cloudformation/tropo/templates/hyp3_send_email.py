@@ -30,13 +30,6 @@ source_zip = "send_email.zip"
 
 print('  adding send_email lambda')
 
-lambda_name = t.add_parameter(Parameter(
-    "SendEmailName",
-    Description="Name of the SendEmail lambda function",
-    Default="hyp3_send_email",
-    Type="String"
-))
-
 lambda_policy = Policy(
     PolicyName="SESSendEmail",
     PolicyDocument=utils.get_static_policy('ses-send-email')
@@ -54,7 +47,6 @@ send_email_role = t.add_resource(Role(
 
 send_email = t.add_resource(Function(
     "SendEmailFunction",
-    FunctionName=Ref(lambda_name),
     Code=Code(
         S3Bucket=environment.lambda_bucket,
         S3Key="{maturity}/{zip}".format(
