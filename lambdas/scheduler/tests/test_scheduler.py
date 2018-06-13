@@ -21,11 +21,12 @@ def test_scheduler(sns_mock):
 
     assert isinstance(email_packages, list)
 
-    for sub, granule_package in email_packages:
+    for sub, user, granule_package in email_packages:
         assert hasattr(sub, 'id')
         assert all(
             k in granule_package for k in ['name', 'download_url', 'polygon']
         )
+        assert sub.user_id == user.id
 
     if 'local' in environment.maturity:
         cache_results(email_packages)

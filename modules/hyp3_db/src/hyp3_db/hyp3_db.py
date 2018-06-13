@@ -2,7 +2,7 @@ from sqlalchemy import sql
 from geoalchemy2 import WKTElement
 
 from .session import make_session
-from .hyp3_models import Subscription, LocalQueue
+from .hyp3_models import Subscription, LocalQueue, User
 
 
 class Hyp3DB:
@@ -21,6 +21,15 @@ class Hyp3DB:
 
     def __init__(self, host, user, password):
         self.session = make_session(host, user, password)
+
+    def get_users_by_ids(self, user_ids):
+        user_ids_filter = User.id.in_(user_ids)
+
+        users = self.session.query(User) \
+            .filter(user_ids_filter) \
+            .all()
+
+        return users
 
     def get_enabled_subs(self):
         subs = self.enabled_subs_query.all()
