@@ -12,4 +12,4 @@ class Hyp3Event():
 
     def to_json(self):
         """Convert a hyp3 event to json."""
-        return json.dump(self.__dict__)
+        return json.dumps(self.__dict__)

@@ -1,5 +1,6 @@
 {
     "notify-only": {
+        "address": "test@teshoo.com",
         "subject" : "New Sentinel Data!",
         "additional_info": [{
              "name" : "Subscription",

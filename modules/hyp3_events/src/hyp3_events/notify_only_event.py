@@ -4,6 +4,7 @@ from .hyp3_event import Hyp3Event
 
 
 class NotifyOnlyEvent(Hyp3Event, collections.namedtuple('NotiyOnlyData', [
+    'address',
     'subject',
     'additional_info',
     'browse_url',
