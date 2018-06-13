@@ -27,7 +27,7 @@ def test_scheduler(sns_mock):
             k in granule_package for k in ['name', 'download_url', 'polygon']
         )
 
-    if 'test' in environment.maturity:
+    if 'local' in environment.maturity:
         cache_results(email_packages)
 
 
