@@ -1,4 +1,4 @@
-import schedule
+import hyp3_schedule
 
 
 def lambda_handler(event, context):
@@ -11,4 +11,4 @@ def lambda_handler(event, context):
     """
     new_granules = event['new_granules']
 
-    schedule.hyp3_jobs(new_granules)
+    hyp3_schedule.hyp3_jobs(new_granules)

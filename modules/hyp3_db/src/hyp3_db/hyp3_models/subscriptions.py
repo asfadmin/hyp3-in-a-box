@@ -17,7 +17,7 @@ from sqlalchemy import (
 from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
 from sqlalchemy import sql
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geography
 
 from .base import Base
 from .groups import subscriptions_in_groups
@@ -43,7 +43,7 @@ class Subscription(Base):
     )
 
     location = Column(
-        Geometry('MULTIPOLYGON'),
+        Geography(geometry_type='MULTIPOLYGON', srid=4326),
         index=True,
         nullable=False
     )

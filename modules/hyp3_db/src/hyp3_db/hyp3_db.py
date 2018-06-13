@@ -1,4 +1,5 @@
 from sqlalchemy import sql
+from geoalchemy2 import WKTElement
 
 from .session import make_session
 from .hyp3_models import Subscription, LocalQueue
@@ -22,15 +23,27 @@ class Hyp3DB:
         self.session = make_session(host, user, password)
 
     def get_enabled_subs(self):
-        subs = self.session                       \
-            .query(Subscription)                  \
-            .filter(Subscription.enabled is True) \
-            .all()
+        subs = self.enabled_subs_query.all()
 
         return subs
 
+    def get_enabled_intersecting_subs(self, polygon):
+        poly = WKTElement(polygon, srid=4326)
+        intersection = Subscription.location.ST_Contains(poly)
+
+        intersecting_subs = self.enabled_subs_query \
+            .filter(intersection) \
+            .all()
+
+        return intersecting_subs
+
+    @property
+    def enabled_subs_query(self):
+        return self.session.query(Subscription) \
+            .filter_by(enabled=True)
+
     def get_job(self, job_id):
-        return self.session                       \
+        return self.session                  \
             .query(LocalQueue)               \
             .filter(LocalQueue.id == job_id) \
             .one()
