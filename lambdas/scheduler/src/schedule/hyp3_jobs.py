@@ -1,5 +1,5 @@
 
-from .environment import environment as env
+from environment import environment as env
 from hyp3_db import Hyp3DB
 
 
@@ -8,6 +8,7 @@ def hyp3_jobs(new_granule_packages):
     db = Hyp3DB(host, name, password)
 
     emails_packages = []
+    # TODO: Take out [:3] when done testing
     for package in new_granule_packages[:3]:
         polygon = format_polygon(package['polygon'])
 
