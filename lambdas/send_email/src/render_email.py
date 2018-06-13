@@ -47,7 +47,7 @@ class Email(abc.ABC):
                     'templates'
                 )
             ),
-            autoescape=j2.select_autoescape(['html', 'xml'])
+            autoescape=True
         )
 
         return env
