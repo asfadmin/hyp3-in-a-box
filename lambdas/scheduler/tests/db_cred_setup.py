@@ -5,8 +5,10 @@ import pathlib as pl
 from schedule.environment import environment
 
 data_path = pl.Path(__file__).parent / 'data'
-if data_path.exists():
-    with (data_path / 'creds.json').open('r') as f:
+creds_path = data_path / 'creds.json'
+
+if creds_path.exists():
+    with creds_path.open('r') as f:
         creds = json.load(f)
     environment.db_creds = creds
 
