@@ -13,6 +13,6 @@ if creds_path.exists():
     environment.db_creds = creds
 
 skip_if_creds_not_availbable = pytest.mark.skipif(
-    not data_path.exists(),
+    not creds_path.exists(),
     reason="Currently can't run test without creds"
 )
