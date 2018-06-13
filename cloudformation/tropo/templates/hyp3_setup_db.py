@@ -23,7 +23,7 @@ from troposphere.iam import Role
 
 from . import utils
 from .hyp3_kms_key import kms_key
-from .hyp3_rds import dbpassword, dbuser
+from .hyp3_rds import dbpassword, dbuser, hyp3_db
 
 source_zip = "setup_db.zip"
 
@@ -62,6 +62,7 @@ send_email = t.add_resource(Function(
     KmsKeyArn=Ref(kms_key),
     Environment=Environment(
         Variables={
+            "Hyp3DBHost": GetAtt(hyp3_db, "Endpoint.Address"),
             "Hyp3DBRootUser": Ref(dbuser),
             "Hyp3DbRootPass": Ref(dbpassword)
         }
