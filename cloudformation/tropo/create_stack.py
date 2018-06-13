@@ -53,12 +53,13 @@ def main():
 
 
 def set_environment_variables(args):
+    print('ENVIRONMENT')
     for arg_name, arg_value in args.items():
 
         if arg_value is None or not is_env_arg(arg_name):
             continue
 
-        print("setting ", arg_name, " to ", arg_value)
+        print("  setting", arg_name, "to", arg_value)
         setattr(environment, arg_name, arg_value)
 
 
@@ -140,6 +141,7 @@ def get_should_make_all(args):
 
 
 def add_sections_to_template(should_make_all, args):
+    print('BUILD')
     for section, module_name in TEMPLATE_SECTIONS.items():
         if should_make_all or args[section]:
             import_module('templates.{}'.format(module_name))

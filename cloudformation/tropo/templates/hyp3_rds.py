@@ -7,7 +7,7 @@ from troposphere import ec2, rds
 
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 
-print('adding rds')
+print('  adding rds')
 
 dbuser = t.add_parameter(ts.Parameter(
     "Hyp3DBUser",

@@ -29,7 +29,7 @@ from . import utils
 source_zip = "find_new_granules.zip"
 
 
-print('adding find_new lambda')
+print('  adding find_new lambda')
 
 previous_time_bucket = t.add_resource(s3.Bucket("S3Bucket"))
 

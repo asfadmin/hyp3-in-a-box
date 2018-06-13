@@ -28,7 +28,7 @@ from . import utils
 source_zip = "send_email.zip"
 
 
-print('adding send_email lambda')
+print('  adding send_email lambda')
 
 lambda_name = t.add_parameter(Parameter(
     "SendEmailName",
