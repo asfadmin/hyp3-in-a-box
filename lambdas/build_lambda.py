@@ -65,6 +65,8 @@ def install_psycopg2(path):
     src = os.path.join(repo_path, 'psycopg2-3.6')
     dest = os.path.join(path, 'dependencies', 'psycopg2')
 
+    if os.path.exists(dest):
+        shutil.rmtree(dest)
     shutil.copytree(src, dest)
     shutil.rmtree(repo_path)
 
