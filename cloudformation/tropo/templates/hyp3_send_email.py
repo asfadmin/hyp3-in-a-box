@@ -39,7 +39,8 @@ lambda_name = t.add_parameter(Parameter(
 
 lambda_policy = Policy(
     PolicyName="SESSendEmail",
-    PolicyDocument=utils.get_static_policy('ses-send-email'))
+    PolicyDocument=utils.get_static_policy('ses-send-email')
+)
 
 send_email_role = t.add_resource(Role(
     "SendEmailExecutionRole",

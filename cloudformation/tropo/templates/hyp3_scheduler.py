@@ -18,7 +18,7 @@ from template import t
 from environment import environment
 
 from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Code, Function, Permission
+from troposphere.awslambda import Code, Function
 from troposphere.iam import Role, Policy
 
 from .hyp3_sns import finish_sns
@@ -72,13 +72,5 @@ scheduler = t.add_resource(Function(
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(lambda_role, "Arn"),
     Runtime="python3.6"
-))
-
-sns_invoke_permissions = t.add_resource(Permission(
-    "SNSSchedulerInvokePermissions",
-    FunctionName=Ref(scheduler),
-    Action="lambda:InvokeFunction",
-    Principal="sns.amazonaws.com",
-    SourceArn=GetAtt(finish_sns, "Arn")
 ))
 
