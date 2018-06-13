@@ -41,7 +41,7 @@ def install_dependencies(path):
 
 
 def install_package(path, package_name, output_dir):
-    subprocess.call([sys.executable, '-m', 'pip', 'install', '--compile', '--upgrade', package_name, '-t', output_dir])
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--compile', '--upgrade', package_name, '-t', output_dir])
 
 
 def make_zip(path, zip_name):
