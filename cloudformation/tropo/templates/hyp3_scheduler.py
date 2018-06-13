@@ -12,22 +12,22 @@ Resources
 * **IAM Policies:**
 
   * Lambda basic execution
-
 """
 
 from template import t
 from environment import environment
 
 from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Code, Function
-from troposphere.iam import Role
+from troposphere.awslambda import Code, Function, Permission
+from troposphere.iam import Role, Policy
 
+from .hyp3_sns import finish_sns
 from . import utils
 
 source_zip = "scheduler.zip"
 
 
-print('adding scheduler lambda')
+print('  adding scheduler lambda')
 
 
 lambda_name = t.add_parameter(Parameter(
@@ -37,16 +37,29 @@ lambda_name = t.add_parameter(Parameter(
     Type="String"
 ))
 
+sns_policy = Policy(
+    PolicyName='FinishEventSNSPublish',
+    PolicyDocument={
+        "Version": "2012-10-17",
+        "Statement": [{
+            "Effect": "Allow",
+            "Action": "sns:Publish",
+            "Resource": GetAtt(finish_sns, "Arn")
+        }]
+    }
+)
+
 lambda_role = t.add_resource(Role(
     "SchedulerExecutionRole",
     Path="/service-role/",
     ManagedPolicyArns=[
         "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
     ],
+    Policies=[sns_policy],
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
-lambda_function = t.add_resource(Function(
+scheduler = t.add_resource(Function(
     "SchedulerFunction",
     FunctionName=Ref(lambda_name),
     Code=Code(
@@ -60,3 +73,12 @@ lambda_function = t.add_resource(Function(
     Role=GetAtt(lambda_role, "Arn"),
     Runtime="python3.6"
 ))
+
+sns_invoke_permissions = t.add_resource(Permission(
+    "SNSSchedulerInvokePermissions",
+    FunctionName=Ref(scheduler),
+    Action="lambda:InvokeFunction",
+    Principal="sns.amazonaws.com",
+    SourceArn=GetAtt(finish_sns, "Arn")
+))
+
