@@ -12,7 +12,6 @@ import json
 import os
 import stat
 import subprocess
-import contextlib as cl
 import sys
 from xml.etree import ElementTree
 
@@ -67,20 +66,12 @@ def post_build():
 
 def install_all_requirements_txts(root_path):
     for path, dirs, files in os.walk('.'):
-        with pushd(path):
-            for name in files:
-                if "requirements" in name:
-                    subprocess.check_call(
-                        ["pip", "install", "-U", "-r", name]
-                    )
-
-
-@cl.contextmanager
-def pushd(path):
-    pwd = os.getcwd()
-    os.chdir(path)
-    yield
-    os.chdir(pwd)
+        for name in files:
+            if "requirements" in name:
+                subprocess.check_call(
+                    ["pip", "install", "-U", "-r", name],
+                    cwd=path
+                )
 
 
 def save_config(key, value):
