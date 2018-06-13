@@ -16,5 +16,5 @@ Entrypoint: Lambda Handler
 Module: notify_only
 ~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: notify_only
+.. automodule:: email
    :members:
