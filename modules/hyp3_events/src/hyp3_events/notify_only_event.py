@@ -10,7 +10,6 @@ class NotifyOnlyEvent(collections.namedtuple('NotiyOnlyData', [
     'additional_info',
     'browse_url',
     'download_url',
-    'unsubscribe_url'
 ]), Hyp3Event):
     """
         * **address** - Address to send email
