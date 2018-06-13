@@ -11,6 +11,9 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 import subprocess
 import sys
+import shutil
+
+PSYCOPG2_REPO = 'https://github.com/jkehler/awslambda-psycopg2'
 
 
 class Logger(object):
@@ -32,13 +35,38 @@ log = Logger(None)
 
 def install_dependencies(path):
     """ Install required modules to dependencies folder """
+    req_file = os.path.join(path, 'requirements.txt')
     subprocess.check_call(
         [
             sys.executable, '-m', 'pip', 'install', '--compile', '-U', '-r',
-            os.path.join(path, 'requirements.txt'), '-t', os.path.join(path, 'dependencies')
+            req_file, '-t',
+            os.path.join(path, 'dependencies')
         ],
         cwd=path
     )
+
+    with open(req_file, 'r') as f:
+        reqs = f.read()
+
+    if 'hyp3_db' in reqs:
+        install_psycopg2(path)
+
+
+def install_psycopg2(path):
+    print('installing psycopg2...')
+    repo = 'psycopg2'
+    subprocess.check_call(
+        ['git', 'clone', '--depth', '1', PSYCOPG2_REPO, repo],
+        cwd=path
+    )
+
+    repo_path = os.path.join(path, repo)
+
+    src = os.path.join(repo_path, 'psycopg2-3.6')
+    dest = os.path.join(path, 'dependencies', 'psycopg2')
+
+    shutil.copytree(src, dest)
+    shutil.rmtree(repo_path)
 
 
 def make_zip(path, zip_name):
