@@ -1,7 +1,7 @@
 import boto3
 import json
 
-from .environment import environment
+from environment import environment
 
 sns = boto3.client('sns')
 

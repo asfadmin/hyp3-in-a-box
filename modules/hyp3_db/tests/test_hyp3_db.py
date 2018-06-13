@@ -11,6 +11,17 @@ def test_db_creation(db):
 
 @tu.run_if_creds
 @tu.with_db
+def test_get_users_by_ids(db):
+    ids = [37, 34]
+    users = db.get_users_by_ids(ids)
+
+    assert users
+    for user in users:
+        assert user.id in ids
+
+
+@tu.run_if_creds
+@tu.with_db
 def test_get_enabled_subs(db):
     enabled_subs = db.get_enabled_subs()
 
