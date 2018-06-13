@@ -12,7 +12,7 @@ from sqlalchemy.sql import text
 
 HOST = os.environ("Hyp3DBHost")
 USER = os.environ("Hyp3DBRootUser")
-PASS = os.environ("Hyp3DbRootPass")
+PASS = os.environ("Hyp3DBRootPass")
 
 ADD_USER_SQL = text("""
 CREATE USER hyp3_user WITH PASSWORD :password;

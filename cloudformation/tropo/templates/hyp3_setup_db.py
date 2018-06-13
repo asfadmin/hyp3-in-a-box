@@ -64,7 +64,7 @@ send_email = t.add_resource(Function(
         Variables={
             "Hyp3DBHost": GetAtt(hyp3_db, "Endpoint.Address"),
             "Hyp3DBRootUser": Ref(dbuser),
-            "Hyp3DbRootPass": Ref(dbpassword)
+            "Hyp3DBRootPass": Ref(dbpassword)
         }
     )
 ))
