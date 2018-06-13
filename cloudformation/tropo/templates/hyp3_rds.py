@@ -1,15 +1,14 @@
 # Example modified from:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
-import troposphere as ts
 from template import t
-from troposphere import ec2, rds
+from troposphere import GetAtt, Output, Parameter, Ref, ec2, rds
 
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 
 print('adding rds')
 
-dbuser = t.add_parameter(ts.Parameter(
+dbuser = t.add_parameter(Parameter(
     "Hyp3DBUser",
     NoEcho=False,
     Description="The database admin account username",
@@ -21,7 +20,7 @@ dbuser = t.add_parameter(ts.Parameter(
                            " alphanumeric characters.")
 ))
 
-dbpassword = t.add_parameter(ts.Parameter(
+dbpassword = t.add_parameter(Parameter(
     "Hyp3DBPassword",
     NoEcho=True,
     Description="The database admin account password",
@@ -51,7 +50,7 @@ inrule, outrule = [
 security_group = t.add_resource(ec2.SecurityGroup(
     "Hyp3TCPAll",
     GroupDescription="Allow for all tcp traffic through port 5432",
-    VpcId=ts.Ref(hyp3_vpc),
+    VpcId=Ref(hyp3_vpc),
     SecurityGroupIngress=[inrule],
     SecurityGroupEgress=[outrule]
 ))
@@ -59,7 +58,7 @@ security_group = t.add_resource(ec2.SecurityGroup(
 mydbsubnetgroup = t.add_resource(rds.DBSubnetGroup(
     "MyDBSubnetGroup",
     DBSubnetGroupDescription="Subnets available for the RDS DB Instance",
-    SubnetIds=[ts.Ref(subnet) for subnet in get_public_subnets()],
+    SubnetIds=[Ref(subnet) for subnet in get_public_subnets()],
 ))
 
 # Only certain versions of postgres are supported on the smaller instance types
@@ -73,9 +72,17 @@ mydb = t.add_resource(rds.DBInstance(
     Engine="postgres",
     EngineVersion="9.5.10",
     PubliclyAccessible=True,
-    VPCSecurityGroups=[ts.Ref(security_group)],
-    DBSubnetGroupName=ts.Ref(mydbsubnetgroup),
-    MasterUsername=ts.Ref(dbuser),
-    MasterUserPassword=ts.Ref(dbpassword),
+    VPCSecurityGroups=[Ref(security_group)],
+    DBSubnetGroupName=Ref(mydbsubnetgroup),
+    MasterUsername=Ref(dbuser),
+    MasterUserPassword=Ref(dbpassword),
     DependsOn=('Hyp3VPC'),
 ))
+
+t.add_output(
+    Output(
+        "RDS URL",
+        Description="HyP3 Database url",
+        Value=GetAtt(mydb, "Endpoint.Address")
+    )
+)
