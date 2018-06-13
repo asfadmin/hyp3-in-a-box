@@ -20,6 +20,16 @@ def render():
 
 
 def lambda_handler(event, aws_context):
+    """ AWS Lambda entry point. Renders an email for the given parameters and
+    sends it via SES.
+
+        :param event: lambda event data
+
+            * body - Email parameters
+                * context - The Jinja2 template context
+                * to_addresses - List of addresses to send the email to
+        :param context: lambda runtime info
+    """
     context = event['body']['context']
     to_addresses = event['body']['to_addresses']
     message = Email('email.html.j2').render(**context)

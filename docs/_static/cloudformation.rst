@@ -2,7 +2,7 @@
 
 .. _cloudformation:
 
-AWS Cloudformation
+AWS CloudFormation
 ==================
 
 
@@ -11,33 +11,37 @@ AWS Cloudformation
    :caption: Contents:
 
    cloudformation/find_new.rst
+   cloudformation/send_email.rst
+   cloudformation/scheduler.rst
 
 Troposphere
 -----------
 
-`Troposphere`_ is a python library for generating cloudformation templates.
-It is used as a lightweight wrapper around cloudformation to allow for
-more dynamic environment then writing plain JSON provides
+`Troposphere`_ is a python library for generating CloudFormation templates.
+It is a lightweight wrapper around CloudFormation which allows for a more
+dynamic environment than plain JSON.
 
 .. _Troposphere: https://github.com/cloudtools/troposphere
 
 Template Generation
 -------------------
 
-The ``create_stack.py`` script is used to generate the raw cloudformaiton json.
-It takes command line arguments of what resources should be included in the
-template.
+The ``create_stack.py`` script is used to generate the raw CloudFormation JSON.
+It can generate the full template, or include only some resources for testing
+purposes.
 
 .. code-block:: bash
 
    python create_stack.py --find_new --api_eb outputs/template.json
 
-This command makes a template with the :ref:`find_new_lambda` lambda and the elastic beanstalk
-application that runs the API.
+This command makes a template with the :ref:`find_new_lambda` lambda and the
+Elastic Beanstalk application that runs the API. Note that it will also include
+the VPC template because the Elastic Beanstalk application depends on it.
 
-Environment variables can also be dynamically set using the ``create_stack`` script.
-This is an example of changing what bucket lambda functions get pulled from and setting
-the maturity of the template to ``test`` while only making :ref:`send_email_lambda`.
+Environment variables can also be dynamically set using the ``create_stack``
+script. This is an example of changing which bucket lambda functions get pulled
+from and setting the maturity of the template to ``test`` while only making
+:ref:`send_email_lambda`.
 
 .. code-block:: bash
 
@@ -47,13 +51,11 @@ the maturity of the template to ``test`` while only making :ref:`send_email_lamb
        --maturity test                     \
        outputs/template.json
 
-To add environment variables to the Environment class's __init__ function
+Add environment variables to the Environment class's __init__ function.
 
 Troposphere Templates
 ---------------------
 
-Each file in ``cloudformation/tropo/templates`` directory is responsible for creating a
-logical portion of the Hy3P-In-A-Box infrastructure. Each flag in the ``create_stack.py``
-corresponds to one of these file.
-
-
+Each file in ``cloudformation/tropo/templates`` directory is responsible for
+creating a logical portion of the Hy3P-In-A-Box infrastructure. Each flag in
+``create_stack.py`` corresponds to one of these file.

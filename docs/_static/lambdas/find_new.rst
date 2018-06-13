@@ -8,8 +8,8 @@ Lambda: Find New Granules
    :alt: alternate text
    :align: right
 
-Entrypoint: Lambda Handle
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Entrypoint: Lambda Handler
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autofunction:: find_new_granules.src.lambda_function.lambda_handler
 
@@ -42,4 +42,3 @@ Module: Results
    :members:
 
    .. automethod:: __init__
-

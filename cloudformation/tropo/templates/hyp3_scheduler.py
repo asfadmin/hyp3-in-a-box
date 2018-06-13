@@ -2,7 +2,18 @@
 # Rohan Weeden
 # Created: June 12, 2018
 
-# Troposphere template for scheduler lambda
+"""
+Troposphere template responsible for generating :ref:`scheduler_lambda`
+
+Resources
+~~~~~~~~~
+
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
+* **IAM Policies:**
+
+  * Lambda basic execution
+
+"""
 
 from template import t
 from environment import environment
@@ -17,6 +28,7 @@ source_zip = "scheduler.zip"
 
 
 print('adding scheduler lambda')
+
 
 lambda_name = t.add_parameter(Parameter(
     "SchedulerName",

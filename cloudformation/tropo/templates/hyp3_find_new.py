@@ -1,5 +1,5 @@
 """
-Troposphere template responsible for generating the :ref:`find_new_lambda`
+Troposphere template responsible for generating :ref:`find_new_lambda`
 
 Resources
 ~~~~~~~~~
@@ -9,7 +9,8 @@ Resources
 * **Cloudwatch Event:** Triggers the lambda after a scheduled amount of time.
 * **IAM Policies:**
 
-  * Give lambda to read/write to the s3 bucket
+  * Lambda basic execution
+  * S3 read/write on ``previous time`` bucket
   * Allow cloudwatch event to trigger the lambda
 
 """
