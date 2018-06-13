@@ -19,7 +19,7 @@ def test_notify_only_dict():
     e_dict = event.to_dict()
 
     assert isinstance(e_dict, dict)
-    assert 'address' in e_dict
+    assert e_dict.keys()
 
 
 def test_notify_only_from_json():
@@ -41,7 +41,7 @@ def test_notify_only_to_json():
 
 def check_json_attrs_against_event(test_json, event):
     test_dict = json.loads(test_json)
-    assert 'address' in test_dict
+    assert test_dict.keys()
 
     for k, v in test_dict.items():
         assert getattr(event, k) == v
