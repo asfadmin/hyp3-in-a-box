@@ -63,7 +63,7 @@ mydbsubnetgroup = t.add_resource(rds.DBSubnetGroup(
 
 # Only certain versions of postgres are supported on the smaller instance types
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html
-mydb = t.add_resource(rds.DBInstance(
+hyp3_db = t.add_resource(rds.DBInstance(
     "Hyp3DB",
     DBInstanceIdentifier="hyp3-in-a-box",
     AllocatedStorage="5",
@@ -83,6 +83,6 @@ t.add_output(
     Output(
         "RdsUrl",
         Description="HyP3 Database url",
-        Value=GetAtt(mydb, "Endpoint.Address")
+        Value=GetAtt(hyp3_db, "Endpoint.Address")
     )
 )
