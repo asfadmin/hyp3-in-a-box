@@ -1,16 +1,17 @@
 import collections
+import json
 
 from .hyp3_event import Hyp3Event
 
 
-class NotifyOnlyEvent(Hyp3Event, collections.namedtuple('NotiyOnlyData', [
+class NotifyOnlyEvent(collections.namedtuple('NotiyOnlyData', [
     'address',
     'subject',
     'additional_info',
     'browse_url',
     'download_url',
     'unsubscribe_url'
-])):
+]), Hyp3Event):
     """
         * **address** - Address to send email
         * **subject** - Email subject
@@ -21,4 +22,9 @@ class NotifyOnlyEvent(Hyp3Event, collections.namedtuple('NotiyOnlyData', [
         * **download_url** - URL where the processed data can be downloaded
         * **unsubscribe_url** - URL to disable email notifications
     """
-    pass
+    def to_json(self):
+        """Convert a hyp3 event to json."""
+        return json.dumps(self.to_dict())
+
+    def to_dict(self):
+        return self._asdict()

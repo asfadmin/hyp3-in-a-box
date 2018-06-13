@@ -1,8 +1,9 @@
 
 import json
+import abc
 
 
-class Hyp3Event():
+class Hyp3Event(abc.ABC):
     @classmethod
     def from_json(cls, event_data):
         """Constructor for making hyp3 events from json."""
@@ -10,6 +11,11 @@ class Hyp3Event():
 
         return cls(**data)
 
+    @abc.abstractmethod
     def to_json(self):
-        """Convert a hyp3 event to json."""
-        return json.dumps(self.__dict__)
+        return NotImplemented
+
+    @abc.abstractmethod
+    def to_dict(self):
+        return NotImplemented
+
