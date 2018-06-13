@@ -32,7 +32,13 @@ log = Logger(None)
 
 def install_dependencies(path):
     """ Install required modules to dependencies folder """
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--compile', '-U', '-r', os.path.join(path, 'requirements.txt'), '-t', os.path.join(path, 'dependencies')])
+    subprocess.check_call(
+        [
+            sys.executable, '-m', 'pip', 'install', '--compile', '-U', '-r',
+            os.path.join(path, 'requirements.txt'), '-t', os.path.join(path, 'dependencies')
+        ],
+        cwd=path
+    )
 
 
 def make_zip(path, zip_name):
@@ -49,7 +55,7 @@ def make_zip(path, zip_name):
         dependencies = os.path.join(path, 'dependencies')
         for dep_dir in os.listdir(dependencies):
             full_path = os.path.join(dependencies, dep_dir)
-            if '.dist-info' or '.egg-info' in full_path:
+            if '.dist-info' in full_path or '.egg-info' in full_path:
                 continue
             if os.path.isdir(full_path):
                 add_folder_to_zip(dependencies, dep_dir, zf)
