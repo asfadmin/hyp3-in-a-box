@@ -1,19 +1,23 @@
 
 from .environment import environment as env
 from hyp3_db import Hyp3DB
-from . import notifications
 
 
 def hyp3_jobs(new_granule_packages):
     host, name, password = env.get_db_creds()
     db = Hyp3DB(host, name, password)
 
+    emails_packages = []
     for package in new_granule_packages[:3]:
         polygon = format_polygon(package['polygon'])
 
         subs = db.get_enabled_intersecting_subs(polygon)
 
-        notifications.send(subs, package)
+        emails_packages += [
+            (sub, package) for sub in subs
+        ]
+
+    return emails_packages
 
 
 def format_polygon(point_vals):
