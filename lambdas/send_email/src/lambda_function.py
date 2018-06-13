@@ -1,4 +1,4 @@
-from notify_only import Email
+from render_email import Email
 import boto3
 
 ses = boto3.client('ses')
