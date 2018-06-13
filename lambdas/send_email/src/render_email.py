@@ -1,9 +1,10 @@
-# notify_only.py
+# render_email.py
 # William Horn
 # Created: June 2018
 
 import jinja2 as j2
 import abc
+import os
 
 
 class Email(abc.ABC):
@@ -40,8 +41,13 @@ class Email(abc.ABC):
             :rtype: `jinja2.Environment <http://jinja.pocoo.org/docs/latest/api/#jinja2.Environment>`_
         '''
         env = j2.Environment(
-            loader=j2.FileSystemLoader('templates'),
-            autoescape=j2.select_autoescape(['html', 'xml'])
+            loader=j2.FileSystemLoader(
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'templates'
+                )
+            ),
+            autoescape=True
         )
 
         return env
