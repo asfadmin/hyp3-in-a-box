@@ -66,6 +66,7 @@ mydbsubnetgroup = t.add_resource(rds.DBSubnetGroup(
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html
 mydb = t.add_resource(rds.DBInstance(
     "Hyp3DB",
+    DBInstanceIdentifier="hyp3-in-a-box",
     AllocatedStorage="5",
     DBInstanceClass="db.t2.micro",
     DBName="hyp3db",
