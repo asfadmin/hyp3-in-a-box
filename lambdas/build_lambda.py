@@ -32,16 +32,7 @@ log = Logger(None)
 
 def install_dependencies(path):
     """ Install required modules to dependencies folder """
-    with open(os.path.join(path, 'requirements.txt')) as f:
-        for line in f.readlines():
-            package = line.strip()
-
-            log.debug('Installing {}'.format(package))
-            install_package(path, package, os.path.join(path, 'dependencies'))
-
-
-def install_package(path, package_name, output_dir):
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--compile', '--upgrade', package_name, '-t', output_dir])
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--compile', '-U', '-r', os.path.join(path, 'requirements.txt'), '-t', os.path.join(path, 'dependencies')])
 
 
 def make_zip(path, zip_name):
