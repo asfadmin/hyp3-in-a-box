@@ -20,8 +20,11 @@ class NotifyOnlyEvent(collections.namedtuple('NotiyOnlyData', [
             * **value** - Metadata content
         * **browse_url** - URL of a browse image to display
         * **download_url** - URL where the processed data can be downloaded
-        * **unsubscribe_url** - URL to disable email notifications
     """
+    @property
+    def event_type(self):
+        return 'Hyp3NotifyOnlyEvent'
+
     def to_json(self):
         """Convert a hyp3 event to json."""
         return json.dumps(self.to_dict())
