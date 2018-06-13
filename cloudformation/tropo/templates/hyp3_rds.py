@@ -81,7 +81,7 @@ mydb = t.add_resource(rds.DBInstance(
 
 t.add_output(
     Output(
-        "RDS URL",
+        "RdsUrl",
         Description="HyP3 Database url",
         Value=GetAtt(mydb, "Endpoint.Address")
     )
