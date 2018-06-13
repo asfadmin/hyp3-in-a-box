@@ -1,37 +1,47 @@
+import pytest
 import json
 import pathlib as pl
 
 import import_hyp3_events
 import hyp3_events
 
+PARAM_NAMES = 'EventType, sample_name'
+EVENTS_TO_TEST = [
+    (hyp3_events.NotifyOnlyEvent, 'notify-only')
+]
 
-def test_notify_only_construction():
-    test_event_data = load_sample_event_data('notify-only', output='dict')
-    event = hyp3_events.NotifyOnlyEvent(**test_event_data)
+
+@pytest.mark.parametrize(PARAM_NAMES, EVENTS_TO_TEST)
+def test_notify_only_construction(EventType, sample_name):
+    test_event_data = load_sample_event_data(sample_name, output='dict')
+    event = EventType(**test_event_data)
 
     assert event
 
 
-def test_notify_only_dict():
+@pytest.mark.parametrize(PARAM_NAMES, EVENTS_TO_TEST)
+def test_notify_only_dict(EventType, sample_name):
     test_event_data = load_sample_event_data('notify-only', output='dict')
+    event = EventType(**test_event_data)
 
-    event = hyp3_events.NotifyOnlyEvent(**test_event_data)
     e_dict = event.to_dict()
 
     assert isinstance(e_dict, dict)
     assert e_dict.keys()
 
 
-def test_notify_only_from_json():
-    test_json = load_sample_event_data('notify-only')
-    event = hyp3_events.NotifyOnlyEvent.from_json(test_json)
+@pytest.mark.parametrize(PARAM_NAMES, EVENTS_TO_TEST)
+def test_notify_only_from_json(EventType, sample_name):
+    test_json = load_sample_event_data(sample_name)
+    event = EventType.from_json(test_json)
 
     check_json_attrs_against_event(test_json, event)
 
 
-def test_notify_only_to_json():
-    test_json = load_sample_event_data('notify-only')
-    event = hyp3_events.NotifyOnlyEvent.from_json(test_json)
+@pytest.mark.parametrize(PARAM_NAMES, EVENTS_TO_TEST)
+def test_notify_only_to_json(EventType, sample_name):
+    test_json = load_sample_event_data(sample_name)
+    event = EventType.from_json(test_json)
 
     event_json = event.to_json()
 
