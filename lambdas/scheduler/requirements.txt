@@ -1,5 +1,5 @@
 -i https://pypi.org/simple
--e ./../../modules/hyp3_db
+./../../modules/hyp3_db
 boto3==1.7.37
 botocore==1.10.37
 docutils==0.14
