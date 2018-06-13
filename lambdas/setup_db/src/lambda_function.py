@@ -10,9 +10,9 @@ from hyp3_db import Hyp3DB
 from hyp3_db.hyp3_models.base import Base
 from sqlalchemy.sql import text
 
-HOST = os.environ("Hyp3DBHost")
-USER = os.environ("Hyp3DBRootUser")
-PASS = os.environ("Hyp3DBRootPass")
+HOST = os.environ["Hyp3DBHost"]
+USER = os.environ["Hyp3DBRootUser"]
+PASS = os.environ["Hyp3DBRootPass"]
 
 ADD_USER_SQL = text("""
 CREATE USER hyp3_user WITH PASSWORD :password;
