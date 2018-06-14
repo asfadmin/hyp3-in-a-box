@@ -19,7 +19,7 @@ from template import t
 from environment import environment
 
 from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Code, Function
+from troposphere.awslambda import Function
 from troposphere.iam import Role
 
 from . import utils
@@ -46,10 +46,11 @@ lambda_role = t.add_resource(Role(
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
+
 lambda_function = t.add_resource(Function(
     "SchedulerFunction",
     FunctionName=Ref(lambda_name),
-    Code=Code(
+    Code=utils.make_lambda_code(
         S3Bucket=environment.lambda_bucket,
         S3Key="{maturity}/{zip}".format(
             maturity=environment.maturity,

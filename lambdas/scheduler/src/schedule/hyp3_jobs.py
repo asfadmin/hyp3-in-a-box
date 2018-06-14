@@ -27,9 +27,9 @@ def format_polygon(point_vals):
     points = ""
 
     for x, y in zip(point_vals[0::2], point_vals[1::2]):
-        points += f"{y} {x},"
+        points += "{} {},".format(x, y)
 
-    return f"POLYGON(({points[:-1]}))"
+    return "POLYGON(({}))".format(points[:-1])
 
 
 def get_users_for(subs, db):

@@ -64,7 +64,7 @@ lambda_exe_role = t.add_resource(iam.Role(
 find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
     FunctionName="hyp3-find-new-granules",
-    Code=awslambda.Code(
+    Code=utils.make_lambda_code(
         S3Bucket=environment.lambda_bucket,
         S3Key="{maturity}/{zip}".format(
             maturity=environment.maturity,
