@@ -1,5 +1,6 @@
 lambdas/upload_lambda.sh
 make_stack.sh
+db_creds.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
