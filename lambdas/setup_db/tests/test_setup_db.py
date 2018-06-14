@@ -10,7 +10,7 @@ from unittest import TestCase
 
 from hyp3_db import make_test_db
 from hyp3_db.hyp3_models.base import Base
-from lambda_function import setup_db
+from setup_db import setup_db
 
 
 class TestSetupDb(TestCase):
