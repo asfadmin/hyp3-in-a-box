@@ -11,7 +11,7 @@
 import json
 import os
 import stat
-import subprocess32 as subprocess
+import subprocess
 import sys
 from xml.etree import ElementTree
 
@@ -19,12 +19,9 @@ import boto3
 from github_status import set_github_ci_status, update_github_status
 
 S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
-
 MATURITY = os.environ["MATURITY"]
-
 BUCKET_BASE_DIR = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
-
-build_step_failure_message = None
+BUILD_STEP_MESSAGES = {}
 
 
 def install():
@@ -34,10 +31,9 @@ def install():
 
 
 def pre_build():
-    global build_step_failure_message
-
     try:
-        subprocess.check_call(["python3", "-m", "pytest", "--junitxml=/tmp/test_results.xml"])
+        subprocess.check_call(
+            ["python3", "-m", "pytest", "--junitxml=/tmp/test_results.xml"])
     except subprocess.CalledProcessError as e:
         raise e
     finally:
@@ -47,7 +43,7 @@ def pre_build():
             r.get("failures"),
             r.get("errors")
         )
-        build_step_failure_message = test_result_summary
+        BUILD_STEP_MESSAGES['failure'] = test_result_summary
         save_config("TEST_RESULT_SUMMARY", test_result_summary)
 
 
@@ -57,13 +53,26 @@ def build():
     version_options = []
     for v in object_versions:
         version_options += ["--{}_version".format(v[0]), v[1]]
-    subprocess.check_call(["python3", "cloudformation/tropo/create_stack.py", "build/template.json", "--maturity", MATURITY] + version_options)
+
+    subprocess.check_call([
+        "python3", "cloudformation/tropo/create_stack.py",
+        "build/template.json", "--maturity", MATURITY
+    ] + version_options
+    )
     subprocess.check_call(["make", "clean", "html"], cwd="docs")
 
 
 def build_lambdas():
-    subprocess.check_call(["python3", "lambdas/build_lambda.py", "-a", "-o", "build/lambdas/", "lambdas/"])
-    subprocess.check_call(["aws", "s3", "cp", "build/lambdas", "s3://{}".format(BUCKET_BASE_DIR), "--recursive", "--include", '"*"'])
+    subprocess.check_call([
+        "python3", "lambdas/build_lambda.py", "-a",
+        "-o", "build/lambdas/", "lambdas/"
+    ])
+    subprocess.check_call([
+        "aws", "s3", "cp", "build/lambdas",
+        "s3://{}".format(BUCKET_BASE_DIR),
+        "--recursive",
+        "--include", '"*"'
+    ])
     print("Latest Source Versions:")
     versions = get_latest_lambda_versions()
     print(versions)
@@ -86,11 +95,22 @@ def get_latest_lambda_versions():
             latest_version.id
         ))
 
+    return versions
+
 
 def post_build():
-    subprocess.check_call(["aws", "s3", "cp", "s3://{}".format(os.path.join(BUCKET_BASE_DIR, "config/configuration.json")), "build/"])
-    subprocess.check_call(["aws", "s3", "cp", "docs/_build/html", "s3://asf-docs/hyp3-in-a-box", "--recursive", "--acl", "public-read"])
-    set_github_ci_status("success", description=get_config("TEST_RESULT_SUMMARY", "Build completed"))
+    bucket_uri = "s3://{}".format(
+        os.path.join(BUCKET_BASE_DIR, "config/configuration.json")
+    )
+
+    subprocess.check_call(["aws", "s3", "cp", bucket_uri, "build/"])
+    subprocess.check_call([
+        "aws", "s3", "cp", "docs/_build/html",
+        "s3://asf-docs/hyp3-in-a-box",
+        "--recursive", "--acl", "public-read"
+    ])
+    set_github_ci_status("success", description=get_config(
+        "TEST_RESULT_SUMMARY", "Build completed"))
 
 
 def install_all_requirements_txts(root_dir):
@@ -139,13 +159,10 @@ def main(step=None):
         if get_config("BUILD_STATUS", 0) == 0:
             save_config("BUILD_STATUS", 0)
             return step_function_table.get(step, lambda: None)()
-        else:
-            return
     except subprocess.CalledProcessError as e:
         desc = step
-        global build_step_failure_message
-        if build_step_failure_message is not None:
-            desc = build_step_failure_message
+        if 'failure' in BUILD_STEP_MESSAGES is not None:
+            desc = BUILD_STEP_MESSAGES['failure']
         set_github_ci_status("failure", description=desc)
         save_config("BUILD_STATUS", e.returncode)
         raise
