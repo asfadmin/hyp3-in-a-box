@@ -1,8 +1,8 @@
 import contextlib as cl
 import datetime as dt
-import requests
 import json
 import pathlib as pl
+import requests
 import time
 
 from . import previous_time, s3
@@ -73,7 +73,7 @@ def make_cmr_query(prev_time):
 
     data = resp.json()
 
-    if not environment.is_production:
+    if 'test' in environment.maturity:
         cache_output(data)
 
     return data

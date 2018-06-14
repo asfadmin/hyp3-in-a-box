@@ -3,7 +3,7 @@ import unittest
 from unittest import mock
 
 import import_find_new
-import mocks
+import custom_mocks
 from find_new import environment as env
 from find_new import previous_time
 
@@ -15,15 +15,14 @@ class TestPreviousTime(unittest.TestCase):
         env.maturity = 'test'
 
     @mock.patch(
-        'find_new.previous_time.s3.upload',
-        side_effect=mocks.s3_upload
+        'find_new.previous_time.s3.upload'
     )
     def test_set_time(self, mock_upload):
         previous_time.set_time(TESTING_TIME)
 
     @mock.patch(
         'find_new.previous_time.s3.download',
-        side_effect=mocks.get_s3_download_func(time=TESTING_TIME)
+        side_effect=custom_mocks.get_s3_download_func(time=TESTING_TIME)
     )
     def test_get_time(self, mock_download):
         t = previous_time.get_time()

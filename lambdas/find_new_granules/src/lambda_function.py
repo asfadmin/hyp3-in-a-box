@@ -32,7 +32,7 @@ def start_scheduler_with(new_granules_json):
 
 
 def setup_env():
-    env.is_production = True
+    env.maturity = 'prod'
 
     env.bucket = os.environ['PREVIOUS_TIME_BUCKET']
     env.scheduler_lambda = os.environ['SCHEDULER_LAMBDA_NAME']

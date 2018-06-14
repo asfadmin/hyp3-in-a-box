@@ -4,8 +4,8 @@ from unittest import mock
 
 import import_find_new
 
+import custom_mocks
 import find_new
-import mocks
 from find_new import environment as env
 
 
@@ -15,7 +15,7 @@ class TestFindNewGranules(unittest.TestCase):
 
     @mock.patch(
         'find_new.find_new.requests.get',
-        side_effect=mocks.asf_api_requests_get
+        side_effect=custom_mocks.asf_api_requests_get
     )
     def test_get_new(self, mock_get):
         prev_time = dt.datetime.now()
@@ -29,11 +29,10 @@ class TestFindNewGranules(unittest.TestCase):
 
     @mock.patch(
         'find_new.find_new.get_new_granules_after',
-        side_effect=mocks.asf_api_requests_get
+        side_effect=custom_mocks.asf_api_requests_get
     )
     @mock.patch(
-        'find_new.s3.upload',
-        side_effect=mocks.s3_upload
+        'find_new.s3.upload'
     )
     def test_s3_upload(self, mock_s3_upload, mock_find_new):
         find_new.granules()

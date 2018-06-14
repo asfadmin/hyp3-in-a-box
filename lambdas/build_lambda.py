@@ -21,7 +21,8 @@ class Logger(object):
     def __init__(self, level):
         self.level = level
 
-    def info(self, *args, **kwargs):
+    @staticmethod
+    def info(cls, *args, **kwargs):
         print(*args, **kwargs)
 
     def debug(self, *args, **kwargs):

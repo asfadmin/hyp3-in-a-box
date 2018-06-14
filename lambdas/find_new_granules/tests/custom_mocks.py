@@ -41,11 +41,6 @@ def is_api_url(url):
     )
 
 
-def s3_upload(*args, **kwargs):
-    """used to mock s3.upload"""
-    return True
-
-
 def get_s3_download_func(time):
     def s3_download(*args, **kwargs):
         time_dict = json.dumps({'previous': time.timestamp()})
