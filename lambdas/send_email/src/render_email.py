@@ -2,14 +2,14 @@
 # William Horn
 # Created: June 2018
 
-import abc
-import os
-
 import jinja2 as j2
+import pathlib as pl
+import abc
 
 
 class Email(abc.ABC):
     ''' Email object for generating an HTML email from Jinja2 template'''
+
     def __init__(self, template_name):
         self.template_name = template_name
 
@@ -19,12 +19,12 @@ class Email(abc.ABC):
             :param \*\*kwargs: The Jinja2 template context
 
                 * subject - Email subject
-                * additional_info - A list of dictionaries containing more meta data about the processing event
+                * additional_info - list[dict] containing meta data about event
                     * name - Metadata title
                     * value - Metadata content
                 * browse_url - URL of a browse image to display
-                * download_url - URL where the processed data can be downloaded from
-                * unsubscribe_url - URL to disable email notifications of this type
+                * download_url - URL where the processed data can be downloaded
+                * unsubscribe_url - URL to disable email notifications
 
             :returns: The rendered message
             :rtype: string
@@ -42,13 +42,13 @@ class Email(abc.ABC):
             :rtype: `jinja2.Environment <http://jinja.pocoo.org/docs/latest/api/#jinja2.Environment>`_
         '''
         env = j2.Environment(
-            loader=j2.FileSystemLoader(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    'templates'
-                )
-            ),
+            loader=self.get_loader(),
             autoescape=True
         )
 
         return env
+
+    def get_loader(self):
+        templates_path = pl.Path(__file__).parent / 'templates'
+
+        return j2.FileSystemLoader(str(templates_path))

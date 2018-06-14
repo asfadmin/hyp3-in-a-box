@@ -94,6 +94,9 @@ def make_zip(path, zip_name):
             else:
                 zf.write(full_path, arcname=dep_dir)
 
+        print('removing dependencies folder')
+        shutil.rmtree(dependencies)
+
 
 def add_folder_to_zip(containing_dir, folder, zf):
     for fname in os.listdir(os.path.join(containing_dir, folder)):
