@@ -13,6 +13,7 @@ AWS CloudFormation
    cloudformation/find_new.rst
    cloudformation/send_email.rst
    cloudformation/scheduler.rst
+   cloudformation/setup_db.rst
 
 Troposphere
 -----------

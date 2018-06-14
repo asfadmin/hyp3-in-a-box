@@ -23,6 +23,7 @@ import sys
 sys.path.insert(0, os.path.abspath('../lambdas/find_new_granules/src'))
 sys.path.insert(0, os.path.abspath('../lambdas/scheduler/src'))
 sys.path.insert(0, os.path.abspath('../lambdas/send_email/src'))
+sys.path.insert(0, os.path.abspath('../lambdas/setup_db/src'))
 sys.path.insert(0, os.path.abspath('../lambdas'))
 sys.path.insert(0, os.path.abspath('../cloudformation/tropo'))
 sys.path.insert(0, os.path.abspath('..'))
