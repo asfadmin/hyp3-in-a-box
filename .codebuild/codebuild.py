@@ -72,10 +72,10 @@ def build_lambdas():
 
 def get_latest_lambda_versions():
     versions = []
-    s3 = boto3.resource()
+    s3 = boto3.resource("s3")
     bucket = s3.Bucket(S3_SOURCE_BUCKET)
     for lambda_zip in os.listdir("build/lambdas"):
-        if '.zip' not in lambda_zip:
+        if ".zip" not in lambda_zip:
             continue
         latest_version = bucket.object_versions.filter(
             Prefix="{}/{}".format(MATURITY, "send_email.zip"),
