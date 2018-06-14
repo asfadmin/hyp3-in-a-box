@@ -15,14 +15,14 @@ def make_notify_event(sub, user, granule):
         address=user.email,
         subject='New Subscription Data',
         additional_info=[{
-            'Name': 'User',
-            'Value': user.username
+            'name': 'User',
+            'value': user.username
         }, {
-            'Name': 'Subscripton',
-            'Value': sub.name
+            'name': 'Subscripton',
+            'value': sub.name
         }, {
-            'Name': 'Granule',
-            'Value': granule['name']
+            'name': 'Granule',
+            'value': granule['name']
         }],
         browse_url='',
         download_url=granule['download_url']
