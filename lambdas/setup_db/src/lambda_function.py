@@ -27,6 +27,6 @@ def lambda_handler(event, context):
         password=PASS
     )
 
-    db.session.engine.execute(ADD_USER_SQL, password="testpass")
+    db.engine.execute(ADD_USER_SQL, password="testpass")
 
-    Base.metadata.create_all(db.session.engine)
+    Base.metadata.create_all(db.engine)
