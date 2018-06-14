@@ -1,5 +1,4 @@
 from geoalchemy2 import WKTElement
-from sqlalchemy import sql
 
 from .hyp3_models import LocalQueue, Subscription, User
 from .session import make_session

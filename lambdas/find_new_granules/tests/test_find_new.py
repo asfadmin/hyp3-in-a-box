@@ -6,12 +6,11 @@ import import_find_new
 
 import custom_mocks
 import find_new
-from find_new import environment as env
 
 
 class TestFindNewGranules(unittest.TestCase):
     def setUp(self):
-        env.maturity = 'test'
+        find_new.environment.maturity = 'test'
 
     @mock.patch(
         'find_new.find_new.requests.get',

@@ -1,8 +1,10 @@
+import os
+
 from environment import environment
 import sns
 import render
 import ses
-import os
+
 
 
 def lambda_handler(aws_event, aws_context):
@@ -39,5 +41,5 @@ def setup_env():
 
 def get_address(event):
     # TODO: This is just temperary for testing
-    print('TESTING: got email from {event.address}')
+    print(f'TESTING: got email from {event.address}')
     return 'wbhorn@alaska.edu'

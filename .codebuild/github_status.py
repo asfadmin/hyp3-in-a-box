@@ -28,13 +28,25 @@ def set_github_ci_status(status, description=None):
     with open("build/status.svg", "w") as f:
         f.write(get_svg_status(svg_status))
 
-    subprocess.check_call(["aws", "s3", "cp", "build/status.svg", "s3://{}".format(os.path.join(S3_STATUS_BUCKET, MATURITY + "-build-status.svg")), "--acl", "public-read", "--cache-control", "no-cache"])
+    s3_object_name = "s3://{}".format(
+        os.path.join(S3_STATUS_BUCKET, MATURITY + "-build-status.svg")
+    )
+
+    subprocess.check_call([
+        "aws", "s3", "cp", "build/status.svg",
+        s3_object_name, "--acl", "public-read",
+        "--cache-control", "no-cache"
+    ])
 
     update_github_status(status, description=description)
 
 
 def update_github_status(state, description=None):
-    url = urljoin(GITHUB_API_ENDPOINT, "repos/{}/statuses/{}".format(GITHUB_REPOSITORY_NAME, GITHUB_COMMIT_HASH))
+    url = urljoin(
+        GITHUB_API_ENDPOINT,
+        "repos/{}/statuses/{}".format(GITHUB_REPOSITORY_NAME,
+                                      GITHUB_COMMIT_HASH)
+    )
     data = {
         "state": state,
         "context": GITHUB_STATUS_CONTEXT,

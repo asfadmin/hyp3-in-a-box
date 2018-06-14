@@ -1,10 +1,11 @@
 import json
 import pathlib as pl
 
+import import_hyp3_events
+
 import hyp3_events
 import pytest
 
-import import_hyp3_events
 
 PARAM_NAMES = 'EventType, sample_name'
 EVENTS_TO_TEST = [
@@ -22,7 +23,7 @@ def test_notify_only_construction(EventType, sample_name):
 
 @pytest.mark.parametrize(PARAM_NAMES, EVENTS_TO_TEST)
 def test_notify_only_dict(EventType, sample_name):
-    test_event_data = load_sample_event_data('notify-only', output='dict')
+    test_event_data = load_sample_event_data(sample_name, output='dict')
     event = EventType(**test_event_data)
 
     e_dict = event.to_dict()

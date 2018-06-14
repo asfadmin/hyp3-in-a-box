@@ -14,9 +14,9 @@ class TestFindNewGranules(unittest.TestCase):
         path = pl.Path(__file__).parent / 'data/api-response.json'
 
         with path.open('r') as f:
-            results = json.load(f)
+            sample_results = json.load(f)
 
-        self.search_results = results['feed']['entry']
+        self.search_results = sample_results['feed']['entry']
 
     def test_package(self):
         new_grans = results.package(self.search_results)

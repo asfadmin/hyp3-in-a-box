@@ -2,9 +2,9 @@
 # William Horn
 # Created: June 2018
 
-import jinja2 as j2
-import pathlib as pl
 import abc
+import pathlib as pl
+import jinja2 as j2
 
 
 class Email(abc.ABC):
@@ -42,13 +42,14 @@ class Email(abc.ABC):
             :rtype: `jinja2.Environment <http://jinja.pocoo.org/docs/latest/api/#jinja2.Environment>`_
         '''
         env = j2.Environment(
-            loader=self.get_loader(),
+            loader=get_loader(),
             autoescape=True
         )
 
         return env
 
-    def get_loader(self):
-        templates_path = pl.Path(__file__).parent / 'templates'
 
-        return j2.FileSystemLoader(str(templates_path))
+def get_loader():
+    templates_path = pl.Path(__file__).parent / 'templates'
+
+    return j2.FileSystemLoader(str(templates_path))

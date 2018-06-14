@@ -22,7 +22,7 @@ def serializeable(sub):
     for k, v in sub.__dict__.items():
         try:
             json.dumps(v)
-        except Exception:
+        except TypeError:
             continue
 
         sub_dict[k] = v
