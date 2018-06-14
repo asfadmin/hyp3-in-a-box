@@ -4,16 +4,22 @@
 
 # Test cases for seting up the database
 
-import pytest
+import import_setup_db
+
+from unittest import TestCase
+
 from hyp3_db import make_test_db
 from hyp3_db.hyp3_models.base import Base
+from lambda_function import setup_db
 
 
-def test_create_all(*args):
-    db = make_test_db()
+class TestSetupDb(TestCase):
 
-    try:
-        Base.metadata.drop_all(db.engine)
-        Base.metadata.create_all(db.engine)
-    except Exception as e:
-        pytest.fail("Error Raised: {}".format(str(e)))
+    def setUp(self):
+        self.db = make_test_db()
+        Base.metadata.drop_all(self.db.engine)
+        self.db.engine.execute("REVOKE ALL PRIVILEGES ON DATABASE hyp3db FROM hyp3_user")
+        self.db.engine.execute("DROP USER hyp3_user")
+
+    def test_lambda_function(self):
+        setup_db(self.db)
