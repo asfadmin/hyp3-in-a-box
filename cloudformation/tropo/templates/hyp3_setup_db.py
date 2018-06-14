@@ -49,12 +49,13 @@ send_email_role = t.add_resource(Role(
 send_email = t.add_resource(Function(
     "SetupDBFunction",
     FunctionName=Ref(lambda_name),
-    Code=Code(
+    Code=utils.make_lambda_code(
         S3Bucket=environment.lambda_bucket,
         S3Key="{maturity}/{zip}".format(
             maturity=environment.maturity,
             zip=source_zip
-        )
+        ),
+        S3ObjectVersion=environment.setup_db_version
     ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(send_email_role, "Arn"),

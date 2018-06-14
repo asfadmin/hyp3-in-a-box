@@ -1,5 +1,7 @@
-import pathlib as pl
 import json
+import pathlib as pl
+
+from troposphere.awslambda import Code
 
 
 def get_map(name):
@@ -22,3 +24,9 @@ def load_json_from(directory, name):
         loaded_json = json.load(f)
 
     return loaded_json
+
+
+def make_lambda_code(**kwargs):
+    kwargs = {key: value for key, value in kwargs.items() if value is not None}
+
+    return Code(**kwargs)

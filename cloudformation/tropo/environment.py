@@ -9,6 +9,7 @@ class Environment:
         self.find_new_version = None
         self.send_email_version = None
         self.scheduler_version = None
+        self.setup_db_version = None
 
     def maturity(self):
         return self.maturity
