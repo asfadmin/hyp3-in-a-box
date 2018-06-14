@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 troposphere = "*"
 "jinja2" = "*"
+"61ea59b" = {path = "./../../modules/hyp3_events"}
 
 [dev-packages]
 

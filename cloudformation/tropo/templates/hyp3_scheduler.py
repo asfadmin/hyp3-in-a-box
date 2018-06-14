@@ -22,7 +22,6 @@ from troposphere.awslambda import Function, Environment
 from troposphere.iam import Role, Policy
 
 from .hyp3_sns import finish_sns
-from .hyp3_kms_key import kms_key
 from . import utils
 
 source_zip = "scheduler.zip"
@@ -60,7 +59,6 @@ scheduler = t.add_resource(Function(
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(lambda_role, "Arn"),
     Runtime="python3.6",
-    KmsKeyArn=Ref(kms_key),
     Environment=Environment(
         Variables={
             'SNS_ARN': Ref(finish_sns),

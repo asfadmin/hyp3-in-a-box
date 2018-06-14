@@ -1,6 +1,8 @@
 from render_email import Email
 import boto3
 
+import hyp3_events
+
 ses = boto3.client('ses')
 
 
@@ -30,17 +32,31 @@ def lambda_handler(event, aws_context):
                 * to_addresses - List of addresses to send the email to
         :param context: lambda runtime info
     """
-    context = event['body']['context']
-    to_addresses = event['body']['to_addresses']
+    sns_record = event['Records'].pop()['Sns']
+    event_json = sns_record['Message']
+
+    notify_event = hyp3_events.NotifyOnlyEvent.from_json(event_json)
+
+    # TODO: This is just a hack for testing
+    if 'wbhorn@alaska.edu' not in notify_event.address:
+        print('TESTING!! not sending to address {}'.format(
+            notify_event.address
+        ))
+        notify_event.address = 'wbhorn@alaska.edu'
+
+    to_addresses = [notify_event.address]
+
+    context = notify_event.to_dict()
     message = Email('email.html.j2').render(**context)
+
     ses.send_email(
-        Source='reweeden@alaska.edu',
+        Source='wbhorn@alaska.edu',
         Destination={
             'ToAddresses': to_addresses
         },
         Message={
             'Subject': {
-                'Data': context['subject']
+                'Data': f'[hyp3] {notify_event.subject}'
             },
             'Body': {
                 'Html': {
