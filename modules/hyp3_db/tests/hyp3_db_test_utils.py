@@ -48,8 +48,8 @@ def load_creds():
 
     if path.exists():
         return load_creds_from_path(path)
-    else:
-        return load_creds_from_env
+
+    return load_creds_from_env()
 
 
 def load_creds_from_path(path):

@@ -11,7 +11,7 @@
 import json
 import os
 import stat
-import subprocess
+import subprocess32 as subprocess
 import sys
 from xml.etree import ElementTree
 
@@ -29,7 +29,7 @@ build_step_failure_message = None
 
 def install():
     update_github_status("pending", description="Build in progress")
-    install_all_requirements_txts(".")
+    install_all_requirements_txts('.')
     os.chmod("upload.sh", stat.S_IEXEC)
 
 
@@ -93,8 +93,8 @@ def post_build():
     set_github_ci_status("success", description=get_config("TEST_RESULT_SUMMARY", "Build completed"))
 
 
-def install_all_requirements_txts():
-    for path, dirs, files in os.walk('.'):
+def install_all_requirements_txts(root_dir):
+    for path, dirs, files in os.walk(root_dir):
         for name in files:
             if "requirements" in name:
                 subprocess.check_call(

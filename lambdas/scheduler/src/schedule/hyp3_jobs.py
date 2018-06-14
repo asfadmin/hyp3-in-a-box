@@ -8,8 +8,7 @@ def hyp3_jobs(new_granule_packages):
     db = Hyp3DB(host, name, password)
 
     emails_packages = []
-    # TODO: Take out [:3] when done testing
-    for package in new_granule_packages[:3]:
+    for package in new_granule_packages:
         polygon = format_polygon(package['polygon'])
 
         subs = db.get_enabled_intersecting_subs(polygon)
