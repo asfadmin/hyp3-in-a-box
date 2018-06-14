@@ -6,15 +6,8 @@
 
 import os
 
-from sqlalchemy.sql import text
-
 from hyp3_db import Hyp3DB
-from hyp3_db.hyp3_models.base import Base
-
-ADD_USER_SQL = text("""
-CREATE USER hyp3_user WITH PASSWORD :password;
-GRANT ALL PRIVILEGES ON DATABASE hyp3db to hyp3_user;
-""")
+from setup_db import setup_db
 
 
 def lambda_handler(event, context):
@@ -32,8 +25,3 @@ def get_db():
         user=USER,
         password=PASS
     )
-
-
-def setup_db(db):
-    db.engine.execute(ADD_USER_SQL, password="testpass")
-    Base.metadata.create_all(db.engine)
