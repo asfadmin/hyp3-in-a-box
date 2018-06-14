@@ -1,24 +1,10 @@
 import pathlib as pl
 import json
-import mock
 
 import import_send_email
-
 from hyp3_events import Hyp3Event
-from lambda_function import lambda_handler
 import sns
 import render
-
-
-@mock.patch('ses.send')
-@mock.patch(
-    'os.environ'
-)
-def test_send_email_lambda(os, ses_mock):
-    event, context = load_example_sns(), {}
-
-    lambda_handler(event, context)
-    ses_mock.assert_called_once()
 
 
 def test_sns_event_from_notification():
