@@ -19,6 +19,7 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('../lambdas/find_new_granules/src'))
 sys.path.insert(0, os.path.abspath('../lambdas/scheduler/src'))
 sys.path.insert(0, os.path.abspath('../lambdas/send_email/src'))

@@ -1,13 +1,12 @@
-import import_find_new
-
+import datetime as dt
 import unittest
 from unittest import mock
-import datetime as dt
 
-import mocks
+import import_find_new
 
-from find_new import environment as env
 import find_new
+import mocks
+from find_new import environment as env
 
 
 class TestFindNewGranules(unittest.TestCase):
@@ -26,6 +25,8 @@ class TestFindNewGranules(unittest.TestCase):
         self.assertIsInstance(granules, list)
         self.assertIsInstance(granules.pop(), dict)
 
+        mock_get.assert_called()
+
     @mock.patch(
         'find_new.find_new.get_new_granules_after',
         side_effect=mocks.asf_api_requests_get
@@ -36,6 +37,9 @@ class TestFindNewGranules(unittest.TestCase):
     )
     def test_s3_upload(self, mock_s3_upload, mock_find_new):
         find_new.granules()
+
+        mock_s3_upload.assert_called_once()
+        mock_find_new.assert_called_once()
 
 
 if __name__ == "__main__":

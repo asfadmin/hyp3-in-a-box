@@ -15,9 +15,6 @@ class Environment:
         self.db_pass = ""
         self.db_user = ""
 
-    def maturity(self):
-        return self.maturity
-
     def get_variables(self):
         return [
             (k, type(v)) for k, v in self.__dict__.items()

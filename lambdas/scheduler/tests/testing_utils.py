@@ -4,7 +4,6 @@ import pathlib as pl
 
 from hyp3_db import hyp3_models
 
-
 data_path = pl.Path(__file__).parent / 'data'
 
 

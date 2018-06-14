@@ -2,14 +2,7 @@
 # Rohan Weeden
 # Created June 7, 2017
 
-from sqlalchemy import (
-    Column,
-    Integer,
-    Text,
-    Boolean,
-    Float
-)
-from sqlalchemy import sql
+from sqlalchemy import Boolean, Column, Float, Integer, Text, sql
 
 from .base import Base
 

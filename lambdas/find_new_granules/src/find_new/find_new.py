@@ -1,13 +1,12 @@
-import requests
+import contextlib as cl
 import datetime as dt
+import requests
 import json
 import pathlib as pl
-import contextlib as cl
 import time
 
-from . import previous_time
+from . import previous_time, s3
 from .environment import environment
-from . import s3
 
 MAX_RESULTS = 2000
 
@@ -20,17 +19,20 @@ def granules():
     prev_time = get_previous_time_formatted()
 
     request_time = dt.datetime.utcnow()
-    print('time-range: {} -> {}'.format(prev_time, cmr_date_format(request_time)))
+    print('time-range: {} -> {}'.format(
+        prev_time,
+        cmr_date_format(request_time)
+    ))
     results = get_new_granules_after(prev_time)
 
-    previous_time.set(request_time)
+    previous_time.set_time(request_time)
 
     return results
 
 
 def get_previous_time_formatted():
     try:
-        prev_time = previous_time.get()
+        prev_time = previous_time.get_time()
     except s3.ObjectDoesntExist:
         prev_time = get_init_prev_time()
 
@@ -79,6 +81,7 @@ def make_cmr_query(prev_time):
 
 class SearchAPI:
     """ Class to wrap searching an generic api"""
+
     def __init__(self, api_url):
         self.api_url = api_url
 

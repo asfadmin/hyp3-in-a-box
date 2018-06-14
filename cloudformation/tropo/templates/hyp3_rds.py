@@ -1,8 +1,9 @@
 # Example modified from:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
-from template import t
 from troposphere import GetAtt, Output, Parameter, Ref, ec2, rds
+
+from template import t
 
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 

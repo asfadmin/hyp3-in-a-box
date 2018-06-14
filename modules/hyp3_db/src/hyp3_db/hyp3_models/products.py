@@ -1,15 +1,5 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    BigInteger,
-    Text,
-    DateTime,
-    Boolean,
-    ForeignKey,
-    REAL,
-    VARCHAR
-)
-from sqlalchemy import orm
+from sqlalchemy import (REAL, VARCHAR, BigInteger, Boolean, Column, DateTime,
+                        ForeignKey, Integer, Text, orm)
 
 from .base import Base
 from .groups import subscriptions_in_groups

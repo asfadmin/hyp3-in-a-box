@@ -1,26 +1,31 @@
+import pathlib as pl
+import json
+
 import import_send_email
 
-from render_email import Email
+from hyp3_events import Hyp3Event
+import sns
+import render
 
 
-example_params = {
-    'download_url': 'www.hello.html',
-    'subject': 'New Data For Subscription',
-    'browse_url': 'https://hyp3-download.asf.alaska.edu/hyp3/browse/dis_mag+S1_20180504T033546_S1_20180528T033547+256-64_50-10_0.00-0.08_2_geo.png',
-    'unsubscribe_url': 'https://unsubscribe.example.com',
-    'additional_info': [
-        {'name': 'granule name', 'value': '777778'}
-    ]
-}
+def test_sns_event_from_notification():
+    event = load_example_sns()
+
+    hyp3_event = sns.get_hyp3_event_from(event)
+
+    assert isinstance(hyp3_event, Hyp3Event)
 
 
-def test_email_class():
-    email_obj = Email('email.html.j2')
-    rendered_output = email_obj.render(**example_params)
+def test_render_email():
+    event = load_example_sns()
 
-    assert isinstance(rendered_output, str)
-    assert example_params['additional_info'][0]['name'] in rendered_output
-    assert example_params['additional_info'][0]['value'] in rendered_output
-    for item in example_params.items():
-        if isinstance(item, str):
-            assert item in rendered_output
+    hyp3_event = sns.get_hyp3_event_from(event)
+    rendered_email = render.email_with(hyp3_event)
+
+    assert isinstance(rendered_email, str)
+
+
+def load_example_sns():
+    sns_example_path = pl.Path(__file__).parent / 'data' / 'sns-event.json'
+    with sns_example_path.open('r') as f:
+        return json.load(f)

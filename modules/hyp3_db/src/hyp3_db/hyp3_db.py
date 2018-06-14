@@ -1,5 +1,4 @@
 from geoalchemy2 import WKTElement
-from sqlalchemy import sql
 
 from .hyp3_models import LocalQueue, Subscription, User
 from .session import make_engine, make_session
@@ -61,25 +60,6 @@ class Hyp3DB:
             .query(LocalQueue)               \
             .filter(LocalQueue.id == job_id) \
             .one()
-
-    # TODO: Get user and process id from subscription
-    def add_job(self, sub, granule, granule_url, message):
-        user = 'sqlalchemy stuff here'
-        process = 'sqlalchemy stuff here'
-        new_job = LocalQueue(
-            granule=granule,
-            granule_url=granule_url,
-            request_time=sql.func.now(),
-            priority=5,
-            sub_id=sub.id,
-            user_id=user.id,
-            process_id=process.id,
-            status='QUEUED',
-            message=message
-        )
-
-        self.session.add(new_job)
-        return new_job
 
     def set_job_status(self, job, status):
         if status not in Hyp3DB.valid_job_status:

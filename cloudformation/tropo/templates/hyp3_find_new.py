@@ -15,14 +15,11 @@ Resources
 
 """
 
-from template import t
-from environment import environment
-
 import troposphere as ts
-from troposphere import awslambda
-from troposphere import iam
-from troposphere import events
-from troposphere import s3
+from troposphere import awslambda, events, iam, s3
+
+from environment import environment
+from template import t
 
 from . import utils
 

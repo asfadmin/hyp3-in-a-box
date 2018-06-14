@@ -5,8 +5,9 @@
 # AWS Encryption key used to keep sensitive HyP3 credentials secure.
 
 from awacs.aws import Action, Allow, PolicyDocument, Principal, Statement
-from template import t
 from troposphere import AWS_ACCOUNT_ID, Join, Ref, kms
+
+from template import t
 
 print('  adding KMS key')
 

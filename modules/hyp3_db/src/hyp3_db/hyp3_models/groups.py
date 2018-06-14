@@ -4,20 +4,10 @@
 
 # Database models for groups
 
-from sqlalchemy import (
-    Column,
-    Integer,
-    Text,
-    Boolean,
-    ForeignKey,
-    Table,
-    VARCHAR
-)
-from sqlalchemy import orm
-from sqlalchemy import sql
+from sqlalchemy import (VARCHAR, Boolean, Column, ForeignKey, Integer, Table,
+                        Text, orm, sql)
 
 from .base import Base
-
 
 subscriptions_in_groups = Table(
     'subscriptions_in_groups',

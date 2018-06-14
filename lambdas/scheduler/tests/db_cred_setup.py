@@ -1,8 +1,9 @@
-import pytest
 import json
 
-from environment import environment
+import pytest
+
 import testing_utils as utils
+from environment import environment
 
 creds_path = utils.data_path / 'creds.json'
 

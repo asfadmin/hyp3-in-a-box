@@ -9,18 +9,14 @@
 
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.sts import AssumeRole
+from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref
+from troposphere.elasticbeanstalk import (Application, ApplicationVersion,
+                                          ConfigurationTemplate, Environment,
+                                          OptionSettings, SourceBundle)
+from troposphere.iam import InstanceProfile, Role
+
 from environment import environment
 from template import t
-from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref
-from troposphere.elasticbeanstalk import (
-    Application,
-    ApplicationVersion,
-    ConfigurationTemplate,
-    Environment,
-    OptionSettings,
-    SourceBundle
-)
-from troposphere.iam import InstanceProfile, Role
 
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map

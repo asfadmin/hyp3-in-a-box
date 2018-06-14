@@ -2,7 +2,7 @@ import json
 import os
 import pathlib as pl
 
-from hyp3_db import Hyp3DB, make_test_db
+from hyp3_db import make_test_db
 
 DB_CONNECTION = {}
 
@@ -24,7 +24,7 @@ def load_creds_from_env():
 
 
 def with_db(func):
-    def wrapper(*args, **kwargs):
+    def wrapper():
         if 'connection' not in DB_CONNECTION:
             db = make_test_db()
             DB_CONNECTION['connection'] = db
@@ -40,8 +40,8 @@ def load_creds():
 
     if path.exists():
         return load_creds_from_path(path)
-    else:
-        return load_creds_from_env
+
+    return load_creds_from_env()
 
 
 def load_creds_from_path(path):

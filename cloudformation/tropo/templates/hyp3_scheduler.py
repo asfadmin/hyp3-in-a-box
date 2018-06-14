@@ -14,15 +14,15 @@ Resources
   * Lambda basic execution
 """
 
-from template import t
+from troposphere import GetAtt, Parameter, Ref
+from troposphere.awslambda import Environment, Function
+from troposphere.iam import Policy, Role
+
 from environment import environment
+from template import t
 
-from troposphere import GetAtt, Ref, Parameter
-from troposphere.awslambda import Function, Environment
-from troposphere.iam import Role, Policy
-
-from .hyp3_sns import finish_sns
 from . import utils
+from .hyp3_sns import finish_sns
 
 source_zip = "scheduler.zip"
 

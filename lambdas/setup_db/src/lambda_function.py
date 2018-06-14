@@ -6,9 +6,10 @@
 
 import os
 
+from sqlalchemy.sql import text
+
 from hyp3_db import Hyp3DB
 from hyp3_db.hyp3_models.base import Base
-from sqlalchemy.sql import text
 
 HOST = os.environ["Hyp3DBHost"]
 USER = os.environ["Hyp3DBRootUser"]

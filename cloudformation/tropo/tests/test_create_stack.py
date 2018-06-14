@@ -1,6 +1,8 @@
-from create_stack import make_template
 import os
+
 import boto3
+
+from create_stack import make_template
 
 client = boto3.client('cloudformation')
 

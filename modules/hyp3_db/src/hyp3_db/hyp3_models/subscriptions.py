@@ -5,19 +5,10 @@
 # Database models for subscription table
 
 
-from sqlalchemy import (
-    Column,
-    Integer,
-    Text,
-    Date,
-    Boolean,
-    ForeignKey,
-    ARRAY
-)
-from sqlalchemy import orm
-from sqlalchemy.dialects import postgresql
-from sqlalchemy import sql
 from geoalchemy2 import Geography
+from sqlalchemy import (ARRAY, Boolean, Column, Date, ForeignKey, Integer,
+                        Text, orm, sql)
+from sqlalchemy.dialects import postgresql
 
 from .base import Base
 from .groups import subscriptions_in_groups

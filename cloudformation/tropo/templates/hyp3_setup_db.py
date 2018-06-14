@@ -15,11 +15,12 @@ Resources
 
 """
 
-from environment import environment
-from template import t
 from troposphere import GetAtt, Parameter, Ref
 from troposphere.awslambda import Environment, Function
 from troposphere.iam import Role
+
+from environment import environment
+from template import t
 
 from . import utils
 from .hyp3_kms_key import kms_key

@@ -1,9 +1,10 @@
-import pytest
 import json
 import pathlib as pl
 
-import import_hyp3_events
 import hyp3_events
+import pytest
+
+import import_hyp3_events
 
 PARAM_NAMES = 'EventType, sample_name'
 EVENTS_TO_TEST = [
