@@ -6,7 +6,6 @@ import render
 import ses
 
 
-
 def lambda_handler(aws_event, aws_context):
     """ AWS Lambda entry point. Renders an email for the given parameters and
     sends it via SES.
@@ -23,10 +22,8 @@ def lambda_handler(aws_event, aws_context):
 
     notify_event = sns.get_hyp3_event_from(aws_event)
 
-    address = get_address(notify_event)
-
+    subject, address = notify_event.subject, notify_event.address
     message = render.email_with(notify_event)
-    subject = notify_event.subject
 
     ses.send(
         address,
@@ -37,9 +34,3 @@ def lambda_handler(aws_event, aws_context):
 
 def setup_env():
     environment.source_email = os.environ['SOURCE_EMAIL']
-
-
-def get_address(event):
-    # TODO: This is just temperary for testing
-    print(f'TESTING: got email from {event.address}')
-    return 'wbhorn@alaska.edu'

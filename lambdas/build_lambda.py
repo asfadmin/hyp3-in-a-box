@@ -22,7 +22,7 @@ class Logger(object):
         self.level = level
 
     @staticmethod
-    def info(cls, *args, **kwargs):
+    def info(*args, **kwargs):
         print(*args, **kwargs)
 
     def debug(self, *args, **kwargs):

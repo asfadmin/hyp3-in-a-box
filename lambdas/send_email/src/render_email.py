@@ -16,7 +16,7 @@ class Email(abc.ABC):
     def render(self, **kwargs):
         ''' Generate the email HTML using the given context.
 
-            :param \*\*kwargs: The Jinja2 template context
+            :param kwargs: The Jinja2 template context
 
                 * subject - Email subject
                 * additional_info - list[dict] containing meta data about event
@@ -29,24 +29,25 @@ class Email(abc.ABC):
             :returns: The rendered message
             :rtype: string
         '''
-        env = self.get_env()
+        env = get_env()
 
         temp = env.get_template(self.template_name)
 
         return temp.render(kwargs)
 
-    def get_env(self):
-        ''' Get the Jinja2 environment for rendering emails
 
-            :returns: The Jinja2 Environment
-            :rtype: `jinja2.Environment <http://jinja.pocoo.org/docs/latest/api/#jinja2.Environment>`_
-        '''
-        env = j2.Environment(
-            loader=get_loader(),
-            autoescape=True
-        )
+def get_env():
+    ''' Get the Jinja2 environment for rendering emails
 
-        return env
+        :returns: The Jinja2 Environment
+        :rtype: `jinja2.Environment <http://jinja.pocoo.org/docs/latest/api/#jinja2.Environment>`_
+    '''
+    env = j2.Environment(
+        loader=get_loader(),
+        autoescape=True
+    )
+
+    return env
 
 
 def get_loader():

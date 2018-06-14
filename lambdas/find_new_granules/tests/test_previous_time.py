@@ -36,4 +36,3 @@ def test_prod_file_name():
 
     # only tmp directory is writable in aws lambdas
     assert prod_file_path == '/tmp/previous-time.prod.json'
-

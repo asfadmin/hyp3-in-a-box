@@ -4,7 +4,6 @@ import boto3
 
 import find_new
 import results
-from find_new import environment as env
 
 
 def lambda_handler(event, context):
@@ -25,14 +24,14 @@ def lambda_handler(event, context):
 
 def start_scheduler_with(new_granules_json):
     boto3.client('lambda').invoke(
-        FunctionName=env.scheduler_lambda,
+        FunctionName=find_new.environment.scheduler_lambda,
         InvocationType='Event',
         Payload=new_granules_json,
     )
 
 
 def setup_env():
-    env.maturity = 'prod'
+    find_new.environment.maturity = 'prod'
 
-    env.bucket = os.environ['PREVIOUS_TIME_BUCKET']
-    env.scheduler_lambda = os.environ['SCHEDULER_LAMBDA_NAME']
+    find_new.environment.bucket = os.environ['PREVIOUS_TIME_BUCKET']
+    find_new.environment.scheduler_lambda = os.environ['SCHEDULER_LAMBDA_NAME']

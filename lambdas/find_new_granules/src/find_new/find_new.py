@@ -2,8 +2,9 @@ import contextlib as cl
 import datetime as dt
 import json
 import pathlib as pl
-import requests
 import time
+
+import requests
 
 from . import previous_time, s3
 from .environment import environment
