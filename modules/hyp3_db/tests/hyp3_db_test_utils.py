@@ -1,10 +1,8 @@
 import json
 import os
 import pathlib as pl
-from unittest import mock
 
-import mocks
-from hyp3_db import Hyp3DB
+from hyp3_db import Hyp3DB, make_test_db
 
 DB_CONNECTION = {}
 
@@ -26,14 +24,9 @@ def load_creds_from_env():
 
 
 def with_db(func):
-    @mock.patch(
-        'hyp3_db.session.get_connection_str',
-        side_effect=mocks.mock_get_connection_str
-    )
     def wrapper(*args, **kwargs):
         if 'connection' not in DB_CONNECTION:
-            creds = load_creds()
-            db = Hyp3DB(*creds)
+            db = make_test_db()
             DB_CONNECTION['connection'] = db
         else:
             db = DB_CONNECTION['connection']
