@@ -31,6 +31,15 @@ source_zip = "find_new_granules.zip"
 
 print('  adding find_new lambda')
 
+
+lambda_name = t.add_parameter(ts.Parameter(
+    "FindNewName",
+    Description="Name of the find new granules lambda function (Optional).",
+    Default="hyp3_find_new",
+    Type="String"
+))
+
+
 previous_time_bucket = t.add_resource(s3.Bucket("S3Bucket"))
 
 logs_policy = iam.Policy(
@@ -63,7 +72,7 @@ lambda_exe_role = t.add_resource(iam.Role(
 
 find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
-    FunctionName="hyp3-find-new-granules",
+    FunctionName=ts.Ref(lambda_name),
     Code=utils.make_lambda_code(
         S3Bucket=environment.lambda_bucket,
         S3Key="{maturity}/{zip}".format(

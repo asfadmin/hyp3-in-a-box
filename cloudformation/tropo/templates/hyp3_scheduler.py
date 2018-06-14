@@ -17,7 +17,7 @@ Resources
 from template import t
 from environment import environment
 
-from troposphere import GetAtt, Ref
+from troposphere import GetAtt, Ref, Parameter
 from troposphere.awslambda import Function, Environment
 from troposphere.iam import Role, Policy
 
@@ -29,6 +29,12 @@ source_zip = "scheduler.zip"
 
 print('  adding scheduler lambda')
 
+lambda_name = t.add_parameter(Parameter(
+    "SchedulerName",
+    Description="Name of the Scheduler lambda function (Optional)",
+    Default="hyp3_scheduler",
+    Type="String"
+))
 
 sns_policy = Policy(
     PolicyName='FinishEventSNSPublish',
