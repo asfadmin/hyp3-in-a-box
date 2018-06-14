@@ -59,7 +59,8 @@ scheduler = t.add_resource(Function(
         S3Key="{maturity}/{zip}".format(
             maturity=environment.maturity,
             zip=source_zip
-        )
+        ),
+        S3ObjectVersion=environment.scheduler_version
     ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(lambda_role, "Arn"),
