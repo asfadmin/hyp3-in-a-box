@@ -36,23 +36,26 @@ log = Logger(None)
 def install_dependencies(path):
     """ Install required modules to dependencies folder """
     req_file = os.path.join(path, 'requirements.txt')
+    deps_dir = os.path.join(path, 'dependencies')
+
     subprocess.check_call(
         [
             sys.executable, '-m', 'pip', 'install', '--compile', '-r',
-            req_file, '-t',
-            os.path.join(path, 'dependencies')
+            req_file, '-t', deps_dir
         ],
         cwd=path
     )
 
-    with open(req_file, 'r') as f:
-        reqs = f.read()
-
-    if 'hyp3_db' in reqs:
-        install_psycopg2(path)
+    if psycopg2_is_dependency(deps_dir):
+        shutil.rmtree(os.path.join(deps_dir, 'psycopg2'))
+        install_lambda_compatible_psycopg2(path)
 
 
-def install_psycopg2(path):
+def psycopg2_is_dependency(deps_dir):
+    return any(dep for dep in os.listdir(deps_dir) if 'psycopg2' in dep)
+
+
+def install_lambda_compatible_psycopg2(path):
     print('installing psycopg2...')
     repo = 'psycopg2'
     subprocess.check_call(
@@ -115,10 +118,14 @@ def build_lambda(path, zip_name):
 
 def parse_args():
     parser = ArgumentParser()
-    parser.add_argument("source_path", help="outer folder of the function to build, if --all is set, then path to the containing folder")
-    parser.add_argument("-a", "--all", help="build all functions found in source_path", action="store_true")
-    parser.add_argument("-o", "--outfile", help="name of the zip file to produce")
-    parser.add_argument("-v", "--verbose", help="enable additional debug output", action="store_true")
+    parser.add_argument(
+        "source_path", help="outer folder of the function to build, if --all is set, then path to the containing folder")
+    parser.add_argument(
+        "-a", "--all", help="build all functions found in source_path", action="store_true")
+    parser.add_argument("-o", "--outfile",
+                        help="name of the zip file to produce")
+    parser.add_argument(
+        "-v", "--verbose", help="enable additional debug output", action="store_true")
     return parser.parse_args()
 
 
@@ -147,7 +154,8 @@ def main(args):
             curr_path = os.path.join(path, d)
             if os.path.isdir(curr_path):
                 try:
-                    build_lambda_from_path(curr_path, outfile=os.path.join(outfile, d) + ".zip")
+                    build_lambda_from_path(
+                        curr_path, outfile=os.path.join(outfile, d) + ".zip")
                 except FileNotFoundError:
                     continue
     else:
