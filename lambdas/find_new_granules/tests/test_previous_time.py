@@ -1,12 +1,11 @@
-import import_find_new
-
+import datetime as dt
 import unittest
 from unittest import mock
-import datetime as dt
 
+import import_find_new
 import mocks
-from find_new import previous_time
 from find_new import environment as env
+from find_new import previous_time
 
 TESTING_TIME = dt.datetime(2017, 12, 6, 15, 29, 43, 79060)
 

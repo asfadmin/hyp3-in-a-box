@@ -16,12 +16,12 @@ Resources
 
 """
 
-from template import t
-from environment import environment
-
 from troposphere import GetAtt, Parameter, Ref
 from troposphere.awslambda import Function
 from troposphere.iam import Policy, Role
+
+from environment import environment
+from template import t
 
 from . import utils
 

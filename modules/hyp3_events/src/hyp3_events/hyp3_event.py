@@ -1,6 +1,6 @@
 
-import json
 import abc
+import json
 
 
 class Hyp3Event(abc.ABC):

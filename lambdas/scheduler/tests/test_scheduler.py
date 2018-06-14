@@ -1,10 +1,8 @@
 import import_scheduler
-
 import schedule
-from environment import environment
-
-from db_cred_setup import skip_if_creds_not_availbable
 import testing_utils as utils
+from db_cred_setup import skip_if_creds_not_availbable
+from environment import environment
 
 
 @skip_if_creds_not_availbable

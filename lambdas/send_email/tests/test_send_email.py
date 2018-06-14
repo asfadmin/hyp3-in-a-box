@@ -1,7 +1,5 @@
 import import_send_email
-
 from render_email import Email
-
 
 example_params = {
     'download_url': 'www.hello.html',

@@ -1,6 +1,8 @@
+import pathlib as pl
+
 import boto3
 import botocore
-import pathlib as pl
+
 from .environment import environment as env
 
 s3 = boto3.resource('s3')

@@ -1,6 +1,6 @@
-from setuptools import setup, find_packages
-
 import codecs
+
+from setuptools import find_packages, setup
 
 with codecs.open('requirements.txt', 'r') as f:
     requirements = f.read().strip().split('\n')

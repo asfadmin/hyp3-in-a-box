@@ -1,7 +1,8 @@
+from hyp3_events import Hyp3Event, NotifyOnlyEvent
+
 import import_scheduler
 
 import events
-from hyp3_events import Hyp3Event, NotifyOnlyEvent
 import testing_utils as utils
 
 

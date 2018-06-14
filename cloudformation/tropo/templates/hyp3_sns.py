@@ -1,9 +1,9 @@
 
-from template import t
-
 from troposphere import GetAtt, Ref
-from troposphere.sns import Topic, Subscription
 from troposphere.awslambda import Permission
+from troposphere.sns import Subscription, Topic
+
+from template import t
 
 from .hyp3_send_email import send_email
 

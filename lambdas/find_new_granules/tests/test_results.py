@@ -1,10 +1,10 @@
-import import_find_new
-
 import json
 import pathlib as pl
 import unittest
 
 import asf_granule_util as gu
+
+import import_find_new
 import results
 from results import granule_package as gp
 

@@ -2,18 +2,8 @@
 # Rohan Weeden
 # Created: June 7, 2017
 
-from sqlalchemy import (
-    Column,
-    Integer,
-    Text,
-    Float,
-    ForeignKey,
-    DateTime,
-    String,
-    ARRAY
-)
-from sqlalchemy import sql
-from sqlalchemy import orm
+from sqlalchemy import (ARRAY, Column, DateTime, Float, ForeignKey, Integer,
+                        String, Text, orm, sql)
 
 from .base import Base
 

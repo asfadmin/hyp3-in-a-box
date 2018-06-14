@@ -1,13 +1,13 @@
-import requests
+import contextlib as cl
 import datetime as dt
 import json
 import pathlib as pl
-import contextlib as cl
 import time
 
-from . import previous_time
+import requests
+
+from . import previous_time, s3
 from .environment import environment
-from . import s3
 
 MAX_RESULTS = 2000
 

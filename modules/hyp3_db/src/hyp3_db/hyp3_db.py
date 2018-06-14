@@ -1,8 +1,8 @@
-from sqlalchemy import sql
 from geoalchemy2 import WKTElement
+from sqlalchemy import sql
 
+from .hyp3_models import LocalQueue, Subscription, User
 from .session import make_session
-from .hyp3_models import Subscription, LocalQueue, User
 
 
 class Hyp3DB:

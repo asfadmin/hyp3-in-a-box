@@ -1,6 +1,5 @@
-import sys
 import os
-
+import sys
 
 path = os.path.dirname(os.path.abspath(__file__))
 new_path = os.path.join(path, '../src')

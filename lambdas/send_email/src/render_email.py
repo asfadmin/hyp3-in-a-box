@@ -2,9 +2,10 @@
 # William Horn
 # Created: June 2018
 
-import jinja2 as j2
 import abc
 import os
+
+import jinja2 as j2
 
 
 class Email(abc.ABC):

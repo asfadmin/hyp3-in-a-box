@@ -2,17 +2,8 @@
 # Hal DiMarchi, Rohan Weeden
 # Created May 25, 2017
 
-from sqlalchemy import (
-    Column,
-    Integer,
-    Text,
-    DateTime,
-    Boolean,
-    Table,
-    ForeignKey
-)
-from sqlalchemy import orm
-from sqlalchemy import sql
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, Table,
+                        Text, orm, sql)
 
 from .base import Base
 

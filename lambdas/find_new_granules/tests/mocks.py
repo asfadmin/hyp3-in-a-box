@@ -1,8 +1,7 @@
-import import_find_new
-
 import json
 import pathlib as pl
 
+import import_find_new
 from find_new.previous_time import get_time_file_path
 
 

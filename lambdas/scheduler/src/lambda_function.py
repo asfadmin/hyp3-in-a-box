@@ -1,8 +1,8 @@
 import os
 
-from environment import environment
-import schedule
 import events
+import schedule
+from environment import environment
 
 
 def lambda_handler(event, context):

@@ -6,12 +6,11 @@
 # Script for zipping up monitor lambda function source and dependencies
 
 import os
-from argparse import ArgumentParser
-from zipfile import ZIP_DEFLATED, ZipFile
-
+import shutil
 import subprocess
 import sys
-import shutil
+from argparse import ArgumentParser
+from zipfile import ZIP_DEFLATED, ZipFile
 
 PSYCOPG2_REPO = 'https://github.com/jkehler/awslambda-psycopg2'
 

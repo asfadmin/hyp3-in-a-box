@@ -1,13 +1,12 @@
-import import_find_new
-
+import datetime as dt
 import unittest
 from unittest import mock
-import datetime as dt
 
-import mocks
+import import_find_new
 
-from find_new import environment as env
 import find_new
+import mocks
+from find_new import environment as env
 
 
 class TestFindNewGranules(unittest.TestCase):

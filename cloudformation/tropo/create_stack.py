@@ -10,8 +10,8 @@ import pathlib as pl
 import re
 from importlib import import_module
 
-from template import t
 from environment import environment
+from template import t
 
 TEMPLATE_DIR = 'templates'
 

@@ -1,7 +1,8 @@
-import pytest
 import json
 import os
 import pathlib as pl
+
+import pytest
 
 from hyp3_db import Hyp3DB
 

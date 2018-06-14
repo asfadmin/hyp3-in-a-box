@@ -1,7 +1,7 @@
-from render_email import Email
 import boto3
-
 import hyp3_events
+
+from render_email import Email
 
 ses = boto3.client('ses')
 

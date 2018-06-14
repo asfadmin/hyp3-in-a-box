@@ -16,6 +16,7 @@ import sys
 from xml.etree import ElementTree
 
 import boto3
+
 from github_status import set_github_ci_status, update_github_status
 
 S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
