@@ -17,6 +17,7 @@ Resources
 """
 
 from template import t
+from environment import environment
 
 from troposphere import GetAtt
 from troposphere.awslambda import Function
@@ -47,7 +48,14 @@ send_email_role = t.add_resource(Role(
 
 send_email = t.add_resource(Function(
     "SendEmailFunction",
-    Code=utils.get_lambda_code(source_zip),
+    Code=utils.make_lambda_code(
+        S3Bucket=environment.lambda_bucket,
+        S3Key="{maturity}/{zip}".format(
+            maturity=environment.maturity,
+            zip=source_zip
+        ),
+        S3ObjectVersion=environment.send_email_version
+    ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(send_email_role, "Arn"),
     Runtime="python3.6"

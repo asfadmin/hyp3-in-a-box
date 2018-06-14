@@ -9,6 +9,7 @@ class Environment:
         self.find_new_version = ""
         self.send_email_version = ""
         self.scheduler_version = ""
+        self.setup_db_version = ""
 
         self.db_host = ""
         self.db_pass = ""

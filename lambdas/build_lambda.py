@@ -38,7 +38,7 @@ def install_dependencies(path):
     req_file = os.path.join(path, 'requirements.txt')
     subprocess.check_call(
         [
-            sys.executable, '-m', 'pip', 'install', '--compile', '-U', '-r',
+            sys.executable, '-m', 'pip', 'install', '--compile', '-r',
             req_file, '-t',
             os.path.join(path, 'dependencies')
         ],

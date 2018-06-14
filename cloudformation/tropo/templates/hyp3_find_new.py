@@ -16,6 +16,7 @@ Resources
 """
 
 from template import t
+from environment import environment
 
 import troposphere as ts
 from troposphere import awslambda
@@ -63,7 +64,14 @@ lambda_exe_role = t.add_resource(iam.Role(
 find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
     FunctionName="hyp3-find-new-granules",
-    Code=utils.get_lambda_code(source_zip),
+    Code=utils.make_lambda_code(
+        S3Bucket=environment.lambda_bucket,
+        S3Key="{maturity}/{zip}".format(
+            maturity=environment.maturity,
+            zip=source_zip
+        ),
+        S3ObjectVersion=environment.find_new_version
+    ),
     Handler='lambda_function.lambda_handler',
     Environment=awslambda.Environment(
         Variables={'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket)}
