@@ -18,7 +18,7 @@ Resources
 from environment import environment
 from template import t
 from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Code, Environment, Function
+from troposphere.awslambda import Environment, Function
 from troposphere.iam import Role
 
 from . import utils

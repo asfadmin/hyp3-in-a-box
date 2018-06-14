@@ -13,7 +13,7 @@ def make_notify_events(email_packages):
 def make_notify_event(sub, user, granule):
     return hyp3_events.NotifyOnlyEvent(
         address=user.email,
-        subject='[hyp3] New Subscription Data',
+        subject='New Subscription Data',
         additional_info=[{
             'Name': 'User',
             'Value': user.username

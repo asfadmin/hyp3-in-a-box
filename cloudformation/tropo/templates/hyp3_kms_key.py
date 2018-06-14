@@ -8,7 +8,7 @@ from awacs.aws import Action, Allow, PolicyDocument, Principal, Statement
 from template import t
 from troposphere import AWS_ACCOUNT_ID, Join, Ref, kms
 
-print('adding KMS key')
+print('  adding KMS key')
 
 
 key_policy = PolicyDocument(

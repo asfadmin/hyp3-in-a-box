@@ -5,7 +5,7 @@ import troposphere as ts
 from template import t
 from troposphere import ec2
 
-print('adding vpc')
+print('  adding vpc')
 
 hyp3_vpc = t.add_resource(ec2.VPC(
     'Hyp3VPC',
