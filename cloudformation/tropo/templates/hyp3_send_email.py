@@ -19,7 +19,7 @@ Resources
 from template import t
 from environment import environment
 
-from troposphere import GetAtt, Parameter, Ref
+from troposphere import GetAtt, Parameter
 from troposphere.awslambda import Code, Function
 from troposphere.iam import Policy, Role
 
