@@ -18,10 +18,11 @@ from template import t
 from environment import environment
 
 from troposphere import GetAtt, Ref
-from troposphere.awslambda import Code, Function, Environment
+from troposphere.awslambda import Function, Environment
 from troposphere.iam import Role, Policy
 
 from .hyp3_sns import finish_sns
+from .hyp3_kms_key import kms_key
 from . import utils
 
 source_zip = "scheduler.zip"
@@ -52,23 +53,21 @@ lambda_role = t.add_resource(Role(
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
+
 scheduler = t.add_resource(Function(
     "SchedulerFunction",
-    Code=Code(
-        S3Bucket=environment.lambda_bucket,
-        S3Key="{maturity}/{zip}".format(
-            maturity=environment.maturity,
-            zip=source_zip
-        ),
-        S3ObjectVersion=environment.scheduler_version
-    ),
+    Code=utils.get_lambda_code(source_zip),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(lambda_role, "Arn"),
     Runtime="python3.6",
+    KmsKeyArn=Ref(kms_key),
     Environment=Environment(
-        Variables={'SNS_ARN': Ref(finish_sns)}
-    ),
+        Variables={
+            'SNS_ARN': Ref(finish_sns),
+            'DB_HOST': environment.db_host,
+            'DB_USER': environment.db_user,
+            'DB_PASSWORD': environment.db_pass
+        }),
     MemorySize=128,
     Timeout=300
 ))
-

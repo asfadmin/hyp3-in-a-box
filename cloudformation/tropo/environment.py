@@ -10,6 +10,10 @@ class Environment:
         self.send_email_version = None
         self.scheduler_version = None
 
+        self.db_host = None
+        self.db_pass = None
+        self.db_user = None
+
     def maturity(self):
         return self.maturity
 
