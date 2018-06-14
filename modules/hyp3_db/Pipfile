@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 SQLAlchemy = "*"
 "geoalchemy2" = "*"
+"psycopg2" = "*"
+"d20dddb" = {path = "./."}
 
 [dev-packages]
 pytest = "*"
