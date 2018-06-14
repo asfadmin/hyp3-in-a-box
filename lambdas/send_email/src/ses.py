@@ -1,5 +1,6 @@
-
 import boto3
+
+from environment import environment
 
 ses = boto3.client('ses')
 
@@ -9,7 +10,7 @@ SUBJECT_PREFIX = '[hyp3]'
 
 def send(address, subject, message):
     ses.send_email(
-        Source=SOURCE_EMAIL,
+        Source=environment.source_email,
         Destination={
             'ToAddresses': [address]
         },

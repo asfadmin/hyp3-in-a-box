@@ -1,19 +1,24 @@
+from environment import environment
 import sns
 import render
 import ses
+import os
 
 
 def lambda_handler(aws_event, aws_context):
     """ AWS Lambda entry point. Renders an email for the given parameters and
     sends it via SES.
 
-        :param event: lambda event data
+        :param aws_event: lambda event data
 
-            * body - Email parameters
-                * context - The Jinja2 template context
-                * to_addresses - List of addresses to send the email to
-        :param context: lambda runtime info
+            * Records - Top level object from sns trigger event
+                * Sns - sns notification data
+                    * Message json serialized `Hyp3Event`
+
+        :param aws_context: lambda runtime info
     """
+    setup_env()
+
     notify_event = sns.get_hyp3_event_from(aws_event)
 
     address = get_address(notify_event)
@@ -26,6 +31,10 @@ def lambda_handler(aws_event, aws_context):
         subject,
         message
     )
+
+
+def setup_env():
+    environment.source_email = os.environ['SOURCE_EMAIL']
 
 
 def get_address(event):
