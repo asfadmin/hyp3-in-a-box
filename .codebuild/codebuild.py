@@ -160,6 +160,8 @@ def main(step=None):
         if get_config("BUILD_STATUS", 0) == 0:
             save_config("BUILD_STATUS", 0)
             return step_function_table.get(step, lambda: None)()
+
+        return None
     except subprocess.CalledProcessError as e:
         desc = step
         if 'failure' in BUILD_STEP_MESSAGES is not None:
