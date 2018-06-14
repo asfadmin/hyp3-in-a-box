@@ -19,7 +19,7 @@ Resources
 from template import t
 from environment import environment
 
-from troposphere import GetAtt
+from troposphere import GetAtt, Parameter, Ref
 from troposphere.awslambda import Function
 from troposphere.iam import Policy, Role
 
@@ -29,6 +29,13 @@ source_zip = "send_email.zip"
 
 
 print('  adding send_email lambda')
+
+lambda_name = t.add_parameter(Parameter(
+    "SendEmailName",
+    Description="Name of the email sending lambda function (Optional)",
+    Default="hyp3_send_email",
+    Type="String"
+))
 
 lambda_policy = Policy(
     PolicyName="SESSendEmail",
@@ -48,6 +55,7 @@ send_email_role = t.add_resource(Role(
 
 send_email = t.add_resource(Function(
     "SendEmailFunction",
+    FunctionName=Ref(lambda_name),
     Code=utils.make_lambda_code(
         S3Bucket=environment.lambda_bucket,
         S3Key="{maturity}/{zip}".format(
