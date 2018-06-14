@@ -1,8 +1,9 @@
-import pytest
 import json
 import os
 import pathlib as pl
+from unittest import mock
 
+import mocks
 from hyp3_db import Hyp3DB
 
 DB_CONNECTION = {}
@@ -24,13 +25,11 @@ def load_creds_from_env():
     ]
 
 
-run_if_creds = pytest.mark.skipif(
-    not creds_file_exists(),
-    reason='Test requires database creds'
-)
-
-
 def with_db(func):
+    @mock.patch(
+        'hyp3_db.session.get_connection_str',
+        side_effect=mocks.mock_get_connection_str
+    )
     def wrapper(*args, **kwargs):
         if 'connection' not in DB_CONNECTION:
             creds = load_creds()
