@@ -6,6 +6,10 @@ class Environment:
         self.eb_bucket = "asf-hyp3-in-a-box-source"
         self.maturity = "test"
 
+        self.find_new_version = None
+        self.send_email_version = None
+        self.scheduler_version = None
+
     def maturity(self):
         return self.maturity
 

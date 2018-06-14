@@ -59,7 +59,8 @@ send_email = t.add_resource(Function(
         S3Key="{maturity}/{zip}".format(
             maturity=environment.maturity,
             zip=source_zip
-        )
+        ),
+        S3ObjectVersion=environment.send_email_version
     ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(send_email_role, "Arn"),

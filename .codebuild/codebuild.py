@@ -15,7 +15,8 @@ import subprocess
 import sys
 from xml.etree import ElementTree
 
-from github_status import update_github_status, set_github_ci_status
+import boto3
+from github_status import set_github_ci_status, update_github_status
 
 S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
 
@@ -52,14 +53,42 @@ def pre_build():
 
 def build():
     os.makedirs("build/lambdas")
-    subprocess.check_call(["python3", "cloudformation/tropo/create_stack.py", "build/template.json", "--maturity", MATURITY])
-    subprocess.check_call(["python3", "lambdas/build_lambda.py", "-a", "-o", "build/lambdas/", "lambdas/"])
+    object_versions = build_lambdas()
+    version_options = []
+    for v in object_versions:
+        version_options += ["--{}_version".format(v[0]), v[1]]
+    subprocess.check_call(["python3", "cloudformation/tropo/create_stack.py", "build/template.json", "--maturity", MATURITY] + version_options)
     subprocess.check_call(["make", "clean", "html"], cwd="docs")
+
+
+def build_lambdas():
+    subprocess.check_call(["python3", "lambdas/build_lambda.py", "-a", "-o", "build/lambdas/", "lambdas/"])
+    subprocess.check_call(["aws", "s3", "cp", "build/lambdas", "s3://{}".format(BUCKET_BASE_DIR), "--recursive", "--include", '"*"'])
+    print("Latest Source Versions:")
+    versions = get_latest_lambda_versions()
+    print(versions)
+    return versions
+
+
+def get_latest_lambda_versions():
+    versions = []
+    s3 = boto3.resource()
+    bucket = s3.Bucket(S3_SOURCE_BUCKET)
+    for lambda_zip in os.listdir("build/lambdas"):
+        if '.zip' not in lambda_zip:
+            continue
+        latest_version = bucket.object_versions.filter(
+            Prefix="{}/{}".format(MATURITY, "send_email.zip"),
+            MaxKeys=1
+        )[0]
+        versions.append((
+            lambda_zip[:-4],
+            latest_version.id
+        ))
 
 
 def post_build():
     subprocess.check_call(["aws", "s3", "cp", "s3://{}".format(os.path.join(BUCKET_BASE_DIR, "config/configuration.json")), "build/"])
-    subprocess.check_call(["aws", "s3", "cp", "build/lambdas", "s3://{}".format(BUCKET_BASE_DIR), "--recursive", "--include", '"*"'])
     subprocess.check_call(["aws", "s3", "cp", "docs/_build/html", "s3://asf-docs/hyp3-in-a-box", "--recursive", "--acl", "public-read"])
     set_github_ci_status("success", description=get_config("TEST_RESULT_SUMMARY", "Build completed"))
 
