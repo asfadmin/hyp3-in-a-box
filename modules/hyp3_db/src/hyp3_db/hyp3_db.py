@@ -1,7 +1,7 @@
 from geoalchemy2 import WKTElement
 
 from .hyp3_models import LocalQueue, Subscription, User
-from .session import make_session
+from .session import make_engine, make_session
 
 
 class Hyp3DB:
@@ -19,7 +19,12 @@ class Hyp3DB:
     ]
 
     def __init__(self, host, user, password):
-        self.session = make_session(host, user, password)
+        self.engine = make_engine(
+            user=user,
+            password=password,
+            host=host
+        )
+        self.session = make_session(self.engine)
 
     def get_users_by_ids(self, user_ids):
         user_ids_filter = User.id.in_(user_ids)

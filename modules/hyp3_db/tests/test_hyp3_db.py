@@ -3,13 +3,11 @@ import pytest
 import hyp3_db_test_utils as tu
 
 
-@tu.run_if_creds
 @tu.with_db
 def test_db_creation(db):
     assert db is not None
 
 
-@tu.run_if_creds
 @tu.with_db
 def test_get_users_by_ids(db):
     ids = [37, 34]
@@ -20,7 +18,6 @@ def test_get_users_by_ids(db):
         assert user.id in ids
 
 
-@tu.run_if_creds
 @tu.with_db
 def test_get_enabled_subs(db):
     enabled_subs = db.get_enabled_subs()
@@ -30,7 +27,6 @@ def test_get_enabled_subs(db):
         assert sub.enabled is True
 
 
-@tu.run_if_creds
 @tu.with_db
 def test_get_jobs(db):
     job_id = 2670
@@ -39,7 +35,6 @@ def test_get_jobs(db):
     assert job.id == job_id
 
 
-@tu.run_if_creds
 @tu.with_db
 def test_set_job(db):
     job_id, new_status = 2670, 'QUEUED'
@@ -59,7 +54,6 @@ def check_status(db, job, new_status):
     assert job_with_new_status.status == new_status
 
 
-@tu.run_if_creds
 @tu.with_db
 def test_set_job_status_bad_status(db):
     job_id = 2670
