@@ -19,7 +19,7 @@ TEMPLATE_DIR = 'templates'
 def pattern_match_hyp3_files():
     sections = {}
 
-    templates_path = pl.Path(__file__).parent / TEMPLATE_DIR
+    templates_path = pl.PosixPath(__file__).parent / TEMPLATE_DIR
 
     for f in templates_path.iterdir():
         hyp3_file_match = re.match(r'hyp3_(.*)\.py', f.name)
@@ -84,7 +84,7 @@ def get_parser():
         help="generate a configuration template with the provided name"
     )
 
-    for section_name in TEMPLATE_SECTIONS.keys():
+    for section_name in TEMPLATE_SECTIONS:
         add_flag_argument(parser, section_name)
 
     for var_name, var_type in environment.get_variables():
@@ -166,9 +166,9 @@ def generate_config_template(output_path, debug):
             json.dump(config, f, indent=4)
 
 
-def write_file(t, file_name, debug):
+def write_file(template, file_name, debug):
     with open(file_name, 'w') as f:
-        generated_template = t.to_json()
+        generated_template = template.to_json()
 
         if debug:
             print(generated_template)
