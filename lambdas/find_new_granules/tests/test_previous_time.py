@@ -20,14 +20,14 @@ class TestPreviousTime(unittest.TestCase):
         side_effect=mocks.s3_upload
     )
     def test_set_time(self, mock_upload):
-        previous_time.set(TESTING_TIME)
+        previous_time.set_time(TESTING_TIME)
 
     @mock.patch(
         'find_new.previous_time.s3.download',
         side_effect=mocks.get_s3_download_func(time=TESTING_TIME)
     )
     def test_get_time(self, mock_download):
-        t = previous_time.get()
+        t = previous_time.get_time()
 
         self.assertEqual(t, TESTING_TIME)
 

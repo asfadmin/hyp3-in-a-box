@@ -31,7 +31,7 @@ run_if_creds = pytest.mark.skipif(
 
 
 def with_db(func):
-    def wrapper(*args, **kwargs):
+    def wrapper():
         if 'connection' not in DB_CONNECTION:
             creds = load_creds()
             db = Hyp3DB(*creds)

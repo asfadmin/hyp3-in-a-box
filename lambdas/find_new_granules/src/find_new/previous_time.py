@@ -6,7 +6,7 @@ from . import s3
 from .environment import environment
 
 
-def get():
+def get_time():
     """ Get the last time the find_new lambda was executed.
 
         :returns: previous lambda runtime
@@ -23,7 +23,7 @@ def get():
     return dt.datetime.fromtimestamp(prev_timestamp)
 
 
-def set(new_time):
+def set_time(new_time):
     """ Sets a timestamp representing the last time the find_new lambda was run.
 
         :param datetime.datetime new_time: runtime to set

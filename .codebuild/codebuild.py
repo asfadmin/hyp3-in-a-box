@@ -93,7 +93,7 @@ def post_build():
     set_github_ci_status("success", description=get_config("TEST_RESULT_SUMMARY", "Build completed"))
 
 
-def install_all_requirements_txts(root_path):
+def install_all_requirements_txts():
     for path, dirs, files in os.walk('.'):
         for name in files:
             if "requirements" in name:
