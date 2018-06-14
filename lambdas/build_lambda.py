@@ -36,19 +36,18 @@ log = Logger(None)
 def install_dependencies(path):
     """ Install required modules to dependencies folder """
     req_file = os.path.join(path, 'requirements.txt')
+    deps_dir = os.path.join(path, 'dependencies')
+
     subprocess.check_call(
         [
             sys.executable, '-m', 'pip', 'install', '--compile', '-r',
-            req_file, '-t',
-            os.path.join(path, 'dependencies')
+            req_file, '-t', deps_dir
         ],
         cwd=path
     )
 
-    with open(req_file, 'r') as f:
-        reqs = f.read()
-
-    if 'hyp3_db' in reqs:
+    if any(dep for dep in os.listdir(deps_dir) if 'psycopg2' in dep):
+        shutil.rmtree(os.path.join(deps_dir, 'psycopg2'))
         install_psycopg2(path)
 
 
