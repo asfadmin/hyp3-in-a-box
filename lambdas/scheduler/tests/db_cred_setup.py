@@ -12,7 +12,7 @@ if creds_path.exists():
         creds = json.load(f)
     environment.db_creds = creds
 
-skip_if_creds_not_availbable = pytest.mark.skipif(
+skip_if_creds_not_available = pytest.mark.skipif(
     not creds_path.exists(),
     reason="Currently can't run test without creds"
 )
