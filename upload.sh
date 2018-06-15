@@ -1,7 +1,8 @@
+#! /bin/bash
 
 docs() {
     cd docs && make clean html && cd ..
-    aws s3 sync docs/_build/html s3://asf-docs/hyp3-in-a-box
+    aws s3 cp docs/_build/html s3://asf-docs/hyp3-in-a-box --recursive --acl public-read
 }
 
 if [ "$1" = "docs" ]

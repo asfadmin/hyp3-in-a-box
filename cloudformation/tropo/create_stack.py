@@ -10,8 +10,8 @@ import pathlib as pl
 import re
 from importlib import import_module
 
+from environment import environment
 from template import t
-from envirnoment import envirnoment
 
 TEMPLATE_DIR = 'templates'
 
@@ -19,7 +19,7 @@ TEMPLATE_DIR = 'templates'
 def pattern_match_hyp3_files():
     sections = {}
 
-    templates_path = pl.Path(__file__).parent / TEMPLATE_DIR
+    templates_path = pl.PosixPath(__file__).parent / TEMPLATE_DIR
 
     for f in templates_path.iterdir():
         hyp3_file_match = re.match(r'hyp3_(.*)\.py', f.name)
@@ -53,17 +53,18 @@ def main():
 
 
 def set_environment_variables(args):
+    print('ENVIRONMENT')
     for arg_name, arg_value in args.items():
 
         if arg_value is None or not is_env_arg(arg_name):
             continue
 
-        print("setting ", arg_name, " to ", arg_value)
-        setattr(envirnoment, arg_name, arg_value)
+        print("  setting", arg_name, "to", arg_value)
+        setattr(environment, arg_name, arg_value)
 
 
 def is_env_arg(arg_name):
-    return arg_name in envirnoment.__dict__
+    return arg_name in environment.__dict__
 
 
 def get_parser():
@@ -83,10 +84,10 @@ def get_parser():
         help="generate a configuration template with the provided name"
     )
 
-    for section_name in TEMPLATE_SECTIONS.keys():
+    for section_name in TEMPLATE_SECTIONS:
         add_flag_argument(parser, section_name)
 
-    for var_name, var_type in envirnoment.get_variables():
+    for var_name, var_type in environment.get_variables():
         add_env_var_to(parser, var_name, var_type)
 
     return parser
@@ -114,7 +115,7 @@ def add_env_var_to(parser, var_name, var_type):
 
     parser.add_argument(
         '--' + var_name, type=var_type,
-        help="Set envirnoment varibable {}".format(var_name)
+        help="Set environment variable {}".format(var_name)
     )
 
 
@@ -132,14 +133,15 @@ def make_template(args):
 
     add_sections_to_template(should_make_all, args)
 
-    generate_template(args['output'], args['debug'])
+    generate_template(args['output'], args.get('debug', False))
 
 
 def get_should_make_all(args):
-    return not any(args[s] for s in TEMPLATE_SECTIONS)
+    return not any(args.get(s, False) for s in TEMPLATE_SECTIONS)
 
 
 def add_sections_to_template(should_make_all, args):
+    print('BUILD')
     for section, module_name in TEMPLATE_SECTIONS.items():
         if should_make_all or args[section]:
             import_module('templates.{}'.format(module_name))
@@ -164,9 +166,9 @@ def generate_config_template(output_path, debug):
             json.dump(config, f, indent=4)
 
 
-def write_file(t, file_name, debug):
+def write_file(template, file_name, debug):
     with open(file_name, 'w') as f:
-        generated_template = t.to_json()
+        generated_template = template.to_json()
 
         if debug:
             print(generated_template)

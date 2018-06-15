@@ -1,13 +1,13 @@
-import requests
+import contextlib as cl
 import datetime as dt
 import json
 import pathlib as pl
-import contextlib as cl
 import time
 
-from . import previous_time
+import requests
+
+from . import previous_time, s3
 from .environment import environment
-from . import s3
 
 MAX_RESULTS = 2000
 
@@ -20,17 +20,20 @@ def granules():
     prev_time = get_previous_time_formatted()
 
     request_time = dt.datetime.utcnow()
-    print(f'time-range: {prev_time} -> {cmr_date_format(request_time)}')
+    print('time-range: {} -> {}'.format(
+        prev_time,
+        cmr_date_format(request_time)
+    ))
     results = get_new_granules_after(prev_time)
 
-    previous_time.set(request_time)
+    previous_time.set_time(request_time)
 
     return results
 
 
 def get_previous_time_formatted():
     try:
-        prev_time = previous_time.get()
+        prev_time = previous_time.get_time()
     except s3.ObjectDoesntExist:
         prev_time = get_init_prev_time()
 
@@ -52,11 +55,11 @@ def get_new_granules_after(prev_time):
         :returns: response from cmr
         :rtype: dict
     """
-    print(f'making api request with: {prev_time}')
+    print('making api request with: {}'.format(prev_time))
     cmr_data = make_cmr_query(prev_time)
-    print(f"cmr returned {len(cmr_data)} results")
+    print("cmr returned {} results".format(len(cmr_data)))
 
-    return cmr_data
+    return cmr_data['feed']['entry']
 
 
 def make_cmr_query(prev_time):
@@ -64,21 +67,22 @@ def make_cmr_query(prev_time):
 
     resp = api.query({
         'provider': 'ASF',
-        'created_at[]': [f"{prev_time},"],
+        'created_at[]': ["{},".format(prev_time)],
         'platform[]': ['Sentinel-1A', 'Sentinel-1B'],
         'page_size': MAX_RESULTS
     })
 
     data = resp.json()
 
-    if not environment.is_production:
+    if 'test' in environment.maturity:
         cache_output(data)
 
-    return data['feed']['entry']
+    return data
 
 
 class SearchAPI:
-    """Class to wrap searching an generic api"""
+    """ Class to wrap searching an generic api"""
+
     def __init__(self, api_url):
         self.api_url = api_url
 
@@ -101,7 +105,7 @@ class CMRSearchAPI(SearchAPI):
 
 @cl.contextmanager
 def timing(print_str):
-    """print a string formatted with timing information"""
+    """ Print a string formatted with timing information"""
     start = time.time()
     yield
     runtime = time.time() - start
@@ -111,7 +115,7 @@ def timing(print_str):
 
 
 def cache_output(data):
-    """Save output from query for debugging"""
+    """ Save output from query for debugging"""
     output_path = pl.Path('cached')
     output_path.mkdir(parents=True, exist_ok=True)
 

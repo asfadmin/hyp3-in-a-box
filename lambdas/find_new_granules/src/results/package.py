@@ -1,15 +1,17 @@
+import json
+
 import asf_granule_util as gu
 
 from . import granule_package as gp
 
 
 def package(search_results):
-    """Filters out irrelevant granules and packages only relevant metadata.
+    """ Filters out irrelevant granules and packages only relevant metadata.
 
-       :param list[dict] search_results: package results from cmr
+        :param list[dict] search_results: package results from CMR
 
-       :returns: List of new granule packages
-       :rtype: list[GranulePackage]
+        :returns: List of new granule packages
+        :rtype: list[GranulePackage]
     """
     hyp3_granules = [
         get_relevant_metadata_from(result) for result in search_results
@@ -26,8 +28,9 @@ def get_relevant_metadata_from(result):
 
     polygon_str = get_polygon_str(polygons)
     polygon = parse_points(polygon_str)
+    download_url = get_download_url(links)
 
-    return gp.GranulePackage(name, polygon)
+    return gp.GranulePackage(name, polygon, download_url)
 
 
 def get_polygon_str(polygons):
@@ -38,6 +41,16 @@ def parse_points(points_str):
     points = points_str.strip().split(' ')
 
     return [float(p) for p in points]
+
+
+def get_download_url(links):
+    for link in links:
+        url = link['href']
+
+        if not url.endswith('.zip'):
+            continue
+
+        return url
 
 
 def is_relevant(result):
@@ -70,3 +83,11 @@ def make_granule_from(result):
 
 def is_relevant_type(granule_type):
     return granule_type in ('SLC', 'GRD')
+
+
+def format_into_json(granule_packages):
+    package_dicts = [gran.__dict__ for gran in granule_packages]
+
+    return json.dumps({
+        'new_granules': package_dicts
+    })

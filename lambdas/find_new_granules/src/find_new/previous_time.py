@@ -1,13 +1,13 @@
-import json
 import datetime as dt
+import json
 import pathlib as pl
 
 from . import s3
 from .environment import environment
 
 
-def get():
-    """Get the last time the find_new lambda was executed.
+def get_time():
+    """ Get the last time the find_new lambda was executed.
 
         :returns: previous lambda runtime
         :rtype: datetime.datetime
@@ -23,8 +23,8 @@ def get():
     return dt.datetime.fromtimestamp(prev_timestamp)
 
 
-def set(new_time):
-    """Sets a timestamp representing the last time the find_new lambda was run.
+def set_time(new_time):
+    """ Sets a timestamp representing the last time the find_new lambda was run.
 
         :param datetime.datetime new_time: runtime to set
     """
@@ -42,13 +42,11 @@ def set(new_time):
 def get_time_file_path():
     key_name = get_s3_key_name()
 
-    path = pl.Path('/tmp/') if environment.is_production \
+    path = pl.Path('/tmp/') if environment.maturity == 'prod' \
         else pl.Path(__file__).parent
 
     return str(path / key_name)
 
 
 def get_s3_key_name():
-    materity = 'prod' if environment.is_production else 'test'
-
-    return f'previous-time.{materity}.json'
+    return 'previous-time.{}.json'.format(environment.maturity)

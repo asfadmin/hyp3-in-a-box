@@ -1,5 +1,5 @@
 """
-Troposphere template responsible for generating the :ref:`find_new_lambda`
+Troposphere template responsible for generating :ref:`find_new_lambda`
 
 Resources
 ~~~~~~~~~
@@ -9,23 +9,33 @@ Resources
 * **Cloudwatch Event:** Triggers the lambda after a scheduled amount of time.
 * **IAM Policies:**
 
-  * Give lambda to read/write to the s3 bucket
+  * Lambda basic execution
+  * S3 read/write on ``previous time`` bucket
   * Allow cloudwatch event to trigger the lambda
 
 """
 
-from template import t
-from envirnoment import envirnoment
-
 import troposphere as ts
-from troposphere import awslambda
-from troposphere import iam
-from troposphere import events
-from troposphere import s3
+from troposphere import awslambda, events, iam, s3
+
+from template import t
 
 from . import utils
+from . import hyp3_scheduler
 
-print('adding find_new lambda')
+source_zip = "find_new_granules.zip"
+
+
+print('  adding find_new lambda')
+
+
+lambda_name = t.add_parameter(ts.Parameter(
+    "FindNewName",
+    Description="Name of the find new granules lambda function (Optional).",
+    Default="hyp3_find_new",
+    Type="String"
+))
+
 
 previous_time_bucket = t.add_resource(s3.Bucket("S3Bucket"))
 
@@ -50,25 +60,39 @@ prev_time_s3_policy = iam.Policy(
         }]}
 )
 
+lambda_invoke = iam.Policy(
+    PolicyName='FindNewLambdaInvoke',
+    PolicyDocument={
+        "Version": "2012-10-17",
+        "Statement": [{
+            "Effect": "Allow",
+            "Action": [
+                "lambda:InvokeFunction",
+                "lambda:InvokeAsync"
+            ],
+            "Resource": "*"
+        }
+        ]
+    }
+)
+
+
 lambda_exe_role = t.add_resource(iam.Role(
     "FindNewExecutionRole",
     Path="/",
-    Policies=[logs_policy, prev_time_s3_policy],
+    Policies=[logs_policy, prev_time_s3_policy, lambda_invoke],
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
 find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
-    FunctionName="hyp3-find-new-granules",
-    Code=awslambda.Code(
-        S3Bucket=envirnoment.lambda_bucket,
-        S3Key="{maturity}/find_new_granules.zip".format(
-            maturity=envirnoment.maturity
-        )
-    ),
+    FunctionName=ts.Ref(lambda_name),
+    Code=utils.make_lambda_code(source_zip),
     Handler='lambda_function.lambda_handler',
     Environment=awslambda.Environment(
-        Variables={'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket)}
+        Variables={
+            'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket),
+            'SCHEDULER_LAMBDA_NAME': ts.Ref(hyp3_scheduler.scheduler)}
     ),
     Role=ts.GetAtt(lambda_exe_role, 'Arn'),
     Runtime='python3.6',
@@ -90,7 +114,7 @@ find_new_event_rule = t.add_resource(events.Rule(
 ))
 
 PermissionForEventsToInvokeLambda = t.add_resource(awslambda.Permission(
-    "SchedulePermissions",
+    "EventSchedulePermissions",
     FunctionName=ts.Ref("Hyp3FindNewGranulesFunction"),
     Action="lambda:InvokeFunction",
     Principal="events.amazonaws.com",

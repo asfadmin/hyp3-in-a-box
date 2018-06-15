@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+SQLAlchemy = "*"
+"geoalchemy2" = "*"
+"psycopg2" = "*"
+"d20dddb" = {path = "./."}
+
+[dev-packages]
+pytest = "*"
+mock = "*"
+
+[requires]
+python_version = "3.6"

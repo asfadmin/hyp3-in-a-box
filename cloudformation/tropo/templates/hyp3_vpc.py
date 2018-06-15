@@ -2,10 +2,11 @@
 # https://github.com/cloudtools/troposphere/blob/master/examples/NatGateway.py
 
 import troposphere as ts
-from template import t
 from troposphere import ec2
 
-print('adding vpc')
+from template import t
+
+print('  adding vpc')
 
 hyp3_vpc = t.add_resource(ec2.VPC(
     'Hyp3VPC',

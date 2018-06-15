@@ -1,22 +1,19 @@
 version: 0.2
 
-env:
-  variables:
-    S3_SOURCE_BUCKET: "hyp3-in-a-box-source"
-
 phases:
   install:
     commands:
-      - pip install -U -r build_requirements.txt
+      - pip install -U requests sphinx pytest subprocess32
+      - python3 .codebuild/codebuild.py install
+  pre_build:
+    commands:
+      - python3 .codebuild/codebuild.py pre_build
   build:
     commands:
-      - mkdir -p build/lambdas
-      - python3 cloudformation/tropo/create_stack.py build/template.json
-      - python3 lambdas/build_lambda.py -a -o build/lambdas/ lambdas/
+      - python3 .codebuild/codebuild.py build
   post_build:
     commands:
-      - aws s3 cp s3://$S3_SOURCE_BUCKET/$MATURITY/config/configuration.json build/
-      - aws s3 cp build/lambdas/ s3://$S3_SOURCE_BUCKET/$MATURITY/ --recursive --include "*"
+      - python3 .codebuild/codebuild.py post_build
 artifacts:
   files:
     - template.json

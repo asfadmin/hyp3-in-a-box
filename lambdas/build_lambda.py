@@ -6,11 +6,13 @@
 # Script for zipping up monitor lambda function source and dependencies
 
 import os
+import shutil
+import subprocess
+import sys
 from argparse import ArgumentParser
 from zipfile import ZIP_DEFLATED, ZipFile
 
-import subprocess
-import sys
+PSYCOPG2_REPO = 'https://github.com/jkehler/awslambda-psycopg2'
 
 
 class Logger(object):
@@ -19,7 +21,8 @@ class Logger(object):
     def __init__(self, level):
         self.level = level
 
-    def info(self, *args, **kwargs):
+    @staticmethod
+    def info(*args, **kwargs):
         print(*args, **kwargs)
 
     def debug(self, *args, **kwargs):
@@ -32,16 +35,43 @@ log = Logger(None)
 
 def install_dependencies(path):
     """ Install required modules to dependencies folder """
-    with open(os.path.join(path, 'requirements.txt')) as f:
-        for line in f.readlines():
-            package = line.strip()
+    req_file = os.path.join(path, 'requirements.txt')
+    deps_dir = os.path.join(path, 'dependencies')
 
-            log.debug('Installing {}'.format(package))
-            install_package(path, package, os.path.join(path, 'dependencies'))
+    subprocess.check_call(
+        [
+            sys.executable, '-m', 'pip', 'install', '--compile', '-r',
+            req_file, '-t', deps_dir
+        ],
+        cwd=path
+    )
+
+    if psycopg2_is_dependency(deps_dir):
+        shutil.rmtree(os.path.join(deps_dir, 'psycopg2'))
+        install_lambda_compatible_psycopg2(path)
 
 
-def install_package(path, package_name, output_dir):
-    subprocess.call([sys.executable, '-m', 'pip', 'install', '--compile', '--upgrade', package_name, '-t', output_dir])
+def psycopg2_is_dependency(deps_dir):
+    return any(dep for dep in os.listdir(deps_dir) if 'psycopg2' in dep)
+
+
+def install_lambda_compatible_psycopg2(path):
+    print('installing psycopg2...')
+    repo = 'psycopg2'
+    subprocess.check_call(
+        ['git', 'clone', '--depth', '1', PSYCOPG2_REPO, repo],
+        cwd=path
+    )
+
+    repo_path = os.path.join(path, repo)
+
+    src = os.path.join(repo_path, 'psycopg2-3.6')
+    dest = os.path.join(path, 'dependencies', 'psycopg2')
+
+    if os.path.exists(dest):
+        shutil.rmtree(dest)
+    shutil.copytree(src, dest)
+    shutil.rmtree(repo_path)
 
 
 def make_zip(path, zip_name):
@@ -58,12 +88,15 @@ def make_zip(path, zip_name):
         dependencies = os.path.join(path, 'dependencies')
         for dep_dir in os.listdir(dependencies):
             full_path = os.path.join(dependencies, dep_dir)
-            if '.dist-info' or '.egg-info' in full_path:
+            if '.dist-info' in full_path or '.egg-info' in full_path:
                 continue
             if os.path.isdir(full_path):
                 add_folder_to_zip(dependencies, dep_dir, zf)
             else:
                 zf.write(full_path, arcname=dep_dir)
+
+        print('removing dependencies folder')
+        shutil.rmtree(dependencies)
 
 
 def add_folder_to_zip(containing_dir, folder, zf):
@@ -88,10 +121,21 @@ def build_lambda(path, zip_name):
 
 def parse_args():
     parser = ArgumentParser()
-    parser.add_argument("source_path", help="outer folder of the function to build, if --all is set, then path to the containing folder")
-    parser.add_argument("-a", "--all", help="build all functions found in source_path", action="store_true")
-    parser.add_argument("-o", "--outfile", help="name of the zip file to produce")
-    parser.add_argument("-v", "--verbose", help="enable additional debug output", action="store_true")
+    parser.add_argument(
+        "source_path",
+        help=("outer folder of the function to build, if --all"
+              " is set, then path to the containing folder")
+    )
+    parser.add_argument(
+        "-a", "--all", action="store_true",
+        help="build all functions found in source_path"
+    )
+    parser.add_argument("-o", "--outfile",
+                        help="name of the zip file to produce")
+    parser.add_argument(
+        "-v", "--verbose", action="store_true",
+        help="enable additional debug output"
+    )
     return parser.parse_args()
 
 
@@ -115,20 +159,26 @@ def main(args):
     outfile = args.outfile
 
     if args.all:
+        log.info("Building all lambdas")
         for d in os.listdir(path):
-            if os.path.isdir(d):
-                build_lambda_from_path(os.path.join(path, d), outfile=os.path.join(outfile, d) + ".zip")
+            curr_path = os.path.join(path, d)
+            if os.path.isdir(curr_path):
+                try:
+                    build_lambda_from_path(
+                        curr_path, outfile=os.path.join(outfile, d) + ".zip")
+                except FileNotFoundError:
+                    continue
     else:
         build_lambda_from_path(path, outfile=outfile)
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    if args.verbose:
+    passed_args = parse_args()
+    if passed_args.verbose:
         log = Logger('debug')
 
     try:
-        main(args)
+        main(passed_args)
     except FileNotFoundError as e:
         log.info("Missing file or directory: {}".format(e.filename))
         sys.exit(-1)

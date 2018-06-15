@@ -1,3 +1,7 @@
+lambdas/upload_lambda.sh
+db_creds.sh
+*.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -5,6 +9,7 @@ __pycache__/
 
 templates/*
 Pipfile.lock
+creds.json
 
 # C extensions
 *.so
@@ -49,6 +54,7 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+cached
 
 # Translations
 *.mo
@@ -86,7 +92,7 @@ celerybeat-schedule
 
 # Environments
 .env
-.venv
+.venv*
 env/
 venv/
 ENV/

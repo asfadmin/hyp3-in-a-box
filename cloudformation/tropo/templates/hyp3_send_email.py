@@ -2,29 +2,52 @@
 # Rohan Weeden
 # Created: June 5, 2018
 
-# Troposphere template for send_email lambda
+"""
+Troposphere template responsible for generating :ref:`send_email_lambda`
 
-from template import t
-from envirnoment import envirnoment
+Resources
+~~~~~~~~~
+
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
+* **IAM Policies:**
+
+  * Lambda basic execution
+  * Allow lambda to trigger SES send email
+
+"""
 
 from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Code, Function
+from troposphere.awslambda import Function, Environment
 from troposphere.iam import Policy, Role
+
+from environment import environment
+from template import t
 
 from . import utils
 
-print('adding send_email lambda')
+source_zip = "send_email.zip"
+
+
+print('  adding send_email lambda')
+
+source_email = t.add_parameter(Parameter(
+    "VerifiedSourceEmail",
+    Description="Source email to send notifications",
+    Type="String",
+    AllowedPattern=r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
+))
 
 lambda_name = t.add_parameter(Parameter(
     "SendEmailName",
-    Description="Name of the SendEmail lambda function",
+    Description="Name of the email sending lambda function (Optional)",
     Default="hyp3_send_email",
     Type="String"
 ))
 
 lambda_policy = Policy(
     PolicyName="SESSendEmail",
-    PolicyDocument=utils.get_static_policy('ses-send-email'))
+    PolicyDocument=utils.get_static_policy('ses-send-email')
+)
 
 send_email_role = t.add_resource(Role(
     "SendEmailExecutionRole",
@@ -36,14 +59,15 @@ send_email_role = t.add_resource(Role(
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
+
 send_email = t.add_resource(Function(
     "SendEmailFunction",
     FunctionName=Ref(lambda_name),
-    Code=Code(
-        S3Bucket=envirnoment.lambda_bucket,
-        S3Key="{maturity}/send_email.zip".format(
-            maturity=envirnoment.maturity
-        )
+    Code=utils.make_lambda_code(source_zip),
+    Environment=Environment(
+        Variables={
+            'SOURCE_EMAIL': Ref(source_email),
+        }
     ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(send_email_role, "Arn"),
