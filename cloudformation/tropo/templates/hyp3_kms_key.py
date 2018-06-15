@@ -20,7 +20,7 @@ key_policy = PolicyDocument(
             Effect=Allow,
             Principal=Principal(
                 "AWS", [
-                    Join(":", ["arn:aws:iam", Ref(AWS_ACCOUNT_ID)])
+                    Join(":", ["arn:aws:iam:", Ref(AWS_ACCOUNT_ID)])
                 ]
             ),
             Action=[Action("kms", "*")],
