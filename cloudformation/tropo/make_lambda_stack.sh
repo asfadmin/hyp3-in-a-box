@@ -1,3 +1,5 @@
+set -e
+
 source db_creds.sh
 
 TEMPLATE=outputs/lambdas.json
