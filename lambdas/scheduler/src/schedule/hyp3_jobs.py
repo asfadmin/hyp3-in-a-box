@@ -1,6 +1,8 @@
+from geoalchemy2 import WKTElement
 
 from environment import environment
 from hyp3_db import Hyp3DB
+from hyp3_db.hyp3_models import Subscription, User
 
 
 def hyp3_jobs(new_granule_packages):
@@ -11,7 +13,7 @@ def hyp3_jobs(new_granule_packages):
     for package in new_granule_packages:
         polygon = format_polygon(package['polygon'])
 
-        subs = db.get_enabled_intersecting_subs(polygon)
+        subs = get_enabled_intersecting_subs(db, polygon)
 
         users = get_users_for(subs, db)
 
@@ -34,8 +36,34 @@ def format_polygon(point_vals):
 def get_users_for(subs, db):
     sub_ids = [sub.user_id for sub in subs]
 
-    users = db.get_users_by_ids(sub_ids)
+    users = get_users_by_ids(db, sub_ids)
 
     return {
         user.id: user for user in users
     }
+
+
+def get_users_by_ids(db, user_ids):
+    user_ids_filter = User.id.in_(user_ids)
+
+    users = db.session.query(User) \
+        .filter(user_ids_filter) \
+        .all()
+
+    return users
+
+
+def get_enabled_intersecting_subs(db, polygon):
+    poly = WKTElement(polygon, srid=4326)
+    intersection = Subscription.location.ST_Contains(poly)
+
+    intersecting_subs = enabled_subs_query(db) \
+        .filter(intersection) \
+        .all()
+
+    return intersecting_subs
+
+
+def enabled_subs_query(db):
+    return db.session.query(Subscription) \
+        .filter_by(enabled=True)
