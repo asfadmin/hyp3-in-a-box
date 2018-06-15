@@ -1,6 +1,7 @@
+from hyp3_db import Hyp3DB
+
 from environment import environment
 from . import queries
-from hyp3_db import Hyp3DB
 
 
 def hyp3_jobs(new_granule_packages):

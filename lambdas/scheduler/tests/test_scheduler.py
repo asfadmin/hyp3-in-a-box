@@ -35,4 +35,3 @@ def test_scheduler():
 
     if 'local' in environment.maturity:
         utils.cache_results(email_packages)
-
