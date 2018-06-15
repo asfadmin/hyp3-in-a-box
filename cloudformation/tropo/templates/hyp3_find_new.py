@@ -61,17 +61,17 @@ prev_time_s3_policy = iam.Policy(
 )
 
 lambda_invoke = iam.Policy(
-    PolicyName='PreviousTimeS3ReadWriteAccess',
+    PolicyName='FindNewLambdaInvoke',
     PolicyDocument={
         "Version": "2012-10-17",
         "Statement": [{
-                "Effect": "Allow",
-                "Action": [
-                    "lambda:InvokeFunction",
-                    "lambda:InvokeAsync"
-                ],
-                "Resource": "*"
-            }
+            "Effect": "Allow",
+            "Action": [
+                "lambda:InvokeFunction",
+                "lambda:InvokeAsync"
+            ],
+            "Resource": "*"
+        }
         ]
     }
 )
@@ -80,7 +80,7 @@ lambda_invoke = iam.Policy(
 lambda_exe_role = t.add_resource(iam.Role(
     "FindNewExecutionRole",
     Path="/",
-    Policies=[logs_policy, prev_time_s3_policy],
+    Policies=[logs_policy, prev_time_s3_policy, lambda_invoke],
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
