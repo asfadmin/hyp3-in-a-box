@@ -2,7 +2,7 @@ source db_creds.sh
 
 TEMPLATE=outputs/lambdas.json
 
-python create_stack.py \
+python3 create_stack.py \
     --find_new \
     --scheduler \
     --send_email \
