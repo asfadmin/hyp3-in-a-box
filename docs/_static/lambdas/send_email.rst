@@ -13,8 +13,14 @@ Entrypoint: Lambda Handler
 
 .. autofunction:: send_email.src.lambda_function.lambda_handler
 
-Module: notify_only
+Module: Notify Only
+~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: notify_only
+   :members:
+
+Module: Render Email
 ~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: render_email
-   :members:
+  :members:

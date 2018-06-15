@@ -9,3 +9,4 @@ AWS Lambda Functions
    lambdas/find_new
    lambdas/send_email
    lambdas/scheduler
+   lambdas/setup_db
