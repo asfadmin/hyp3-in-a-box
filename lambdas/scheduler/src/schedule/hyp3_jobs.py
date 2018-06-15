@@ -27,8 +27,8 @@ def hyp3_jobs(new_granule_packages):
 def format_polygon(point_vals):
     points = ""
 
-    for x, y in zip(point_vals[0::2], point_vals[1::2]):
-        points += "{} {},".format(x, y)
+    for lat, lon in zip(point_vals[0::2], point_vals[1::2]):
+        points += "{} {},".format(lon, lat)
 
     return "POLYGON(({}))".format(points[:-1])
 
