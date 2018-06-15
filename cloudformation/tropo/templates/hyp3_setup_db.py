@@ -29,7 +29,7 @@ from .hyp3_rds import dbpassword, dbuser, hyp3_db
 source_zip = "setup_db.zip"
 
 
-print('adding setup_db lambda')
+print('  adding setup_db lambda')
 
 lambda_name = t.add_parameter(Parameter(
     "SetupDBName",
