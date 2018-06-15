@@ -78,7 +78,8 @@ scheduler = t.add_resource(Function(
             'SNS_ARN': Ref(finish_sns),
             'DB_HOST': environment.db_host,
             'DB_USER': environment.db_user,
-            'DB_PASSWORD': environment.db_pass
+            'DB_PASSWORD': environment.db_pass,
+            'DB_NAME': environment.db_name
         }),
     MemorySize=128,
     Timeout=300

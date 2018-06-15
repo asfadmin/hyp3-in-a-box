@@ -4,14 +4,19 @@ from hyp3_db import Hyp3DB
 
 
 def hyp3_jobs(new_granule_packages):
-    host, name, password = environment.db_creds
-    db = Hyp3DB(host, name, password)
+    host, name, password, db = environment.db_creds
+    db = Hyp3DB(host, name, password, db)
+
+    subs = db.get_enabled_subs()
+    print(subs)
 
     emails_packages = []
     for package in new_granule_packages:
         polygon = format_polygon(package['polygon'])
+        print(polygon)
 
         subs = db.get_enabled_intersecting_subs(polygon)
+        print(f'Found {len(subs)} subs overlapping granule')
 
         users = get_users_for(subs, db)
 

@@ -3,7 +3,8 @@ class Environment:
         self.db_creds = [
             'db host',
             'db user',
-            'db pass'
+            'db pass',
+            'db name'
         ]
 
         self.sns_arn = \

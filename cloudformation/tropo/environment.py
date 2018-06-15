@@ -14,6 +14,7 @@ class Environment:
         self.db_host = ""
         self.db_pass = ""
         self.db_user = ""
+        self.db_name = ""
 
     def get_variables(self):
         return [
