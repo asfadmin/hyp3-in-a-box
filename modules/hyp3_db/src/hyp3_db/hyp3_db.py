@@ -15,10 +15,11 @@ class Hyp3DB:
         'CANCELLED'
     ]
 
-    def __init__(self, host, user, password):
+    def __init__(self, host, user, password, db='hyp3db'):
         self.engine = make_engine(
             user=user,
             password=password,
-            host=host
+            host=host,
+            db=db
         )
         self.session = make_session(self.engine)

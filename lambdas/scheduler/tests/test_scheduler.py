@@ -8,7 +8,7 @@ from environment import environment
 import scheduler_main
 
 
-@skip_if_creds_not_availbable
+@skip_if_creds_not_available
 @mock.patch('events.sns.push')
 def test_scheduler_main(sns_mock):
     event = utils.load_testing_granules()
@@ -36,21 +36,3 @@ def test_scheduler():
     if 'local' in environment.maturity:
         utils.cache_results(email_packages)
 
-
-@skip_if_creds_not_available
-def test_get_users_by_ids(db):
-    ids = [37, 34]
-    users = db.get_users_by_ids(ids)
-
-    assert users
-    for user in users:
-        assert user.id in ids
-
-
-@skip_if_creds_not_available
-def test_get_enabled_subs(db):
-    enabled_subs = db.get_enabled_subs()
-
-    assert enabled_subs
-    for sub in enabled_subs:
-        assert sub.enabled is True
