@@ -62,7 +62,14 @@ lambda_role = t.add_resource(Role(
 scheduler = t.add_resource(Function(
     "SchedulerFunction",
     FunctionName=Ref(lambda_name),
-    Code=utils.make_lambda_code(source_zip),
+    Code=utils.make_lambda_code(
+        S3Bucket=environment.lambda_bucket,
+        S3Key="{maturity}/{source_zip}".format(
+            maturity=environment.maturity,
+            source_zip=source_zip
+        ),
+        S3ObjectVersion=environment.scheduler_version
+    ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(lambda_role, "Arn"),
     Runtime="python3.6",

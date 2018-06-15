@@ -18,10 +18,10 @@ Resources
 import troposphere as ts
 from troposphere import awslambda, events, iam, s3
 
+from environment import environment
 from template import t
 
-from . import utils
-from . import hyp3_scheduler
+from . import hyp3_scheduler, utils
 
 source_zip = "find_new_granules.zip"
 
@@ -87,7 +87,14 @@ lambda_exe_role = t.add_resource(iam.Role(
 find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
     FunctionName=ts.Ref(lambda_name),
-    Code=utils.make_lambda_code(source_zip),
+    Code=utils.make_lambda_code(
+        S3Bucket=environment.lambda_bucket,
+        S3Key="{maturity}/{source_zip}".format(
+            maturity=environment.maturity,
+            source_zip=source_zip
+        ),
+        S3ObjectVersion=environment.find_new_granules_version
+    ),
     Handler='lambda_function.lambda_handler',
     Environment=awslambda.Environment(
         Variables={

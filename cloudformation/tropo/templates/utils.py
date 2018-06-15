@@ -28,16 +28,7 @@ def load_json_from(directory, name):
     return loaded_json
 
 
-def make_lambda_code(source_zip):
-    code_params = {
-        'S3Bucket': environment.lambda_bucket,
-        'S3Key': "{maturity}/{source_zip}".format(
-            maturity=environment.maturity,
-            source_zip=source_zip
-        )
-    }
+def make_lambda_code(**kwargs):
+    kwargs = {key: value for key, value in kwargs.items() if value is not None}
 
-    if environment.send_email_version:
-        code_params['S3ObjectVersion'] = environment.send_email_version
-
-    return Code(**code_params)
+    return Code(**kwargs)

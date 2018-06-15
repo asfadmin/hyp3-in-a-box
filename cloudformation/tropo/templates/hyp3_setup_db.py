@@ -50,11 +50,18 @@ send_email_role = t.add_resource(Role(
 send_email = t.add_resource(Function(
     "SetupDBFunction",
     FunctionName=Ref(lambda_name),
-    Code=utils.make_lambda_code(source_zip),
+    Code=utils.make_lambda_code(
+        S3Bucket=environment.lambda_bucket,
+        S3Key="{maturity}/{source_zip}".format(
+            maturity=environment.maturity,
+            source_zip=source_zip
+        ),
+        S3ObjectVersion=environment.setup_db_version
+    ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(send_email_role, "Arn"),
     Runtime="python3.6",
-    KmsKeyArn=Ref(kms_key),
+    KmsKeyArn=GetAtt(kms_key, "Arn"),
     Environment=Environment(
         Variables={
             "Hyp3DBHost": GetAtt(hyp3_db, "Endpoint.Address"),

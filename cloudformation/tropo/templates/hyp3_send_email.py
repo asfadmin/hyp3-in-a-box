@@ -63,7 +63,14 @@ send_email_role = t.add_resource(Role(
 send_email = t.add_resource(Function(
     "SendEmailFunction",
     FunctionName=Ref(lambda_name),
-    Code=utils.make_lambda_code(source_zip),
+    Code=utils.make_lambda_code(
+        S3Bucket=environment.lambda_bucket,
+        S3Key="{maturity}/{source_zip}".format(
+            maturity=environment.maturity,
+            source_zip=source_zip
+        ),
+        S3ObjectVersion=environment.send_email_version
+    ),
     Environment=Environment(
         Variables={
             'SOURCE_EMAIL': Ref(source_email),
