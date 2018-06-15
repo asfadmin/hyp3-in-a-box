@@ -2,8 +2,7 @@ import sqlalchemy as sqla
 from sqlalchemy import orm
 
 
-def make_session(host, user, password, db):
-    engine = make_engine(user, password, host, db)
+def make_session(engine):
     Session = orm.sessionmaker(bind=engine)
 
     return Session()

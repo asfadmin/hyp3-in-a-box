@@ -2,9 +2,7 @@ import json
 import os
 import pathlib as pl
 
-import pytest
-
-from hyp3_db import Hyp3DB
+from hyp3_db import make_test_db
 
 DB_CONNECTION = {}
 
@@ -25,17 +23,10 @@ def load_creds_from_env():
     ]
 
 
-run_if_creds = pytest.mark.skipif(
-    not creds_file_exists(),
-    reason='Test requires database creds'
-)
-
-
 def with_db(func):
     def wrapper():
         if 'connection' not in DB_CONNECTION:
-            creds = load_creds()
-            db = Hyp3DB(*creds)
+            db = make_test_db()
             DB_CONNECTION['connection'] = db
         else:
             db = DB_CONNECTION['connection']

@@ -87,14 +87,17 @@ def get_latest_lambda_versions():
     for lambda_zip in os.listdir("build/lambdas"):
         if ".zip" not in lambda_zip:
             continue
-        latest_version = bucket.object_versions.filter(
-            Prefix="{}/{}".format(MATURITY, "send_email.zip"),
+        latest_versions = bucket.object_versions.filter(
+            Prefix="{}/{}".format(MATURITY, lambda_zip),
             MaxKeys=1
-        )[0]
-        versions.append((
-            lambda_zip[:-4],
-            latest_version.id
-        ))
+        ).limit(
+            count=1
+        )
+        for version in latest_versions:
+            versions.append((
+                lambda_zip[:-4],
+                version.id
+            ))
 
     return versions
 

@@ -3,7 +3,7 @@ import import_scheduler
 import mock
 import schedule
 import testing_utils as utils
-from db_cred_setup import skip_if_creds_not_availbable
+from db_cred_setup import skip_if_creds_not_available
 from environment import environment
 import scheduler_main
 
@@ -18,7 +18,7 @@ def test_scheduler_main(sns_mock):
     sns_mock.assert_called()
 
 
-@skip_if_creds_not_availbable
+@skip_if_creds_not_available
 def test_scheduler():
     granules = utils.load_testing_granules()['new_granules']
 
@@ -35,3 +35,22 @@ def test_scheduler():
 
     if 'local' in environment.maturity:
         utils.cache_results(email_packages)
+
+
+@skip_if_creds_not_available
+def test_get_users_by_ids(db):
+    ids = [37, 34]
+    users = db.get_users_by_ids(ids)
+
+    assert users
+    for user in users:
+        assert user.id in ids
+
+
+@skip_if_creds_not_available
+def test_get_enabled_subs(db):
+    enabled_subs = db.get_enabled_subs()
+
+    assert enabled_subs
+    for sub in enabled_subs:
+        assert sub.enabled is True

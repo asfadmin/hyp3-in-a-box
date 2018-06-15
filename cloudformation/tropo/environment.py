@@ -6,7 +6,7 @@ class Environment:
         self.eb_bucket = "asf-hyp3-in-a-box-source"
         self.maturity = "test"
 
-        self.find_new_version = ""
+        self.find_new_granules_version = ""
         self.send_email_version = ""
         self.scheduler_version = ""
         self.setup_db_version = ""
