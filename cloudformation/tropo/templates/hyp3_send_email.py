@@ -31,10 +31,10 @@ source_zip = "send_email.zip"
 print('  adding send_email lambda')
 
 source_email = t.add_parameter(Parameter(
-    "SendEmailName",
+    "VerifiedSourceEmail",
     Description="Source email to send notifications",
     Type="String",
-    AllowedPattern='/[^\s@]+@[^\s@]+\.[^\s@]+/'
+    AllowedPattern='(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
 ))
 
 lambda_name = t.add_parameter(Parameter(
