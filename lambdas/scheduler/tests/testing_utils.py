@@ -34,7 +34,7 @@ def load_testing_granules():
     new_grans_path = data_path / 'new_granules.json'
 
     with new_grans_path.open('r') as f:
-        return json.load(f)['new_granules']
+        return json.load(f)
 
 
 def load_email_packages():

@@ -37,9 +37,8 @@ def format_polygon(point_vals):
 
 
 def get_users_for(subs, db):
-    sub_ids = [sub.user_id for sub in subs]
-
-    users = db.get_users_by_ids(sub_ids)
+    user_ids = [sub.user_id for sub in subs]
+    users = db.get_users_by_ids(user_ids)
 
     return {
         user.id: user for user in users

@@ -17,7 +17,7 @@ Resources
 """
 
 from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Function
+from troposphere.awslambda import Function, Environment
 from troposphere.iam import Policy, Role
 
 from environment import environment
@@ -29,6 +29,13 @@ source_zip = "send_email.zip"
 
 
 print('  adding send_email lambda')
+
+source_email = t.add_parameter(Parameter(
+    "SendEmailName",
+    Description="Source email to send notifications",
+    Type="String",
+    AllowedPattern='/[^\s@]+@[^\s@]+\.[^\s@]+/'
+))
 
 lambda_name = t.add_parameter(Parameter(
     "SendEmailName",
@@ -56,13 +63,11 @@ send_email_role = t.add_resource(Role(
 send_email = t.add_resource(Function(
     "SendEmailFunction",
     FunctionName=Ref(lambda_name),
-    Code=utils.make_lambda_code(
-        S3Bucket=environment.lambda_bucket,
-        S3Key="{maturity}/{zip}".format(
-            maturity=environment.maturity,
-            zip=source_zip
-        ),
-        S3ObjectVersion=environment.send_email_version
+    Code=utils.make_lambda_code(source_zip),
+    Environment=Environment(
+        Variables={
+            'SOURCE_EMAIL': Ref(source_email),
+        }
     ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(send_email_role, "Arn"),

@@ -18,10 +18,10 @@ Resources
 import troposphere as ts
 from troposphere import awslambda, events, iam, s3
 
-from environment import environment
 from template import t
 
 from . import utils
+from . import hyp3_scheduler
 
 source_zip = "find_new_granules.zip"
 
@@ -60,6 +60,23 @@ prev_time_s3_policy = iam.Policy(
         }]}
 )
 
+lambda_invoke = iam.Policy(
+    PolicyName='PreviousTimeS3ReadWriteAccess',
+    PolicyDocument={
+        "Version": "2012-10-17",
+        "Statement": [{
+                "Effect": "Allow",
+                "Action": [
+                    "lambda:InvokeFunction",
+                    "lambda:InvokeAsync"
+                ],
+                "Resource": "*"
+            }
+        ]
+    }
+)
+
+
 lambda_exe_role = t.add_resource(iam.Role(
     "FindNewExecutionRole",
     Path="/",
@@ -70,17 +87,12 @@ lambda_exe_role = t.add_resource(iam.Role(
 find_new_granules_function = t.add_resource(awslambda.Function(
     "Hyp3FindNewGranulesFunction",
     FunctionName=ts.Ref(lambda_name),
-    Code=utils.make_lambda_code(
-        S3Bucket=environment.lambda_bucket,
-        S3Key="{maturity}/{zip}".format(
-            maturity=environment.maturity,
-            zip=source_zip
-        ),
-        S3ObjectVersion=environment.find_new_version
-    ),
+    Code=utils.make_lambda_code(source_zip),
     Handler='lambda_function.lambda_handler',
     Environment=awslambda.Environment(
-        Variables={'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket)}
+        Variables={
+            'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket),
+            'SCHEDULER_LAMBDA_NAME': ts.Ref(hyp3_scheduler.scheduler)}
     ),
     Role=ts.GetAtt(lambda_exe_role, 'Arn'),
     Runtime='python3.6',
@@ -102,7 +114,7 @@ find_new_event_rule = t.add_resource(events.Rule(
 ))
 
 PermissionForEventsToInvokeLambda = t.add_resource(awslambda.Permission(
-    "SchedulePermissions",
+    "EventSchedulePermissions",
     FunctionName=ts.Ref("Hyp3FindNewGranulesFunction"),
     Action="lambda:InvokeFunction",
     Principal="events.amazonaws.com",

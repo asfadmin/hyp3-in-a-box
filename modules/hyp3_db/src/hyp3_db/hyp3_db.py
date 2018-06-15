@@ -18,8 +18,8 @@ class Hyp3DB:
         'CANCELLED'
     ]
 
-    def __init__(self, host, user, password):
-        self.session = make_session(host, user, password)
+    def __init__(self, host, user, password, db='hyp3db'):
+        self.session = make_session(host, user, password, db)
 
     def get_users_by_ids(self, user_ids):
         user_ids_filter = User.id.in_(user_ids)
