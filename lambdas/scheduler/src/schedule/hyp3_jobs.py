@@ -42,4 +42,3 @@ def get_users_for(subs, db):
     return {
         user.id: user for user in users
     }
-
