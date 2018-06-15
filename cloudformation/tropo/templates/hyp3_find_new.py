@@ -76,7 +76,7 @@ find_new_granules_function = t.add_resource(awslambda.Function(
             maturity=environment.maturity,
             zip=source_zip
         ),
-        S3ObjectVersion=environment.find_new_version
+        S3ObjectVersion=environment.find_new_granules_version
     ),
     Handler='lambda_function.lambda_handler',
     Environment=awslambda.Environment(
