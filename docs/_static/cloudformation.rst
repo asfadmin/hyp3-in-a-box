@@ -20,6 +20,8 @@ AWS CloudFormation
 
    cloudformation/rds.rst
 
+   cloudformation/sns.rst
+
    cloudformation/kms_key.rst
 
 Troposphere
