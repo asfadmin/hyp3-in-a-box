@@ -27,6 +27,7 @@ Hyp3 In A Box's Documentation
 
    _static/cloudformation
    _static/lambdas-main
+   _static/modules
 
 
 The Hybrid Pluggable Procecssing (HyP3) System

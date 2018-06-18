@@ -18,15 +18,11 @@ Module: Schedule
 .. automodule:: schedule
    :members:
 
-Submodule: HyP3 Jobs
-~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: schedule.hyp3_jobs
+Module: Events
+~~~~~~~~~~~~~~~~
+
+.. automodule:: events
    :members:
 
 
-Submodule: Environment
-~~~~~~~~~~~~~~~~~~~~~~
-
-.. automodule:: environment
-   :members:

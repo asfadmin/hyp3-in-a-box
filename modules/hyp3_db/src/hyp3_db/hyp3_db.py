@@ -2,6 +2,7 @@ from .session import make_engine, make_session
 
 
 class Hyp3DB:
+    """ Handles a connection to the hyp3 database."""
     valid_job_status = [
         'INVALID',
         'INSERTED',
@@ -16,10 +17,17 @@ class Hyp3DB:
     ]
 
     def __init__(self, host, user, password, db='hyp3db'):
+        """
+            :param str host: host database url
+            :param str user: database username
+            :param str password: database password
+            :param str db:  name of the database
+        """
         self.engine = make_engine(
             user=user,
             password=password,
             host=host,
             db=db
         )
+
         self.session = make_session(self.engine)
