@@ -11,15 +11,15 @@ class Environment:
         self.scheduler_version = None
         self.setup_db_version = None
 
-        self.db_host = ""
-        self.db_pass = ""
-        self.db_user = ""
-        self.db_name = ""
-
     def get_variables(self):
         return [
-            (k, type(v)) for k, v in self.__dict__.items()
+            (k, get_var_type(v))
+            for k, v in self.__dict__.items()
         ]
+
+
+def get_var_type(v):
+    return type(v) if v is not None else str
 
 
 environment = Environment()
