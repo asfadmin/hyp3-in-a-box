@@ -21,9 +21,9 @@ def get_users_by_ids(db, user_ids):
     return users
 
 
-def get_enabled_intersecting_subs(db, polygon):
+def get_enabled_containing_subs(db, polygon):
     poly = WKTElement(polygon, srid=4326)
-    intersection = Subscription.location.ST_Contains(poly)
+    intersection = Subscription.location.ST_Intersects(poly)
 
     intersecting_subs = enabled_subs_query(db) \
         .filter(intersection) \
