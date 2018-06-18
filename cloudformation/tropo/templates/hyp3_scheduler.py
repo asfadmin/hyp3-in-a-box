@@ -5,6 +5,10 @@
 """
 Troposphere template responsible for generating :ref:`scheduler_lambda`
 
+Requires
+~~~~~~~~
+* :ref:`sns_template`
+
 Resources
 ~~~~~~~~~
 

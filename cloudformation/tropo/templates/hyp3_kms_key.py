@@ -2,7 +2,18 @@
 # Rohan Weeden
 # Created: June 13, 2018
 
-# AWS Encryption key used to keep sensitive HyP3 credentials secure.
+"""
+Troposphere template responsible for generating AWS Encryption key used to keep
+sensitive HyP3 credentials secure.
+
+Resources
+~~~~~~~~~
+
+* **KMS Key:** A new KMS key
+* **IAM Policies:**
+
+  * Full management permissions by root account
+"""
 
 from awacs.aws import Action, Allow, PolicyDocument, Principal, Statement
 from troposphere import AWS_ACCOUNT_ID, Join, Ref, kms

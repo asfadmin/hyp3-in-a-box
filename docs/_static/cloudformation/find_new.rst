@@ -1,3 +1,4 @@
+.. _find_new_template:
 
 Template: Find New
 ==================
@@ -9,4 +10,3 @@ Template: Find New
    :alt: flowchart of the find_new granule lambda
 
    Diagram of the find_new lambda.
-

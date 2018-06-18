@@ -15,6 +15,10 @@ AWS CloudFormation
    cloudformation/scheduler.rst
    cloudformation/setup_db.rst
 
+   cloudformation/rds.rst
+
+   cloudformation/kms_key.rst
+
 Troposphere
 -----------
 

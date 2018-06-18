@@ -1,3 +1,4 @@
+.. _setup_db_template:
 
 Template: Setup DB
 ==================
