@@ -10,16 +10,18 @@ from unittest import TestCase
 
 from hyp3_db import make_test_db
 from hyp3_db.hyp3_models.base import Base
-from setup_db import setup_db
+from init_db import setup_db
 
 
 class TestSetupDb(TestCase):
-
     def setUp(self):
+        admindb = make_test_db(db="postgres")
+        admindb.session.connection().connection.set_isolation_level(0)
+        admindb.session.execute("DROP DATABASE hyp3db;")
+        admindb.session.execute("CREATE DATABASE hyp3db;")
+        admindb.session.execute("DROP USER IF EXISTS hyp3_user;")
+        admindb.session.connection().connection.set_isolation_level(1)
         self.db = make_test_db()
-        Base.metadata.drop_all(self.db.engine)
-        self.db.engine.execute("REVOKE ALL PRIVILEGES ON DATABASE hyp3db FROM hyp3_user")
-        self.db.engine.execute("DROP USER hyp3_user")
 
     def test_lambda_function(self):
         setup_db(self.db)

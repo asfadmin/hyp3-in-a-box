@@ -3,6 +3,8 @@ import pathlib as pl
 
 from troposphere.awslambda import Code
 
+from environment import environment
+
 
 def get_map(name):
     return load_json_from('maps', name)

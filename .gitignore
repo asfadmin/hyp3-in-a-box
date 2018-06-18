@@ -1,5 +1,4 @@
 lambdas/upload_lambda.sh
-make_stack.sh
 db_creds.sh
 *.txt
 

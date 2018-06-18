@@ -2,6 +2,13 @@ import hyp3_events
 
 
 def make_notify_events(email_packages):
+    """ make email packages into notify only events
+
+        :param list(tuple): email packages of the form (sub, user, granule)
+
+        :returns: hyp3 events corresponding to each package
+        :rtype: list[hyp3_events.NotifyOnlyEvent]
+    """
     events = [
         make_notify_event(sub, user, granule) for
         sub, user, granule in email_packages

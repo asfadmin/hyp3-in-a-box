@@ -1,41 +1,61 @@
-
-from environment import environment
 from hyp3_db import Hyp3DB
 
+from environment import environment
+from . import queries
 
-def hyp3_jobs(new_granule_packages):
-    host, name, password = environment.db_creds
-    db = Hyp3DB(host, name, password)
 
-    emails_packages = []
-    for package in new_granule_packages:
-        polygon = format_polygon(package['polygon'])
+def hyp3_jobs(new_granules):
+    """ Get all the hyp3 jobs from the new granules
 
-        subs = db.get_enabled_intersecting_subs(polygon)
+        :param list[dict] new_granules: New granules from cmr
 
-        users = get_users_for(subs, db)
+        :return: A tuple of the form (sub, user, granule)
+        :rtype: list[tuple]
+    """
+    host, name, password, db = environment.db_creds
+    db = Hyp3DB(host, name, password, db)
 
-        emails_packages += [
-            (sub, users[sub.user_id], package) for sub in subs
-        ]
+    jobs_for_each_granule = [
+        get_jobs_for(granule, db) for granule in new_granules
+    ]
 
-    return emails_packages
+    jobs = flatten_list(jobs_for_each_granule)
+
+    return jobs
+
+
+def get_jobs_for(granule, db):
+    polygon = format_polygon(granule['polygon'])
+    print(polygon)
+
+    subs = queries.get_enabled_intersecting_subs(db, polygon)
+    print(f'Found {len(subs)} subs overlapping granule')
+
+    users = get_users_for(subs, db)
+
+    return [
+        (sub, users[sub.user_id], granule) for sub in subs
+    ]
 
 
 def format_polygon(point_vals):
     points = ""
 
-    for x, y in zip(point_vals[0::2], point_vals[1::2]):
-        points += "{} {},".format(x, y)
+    for lat, lon in zip(point_vals[0::2], point_vals[1::2]):
+        points += "{} {},".format(lon, lat)
 
     return "POLYGON(({}))".format(points[:-1])
 
 
 def get_users_for(subs, db):
-    sub_ids = [sub.user_id for sub in subs]
+    user_ids = [sub.user_id for sub in subs]
 
-    users = db.get_users_by_ids(sub_ids)
+    users = queries.get_users_by_ids(db, user_ids)
 
     return {
         user.id: user for user in users
     }
+
+
+def flatten_list(l):
+    return sum(l, [])

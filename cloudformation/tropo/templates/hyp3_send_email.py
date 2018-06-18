@@ -12,12 +12,12 @@ Resources
 * **IAM Policies:**
 
   * Lambda basic execution
-  * Allow lambda to trigger SES send email
+  * Allow lambda to trigger SES send email using verified email
 
 """
 
 from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Function
+from troposphere.awslambda import Function, Environment
 from troposphere.iam import Policy, Role
 
 from environment import environment
@@ -29,6 +29,13 @@ source_zip = "send_email.zip"
 
 
 print('  adding send_email lambda')
+
+source_email = t.add_parameter(Parameter(
+    "VerifiedSourceEmail",
+    Description="Source email to send notifications",
+    Type="String",
+    AllowedPattern=r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
+))
 
 lambda_name = t.add_parameter(Parameter(
     "SendEmailName",
@@ -58,11 +65,16 @@ send_email = t.add_resource(Function(
     FunctionName=Ref(lambda_name),
     Code=utils.make_lambda_code(
         S3Bucket=environment.lambda_bucket,
-        S3Key="{maturity}/{zip}".format(
+        S3Key="{maturity}/{source_zip}".format(
             maturity=environment.maturity,
-            zip=source_zip
+            source_zip=source_zip
         ),
         S3ObjectVersion=environment.send_email_version
+    ),
+    Environment=Environment(
+        Variables={
+            'SOURCE_EMAIL': Ref(source_email),
+        }
     ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(send_email_role, "Arn"),

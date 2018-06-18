@@ -34,7 +34,7 @@ from .hyp3_rds import dbpassword, dbuser, hyp3_db
 source_zip = "setup_db.zip"
 
 
-print('adding setup_db lambda')
+print('  adding setup_db lambda')
 
 lambda_name = t.add_parameter(Parameter(
     "SetupDBName",
@@ -57,16 +57,16 @@ send_email = t.add_resource(Function(
     FunctionName=Ref(lambda_name),
     Code=utils.make_lambda_code(
         S3Bucket=environment.lambda_bucket,
-        S3Key="{maturity}/{zip}".format(
+        S3Key="{maturity}/{source_zip}".format(
             maturity=environment.maturity,
-            zip=source_zip
+            source_zip=source_zip
         ),
         S3ObjectVersion=environment.setup_db_version
     ),
     Handler="lambda_function.lambda_handler",
     Role=GetAtt(send_email_role, "Arn"),
     Runtime="python3.6",
-    KmsKeyArn=Ref(kms_key),
+    KmsKeyArn=GetAtt(kms_key, "Arn"),
     Environment=Environment(
         Variables={
             "Hyp3DBHost": GetAtt(hyp3_db, "Endpoint.Address"),

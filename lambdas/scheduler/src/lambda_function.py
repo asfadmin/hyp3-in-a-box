@@ -1,8 +1,7 @@
 import os
-
-import events
-import schedule
 from environment import environment
+
+from scheduler_main import scheduler
 
 
 def lambda_handler(event, context):
@@ -13,19 +12,15 @@ def lambda_handler(event, context):
             * new_granules - A list of granules to process
         :param context: lambda runtime info
     """
+    print('Setting environment variables')
     set_environment_variables()
 
-    new_granules = event['new_granules']
-    job_packages = schedule.hyp3_jobs(new_granules)
-
-    notify_only_events = events.make_notify_events(job_packages)
-
-    events.send(notify_only_events)
+    scheduler(event)
 
 
 def set_environment_variables():
     environment.db_creds = [
-        os.environ[k] for k in ['DB_HOST', 'DB_USER', 'DB_PASSWORD']
+        os.environ[k] for k in ['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME']
     ]
 
     environment.sns_arn = os.environ['SNS_ARN']

@@ -13,9 +13,12 @@ Resources
 ~~~~~~~~~
 
 * **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
+* **SNS Topic:** This is where notify only/finish events get put.
 * **IAM Policies:**
 
   * Lambda basic execution
+  * SNS publish access
+
 """
 
 from troposphere import GetAtt, Parameter, Ref
@@ -68,9 +71,9 @@ scheduler = t.add_resource(Function(
     FunctionName=Ref(lambda_name),
     Code=utils.make_lambda_code(
         S3Bucket=environment.lambda_bucket,
-        S3Key="{maturity}/{zip}".format(
+        S3Key="{maturity}/{source_zip}".format(
             maturity=environment.maturity,
-            zip=source_zip
+            source_zip=source_zip
         ),
         S3ObjectVersion=environment.scheduler_version
     ),
@@ -82,7 +85,8 @@ scheduler = t.add_resource(Function(
             'SNS_ARN': Ref(finish_sns),
             'DB_HOST': environment.db_host,
             'DB_USER': environment.db_user,
-            'DB_PASSWORD': environment.db_pass
+            'DB_PASSWORD': environment.db_pass,
+            'DB_NAME': environment.db_name
         }),
     MemorySize=128,
     Timeout=300
