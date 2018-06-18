@@ -4,7 +4,6 @@ Lambda: Scheduler
 =================
 
 .. image:: ../images/lambda.png
-   :scale: 3 %
    :alt: alternate text
    :align: right
 
@@ -19,15 +18,11 @@ Module: Schedule
 .. automodule:: schedule
    :members:
 
-Submodule: HyP3 Jobs
-~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: schedule.hyp3_jobs
+Module: Events
+~~~~~~~~~~~~~~~~
+
+.. automodule:: events
    :members:
 
 
-Submodule: Environment
-~~~~~~~~~~~~~~~~~~~~~~
-
-.. automodule:: schedule.environment
-   :members:

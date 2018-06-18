@@ -23,9 +23,11 @@ import sys
 sys.path.insert(0, os.path.abspath('../lambdas/find_new_granules/src'))
 sys.path.insert(0, os.path.abspath('../lambdas/scheduler/src'))
 sys.path.insert(0, os.path.abspath('../lambdas/send_email/src'))
-sys.path.insert(0, os.path.abspath('../lambdas/setup_db/src'))
 sys.path.insert(0, os.path.abspath('../lambdas'))
+sys.path.insert(0, os.path.abspath('../lambdas/setup_db/src'))
 sys.path.insert(0, os.path.abspath('../cloudformation/tropo'))
+sys.path.insert(0, os.path.abspath('../modules/hyp3_db/src'))
+sys.path.insert(0, os.path.abspath('../modules/hyp3_events/src'))
 sys.path.insert(0, os.path.abspath('..'))
 
 
@@ -61,7 +63,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Hyp3 In A Box'
-copyright = '2018, William Horn, Rohan Weeden'
+copyright = '2018, William Horn, Rohan Weeden'  # pylint: disable=E0102
 author = 'William Horn, Rohan Weeden'
 
 # The version info for the project you're documenting, acts as replacement for

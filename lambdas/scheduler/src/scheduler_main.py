@@ -6,6 +6,10 @@ import schedule
 
 
 def scheduler(event):
+    """
+        Wrapper around scheduler lambda that can be imported by
+        pytest correctly
+    """
     new_granules = event['new_granules']
 
     print('Scheduling hyp3_jobs')

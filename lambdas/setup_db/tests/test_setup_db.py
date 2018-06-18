@@ -9,11 +9,11 @@ import import_setup_db
 from unittest import TestCase
 
 from hyp3_db import make_test_db
-from setup_db import setup_db
+from hyp3_db.hyp3_models.base import Base
+from init_db import setup_db
 
 
 class TestSetupDb(TestCase):
-
     def setUp(self):
         admindb = make_test_db(db="postgres")
         admindb.session.connection().connection.set_isolation_level(0)

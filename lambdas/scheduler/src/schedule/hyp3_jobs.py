@@ -4,25 +4,38 @@ from environment import environment
 from . import queries
 
 
-def hyp3_jobs(new_granule_packages):
+def hyp3_jobs(new_granules):
+    """ Get all the hyp3 jobs from the new granules
+
+        :param list[dict] new_granules: New granules from cmr
+
+        :return: A tuple of the form (sub, user, granule)
+        :rtype: list[tuple]
+    """
     host, name, password, db = environment.db_creds
     db = Hyp3DB(host, name, password, db)
 
-    emails_packages = []
-    for package in new_granule_packages:
-        polygon = format_polygon(package['polygon'])
-        print(polygon)
+    jobs_for_each_granule = [
+        get_jobs_for(granule, db) for granule in new_granules
+    ]
 
-        subs = queries.get_enabled_intersecting_subs(db, polygon)
-        print(f'Found {len(subs)} subs overlapping granule')
+    jobs = flatten_list(jobs_for_each_granule)
 
-        users = get_users_for(subs, db)
+    return jobs
 
-        emails_packages += [
-            (sub, users[sub.user_id], package) for sub in subs
-        ]
 
-    return emails_packages
+def get_jobs_for(granule, db):
+    polygon = format_polygon(granule['polygon'])
+    print(polygon)
+
+    subs = queries.get_enabled_intersecting_subs(db, polygon)
+    print(f'Found {len(subs)} subs overlapping granule')
+
+    users = get_users_for(subs, db)
+
+    return [
+        (sub, users[sub.user_id], granule) for sub in subs
+    ]
 
 
 def format_polygon(point_vals):
@@ -42,3 +55,7 @@ def get_users_for(subs, db):
     return {
         user.id: user for user in users
     }
+
+
+def flatten_list(l):
+    return sum(l, [])

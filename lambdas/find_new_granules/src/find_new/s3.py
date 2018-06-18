@@ -28,8 +28,7 @@ def get_correct_exception(e, key):
 
         return ObjectDoesntExist(error_msg)
 
-    else:
-        return e
+    return e
 
 
 def get_no_object_error_msg(key):

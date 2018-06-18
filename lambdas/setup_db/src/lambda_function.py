@@ -7,7 +7,7 @@
 import os
 
 from hyp3_db import Hyp3DB
-from setup_db import setup_db
+from init_db import setup_db
 
 
 def lambda_handler(aws_event, aws_context):
