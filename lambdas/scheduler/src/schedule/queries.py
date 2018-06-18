@@ -21,7 +21,15 @@ def get_users_by_ids(db, user_ids):
     return users
 
 
-def get_enabled_containing_subs(db, polygon):
+def get_enabled_intersecting_subs(db, polygon):
+    """ Get enabled subs intersecting a polygon
+
+        :param Hyp3DB db: The db to make the query on
+        :param str polygon: WKT polygon
+
+        :returns: hyp3 subscriptions intersecting polygon
+        :rtype: list[hyp3_db.hyp3_models.Subscription]
+    """
     poly = WKTElement(polygon, srid=4326)
     intersection = Subscription.location.ST_Intersects(poly)
 
