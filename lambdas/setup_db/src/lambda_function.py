@@ -11,8 +11,9 @@ from init_db import setup_db
 
 
 def lambda_handler(aws_event, aws_context):
-    """ AWS Lambda entry point. Renders an email for the given parameters and
-    sends it via SES.
+    """ AWS Lambda entry point. Sets up the hyp3 database for the rest of the
+        hyp3 system to use. The lambda is responsible for creating a new user
+        and installing the postgis plugin.
 
         :param aws_event: lambda event data
         :param aws_context: lambda runtime info
