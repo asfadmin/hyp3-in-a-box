@@ -29,7 +29,7 @@ def get_jobs_for(granule, db):
     print(polygon)
 
     subs = queries.get_enabled_intersecting_subs(db, polygon)
-    print(f'Found {len(subs)} subs overlapping granule')
+    print('Found {} subs overlapping granule'.format(len(subs)))
 
     users = get_users_for(subs, db)
 

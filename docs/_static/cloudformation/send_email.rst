@@ -1,3 +1,4 @@
+.. _send_email_template:
 
 Template: Send Email
 ====================

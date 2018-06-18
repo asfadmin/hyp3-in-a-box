@@ -1,3 +1,4 @@
+.. _scheduler_template:
 
 Template: Scheduler
 ===================
