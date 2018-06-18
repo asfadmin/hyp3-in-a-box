@@ -4,6 +4,14 @@ from geoalchemy2 import WKTElement
 
 
 def get_users_by_ids(db, user_ids):
+    """ Get users from a list of user ids
+
+        :param Hyp3DB db: The db to make the query on
+        :param list[int] user_ids: User ids to get user objects from
+
+        :returns: hyp3 users with ids in user_ids list
+        :rtype: list[hyp3_db.hyp3_models.User]
+    """
     user_ids_filter = User.id.in_(user_ids)
 
     users = db.session.query(User) \
