@@ -8,6 +8,9 @@
 from hyp3_db.hyp3_models.base import Base
 from sqlalchemy.sql import text
 
+CREATE_POSTGIS_SQL = text("""
+CREATE EXTENSION postgis;
+""")
 
 ADD_USER_SQL = text("""
 CREATE USER hyp3_user WITH PASSWORD :password;
@@ -17,5 +20,6 @@ GRANT ALL PRIVILEGES ON DATABASE hyp3db to hyp3_user;
 
 def setup_db(db):
     """ Creates hyp3 user as well as all database tables """
+    db.engine.execute(CREATE_POSTGIS_SQL)
     db.engine.execute(ADD_USER_SQL, password="testpass")
     Base.metadata.create_all(db.engine)
