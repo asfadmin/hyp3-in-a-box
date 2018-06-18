@@ -29,5 +29,5 @@ Submodule: HyP3 Jobs
 Submodule: Environment
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: schedule.environment
+.. automodule:: environment
    :members:

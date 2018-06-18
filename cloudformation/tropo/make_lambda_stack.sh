@@ -1,5 +1,4 @@
 set -e
-
 source db_creds.sh
 
 TEMPLATE=outputs/lambdas.json
@@ -8,6 +7,7 @@ python3 create_stack.py \
     --find_new \
     --scheduler \
     --send_email \
+
     --lambda_bucket hyp3-in-a-box-lambdas \
     --maturity test \
     --db_host $HOST \
