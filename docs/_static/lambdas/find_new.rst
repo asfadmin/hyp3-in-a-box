@@ -4,7 +4,6 @@ Lambda: Find New Granules
 =========================
 
 .. image:: ../images/lambda.png
-   :scale: 3 %
    :alt: alternate text
    :align: right
 

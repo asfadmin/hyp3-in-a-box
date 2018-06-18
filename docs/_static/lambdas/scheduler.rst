@@ -4,7 +4,6 @@ Lambda: Scheduler
 =================
 
 .. image:: ../images/lambda.png
-   :scale: 3 %
    :alt: alternate text
    :align: right
 

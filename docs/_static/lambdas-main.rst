@@ -2,6 +2,10 @@
 AWS Lambda Functions
 ====================
 
+.. image:: images/lambda.png
+   :alt: alternate text
+   :align: right
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

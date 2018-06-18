@@ -5,6 +5,9 @@
 AWS CloudFormation
 ==================
 
+.. image:: images/cloudformation.png
+   :alt: alternate text
+   :align: right
 
 .. toctree::
    :maxdepth: 2
