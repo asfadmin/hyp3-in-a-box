@@ -2,7 +2,7 @@ from hypothesis import strategies as st
 
 import hyp3_events
 
-url_strategy = st.from_regex('https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+')
+url_strategy = st.from_regex(r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+')
 
 
 notify_only_event = st.builds(
