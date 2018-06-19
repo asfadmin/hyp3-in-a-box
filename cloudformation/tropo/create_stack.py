@@ -113,7 +113,6 @@ def add_env_var_to(parser, var_name, var_type):
     if var_type is bool:
         var_type = str2bool
 
-
     parser.add_argument(
         '--' + var_name, type=var_type,
         help="Set environment variable {}".format(var_name)
