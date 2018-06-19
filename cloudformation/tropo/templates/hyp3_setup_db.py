@@ -5,6 +5,11 @@
 """
 Troposphere template responsible for generating :ref:`setup_db_lambda`
 
+Requires
+~~~~~~~~
+* :ref:`rds_template`
+* :ref:`kms_key_template`
+
 Resources
 ~~~~~~~~~
 
