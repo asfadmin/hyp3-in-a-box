@@ -40,33 +40,6 @@ The Hybrid Pluggable Procecssing (HyP3) System
    Diagram of the hyp3 system. All these resourse get automatically created
    using `AWS Cloudformation`_.
 
-Start Events
-~~~~~~~~~~~~
-
-Holds information about the event like processing type, granules, etc.
-Connects to a job entry in the database.
-
-Finish Events
-~~~~~~~~~~~~~
-
-Holds info about the outcome of the processing like status, products, as well as all the
-general job info (also connected to job entry).
-
-Admin API
-~~~~~~~~~
-
-A python module responsible for interfacing with the database.
-
-**Responsibilities:**
-
-* get all subs
-* get all jobs
-* start job
-* update job
-* add products
-* get email unsubscribe link
-
-
 Indices and tables
 ------------------
 
