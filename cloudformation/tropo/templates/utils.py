@@ -3,16 +3,13 @@ import pathlib as pl
 
 from troposphere.awslambda import Code
 
-from environment import environment
-
 
 def get_map(name):
     return load_json_from('maps', name)
 
 
-def get_static_policy(name, update_with={}):
+def get_static_policy(name):
     static_policy = load_json_from('policies', name)
-    static_policy.update(update_with)
 
     return static_policy
 
