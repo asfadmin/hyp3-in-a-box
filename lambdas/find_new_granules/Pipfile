@@ -10,6 +10,8 @@ asf-granule-util = "*"
 
 [dev-packages]
 pytest = "*"
+pytest-cov = "*"
+mock = "*"
 
 [requires]
 python_version = "3.6"
