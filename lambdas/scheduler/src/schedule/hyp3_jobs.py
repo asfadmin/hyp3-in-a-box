@@ -25,7 +25,7 @@ def hyp3_jobs(new_granules):
 
 
 def get_jobs_for(granule, db):
-    polygon = format_polygon(granule['polygon'])
+    polygon = format_polygon(granule.polygon)
     print(polygon)
 
     subs = queries.get_enabled_intersecting_subs(db, polygon)

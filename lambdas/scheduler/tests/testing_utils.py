@@ -2,6 +2,8 @@
 import json
 import pathlib as pl
 
+import hyp3_events
+
 from hyp3_db import hyp3_models
 
 data_path = pl.Path(__file__).parent / 'data'
@@ -56,5 +58,5 @@ def format_package(pack):
     return (
         hyp3_models.Subscription(**sub),
         hyp3_models.User(**user),
-        granule
+        hyp3_events.NewGranuleEvent(**granule)
     )
