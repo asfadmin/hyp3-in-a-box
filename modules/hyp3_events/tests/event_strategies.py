@@ -25,7 +25,7 @@ def get_new_granule_strategy():
     return st.builds(
         hyp3_events.NewGranuleEvent,
         name=st.text(),
-        polygon=cmr_polygon_list(),
+        polygon=cmr_polygon_list(),  # pylint: disable=E1120
         download_url=get_url_strategy()
     )
 
@@ -56,8 +56,6 @@ def cmr_polygon_list(draw):
 
     return polygon + polygon[:2]
 
-
-print(cmr_polygon_list().example())
 
 strategies = {
     hyp3_events.NotifyOnlyEvent: get_notify_only_strategy(),

@@ -1,6 +1,3 @@
-import json
-import pathlib as pl
-
 import import_hyp3_events
 
 import pytest
@@ -27,7 +24,7 @@ def test_to_dict(EventType):
         assert isinstance(e_dict, dict)
         assert e_dict.keys()
 
-    to_dict()
+    to_dict()  # pylint: disable=E1120
 
 
 @pytest.mark.parametrize(PARAM_NAMES, EVENTS_TO_TEST)
@@ -40,4 +37,4 @@ def test_notify_only_json_round_trip(EventType):
 
         assert new_event == event
 
-    round_trip_property_test()
+    round_trip_property_test()  # pylint: disable=E1120
