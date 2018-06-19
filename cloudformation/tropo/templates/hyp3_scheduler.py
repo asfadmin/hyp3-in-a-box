@@ -30,6 +30,7 @@ from template import t
 
 from . import utils
 from .hyp3_sns import finish_sns
+from .hyp3_db_params import db_pass, db_user, db_name
 
 source_zip = "scheduler.zip"
 
@@ -84,9 +85,9 @@ scheduler = t.add_resource(Function(
         Variables={
             'SNS_ARN': Ref(finish_sns),
             'DB_HOST': environment.db_host,
-            'DB_USER': environment.db_user,
-            'DB_PASSWORD': environment.db_pass,
-            'DB_NAME': environment.db_name
+            'DB_USER': db_user,
+            'DB_PASSWORD': db_pass,
+            'DB_NAME': db_name
         }),
     MemorySize=128,
     Timeout=300

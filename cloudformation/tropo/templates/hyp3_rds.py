@@ -6,32 +6,10 @@ from troposphere import GetAtt, Output, Parameter, Ref, ec2, rds
 from template import t
 
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
+from .hyp3_db_params import db_pass, db_user, db_name
+
 
 print('  adding rds')
-
-dbuser = t.add_parameter(Parameter(
-    "Hyp3DBUser",
-    NoEcho=False,
-    Description="The database admin account username",
-    Type="String",
-    MinLength="1",
-    MaxLength="16",
-    AllowedPattern="[a-zA-Z][a-zA-Z0-9]*",
-    ConstraintDescription=("must begin with a letter and contain only"
-                           " alphanumeric characters.")
-))
-
-dbpassword = t.add_parameter(Parameter(
-    "Hyp3DBPassword",
-    NoEcho=True,
-    Description="The database admin account password",
-    Type="String",
-    MinLength="8",
-    MaxLength="41",
-    AllowedPattern="[a-zA-Z0-9]*",
-    ConstraintDescription=("must contain only alphanumeric characters "
-                           "and be from 8-41 characters in length.")
-))
 
 
 def get_security_group(name: str):
@@ -69,14 +47,14 @@ hyp3_db = t.add_resource(rds.DBInstance(
     DBInstanceIdentifier="hyp3-in-a-box",
     AllocatedStorage="5",
     DBInstanceClass="db.t2.micro",
-    DBName="hyp3db",
+    DBName=Ref(db_name),
     Engine="postgres",
     EngineVersion="9.5.10",
     PubliclyAccessible=True,
     VPCSecurityGroups=[Ref(security_group)],
     DBSubnetGroupName=Ref(mydbsubnetgroup),
-    MasterUsername=Ref(dbuser),
-    MasterUserPassword=Ref(dbpassword),
+    MasterUsername=Ref(db_user),
+    MasterUserPassword=Ref(db_pass),
     DependsOn=('Hyp3VPC'),
 ))
 
