@@ -12,7 +12,8 @@ import event_strategies
 
 PARAM_NAMES = 'EventType'
 EVENTS_TO_TEST = [
-    (hyp3_events.NotifyOnlyEvent)
+    (hyp3_events.NotifyOnlyEvent),
+    (hyp3_events.NewGranuleEvent)
 ]
 
 
@@ -20,7 +21,7 @@ EVENTS_TO_TEST = [
 def test_to_dict(EventType):
 
     @given(event_strategies.strategies[EventType])
-    def to_dict(event=None):
+    def to_dict(event):
         e_dict = event.to_dict()
 
         assert isinstance(e_dict, dict)
@@ -33,7 +34,7 @@ def test_to_dict(EventType):
 def test_notify_only_json_round_trip(EventType):
 
     @given(event_strategies.strategies[EventType])
-    def round_trip_property_test(event=None):
+    def round_trip_property_test(event):
         event_json = event.to_json()
         new_event = EventType.from_json(event_json)
 

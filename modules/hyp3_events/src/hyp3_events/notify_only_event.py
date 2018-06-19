@@ -1,5 +1,4 @@
 import collections
-import json
 
 from .hyp3_event import Hyp3Event
 
