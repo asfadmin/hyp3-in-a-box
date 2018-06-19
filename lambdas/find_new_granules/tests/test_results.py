@@ -3,10 +3,10 @@ import pathlib as pl
 import unittest
 
 import asf_granule_util as gu
+import hyp3_events
 
 import import_find_new
 import results
-from results import granule_package as gp
 
 
 class TestFindNewGranules(unittest.TestCase):
@@ -42,7 +42,7 @@ class TestFindNewGranules(unittest.TestCase):
             f.write(new_grans_json)
 
     def package_test(self, result):
-        self.assertIsInstance(result, gp.GranulePackage)
+        self.assertIsInstance(result, hyp3_events.NewGranuleEvent)
 
         for point in result.polygon:
             self.assertIsInstance(point, float)

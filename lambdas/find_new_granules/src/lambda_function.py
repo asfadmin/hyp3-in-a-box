@@ -16,10 +16,10 @@ def lambda_handler(event, context):
 
     search_results = find_new.granules()
 
-    new_granules = results.package(search_results)
-    new_granules_json = results.format_into_json(new_granules)
+    new_granule_events = results.package(search_results)
+    events_json = results.format_into_json(new_granule_events)
 
-    start_scheduler_with(new_granules_json)
+    start_scheduler_with(events_json)
 
 
 def start_scheduler_with(new_granules_json):
