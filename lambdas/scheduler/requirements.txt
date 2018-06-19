@@ -1,8 +1,8 @@
 -i https://pypi.org/simple
 ./../../modules/hyp3_db
 ./../../modules/hyp3_events
-boto3==1.7.38
-botocore==1.10.38
+boto3==1.7.40
+botocore==1.10.40
 docutils==0.14
 jmespath==0.9.3
 python-dateutil==2.7.3; python_version >= '2.7'
