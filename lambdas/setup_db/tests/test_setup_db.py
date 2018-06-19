@@ -4,12 +4,12 @@
 
 # Test cases for seting up the database
 
-import import_setup_db
 
 from unittest import TestCase
 
+import import_setup_db
+
 from hyp3_db import make_test_db
-from hyp3_db.hyp3_models.base import Base
 from init_db import setup_db
 
 
