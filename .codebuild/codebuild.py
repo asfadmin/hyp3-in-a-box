@@ -13,8 +13,9 @@ import os
 import stat
 import subprocess
 import sys
-from xml.etree import ElementTree
 import pathlib as pl
+
+from defusedxml import ElementTree
 
 import boto3
 

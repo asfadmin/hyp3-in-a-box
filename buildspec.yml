@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - pip install -U requests sphinx pytest subprocess32 pytest-cov
+      - pip install -U requests sphinx pytest subprocess32 pytest-cov defusedxml
       - python3 .codebuild/codebuild.py install
   pre_build:
     commands:
