@@ -90,7 +90,7 @@ scheduler_args = {
             'DB_PASSWORD': Ref(db_pass),
             'DB_NAME': Ref(db_name)
         }),
-    "KmsKeyArn": Ref(kms_key),
+    "KmsKeyArn": GetAtt(kms_key, "Arn"),
     "MemorySize": 128,
     "Timeout": 300
 }
