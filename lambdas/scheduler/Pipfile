@@ -11,6 +11,9 @@ name = "pypi"
 [dev-packages]
 pytest = "*"
 mock = "*"
+coverage = "*"
+pytest-cov = "*"
+hypothesis = "*"
 
 [requires]
 python_version = "3.6"

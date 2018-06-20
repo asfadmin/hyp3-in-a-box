@@ -12,7 +12,7 @@ Resources
 * **IAM Policies:**
 
   * Lambda basic execution
-  * Allow lambda to trigger SES send email
+  * Allow lambda to trigger SES send email using verified email
 
 """
 

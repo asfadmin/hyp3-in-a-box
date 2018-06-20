@@ -5,6 +5,9 @@
 AWS CloudFormation
 ==================
 
+.. image:: images/cloudformation.png
+   :alt: alternate text
+   :align: right
 
 .. toctree::
    :maxdepth: 2
@@ -14,6 +17,12 @@ AWS CloudFormation
    cloudformation/send_email.rst
    cloudformation/scheduler.rst
    cloudformation/setup_db.rst
+
+   cloudformation/rds.rst
+
+   cloudformation/sns.rst
+
+   cloudformation/kms_key.rst
 
 Troposphere
 -----------

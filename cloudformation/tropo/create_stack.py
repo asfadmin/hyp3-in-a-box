@@ -88,8 +88,6 @@ def get_parser():
         add_flag_argument(parser, section_name)
 
     for var_name, var_type in environment.get_variables():
-        if isinstance(var_type, type(None)):
-            continue
         add_env_var_to(parser, var_name, var_type)
 
     return parser

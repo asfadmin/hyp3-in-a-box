@@ -1,73 +1,41 @@
-import json
-import pathlib as pl
+
+import pytest
+from hypothesis import given
 
 import import_hyp3_events
 
 import hyp3_events
-import pytest
+import event_strategies
 
 
-PARAM_NAMES = 'EventType, sample_name'
+PARAM_NAMES = 'EventType'
 EVENTS_TO_TEST = [
-    (hyp3_events.NotifyOnlyEvent, 'notify-only')
+    (hyp3_events.NotifyOnlyEvent),
+    (hyp3_events.NewGranuleEvent)
 ]
 
 
 @pytest.mark.parametrize(PARAM_NAMES, EVENTS_TO_TEST)
-def test_notify_only_construction(EventType, sample_name):
-    test_event_data = load_sample_event_data(sample_name, output='dict')
-    event = EventType(**test_event_data)
+def test_to_dict(EventType):
 
-    assert event
+    @given(event_strategies.strategies[EventType])
+    def to_dict(event):
+        e_dict = event.to_dict()
 
+        assert isinstance(e_dict, dict)
+        assert e_dict.keys()
 
-@pytest.mark.parametrize(PARAM_NAMES, EVENTS_TO_TEST)
-def test_notify_only_dict(EventType, sample_name):
-    test_event_data = load_sample_event_data(sample_name, output='dict')
-    event = EventType(**test_event_data)
-
-    e_dict = event.to_dict()
-
-    assert isinstance(e_dict, dict)
-    assert e_dict.keys()
+    to_dict()  # pylint: disable=E1120
 
 
 @pytest.mark.parametrize(PARAM_NAMES, EVENTS_TO_TEST)
-def test_notify_only_from_json(EventType, sample_name):
-    test_json = load_sample_event_data(sample_name)
-    event = EventType.from_json(test_json)
+def test_notify_only_json_round_trip(EventType):
 
-    check_json_attrs_against_event(test_json, event)
+    @given(event_strategies.strategies[EventType])
+    def round_trip_property_test(event):
+        event_json = event.to_json()
+        new_event = EventType.from_json(event_json)
 
+        assert new_event == event
 
-@pytest.mark.parametrize(PARAM_NAMES, EVENTS_TO_TEST)
-def test_notify_only_to_json(EventType, sample_name):
-    test_json = load_sample_event_data(sample_name)
-    event = EventType.from_json(test_json)
-
-    event_json = event.to_json()
-
-    assert isinstance(event_json, str)
-    check_json_attrs_against_event(event_json, event)
-
-
-def check_json_attrs_against_event(test_json, event):
-    test_dict = json.loads(test_json)
-    assert test_dict.keys()
-
-    for k, v in test_dict.items():
-        assert getattr(event, k) == v
-        assert hasattr(event, k)
-
-
-def load_sample_event_data(event_name, output='json'):
-    file_path = pl.Path(__file__).parent
-    events_path = file_path / 'data' / 'sample-events.json'
-
-    with events_path.open('r') as f:
-        sample_events = json.load(f)
-
-    selected_event = sample_events[event_name]
-
-    return json.dumps(selected_event) if 'json' in output \
-        else selected_event
+    round_trip_property_test()  # pylint: disable=E1120

@@ -1,7 +1,23 @@
 import hyp3_events
 
 
+def make_new_granule_events_with(new_granule_dicts):
+    events = [
+        hyp3_events.NewGranuleEvent(**event)
+        for event in new_granule_dicts
+    ]
+
+    return events
+
+
 def make_notify_events(email_packages):
+    """ make email packages into notify only events
+
+        :param list(tuple): email packages of the form (sub, user, granule)
+
+        :returns: hyp3 events corresponding to each package
+        :rtype: list[hyp3_events.NotifyOnlyEvent]
+    """
     events = [
         make_notify_event(sub, user, granule) for
         sub, user, granule in email_packages
@@ -22,8 +38,8 @@ def make_notify_event(sub, user, granule):
             'value': sub.name
         }, {
             'name': 'Granule',
-            'value': granule['name']
+            'value': granule.name
         }],
         browse_url='',
-        download_url=granule['download_url']
+        download_url=granule.download_url
     )

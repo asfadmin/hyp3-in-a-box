@@ -6,10 +6,13 @@ name = "pypi"
 [packages]
 requests = "*"
 "boto3" = "*"
+"61ea59b" = {path = "./../../modules/hyp3_events"}
 asf-granule-util = "*"
 
 [dev-packages]
 pytest = "*"
+pytest-cov = "*"
+mock = "*"
 
 [requires]
 python_version = "3.6"

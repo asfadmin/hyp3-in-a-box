@@ -2,7 +2,7 @@ import json
 
 import asf_granule_util as gu
 
-from . import granule_package as gp
+import hyp3_events
 
 
 def package(search_results):
@@ -30,7 +30,7 @@ def get_relevant_metadata_from(result):
     polygon = parse_points(polygon_str)
     download_url = get_download_url(links)
 
-    return gp.GranulePackage(name, polygon, download_url)
+    return hyp3_events.NewGranuleEvent(name, polygon, download_url)
 
 
 def get_polygon_str(polygons):
@@ -85,9 +85,9 @@ def is_relevant_type(granule_type):
     return granule_type in ('SLC', 'GRD')
 
 
-def format_into_json(granule_packages):
-    package_dicts = [gran.__dict__ for gran in granule_packages]
+def format_into_json(new_granules_events):
+    event_dicts = [e.to_dict() for e in new_granules_events]
 
     return json.dumps({
-        'new_granules': package_dicts
+        'new_granules': event_dicts
     })

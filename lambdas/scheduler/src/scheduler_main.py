@@ -6,16 +6,22 @@ import schedule
 
 
 def scheduler(event):
-    new_granules = event['new_granules']
+    """
+        Wrapper around scheduler lambda that can be imported by
+        pytest correctly
+    """
+    new_granule_dicts = event['new_granules']
+    new_granule_events = events.make_new_granule_events_with(new_granule_dicts)
 
     print('Scheduling hyp3_jobs')
-    print(json.dumps([g['name'] for g in new_granules]))
-    job_packages = schedule.hyp3_jobs(new_granules)
-    print(f'Found {len(job_packages)} jobs to start')
+    print(json.dumps([g.name for g in new_granule_events]))
+
+    job_packages = schedule.hyp3_jobs(new_granule_events)
+    print('Found {} jobs to start'.format(len(job_packages)))
 
     print('Making notify only events')
     notify_only_events = events.make_notify_events(job_packages)
 
-    print(f'Sending {len(notify_only_events)} notify events')
+    print('Sending {} notify events'.format(len(notify_only_events)))
     print('Sending...')
     events.send(notify_only_events)
