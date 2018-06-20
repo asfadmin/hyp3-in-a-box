@@ -15,7 +15,7 @@ import testing_utils as utils
 })))
 def test_make_new_granule_events(granule_events):
     new_granule_events = events.make_new_granule_events_with(granule_events)
-
+    print(granule_events)
     assert isinstance(new_granule_events, list)
     assert all([
         isinstance(e, hyp3_events.NewGranuleEvent) for e in new_granule_events
