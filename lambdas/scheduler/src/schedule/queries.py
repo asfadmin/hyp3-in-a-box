@@ -31,10 +31,10 @@ def get_enabled_intersecting_subs(db, polygon):
         :rtype: list[hyp3_db.hyp3_models.Subscription]
     """
     poly = WKTElement(polygon, srid=4326)
-    intersecting = Subscription.location.intersects(poly)
+    intersection = Subscription.location.ST_Intersects(poly)
 
     intersecting_subs = enabled_subs_query(db) \
-        .filter(intersecting) \
+        .filter(intersection) \
         .all()
 
     return intersecting_subs
