@@ -23,7 +23,7 @@ python3 -m awscli cloudformation create-stack  \
         ParameterKey=VerifiedSourceEmail,ParameterValue="wbhorn@alaska.edu"\
         ParameterKey=FindNewName,ParameterValue=Hyp3FindNewGranules1 \
         ParameterKey=SchedulerName,ParameterValue=Hyp3Scheduler1 \
-        ParameterKey=SendEmailName,ParameterValue=Hyp3SendEmail1
-        ParameterKey=Hyp3DBName,ParameterValue=$NAME
-        ParameterKey=Hyp3DBUser,ParameterValue=$USER
+        ParameterKey=SendEmailName,ParameterValue=Hyp3SendEmail1 \
+        ParameterKey=Hyp3DBName,ParameterValue=$DB \
+        ParameterKey=Hyp3DBUser,ParameterValue=$USER \
         ParameterKey=Hyp3DBPassword,ParameterValue=$PASS
