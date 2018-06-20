@@ -13,11 +13,17 @@ import os
 import stat
 import subprocess
 import sys
-from xml.etree import ElementTree
+import pathlib as pl
+
+from defusedxml import ElementTree
 
 import boto3
 
-from github_status import set_github_ci_status, update_github_status
+from github_status import (
+    set_github_ci_status,
+    update_github_status,
+    write_status_to_s3
+)
 
 S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
 MATURITY = os.environ["MATURITY"]
@@ -32,11 +38,17 @@ def install():
 
 
 def pre_build():
+    run_tests()
+
+
+def run_tests():
     try:
         subprocess.check_call(
             ["python3", "-m", "pytest", "--junitxml=/tmp/test_results.xml"])
     except subprocess.CalledProcessError as e:
         raise e
+    else:
+        check_coverage()
     finally:
         r = ElementTree.parse("/tmp/test_results.xml").getroot()
         test_result_summary = "{} Tests, {} Failed, {} Errors".format(
@@ -46,6 +58,34 @@ def pre_build():
         )
         BUILD_STEP_MESSAGES['failure'] = test_result_summary
         save_config("TEST_RESULT_SUMMARY", test_result_summary)
+
+
+def check_coverage():
+    cov_xml_path = pl.Path('/tmp/cov.xml')
+    subprocess.check_call(
+        ["py.test", "--cov=.", "--cov-report", f"xml:{cov_xml_path}", "."]
+    )
+
+    r = ElementTree.parse(str(cov_xml_path)).getroot()
+    coverage = float(r.get('line-rate'))
+    coverage_percent = int(coverage * 100)
+
+    url_percent_sign = '%25'
+    subject, status = 'coverage', f"{coverage_percent}{url_percent_sign}"
+    color = get_badge_color(coverage)
+
+    write_status_to_s3(subject, status, color)
+
+
+def get_badge_color(coverage):
+    if coverage < .65:
+        color = 'red'
+    elif coverage < .80:
+        color = 'yellow'
+    else:
+        color = 'brightgreen'
+
+    return color
 
 
 def build():

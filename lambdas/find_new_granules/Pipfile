@@ -6,8 +6,8 @@ name = "pypi"
 [packages]
 requests = "*"
 "boto3" = "*"
-asf-granule-util = "*"
 "61ea59b" = {path = "./../../modules/hyp3_events"}
+asf-granule-util = "*"
 
 [dev-packages]
 pytest = "*"

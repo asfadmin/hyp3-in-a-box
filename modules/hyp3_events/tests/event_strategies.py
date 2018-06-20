@@ -1,6 +1,7 @@
 from hypothesis import strategies as st
 
 import hyp3_events
+import asf_granule_util as gu
 
 
 def get_notify_only_strategy():
@@ -8,10 +9,12 @@ def get_notify_only_strategy():
         hyp3_events.NotifyOnlyEvent,
         address=st.emails(),
         subject=st.text(),
-        additional_info=st.fixed_dictionaries({
-            'name': st.text(),
-            'value': st.text()
-        }),
+        additional_info=st.lists(
+            st.fixed_dictionaries({
+                'name': st.text(),
+                'value': st.text()
+            })
+        ),
         browse_url=get_url_strategy(),
         download_url=get_url_strategy()
     )
@@ -24,7 +27,7 @@ def get_url_strategy():
 def get_new_granule_strategy():
     return st.builds(
         hyp3_events.NewGranuleEvent,
-        name=st.text(),
+        name=st.from_regex(gu.SentinelGranule.pattern_exact),
         polygon=cmr_polygon_list(),  # pylint: disable=E1120
         download_url=get_url_strategy()
     )

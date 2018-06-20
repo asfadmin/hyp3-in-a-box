@@ -11,18 +11,24 @@ Hyp3 In A Box's Documentation
    .. image:: https://s3-us-west-2.amazonaws.com/asf-docs/hyp3-in-a-box/test-build-status.svg
       :target: https://github.com/asfadmin/hyp3-in-a-box
 
+   .. image:: https://s3-us-west-2.amazonaws.com/asf-docs/hyp3-in-a-box/test-coverage-status.svg
+      :target: https://github.com/asfadmin/hyp3-in-a-box
+
+   .. image:: https://www.codefactor.io/repository/github/asfadmin/hyp3-in-a-box/badge/master
+      :target: https://github.com/asfadmin/hyp3-in-a-box
+
    .. image:: https://img.shields.io/badge/python-3.6-blue.svg
       :target: https://www.python.org/
 
    .. image:: https://img.shields.io/badge/cloud%20provider-aws-FF9900.svg
       :target: https://aws.amazon.com/
 
-   .. image:: https://img.shields.io/badge/license-LGPL--3.0-blue.svg
-      :target: https://www.gnu.org/licenses/lgpl-3.0.en.html
+   .. image:: https://img.shields.io/badge/license-GPL--3.0-blue.svg
+      :target: https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
    _static/cloudformation

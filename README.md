@@ -2,7 +2,7 @@
 
 | Build Status          |                                       |
 | --------------------- | ------------------------------------- |
-| **Test** | ![Build Status](https://s3-us-west-2.amazonaws.com/asf-docs/hyp3-in-a-box/test-build-status.svg) |
+| **Test** | ![Build Status](https://s3-us-west-2.amazonaws.com/asf-docs/hyp3-in-a-box/test-build-status.svg) ![Build Status](https://s3-us-west-2.amazonaws.com/asf-docs/hyp3-in-a-box/test-coverage-status.svg) |
 | **Prod** | ![Build Status](https://s3-us-west-2.amazonaws.com/asf-docs/hyp3-in-a-box/prod-build-status.svg) |
 
 
