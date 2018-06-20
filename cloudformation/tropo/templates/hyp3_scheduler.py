@@ -8,6 +8,8 @@ Troposphere template responsible for generating :ref:`scheduler_lambda`
 Requires
 ~~~~~~~~
 * :ref:`sns_template`
+* :ref:`kms_key_template`
+* :ref:`db_params_template`
 
 Resources
 ~~~~~~~~~
