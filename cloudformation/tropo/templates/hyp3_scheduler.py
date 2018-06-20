@@ -22,7 +22,7 @@ Resources
 """
 
 from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Environment, Function
+from troposphere.awslambda import Environment, Function, VPCConfig
 from troposphere.iam import Policy, Role
 
 from environment import environment
@@ -60,17 +60,17 @@ lambda_role = t.add_resource(Role(
     "SchedulerExecutionRole",
     Path="/service-role/",
     ManagedPolicyArns=[
-        "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+        "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
     ],
     Policies=[sns_policy],
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
 
-scheduler = t.add_resource(Function(
-    "SchedulerFunction",
-    FunctionName=Ref(lambda_name),
-    Code=utils.make_lambda_code(
+scheduler_args = {
+    "FunctionName": Ref(lambda_name),
+    "Code": utils.make_lambda_code(
         S3Bucket=environment.lambda_bucket,
         S3Key="{maturity}/{source_zip}".format(
             maturity=environment.maturity,
@@ -78,17 +78,34 @@ scheduler = t.add_resource(Function(
         ),
         S3ObjectVersion=environment.scheduler_version
     ),
-    Handler="lambda_function.lambda_handler",
-    Role=GetAtt(lambda_role, "Arn"),
-    Runtime="python3.6",
-    Environment=Environment(
+    "Handler": "lambda_function.lambda_handler",
+    "Role": GetAtt(lambda_role, "Arn"),
+    "Runtime": "python3.6",
+    "Environment": Environment(
         Variables={
             'SNS_ARN': Ref(finish_sns),
             'DB_HOST': environment.db_host,
-            'DB_USER': db_user,
-            'DB_PASSWORD': db_pass,
-            'DB_NAME': db_name
+            'DB_USER': Ref(db_user),
+            'DB_PASSWORD': Ref(db_pass),
+            'DB_NAME': Ref(db_name)
         }),
-    MemorySize=128,
-    Timeout=300
+    "MemorySize": 128,
+    "Timeout": 300
+}
+
+if 'test' in environment.maturity:
+    scheduler_args['VpcConfig'] = VPCConfig(
+        SecurityGroupIds=[
+            'sg-0d8cdb7c'
+        ],
+        SubnetIds=[
+            'subnet-dc7dcaab',
+            'subnet-c78f1ea2',
+            'subnet-b66fa5ef'
+        ]
+    )
+
+scheduler = t.add_resource(Function(
+    "SchedulerFunction",
+    **scheduler_args
 ))
