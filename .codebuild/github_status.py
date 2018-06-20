@@ -34,7 +34,7 @@ def set_github_ci_status(status, description=None):
 
 
 def write_status_to_s3(subject, status, color):
-    if not os.exists(subject):
+    if not os.path.exists(subject):
         os.makedirs(subject)
 
     with open(f"{subject}/status.svg", "w") as f:
