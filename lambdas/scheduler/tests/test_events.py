@@ -25,8 +25,9 @@ def test_make_new_granule_events(granule_events):
 def test_events():
     packages = utils.load_email_packages()
 
-    new_events = events.make_from(packages)
+    notify_events = events.make_notify_events(packages)
 
-    assert isinstance(new_events, list)
-    for event in new_events:
+    assert isinstance(notify_events, list)
+    for event in notify_events:
         assert isinstance(event, hyp3_events.Hyp3Event)
+        assert isinstance(event, hyp3_events.NotifyOnlyEvent)

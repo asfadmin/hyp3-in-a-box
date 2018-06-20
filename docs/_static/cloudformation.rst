@@ -10,7 +10,7 @@ AWS CloudFormation
    :align: right
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
    cloudformation/find_new.rst
@@ -23,7 +23,6 @@ AWS CloudFormation
    cloudformation/sns.rst
 
    cloudformation/kms_key.rst
-   cloudformation/db_params.rst
 
 Troposphere
 -----------

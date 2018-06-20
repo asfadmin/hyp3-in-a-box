@@ -1,7 +1,3 @@
-"""
-Troposphere template responsible for adding parameters for entering
-data base credentials.
-"""
 
 from troposphere import Parameter
 

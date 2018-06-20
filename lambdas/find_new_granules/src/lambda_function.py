@@ -15,22 +15,14 @@ def lambda_handler(event, context):
     setup_env()
 
     search_results = find_new.granules()
+
     new_granule_events = results.package(search_results)
-
-    if not any_new_granules(new_granule_events):
-        print('No new granules. Done.')
-        return
-
     events_json = results.format_into_json(new_granule_events)
+
     start_scheduler_with(events_json)
 
 
-def any_new_granules(granules):
-    return len(granules) > 1
-
-
 def start_scheduler_with(new_granules_json):
-    print('Scheduling job')
     boto3.client('lambda').invoke(
         FunctionName=find_new.environment.scheduler_lambda,
         InvocationType='Event',
