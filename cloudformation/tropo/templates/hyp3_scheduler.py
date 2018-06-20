@@ -98,12 +98,13 @@ scheduler_args = {
 if 'test' in environment.maturity:
     scheduler_args['VpcConfig'] = VPCConfig(
         SecurityGroupIds=[
-            'sg-0d8cdb7c'
+            'sg-0d8cdb7c',
+            'sg-72f8c803'
         ],
         SubnetIds=[
-            'subnet-dc7dcaab',
-            'subnet-c78f1ea2',
-            'subnet-b66fa5ef'
+            'subnet-e3495984',
+            'subnet-77ecc73e',
+            'subnet-2efd4975'
         ]
     )
 
