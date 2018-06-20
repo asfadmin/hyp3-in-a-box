@@ -31,6 +31,7 @@ from template import t
 from . import utils
 from .hyp3_sns import finish_sns
 from .hyp3_db_params import db_pass, db_user, db_name
+from .hyp3_kms_key import kms_key
 
 source_zip = "scheduler.zip"
 
@@ -89,6 +90,7 @@ scheduler_args = {
             'DB_PASSWORD': Ref(db_pass),
             'DB_NAME': Ref(db_name)
         }),
+    "KmsKeyArn": Ref(kms_key),
     "MemorySize": 128,
     "Timeout": 300
 }
