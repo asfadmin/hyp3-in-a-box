@@ -25,20 +25,27 @@ def set_github_ci_status(status, description=None):
     if status != "success":
         svg_status = "failing"
 
-    with open("build/status.svg", "w") as f:
-        f.write(get_svg_status(svg_status))
+    color = "brightgreen"
+    if status == "failing":
+        color = "red"
+
+    write_status_to_s3("build", svg_status, color, description)
+    update_github_status(status, description=description)
+
+
+def write_status_to_s3(subject, status, color):
+    with open(f"{subject}/status.svg", "w") as f:
+        f.write(get_svg_status(subject, status, color))
 
     s3_object_name = "s3://{}".format(
-        os.path.join(S3_STATUS_BUCKET, MATURITY + "-build-status.svg")
+        os.path.join(S3_STATUS_BUCKET, MATURITY + f"-{subject}-status.svg")
     )
 
     subprocess.check_call([
-        "aws", "s3", "cp", "build/status.svg",
+        "aws", "s3", "cp", f"{subject}/status.svg",
         s3_object_name, "--acl", "public-read",
         "--cache-control", "no-cache"
     ])
-
-    update_github_status(status, description=description)
 
 
 def update_github_status(state, description=None):
@@ -55,12 +62,8 @@ def update_github_status(state, description=None):
     requests.post(url, params={"access_token": GITHUB_STATUS_TOKEN}, json=data)
 
 
-def get_svg_status(status):
-    color = "brightgreen"
-    if status == "failing":
-        color = "red"
-
-    url = 'https://img.shields.io/badge/build-{status}-{color}.svg'.format(
+def get_svg_status(subject, status, color):
+    url = 'https://img.shields.io/badge/{topic}-{status}-{color}.svg'.format(
         status=status, color=color
     )
     r = requests.get(url)
