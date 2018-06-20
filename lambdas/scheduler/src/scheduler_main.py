@@ -19,10 +19,10 @@ def scheduler(event):
     print('Found {} jobs to start'.format(len(job_packages)))
     print('Making notify only events')
 
-    new_events = events.make_from(job_packages)
+    new_hyp3_events = events.make_from(job_packages)
 
-    print('Sending {} new events'.format(len(new_events)))
+    print('Sending {} new events'.format(len(new_hyp3_events)))
 
-    dispatch.new_events(new_events)
+    dispatch.new_events(new_hyp3_events)
 
     print('Done!')
