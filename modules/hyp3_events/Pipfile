@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+asf-granule-util = "==0.0.57"
 
 [dev-packages]
 pytest = "*"
