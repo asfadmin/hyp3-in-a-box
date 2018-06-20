@@ -12,7 +12,7 @@ import scheduler_main
 
 
 @skip_if_creds_not_available
-@mock.patch('events.sns.push')
+@mock.patch('dispatch.sns.push')
 def test_scheduler_main(sns_mock):
     event = utils.load_testing_granules()
 
