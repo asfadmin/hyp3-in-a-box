@@ -1,7 +1,8 @@
-import import_hyp3_events
 
 import pytest
 from hypothesis import given
+
+import import_hyp3_events
 
 import hyp3_events
 import event_strategies
