@@ -1,6 +1,6 @@
-from . import send
-
 import hyp3_events
+
+from . import send
 
 
 def new_events(new_hyp3_events):

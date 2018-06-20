@@ -29,8 +29,8 @@ def make_from(email_packages):
 def make_event(sub, user, granule):
     if sub.process_id == 1:
         return make_notify_only_event(sub, user, granule)
-    else:
-        return make_start_event(sub, user, granule)
+
+    return make_start_event(sub, user, granule)
 
 
 def make_notify_only_event(sub, user, granule):
