@@ -29,11 +29,14 @@ def set_github_ci_status(status, description=None):
     if status == "failing":
         color = "red"
 
-    write_status_to_s3("build", svg_status, color, description)
+    write_status_to_s3("build", svg_status, color)
     update_github_status(status, description=description)
 
 
 def write_status_to_s3(subject, status, color):
+    if not os.exists(subject):
+        os.makedirs(subject)
+
     with open(f"{subject}/status.svg", "w") as f:
         f.write(get_svg_status(subject, status, color))
 
