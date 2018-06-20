@@ -66,8 +66,8 @@ def update_github_status(state, description=None):
 
 
 def get_svg_status(subject, status, color):
-    url = 'https://img.shields.io/badge/{topic}-{status}-{color}.svg'.format(
-        status=status, color=color
+    url = 'https://img.shields.io/badge/{subject}-{status}-{color}.svg'.format(
+        subject=subject, status=status, color=color
     )
     r = requests.get(url)
 
