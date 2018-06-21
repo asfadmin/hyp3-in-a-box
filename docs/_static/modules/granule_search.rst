@@ -1,12 +1,12 @@
 
-Module: Hyp3 DB
-===============
+Module: Granule Search
+======================
 
 .. image:: ../images/python.png
    :alt: alternate text
    :align: right
 
-.. automodule:: hyp3_db
+.. automodule:: granule_search
    :members:
-   :special-members:
+
 

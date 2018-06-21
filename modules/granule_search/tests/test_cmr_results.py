@@ -5,13 +5,13 @@ import unittest
 import asf_granule_util as gu
 import hyp3_events
 
-import import_find_new
-import results
+import import_granule_search_api
+from granule_search.cmr import results
 
 
 class TestFindNewGranules(unittest.TestCase):
     def setUp(self):
-        path = pl.Path(__file__).parent / 'data/api-response.json'
+        path = pl.Path(__file__).parent / 'data/cmr-response.json'
 
         with path.open('r') as f:
             sample_results = json.load(f)
@@ -24,22 +24,6 @@ class TestFindNewGranules(unittest.TestCase):
         self.assertIsInstance(new_grans, list)
         for result in new_grans:
             self.package_test(result)
-
-    def test_format_as_json(self):
-        new_grans = results.package(self.search_results)
-        new_grans_json = results.format_into_json(new_grans)
-
-        formatted_new_grans = json.loads(new_grans_json)
-
-        self.assertIn('new_granules', formatted_new_grans)
-        self.assertIsInstance(
-            formatted_new_grans['new_granules'],
-            list
-        )
-
-        path = pl.Path(__file__).parent / 'new_granules.package.json'
-        with path.open('w') as f:
-            f.write(new_grans_json)
 
     def package_test(self, result):
         self.assertIsInstance(result, hyp3_events.NewGranuleEvent)
