@@ -18,8 +18,7 @@ Resources
 * **Auto Scaling Group:** The cluster of hyp3 processing instances.
 * **Launch Configuration:** Instance definitions for the auto scaling group.
 * **Security Group:** Firewall rules for processing instances.
-* **Cloudwatch Alarm:** Triggers the auto scaling group to increase instance.
-    count
+* **Cloudwatch Alarm:** Triggers the auto scaling group to increase instance count.
 
 """
 
