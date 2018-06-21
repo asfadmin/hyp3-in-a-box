@@ -1,5 +1,3 @@
-import json
-
 import asf_granule_util as gu
 
 import hyp3_events
@@ -11,7 +9,7 @@ def package(search_results):
         :param list[dict] search_results: package results from CMR
 
         :returns: List of new granule packages
-        :rtype: list[GranulePackage]
+        :rtype: list[hyp3_events.NewGranuleEvent]
     """
     hyp3_granules = [
         get_relevant_metadata_from(result) for result in search_results
@@ -77,6 +75,7 @@ def is_granule_in(title):
 
 def make_granule_from(result):
     name = result['producer_granule_id']
+    print(f'found granule: {name}')
 
     return gu.SentinelGranule(name)
 
@@ -84,10 +83,3 @@ def make_granule_from(result):
 def is_relevant_type(granule_type):
     return granule_type in ('SLC', 'GRD')
 
-
-def format_into_json(new_granules_events):
-    event_dicts = [e.to_dict() for e in new_granules_events]
-
-    return json.dumps({
-        'new_granules': event_dicts
-    })

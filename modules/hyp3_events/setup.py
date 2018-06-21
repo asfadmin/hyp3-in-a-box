@@ -13,7 +13,7 @@ setup(
     version='0.1dev',
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    license='Event Classes for the hyp3 sytem',
-    long_description='Not for public use.',
+    license="GPLv3+",
+    description="Event Classes for the hyp3 system",
     install_requires=requirements
 )
