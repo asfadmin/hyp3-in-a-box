@@ -5,7 +5,7 @@ and mainly handles connecting to the database.
 """
 import contextlib
 
-from .hyp3_db import Hyp3DB
+from .hyp3_db import Hyp3DB, connect
 from . import hyp3_models
 
 
@@ -29,4 +29,4 @@ def test_db(db="hyp3db"):
     db.close()
 
 
-__all__ = ['Hyp3DB', 'hyp3_models', 'test_db']
+__all__ = ['Hyp3DB', 'connect', 'hyp3_models', 'test_db']
