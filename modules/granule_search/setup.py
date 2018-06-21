@@ -9,11 +9,11 @@ with codecs.open('requirements.txt', 'r') as f:
         requirements = requirements[1:]
 
 setup(
-    name='Hyp3 DB',
+    name='Granule Search',
     version='0.1dev',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     license="GPLv3+",
-    description='Buisness code for interfacing with hyp3 db.',
+    description="Wrappers around granule search api's",
     install_requires=requirements
 )
