@@ -11,7 +11,7 @@ import hyp3_db
 from init_db import setup_db
 
 
-def test_lambda_function(self):
+def test_lambda_function():
     setup_db_for_test()
 
     with hyp3_db.test_db() as db:
