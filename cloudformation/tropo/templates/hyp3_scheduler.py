@@ -8,6 +8,8 @@ Troposphere template responsible for generating :ref:`scheduler_lambda`
 Requires
 ~~~~~~~~
 * :ref:`sns_template`
+* :ref:`kms_key_template`
+* :ref:`db_params_template`
 
 Resources
 ~~~~~~~~~
@@ -31,6 +33,7 @@ from template import t
 from . import utils
 from .hyp3_sns import finish_sns
 from .hyp3_db_params import db_pass, db_user, db_name
+from .hyp3_kms_key import kms_key
 
 source_zip = "scheduler.zip"
 
@@ -89,6 +92,7 @@ scheduler_args = {
             'DB_PASSWORD': Ref(db_pass),
             'DB_NAME': Ref(db_name)
         }),
+    "KmsKeyArn": GetAtt(kms_key, "Arn"),
     "MemorySize": 128,
     "Timeout": 300
 }
@@ -96,12 +100,13 @@ scheduler_args = {
 if 'test' in environment.maturity:
     scheduler_args['VpcConfig'] = VPCConfig(
         SecurityGroupIds=[
-            'sg-0d8cdb7c'
+            'sg-0d8cdb7c',
+            'sg-72f8c803'
         ],
         SubnetIds=[
-            'subnet-dc7dcaab',
-            'subnet-c78f1ea2',
-            'subnet-b66fa5ef'
+            'subnet-e3495984',
+            'subnet-77ecc73e',
+            'subnet-2efd4975'
         ]
     )
 
