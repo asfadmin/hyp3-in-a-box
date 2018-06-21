@@ -1,14 +1,10 @@
+# hyp3_db.py
+
+# Database wrappers
+
 import contextlib
 
 from .session import make_engine, make_session
-import contextlib
-
-
-@contextlib.contextmanager
-def connect(host, user, password, db='hyp3db'):
-    db = Hyp3DB(host, user, password, db)
-    yield db
-    db.close()
 
 
 @contextlib.contextmanager
