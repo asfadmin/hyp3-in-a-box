@@ -5,10 +5,13 @@ name = "pypi"
 
 [packages]
 requests = "*"
+asf-granule-util = "*"
+"0c4b69c" = {path = "./../hyp3_events"}
 
 [dev-packages]
 pytest = "*"
 hypothesis = "*"
+mock = "*"
 
 [requires]
 python_version = "3.6"

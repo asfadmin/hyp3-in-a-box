@@ -1,6 +1,8 @@
+import json
 import requests
 
-from .search_api import GranuleSearchAPI, QueryLimitError
+from ..search_api import GranuleSearchAPI, QueryLimitError
+from . import results
 
 
 class CMR(GranuleSearchAPI):
@@ -8,7 +10,14 @@ class CMR(GranuleSearchAPI):
 
     def __init__(self):
         self.output_format = 'json'
+        self.package = json.dump
         self.query_params = {}
+
+    def get_new_granule_events(self):
+        raw_data = self.search()
+        data = raw_data['feed']['entry']
+
+        return results.package(data)
 
     def search(self):
         total_query_params = {

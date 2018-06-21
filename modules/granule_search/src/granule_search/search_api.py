@@ -10,6 +10,15 @@ class GranuleSearchAPI(abc.ABC):
         return NotImplemented
 
     @abc.abstractmethod
+    def get_new_granule_events(self):
+        """ Build the query for the search api
+
+            :returns: the results returned by the api
+            :rtype: dict
+        """
+        return NotImplemented
+
+    @abc.abstractmethod
     def search(self):
         """ Build the query for the search api
 

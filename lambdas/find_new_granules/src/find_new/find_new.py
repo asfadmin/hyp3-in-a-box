@@ -47,26 +47,26 @@ def get_new_granules_after(prev_time):
         :param datetime.datetime prev_time: previous lambda runtime
 
         :returns: response from cmr
-        :rtype: dict
+        :rtype: hyp3_events.NewGranuleEvent
     """
     print('making api request with: {}'.format(prev_time))
-    cmr_data = make_cmr_query(prev_time)
-    print("cmr returned {} results".format(len(cmr_data)))
+    new_granule_events = make_cmr_query(prev_time)
+    print("cmr returned {} results".format(len(new_granule_events)))
 
-    return cmr_data['feed']['entry']
+    return new_granule_events
 
 
 def make_cmr_query(prev_time):
     api = granule_search.CMR()
 
-    new_data = api        \
+    new_granule_events = api        \
         .after(prev_time) \
-        .search()
+        .get_new_granule_events()
 
     if 'test' in environment.maturity:
-        cache_output(new_data)
+        cache_output(new_granule_events)
 
-    return new_data
+    return new_granule_events
 
 
 @cl.contextmanager
