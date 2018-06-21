@@ -1,6 +1,7 @@
 import datetime as dt
 
 import mock
+import hyp3_events
 
 import import_find_new
 
@@ -21,7 +22,7 @@ def test_get_new(mock_get):
     granules = find_new.get_new_granules_after(prev_time)
 
     assert isinstance(granules, list)
-    assert isinstance(granules.pop(), dict)
+    assert all(isinstance(e, hyp3_events.NewGranuleEvent) for e in granules)
 
     mock_get.assert_called()
 
