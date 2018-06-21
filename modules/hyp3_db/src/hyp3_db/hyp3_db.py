@@ -1,5 +1,6 @@
-from .session import make_engine, make_session
 import contextlib
+
+from .session import make_engine, make_session
 
 
 @contextlib.contextmanager
