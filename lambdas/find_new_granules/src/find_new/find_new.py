@@ -22,8 +22,9 @@ def granules():
     request_time = dt.datetime.utcnow()
     print('time-range: {} -> {}'.format(
         prev_time,
-        cmr_date_format(request_time)
+        request_time
     ))
+
     results = get_new_granules_after(prev_time)
 
     previous_time.set_time(request_time)
@@ -37,15 +38,11 @@ def get_previous_time_formatted():
     except s3.ObjectDoesntExist:
         prev_time = get_init_prev_time()
 
-    return cmr_date_format(prev_time)
+    return prev_time
 
 
 def get_init_prev_time():
     return dt.datetime.now() - dt.timedelta(minutes=5)
-
-
-def cmr_date_format(date):
-    return date.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 def get_new_granules_after(prev_time):
@@ -63,44 +60,16 @@ def get_new_granules_after(prev_time):
 
 
 def make_cmr_query(prev_time):
-    api = CMRSearchAPI()
+    api = CMR()
 
-    resp = api.query({
-        'provider': 'ASF',
-        'created_at[]': ["{},".format(prev_time)],
-        'platform[]': ['Sentinel-1A', 'Sentinel-1B'],
-        'page_size': MAX_RESULTS
-    })
-
-    data = resp.json()
+    new_data = api \
+        .after(prev_time) \
+        .search()
 
     if 'test' in environment.maturity:
         cache_output(data)
 
     return data
-
-
-class SearchAPI:
-    """ Class to wrap searching an generic api"""
-
-    def __init__(self, api_url):
-        self.api_url = api_url
-
-    def query(self, params):
-        """
-            :param params: dict
-
-            :returns: response from cmr
-            :rtype: requests.Response
-
-        """
-        with timing('request took {runtime} secs to complete'):
-            return requests.get(self.api_url, params=params)
-
-
-class CMRSearchAPI(SearchAPI):
-    def __init__(self):
-        super().__init__("https://cmr.earthdata.nasa.gov/search/granules.json")
 
 
 @cl.contextmanager
