@@ -1,5 +1,6 @@
-from .search_api import GranuleSearchAPI, QueryLimitError
 import requests
+
+from .search_api import GranuleSearchAPI, QueryLimitError
 
 
 class CMR(GranuleSearchAPI):
@@ -40,14 +41,14 @@ class CMR(GranuleSearchAPI):
             after_time, format_str="{},"
         )
 
-    def between(self, min_date, max_date):
+    def between(self, before_time, after_time):
         create_at_params = self.query_params.get('created_at[]', [])
 
-        min_str, max_str = [
-            self._cmr_date_format(d) for d in (min_date, max_date)
+        before_str, after_str = [
+            self._cmr_date_format(d) for d in (before_time, before_time)
         ]
-        create_at_params.append("{},{}".format(min_str, max_str))
 
+        create_at_params.append("{},{}".format(before_str, after_str))
         self.query_params['created_at[]'] = create_at_params
 
         return self
