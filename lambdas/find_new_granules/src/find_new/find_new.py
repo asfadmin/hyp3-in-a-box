@@ -10,7 +10,7 @@ from . import previous_time, s3
 from .environment import environment
 
 
-def granules():
+def granule_events():
     """
         :returns: new granules before the previous runtime of the lambda
         :rtype: list[dict]

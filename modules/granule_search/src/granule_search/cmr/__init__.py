@@ -1,4 +1,4 @@
-"""CMR module for searching granules """
+""" CMR module for searching granules """
 
 from .cmr import CMR
 from . import results

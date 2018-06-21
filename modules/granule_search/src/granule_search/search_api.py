@@ -2,11 +2,11 @@ import abc
 
 
 class GranuleSearchAPI(abc.ABC):
-    """A generic interface for granule search api's"""
+    """ A generic interface for granule search api's"""
     @property
     @abc.abstractmethod
     def api_url(self):
-        """Base url for the api"""
+        """ Base url for the api"""
         return NotImplemented
 
     @abc.abstractmethod

@@ -14,17 +14,17 @@ def lambda_handler(event, context):
     """
     setup_env()
 
-    new_granule_events = find_new.granules()
+    new_granule_events = find_new.granule_events()
 
     if not any_new_granules(new_granule_events):
         print('No new granules. Done.')
         return
 
-    events_json = format_into_json(new_granule_events)
+    events_json = format_as_json(new_granule_events)
     start_scheduler_with(events_json)
 
 
-def format_into_json(new_granules_events):
+def format_as_json(new_granules_events):
     event_dicts = [e.to_dict() for e in new_granules_events]
 
     return json.dumps({

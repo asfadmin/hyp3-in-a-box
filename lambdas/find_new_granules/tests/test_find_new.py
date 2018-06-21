@@ -35,7 +35,7 @@ def test_get_new(mock_get):
     'find_new.s3.upload'
 )
 def test_s3_upload(mock_s3_upload, mock_find_new):
-    find_new.granules()
+    find_new.granule_events()
 
     mock_s3_upload.assert_called_once()
     mock_find_new.assert_called_once()

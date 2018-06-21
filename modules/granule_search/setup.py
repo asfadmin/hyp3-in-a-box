@@ -13,7 +13,7 @@ setup(
     version='0.1dev',
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    license="Wrappers around granule search api's",
-    long_description='Maybe for public use.',
+    license="GPLv3+",
+    description="Wrappers around granule search api's",
     install_requires=requirements
 )
