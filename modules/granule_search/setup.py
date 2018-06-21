@@ -9,11 +9,11 @@ with codecs.open('requirements.txt', 'r') as f:
         requirements = requirements[1:]
 
 setup(
-    name='Granule Seach',
+    name='Granule Search',
     version='0.1dev',
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    license="Wrappers around granule seach api's",
-    long_description='Not for public use.',
+    license="Wrappers around granule search api's",
+    long_description='Maybe for public use.',
     install_requires=requirements
 )
