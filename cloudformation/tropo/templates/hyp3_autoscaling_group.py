@@ -66,7 +66,7 @@ security_group = t.add_resource(SecurityGroup(
 
 launch_config = t.add_resource(LaunchConfiguration(
     "Hyp3LaunchConfiguration",
-    ImageId='ami-db710fa3',
+    ImageId='ami-db710fa3',  # TODO: Choose correct ami here
     KeyName=Ref(keyname),
     SecurityGroups=[Ref(security_group)],
     InstanceType="m1.small",
