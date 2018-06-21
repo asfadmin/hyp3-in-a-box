@@ -1,7 +1,7 @@
 # Example modified from:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
-from troposphere import GetAtt, Output, Parameter, Ref, ec2, rds
+from troposphere import GetAtt, Output, Ref, ec2, rds
 
 from template import t
 
