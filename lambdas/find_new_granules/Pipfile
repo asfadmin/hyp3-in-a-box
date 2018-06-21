@@ -8,6 +8,7 @@ requests = "*"
 "boto3" = "*"
 "61ea59b" = {path = "./../../modules/hyp3_events"}
 asf-granule-util = "*"
+"22c4475" = {path = "./../../modules/granule_search"}
 
 [dev-packages]
 pytest = "*"

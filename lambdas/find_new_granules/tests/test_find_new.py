@@ -12,7 +12,7 @@ find_new.environment.maturity = 'test'
 
 
 @mock.patch(
-    'find_new.find_new.requests.get',
+    'find_new.find_new.granule_search.CMR.search',
     side_effect=custom_mocks.asf_api_requests_get
 )
 def test_get_new(mock_get):

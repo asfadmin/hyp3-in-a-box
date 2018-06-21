@@ -4,12 +4,10 @@ import json
 import pathlib as pl
 import time
 
-import requests
+import granule_search
 
 from . import previous_time, s3
 from .environment import environment
-
-MAX_RESULTS = 2000
 
 
 def granules():
@@ -60,16 +58,16 @@ def get_new_granules_after(prev_time):
 
 
 def make_cmr_query(prev_time):
-    api = CMR()
+    api = granule_search.CMR()
 
-    new_data = api \
+    new_data = api        \
         .after(prev_time) \
         .search()
 
     if 'test' in environment.maturity:
-        cache_output(data)
+        cache_output(new_data)
 
-    return data
+    return new_data
 
 
 @cl.contextmanager
