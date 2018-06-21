@@ -77,6 +77,7 @@ def is_granule_in(title):
 
 def make_granule_from(result):
     name = result['producer_granule_id']
+    print(f'found granule: {name}')
 
     return gu.SentinelGranule(name)
 

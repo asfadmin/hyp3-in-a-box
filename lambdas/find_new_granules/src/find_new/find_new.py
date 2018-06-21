@@ -12,7 +12,7 @@ from .environment import environment
 
 def granules():
     """
-        :returns: new granules before previous runtime
+        :returns: new granules before the previous runtime of the lambda
         :rtype: list[dict]
     """
     prev_time = get_previous_time_formatted()
@@ -24,7 +24,6 @@ def granules():
     ))
 
     results = get_new_granules_after(prev_time)
-
     previous_time.set_time(request_time)
 
     return results
