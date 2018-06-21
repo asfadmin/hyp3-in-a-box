@@ -1,0 +1,2 @@
+class GranuleSearchAPI:
+    pass
