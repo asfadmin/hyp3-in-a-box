@@ -17,9 +17,10 @@ find_new.environment.maturity = 'test'
     side_effect=custom_mocks.asf_api_requests_get
 )
 def test_get_new(mock_get):
-    prev_time = dt.datetime.now()
+    request_time = dt.datetime.now()
+    prev_time = request_time - dt.timedelta(minutes=5)
 
-    granules = find_new.get_new_granules_after(prev_time)
+    granules = find_new.get_new_granules_between(prev_time, request_time)
 
     assert isinstance(granules, list)
     assert all(isinstance(e, hyp3_events.NewGranuleEvent) for e in granules)
@@ -28,7 +29,7 @@ def test_get_new(mock_get):
 
 
 @mock.patch(
-    'find_new.find_new.get_new_granules_after',
+    'find_new.find_new.get_new_granules_between',
     side_effect=custom_mocks.asf_api_requests_get
 )
 @mock.patch(
