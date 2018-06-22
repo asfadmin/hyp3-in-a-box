@@ -24,8 +24,6 @@ def get_relevant_metadata_from(result):
         result[k] for k in ('polygons', 'producer_granule_id', 'links')
     ]
 
-    print(f'found granule: {name}')
-
     polygon_str = get_polygon_str(polygons)
     polygon = parse_points(polygon_str)
 
