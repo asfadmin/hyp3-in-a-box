@@ -20,6 +20,23 @@ We use `pytest` to run all unit tests in the project. This means sometimes we
 need to do hacky things with the import paths to make sure the tests can be run
 from the root directory of the project.
 
+We have also set up a scratch database for unit testing (appropriately named
+`unit-testing`). The hostname is
+`unit-testing.cxpvv5ynyjaw.us-west-2.rds.amazonaws.com` and credentials are
+```
+user: unittest
+pass: unittestpass
+```
+*Don't store any confidential info in this database. Assume that anyone can log
+in to it and only use it for testing.*
+
+For the purposes of our unit tests we assume that when we connect to the db, it
+may contain left over tables and content from a different test, so our test
+suites will drop and recreate the database that they need.
+
+The security group for this database is configured to only allow access from
+inside the default VPC and from UAF IP addresses.
+
 ## CI Configuration
 This project is set up to build and test using AWS CodeBuild. CodeBuild uses
 WebHooks for change detection on the `dev` branch. We do most of the automation
