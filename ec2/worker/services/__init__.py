@@ -8,6 +8,10 @@ import boto3
 from hashlib import md5
 import json
 
+from hyp3_logging import getLogger
+
+log = getLogger(__name__)
+
 
 class BadMessageException(Exception):
     pass
@@ -25,8 +29,7 @@ class SQSService(object):
             MaxNumberOfMessages=1,
         )
         if len(messages) > 1:
-            # TODO: Replace with logger
-            print("WARN: API call returned more messages that it was supposed to. Some jobs might not be processed")
+            log.warn("API call returned more messages that it was supposed to. Some jobs might not be processed")
 
         if not messages:
             return None
@@ -37,8 +40,7 @@ class SQSService(object):
             SQSService.validate_message(message)
             job_info = SQSService.parse_message(message)
         except BadMessageException as e:
-            # TODO: Replace with logger
-            print("DEBUG: Failed to recieve message due to the following error:\n\t", str(e))
+            log.debug("DEBUG: Failed to recieve message due to the following error:\n\t", str(e))
         return job_info
 
     @staticmethod

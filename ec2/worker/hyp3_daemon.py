@@ -6,21 +6,16 @@
 # 'Start Events' sqs queue for new processing jobs, and starts processes if the
 # system has the appropriate dependencies and available resources.
 
-import logging
 import sys
 import time
 from multiprocessing import Pipe
+import logging
 
 from hyp3_worker import HyP3Worker, WorkerStatus
 from services import SQSService
+from hyp3hyp3_logging import getLogger
 
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)
-
-log.addHandler(console_handler)
+log = getLogger(__name__)
 
 
 class HyP3Daemon(object):
@@ -96,4 +91,5 @@ def main():
 
 
 if __name__ == '__main__':
+    log.setLevel(logging.DEBUG)
     main()
