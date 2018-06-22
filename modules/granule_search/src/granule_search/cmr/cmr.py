@@ -24,40 +24,50 @@ class CMR(GranuleSearchAPI):
             **self._get_base_params(),
             **self.query_params
         }
-
-        api_url_with_format = self.api_url.format(
-            output=self.output_format
-        )
+        print(json.dumps(total_query_params, indent=2))
 
         resp = requests.get(
-            api_url_with_format,
-            total_query_params
+            self.api_url,
+            params=total_query_params
         )
+        print(resp.url)
 
         return resp.json()
 
     @property
     def api_url(self):
-        return "https://cmr.earthdata.nasa.gov/search/granules.{output}"
+        return "https://cmr.earthdata.nasa.gov/search/granules.json"
 
     def before(self, before_time):
-        return self.single_date_param(
+        return self._single_date_param(
             before_time, format_str=",{}"
         )
 
     def after(self, after_time):
-        return self.single_date_param(
+        return self._single_date_param(
             after_time, format_str="{},"
         )
+
+    def _single_date_param(self, query_date, format_str):
+        create_params = self.query_params.get('created_at[]', [])
+
+        date_str = self._cmr_date_format(query_date)
+        print(date_str)
+        create_params.append(format_str.format(date_str))
+
+        self.query_params['created_at[]'] = create_params
+
+        return self
 
     def between(self, before_time, after_time):
         create_at_params = self.query_params.get('created_at[]', [])
 
         before_str, after_str = [
-            self._cmr_date_format(d) for d in (before_time, before_time)
+            self._cmr_date_format(d) for d in (before_time, after_time)
         ]
 
-        create_at_params.append("{},{}".format(before_str, after_str))
+        cmr_date_range = "{},{}".format(before_str, after_str)
+        create_at_params.append(cmr_date_range)
         self.query_params['created_at[]'] = create_at_params
 
         return self
@@ -76,16 +86,6 @@ class CMR(GranuleSearchAPI):
             )
 
         self.query_params['page_size'] = amount
-
-        return self
-
-    def single_date_param(self, query_date, format_str):
-        create_params = self.query_params.get('created_at[]', [])
-
-        date_str = self._cmr_date_format(query_date)
-        create_params.append("{},".format(date_str))
-
-        self.query_params['created_at[]'] = create_params
 
         return self
 

@@ -83,7 +83,7 @@ def is_zip_url(url):
 def is_img_url(url):
     img_extensions = ('jpg', 'png', 'jpeg')
 
-    return all(
+    return any(
         has_extension(url, extension) for extension in img_extensions
     )
 
