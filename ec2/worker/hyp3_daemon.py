@@ -1,0 +1,99 @@
+# hyp3_daemon.py
+# Rohan Weeden
+# Created: June 22 2018
+
+# Entry point for the hyp3 processing glue code. The hyp3 daemon polls the
+# 'Start Events' sqs queue for new processing jobs, and starts processes if the
+# system has the appropriate dependencies and available resources.
+
+import logging
+import sys
+import time
+from multiprocessing import Pipe
+
+from hyp3_worker import HyP3Worker, WorkerStatus
+from services import SQSService
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+
+log.addHandler(console_handler)
+
+
+class HyP3Daemon(object):
+
+    def __init__(self):
+        self.job_queue = None
+        self.worker = None
+        self.worker_conn = None
+        self.previous_worker_status = WorkerStatus.NO_STATUS
+
+    def run(self):
+        log.info("HyP3 Daemon starting...")
+        while True:
+            try:
+                self.main()
+                time.sleep(1)
+            except KeyboardInterrupt:
+                log.debug("Shutting down...")
+                sys.exit(0)
+            # For now, just crash on errors
+
+    def main(self):
+        if not self.job_queue:
+            self._connect_sqs()
+
+        status = self._poll_worker_status()
+        if status == WorkerStatus.DONE:
+            self._stop_worker()
+            status = WorkerStatus.NO_STATUS
+        if status != WorkerStatus.READY and status != WorkerStatus.NO_STATUS:
+            return
+
+        new_job = self.job_queue.get_next_message()
+        if not new_job:
+            return
+
+        log.debug("Staring new job {}".format(new_job))
+        self._process_job(new_job)
+
+    def _connect_sqs(self):
+        if self.job_queue:
+            return
+
+        self.job_queue = SQSService(
+            queue_name="hyp3-in-a-box-test-Hyp3StartEvents-1VPMA189B6AFV.fifo"
+        )
+
+    def _poll_worker_status(self):
+        if self.worker and self.worker_conn.poll():
+            self.previous_worker_status = self.worker_conn.recv()
+        return self.previous_worker_status
+
+    def _process_job(self, job):
+        if self.worker:
+            raise Exception("Worker already processing")
+
+        self.worker_conn, child_conn = Pipe()
+        self.worker = HyP3Worker(child_conn, job)
+        self.worker.start()
+
+    def _stop_worker(self):
+        self.worker_conn.close()
+        self.worker.join()
+        self.worker = None
+        self.worker_conn = None
+        self.previous_worker_status = WorkerStatus.NO_STATUS
+        log.debug("Worker stopped")
+
+
+def main():
+    daemon = HyP3Daemon()
+    daemon.run()
+
+
+if __name__ == '__main__':
+    main()
