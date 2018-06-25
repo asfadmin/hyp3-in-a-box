@@ -44,4 +44,3 @@ def load_example_sns():
     sns_example_path = pl.Path(__file__).parent / 'data' / 'sns-event.json'
     with sns_example_path.open('r') as f:
         return json.load(f)
-
