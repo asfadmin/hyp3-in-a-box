@@ -24,6 +24,8 @@ def get_relevant_metadata_from(result):
         result[k] for k in ('polygons', 'producer_granule_id', 'links')
     ]
 
+    print(f'found granule: {name}')
+
     polygon_str = get_polygon_str(polygons)
     polygon = parse_points(polygon_str)
     download_url = get_download_url(links)
@@ -75,7 +77,6 @@ def is_granule_in(title):
 
 def make_granule_from(result):
     name = result['producer_granule_id']
-    print(f'found granule: {name}')
 
     return gu.SentinelGranule(name)
 

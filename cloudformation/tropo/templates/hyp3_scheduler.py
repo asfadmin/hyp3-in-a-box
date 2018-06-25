@@ -97,7 +97,7 @@ scheduler_args = {
     "Timeout": 300
 }
 
-if 'test' in environment.maturity:
+if 'unittest' in environment.maturity:
     scheduler_args['VpcConfig'] = VPCConfig(
         SecurityGroupIds=[
             'sg-0d8cdb7c',

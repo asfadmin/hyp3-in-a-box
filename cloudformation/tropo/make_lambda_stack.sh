@@ -10,7 +10,7 @@ python3 create_stack.py \
     --scheduler \
     --send_email \
     --lambda_bucket hyp3-in-a-box-lambdas \
-    --maturity test \
+    --maturity unittest \
     --db_host $HOST \
     $TEMPLATE
 
