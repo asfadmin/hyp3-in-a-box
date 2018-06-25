@@ -10,7 +10,6 @@ from template import t
 
 db_super_user = t.add_parameter(Parameter(
     "Hyp3DBSuperUser",
-    NoEcho=False,
     Description="The database admin account username",
     Type="String",
     MinLength="1",
@@ -34,7 +33,6 @@ db_super_user_pass = t.add_parameter(Parameter(
 
 db_user = t.add_parameter(Parameter(
     "Hyp3DBUser",
-    NoEcho=False,
     Description="The database low privilege account username",
     Type="String",
     MinLength="1",
