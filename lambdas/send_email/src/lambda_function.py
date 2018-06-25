@@ -20,10 +20,10 @@ def lambda_handler(aws_event, aws_context):
     """
     setup_env()
 
-    notify_event = sns.get_hyp3_event_from(aws_event)
+    finish_event = sns.get_hyp3_event_from(aws_event)
 
-    subject, address = notify_event.subject, notify_event.address
-    message = render.email_with(notify_event)
+    subject, address = finish_event.subject, finish_event.address
+    message = render.email_with(finish_event)
 
     ses.send(
         address,

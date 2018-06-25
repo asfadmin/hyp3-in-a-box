@@ -6,7 +6,8 @@ from .hyp3_event import Hyp3Event
 NewGranuleData = collections.namedtuple('NewGranuleData', [
     'name',
     'polygon',
-    'download_url'
+    'download_url',
+    'browse_url'
 ])
 
 

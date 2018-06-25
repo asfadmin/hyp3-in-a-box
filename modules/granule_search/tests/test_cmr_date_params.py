@@ -12,6 +12,7 @@ def test_before(query_time):
     params = api.get_query_params()
 
     time_query_tests(params)
+    assert all(d.startswith(',') for d in params['created_at[]'])
 
 
 @given(st.datetimes())
@@ -22,6 +23,7 @@ def test_after(query_time):
     params = api.get_query_params()
 
     time_query_tests(params)
+    assert all(d.endswith(',') for d in params['created_at[]'])
 
 
 @given(st.datetimes(), st.datetimes())
@@ -37,4 +39,3 @@ def test_between(start_time, end_time):
 def time_query_tests(params):
     assert 'created_at[]' in params
     assert isinstance(params['created_at[]'], list)
-    assert all(',' in d for d in params['created_at[]'])
