@@ -30,8 +30,8 @@ print('  adding find_new lambda')
 
 
 lambda_name = t.add_parameter(ts.Parameter(
-    "FindNewName",
-    Description="Name of the find new granules lambda function (Optional).",
+    "LambdaFindNewName",
+    Description="Name of the find new granules lambda function",
     Default="hyp3_find_new",
     Type="String"
 ))

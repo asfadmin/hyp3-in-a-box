@@ -42,8 +42,8 @@ source_zip = "scheduler.zip"
 print('  adding scheduler lambda')
 
 lambda_name = t.add_parameter(Parameter(
-    "SchedulerName",
-    Description="Name of the Scheduler lambda function (Optional)",
+    "LambdaSchedulerName",
+    Description="Name of the Scheduler lambda function",
     Default="hyp3_scheduler",
     Type="String"
 ))

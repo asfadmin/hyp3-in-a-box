@@ -38,7 +38,7 @@ source_zip = "setup_db.zip"
 print('  adding setup_db lambda')
 
 lambda_name = t.add_parameter(Parameter(
-    "SetupDBName",
+    "LambdaSetupDBName",
     Description="Name of the SetupDB lambda function",
     Default="hyp3_setup_db",
     Type="String"
