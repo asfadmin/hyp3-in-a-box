@@ -2,22 +2,45 @@
 # Rohan Weeden
 # Created: May 24, 2018
 
-# Troposphere definitions for the HyP3 API Elastic beanstalk application
+"""
+Troposphere definitions for the HyP3 API Elastic beanstalk application.
 
-# Converted from ElasticBeanstalk_Nodejs.template located at:
-# http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
+Converted from ElasticBeanstalk_Nodejs.template located at:
+http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
+
+Requires
+~~~~~~~~
+* :ref:`rds_template`
+* :ref:`vpc_template`
+
+Resources
+~~~~~~~~~
+
+* **ElasticBeanstalk:** Python 3.6 web server
+* **IAM Policies:**
+
+  * ElasticBeanstalk Web Tier
+  * S3 read/write on ``previous time`` bucket
+  * Allow cloudwatch event to trigger the lambda
+
+"""
 
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.sts import AssumeRole
-from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref
-from troposphere.elasticbeanstalk import (Application, ApplicationVersion,
-                                          ConfigurationTemplate, Environment,
-                                          OptionSettings, SourceBundle)
-from troposphere.iam import InstanceProfile, Role
-
 from environment import environment
 from template import t
+from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref
+from troposphere.elasticbeanstalk import (
+    Application,
+    ApplicationVersion,
+    ConfigurationTemplate,
+    Environment,
+    OptionSettings,
+    SourceBundle
+)
+from troposphere.iam import InstanceProfile, Role
 
+from .hyp3_rds import hyp3_db
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
 
@@ -38,7 +61,7 @@ keyname = t.add_parameter(Parameter(
 t.add_mapping("Region2Principal", get_map('region2principal'))
 
 role = t.add_resource(Role(
-    "WebServerRole",
+    "HyP3ApiWebServerRole",
     AssumeRolePolicyDocument=Policy(
         Statement=[
             Statement(
@@ -126,6 +149,11 @@ config_template = t.add_resource(ConfigurationTemplate(
             Namespace="aws:ec2:vpc",
             OptionName="Subnets",
             Value=Ref(get_public_subnets()[0])
+        ),
+        OptionSettings(
+            Namespace="aws::elasticbeanstalk:application:environment",
+            OptionName="DB_URL",
+            Value=GetAtt(hyp3_db, "Endpoint.Address")
         )
     ]
 ))
@@ -141,7 +169,7 @@ test_environment = t.add_resource(Environment(
 
 t.add_output(
     Output(
-        "URL",
+        "HyP3ApiUrl",
         Description="HyP3 API url",
         Value=Join("", ["http://", GetAtt(test_environment, "EndpointURL")])
     )
