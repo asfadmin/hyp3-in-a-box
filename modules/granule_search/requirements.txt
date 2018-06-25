@@ -1,5 +1,4 @@
 -i https://pypi.org/simple
-./../hyp3_events
 asf-granule-util==0.0.57
 certifi==2018.4.16
 chardet==3.0.4
