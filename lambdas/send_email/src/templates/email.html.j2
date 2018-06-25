@@ -32,8 +32,7 @@
         <td align="left" style="text-align:left" text-align="left" colspan="2">
             {% if download_url is defined %}
                 <h3 style="margin: 1em 0;margin:5px 0px 5px 20px;color: #000">
-                    <b>Get the data!&nbsp;</b>
-                    <a target="_blank" href="{{ download_url }}">Download</a>
+                    <b>Get the data!&nbsp;</b> {{ macros.download_button(download_url) }}
                 </h3>
                 {{ macros.hr() }}
             {% endif %}
