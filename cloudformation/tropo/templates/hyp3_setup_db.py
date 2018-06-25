@@ -20,17 +20,22 @@ Resources
 
 """
 
+from environment import environment
+from template import t
 from troposphere import GetAtt, Parameter, Ref
 from troposphere.awslambda import Environment, Function
 from troposphere.iam import Role
 
-from environment import environment
-from template import t
-
 from . import utils
+from .hyp3_db_params import (
+    db_name,
+    db_pass,
+    db_super_user,
+    db_super_user_pass,
+    db_user
+)
 from .hyp3_kms_key import kms_key
 from .hyp3_rds import hyp3_db
-from .hyp3_db_params import db_user, db_pass
 
 source_zip = "setup_db.zip"
 
@@ -71,8 +76,11 @@ send_email = t.add_resource(Function(
     Environment=Environment(
         Variables={
             "Hyp3DBHost": GetAtt(hyp3_db, "Endpoint.Address"),
-            "Hyp3DBRootUser": Ref(db_user),
-            "Hyp3DBRootPass": Ref(db_pass)
+            "Hyp3DBName": Ref(db_name),
+            "Hyp3DBRootUser": Ref(db_super_user),
+            "Hyp3DBRootPass": Ref(db_super_user_pass),
+            "Hyp3DBUser": Ref(db_user),
+            "Hyp3DBPass": Ref(db_pass)
         }
     )
 ))

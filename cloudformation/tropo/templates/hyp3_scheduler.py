@@ -87,7 +87,6 @@ scheduler_args = {
     "Runtime": "python3.6",
     "Environment": Environment(
         Variables={
-            # TODO: Don't use superuser credentials
             'SNS_ARN': Ref(finish_sns),
             'DB_HOST': GetAtt(hyp3_db, "Endpoint.Address"),
             'DB_USER': Ref(db_user),
