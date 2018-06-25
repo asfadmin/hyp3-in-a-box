@@ -9,6 +9,7 @@ Requires
 ~~~~~~~~
 * :ref:`sns_template`
 * :ref:`kms_key_template`
+* :ref:`rds_template`
 * :ref:`db_params_template`
 
 Resources
@@ -23,17 +24,17 @@ Resources
 
 """
 
+from environment import environment
+from template import t
 from troposphere import GetAtt, Parameter, Ref
 from troposphere.awslambda import Environment, Function, VPCConfig
 from troposphere.iam import Policy, Role
 
-from environment import environment
-from template import t
-
 from . import utils
-from .hyp3_sns import finish_sns
-from .hyp3_db_params import db_pass, db_user, db_name
+from .hyp3_db_params import db_name, db_pass, db_user
 from .hyp3_kms_key import kms_key
+from .hyp3_rds import hyp3_db
+from .hyp3_sns import finish_sns
 
 source_zip = "scheduler.zip"
 
@@ -86,8 +87,9 @@ scheduler_args = {
     "Runtime": "python3.6",
     "Environment": Environment(
         Variables={
+            # TODO: Don't use superuser credentials
             'SNS_ARN': Ref(finish_sns),
-            'DB_HOST': environment.db_host,
+            'DB_HOST': GetAtt(hyp3_db, "Endpoint.Address"),
             'DB_USER': Ref(db_user),
             'DB_PASSWORD': Ref(db_pass),
             'DB_NAME': Ref(db_name)
