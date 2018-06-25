@@ -1,9 +1,16 @@
 -i https://pypi.org/simple
+./../../modules/hyp3_db
 ./../../modules/hyp3_events
+boto3==1.7.45
+botocore==1.10.45
 cfn-flip==1.0.3
 click==6.7
+docutils==0.14
 jinja2==2.10
+jmespath==0.9.3
 markupsafe==1.0
+python-dateutil==2.7.3; python_version >= '2.7'
 pyyaml==3.12
+s3transfer==0.1.13
 six==1.11.0
 troposphere==2.3.0
