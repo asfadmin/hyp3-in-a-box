@@ -1,11 +1,26 @@
 import pathlib as pl
 import json
 
-import import_send_email
-
+import mock
 from hyp3_events import Hyp3Event
+
+import import_send_email
+import custom_mocks
+
+from send_email_main import send_email_main
+from environment import environment
 import sns
 import render
+
+
+@mock.patch(
+    'ses.send',
+    side_effect=custom_mocks.send_mock
+)
+def test_main_email(ses_mock):
+    environment.source_email = "test@test.com"
+    event = load_example_sns()
+    send_email_main(event)
 
 
 def test_sns_event_from_notification():
@@ -29,3 +44,4 @@ def load_example_sns():
     sns_example_path = pl.Path(__file__).parent / 'data' / 'sns-event.json'
     with sns_example_path.open('r') as f:
         return json.load(f)
+
