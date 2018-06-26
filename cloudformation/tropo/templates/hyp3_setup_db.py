@@ -1,5 +1,5 @@
 # hyp3_setup_db.py
-# Rohan Weeden
+# Rohan Weeden, William Horn
 # Created: June 13, 2018
 
 """
@@ -20,7 +20,7 @@ Resources
 
 """
 
-from troposphere import GetAtt, Parameter, Ref
+from troposphere import GetAtt, Parameter, Ref, Output
 from troposphere.awslambda import Environment, Function
 from troposphere.iam import Role
 
@@ -53,7 +53,7 @@ send_email_role = t.add_resource(Role(
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
-send_email = t.add_resource(Function(
+setup_db = t.add_resource(Function(
     "SetupDBFunction",
     FunctionName=Ref(lambda_name),
     Code=utils.make_lambda_code(
@@ -75,4 +75,13 @@ send_email = t.add_resource(Function(
             "Hyp3DBRootPass": Ref(db_pass)
         }
     )
+))
+
+setup_db_output = t.add_output(Output(
+    'SetupDBLambdaFunctionOutput',
+    Description=(
+        "Lambda function for setting up the database. "
+        "Should be run when the template is finished creating."
+    ),
+    Value=Ref(setup_db)
 ))

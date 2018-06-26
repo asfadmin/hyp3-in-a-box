@@ -25,6 +25,13 @@ def load_json_from(directory, name):
     return loaded_json
 
 
+def get_lambda_function(name):
+    func_path = pl.Path(__file__).parent / 'functions' / '{}.py'.format(name)
+
+    with func_path.open('r') as f:
+        return f.read().strip().split('\n')
+
+
 def make_lambda_code(**kwargs):
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
 
