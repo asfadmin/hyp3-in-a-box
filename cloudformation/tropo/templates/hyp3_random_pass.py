@@ -34,18 +34,17 @@ random_password = t.add_resource(Function(
     ),
     Handler='lambda_function.lambda_handler',
     Role=GetAtt(lambda_role, "Arn"),
-    Runtime="python2.7"
+    Runtime="python3.6"
 ))
 
 password = t.add_resource(CustomResource(
     "RandomPasswordString",
     Length=25,
-    RDSCompatible=True,
     ServiceToken=GetAtt(random_password, "Arn")
 ))
 
 setup_db_output = t.add_output(Output(
     'RandomString',
     Description=("Some random string generated in cloudformation"),
-    Value=GetAtt(password, 'RandomString')
+    Value=GetAtt(password, 'Password')
 ))
