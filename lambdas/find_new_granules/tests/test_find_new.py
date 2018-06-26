@@ -5,7 +5,7 @@ import hyp3_events
 
 import import_find_new
 
-import custom_mocks
+import find_new_mocks
 import find_new
 
 
@@ -14,7 +14,7 @@ find_new.environment.maturity = 'test'
 
 @mock.patch(
     'find_new.find_new.granule_search.CMR.search',
-    side_effect=custom_mocks.asf_api_requests_get
+    side_effect=find_new_mocks.asf_api_requests_get
 )
 def test_get_new(mock_get):
     request_time = dt.datetime.now()
@@ -30,7 +30,7 @@ def test_get_new(mock_get):
 
 @mock.patch(
     'find_new.find_new.get_new_granules_between',
-    side_effect=custom_mocks.asf_api_requests_get
+    side_effect=find_new_mocks.asf_api_requests_get
 )
 @mock.patch(
     'find_new.s3.upload'

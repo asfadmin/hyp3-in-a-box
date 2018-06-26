@@ -5,7 +5,7 @@ import mock
 from hyp3_events import Hyp3Event
 
 import import_send_email
-import custom_mocks
+import send_email_mocks
 
 from send_email_main import send_email_main
 from environment import environment
@@ -15,7 +15,7 @@ import render
 
 @mock.patch(
     'ses.send',
-    side_effect=custom_mocks.send_mock
+    side_effect=send_email_mocks.send_mock
 )
 def test_main_email(ses_mock):
     environment.source_email = "test@test.com"
