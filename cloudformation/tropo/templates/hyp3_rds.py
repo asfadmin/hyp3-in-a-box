@@ -1,12 +1,12 @@
 # Example modified from:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
-from troposphere import GetAtt, Output, Parameter, Ref, ec2, rds
+from troposphere import GetAtt, Output, Ref, ec2, rds
 
 from template import t
 
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
-from .hyp3_db_params import db_pass, db_user, db_name
+from .hyp3_db_params import db_super_user_pass, db_super_user, db_name
 
 
 print('  adding rds')
@@ -53,8 +53,8 @@ hyp3_db = t.add_resource(rds.DBInstance(
     PubliclyAccessible=True,
     VPCSecurityGroups=[Ref(security_group)],
     DBSubnetGroupName=Ref(mydbsubnetgroup),
-    MasterUsername=Ref(db_user),
-    MasterUserPassword=Ref(db_pass),
+    MasterUsername=Ref(db_super_user),
+    MasterUserPassword=Ref(db_super_user_pass),
     DependsOn=('Hyp3VPC'),
 ))
 

@@ -27,13 +27,14 @@ from github_status import (
 
 S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
 MATURITY = os.environ["MATURITY"]
+GITHUB_HYP3_API_CLONE_TOKEN = os.environ["GITHUB_HYP3_API_CLONE_TOKEN"]
 BUCKET_BASE_DIR = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
 BUILD_STEP_MESSAGES = {}
 
 
 def install():
     update_github_status("pending", description="Build in progress")
-    install_all_requirements_txts('.')
+    install_all_requirements_txts(".")
     os.chmod("upload.sh", stat.S_IEXEC)
 
 
@@ -56,22 +57,22 @@ def run_tests():
             r.get("failures"),
             r.get("errors")
         )
-        BUILD_STEP_MESSAGES['failure'] = test_result_summary
+        BUILD_STEP_MESSAGES["failure"] = test_result_summary
         save_config("TEST_RESULT_SUMMARY", test_result_summary)
 
 
 def check_coverage():
-    cov_xml_path = pl.Path('/tmp/cov.xml')
+    cov_xml_path = pl.Path("/tmp/cov.xml")
     subprocess.check_call(
-        ["py.test", "--cov=.", "--cov-report", f"xml:{cov_xml_path}", "."]
+        ["py.test", "--cov=.", "--cov-report", "xml:{}".format(cov_xml_path), "."]
     )
 
     r = ElementTree.parse(str(cov_xml_path)).getroot()
-    coverage = float(r.get('line-rate'))
+    coverage = float(r.get("line-rate"))
     coverage_percent = int(coverage * 100)
 
-    url_percent_sign = '%25'
-    subject, status = 'coverage', f"{coverage_percent}{url_percent_sign}"
+    url_percent_sign = "%25"
+    subject, status = "coverage", "{}{}".format(coverage_percent, url_percent_sign)
     color = get_badge_color(coverage)
 
     write_status_to_s3(subject, status, color)
@@ -79,11 +80,11 @@ def check_coverage():
 
 def get_badge_color(coverage):
     if coverage < .65:
-        color = 'red'
+        color = "red"
     elif coverage < .80:
-        color = 'yellow'
+        color = "yellow"
     else:
-        color = 'brightgreen'
+        color = "brightgreen"
 
     return color
 
@@ -95,6 +96,7 @@ def build():
     for v in object_versions:
         version_options += ["--{}_version".format(v[0]), v[1]]
 
+    build_hyp3_api()
     subprocess.check_call([
         "python3", "cloudformation/tropo/create_stack.py",
         "build/template.json", "--maturity", MATURITY
@@ -112,7 +114,7 @@ def build_lambdas():
         "aws", "s3", "cp", "build/lambdas",
         "s3://{}".format(BUCKET_BASE_DIR),
         "--recursive",
-        "--include", '"*"'
+        "--include", ""*""
     ])
     print("Latest Source Versions:")
     versions = get_latest_lambda_versions()
@@ -140,6 +142,24 @@ def get_latest_lambda_versions():
             ))
 
     return versions
+
+
+def build_hyp3_api():
+    subprocess.check_call([
+        "git", "clone",
+        "https://{}@github.com/asfadmin/hyp3-api".format(GITHUB_HYP3_API_CLONE_TOKEN),
+        "--depth", "1"
+    ])
+    subprocess.check_call([
+        "aws", "s3", "cp", "s3://{}".format(
+            os.path.join(BUCKET_BASE_DIR, "config/hyp3_api_config.json")
+        ), "hyp3-api/hyp3_flask/config.json"
+    ])
+    subprocess.check_call(["zip", "../build/hyp3_api.zip", "hyp3_flask"], cwd="hyp3-api")
+    subprocess.check_call([
+        "aws", "s3", "cp", "build/hyp3_api.zip",
+        "s3://{}".format(BUCKET_BASE_DIR)
+    ])
 
 
 def post_build():
@@ -207,8 +227,8 @@ def main(step=None):
         return None
     except subprocess.CalledProcessError as e:
         desc = step
-        if 'failure' in BUILD_STEP_MESSAGES is not None:
-            desc = BUILD_STEP_MESSAGES['failure']
+        if "failure" in BUILD_STEP_MESSAGES is not None:
+            desc = BUILD_STEP_MESSAGES["failure"]
         set_github_ci_status("failure", description=desc)
         save_config("BUILD_STATUS", e.returncode)
         raise
@@ -218,7 +238,7 @@ def main(step=None):
         raise
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) > 1:
         main(step=sys.argv[1])
     else:
