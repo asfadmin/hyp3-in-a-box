@@ -1,0 +1,14 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+SQLAlchemy = "==1.2.8"
+"3da5cae" = {path = "./../../modules/hyp3_db"}
+
+[dev-packages]
+pytest = "*"
+
+[requires]
+python_version = "3.6"
