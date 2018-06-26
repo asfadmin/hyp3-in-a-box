@@ -1,3 +1,3 @@
-def send_mock(*args, **kwargs):
+def send_mock(address, subject, message):
     with open('output.html', 'w') as f:
-        f.write(args[2])
+        f.write(message)
