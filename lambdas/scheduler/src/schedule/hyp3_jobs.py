@@ -1,4 +1,4 @@
-from hyp3_db import Hyp3DB
+import hyp3_db
 
 from environment import environment
 from . import queries
@@ -13,15 +13,15 @@ def hyp3_jobs(new_granules):
         :rtype: list[tuple]
     """
     host, name, password, db = environment.db_creds
-    db = Hyp3DB(host, name, password, db)
 
-    jobs_for_each_granule = [
-        get_jobs_for(granule, db) for granule in new_granules
-    ]
+    with hyp3_db.connect(host, name, password, db) as db:
+        jobs_for_each_granule = [
+            get_jobs_for(granule, db) for granule in new_granules
+        ]
 
-    jobs = flatten_list(jobs_for_each_granule)
+        jobs = flatten_list(jobs_for_each_granule)
 
-    return jobs
+        return jobs
 
 
 def get_jobs_for(granule, db):
@@ -41,10 +41,14 @@ def get_jobs_for(granule, db):
 def format_polygon(point_vals):
     points = ""
 
-    for lat, lon in zip(point_vals[0::2], point_vals[1::2]):
+    for lat, lon in pair_up_lat_lons(point_vals):
         points += "{} {},".format(lon, lat)
 
     return "POLYGON(({}))".format(points[:-1])
+
+
+def pair_up_lat_lons(point_vals):
+    return zip(point_vals[0::2], point_vals[1::2])
 
 
 def get_users_for(subs, db):
