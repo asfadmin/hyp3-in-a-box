@@ -1,14 +1,16 @@
 
-from troposphere import GetAtt, Ref, Output, Join
-from troposphere.awslambda import Function, Code
+from troposphere import GetAtt, Output
+from troposphere.awslambda import Function
 from troposphere.cloudformation import CustomResource
 from troposphere.iam import Role
 
 from template import t
+from environment import environment
 
 from . import utils
 
 print('  adding random_pass')
+source_zip = 'random_password.zip'
 
 
 lambda_role = t.add_resource(Role(
@@ -22,10 +24,15 @@ lambda_role = t.add_resource(Role(
 
 random_password = t.add_resource(Function(
     "RandomPasswordLambda",
-    Code=Code(
-        ZipFile=Join("\n", utils.get_lambda_function('random_pass'))
+    Code=utils.make_lambda_code(
+        S3Bucket=environment.lambda_bucket,
+        S3Key="{maturity}/{source_zip}".format(
+            maturity=environment.maturity,
+            source_zip=source_zip
+        ),
+        S3ObjectVersion=environment.find_new_granules_version
     ),
-    Handler='index.lambda_handler',
+    Handler='lambda_function.lambda_handler',
     Role=GetAtt(lambda_role, "Arn"),
     Runtime="python2.7"
 ))
