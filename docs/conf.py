@@ -20,16 +20,21 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../lambdas/find_new_granules/src'))
-sys.path.insert(0, os.path.abspath('../lambdas/scheduler/src'))
-sys.path.insert(0, os.path.abspath('../lambdas/send_email/src'))
-sys.path.insert(0, os.path.abspath('../lambdas'))
-sys.path.insert(0, os.path.abspath('../lambdas/setup_db/src'))
-sys.path.insert(0, os.path.abspath('../cloudformation/tropo'))
-sys.path.insert(0, os.path.abspath('../modules/hyp3_db/src'))
-sys.path.insert(0, os.path.abspath('../modules/hyp3_events/src'))
-sys.path.insert(0, os.path.abspath('../modules/granule_search/src'))
-sys.path.insert(0, os.path.abspath('..'))
+paths = [
+    '../lambdas/find_new_granules/src',
+    '../lambdas/scheduler/src',
+    '../lambdas/send_email/src',
+    '../lambdas',
+    '../lambdas/setup_db/src',
+    '../cloudformation/tropo',
+    '../modules/hyp3_db/src',
+    '../modules/hyp3_events/src',
+    '../modules/granule_search/src',
+    '..'
+]
+
+for p in paths:
+    sys.path.insert(0, os.path.abspath(p))
 
 
 def setup(app):
