@@ -1,4 +1,4 @@
-.. _rds_template:
+.. _api_eb_template:
 
 Template: HyP3 API
 ==================
