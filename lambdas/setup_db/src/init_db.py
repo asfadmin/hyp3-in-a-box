@@ -1,5 +1,5 @@
 # setup_db.py
-# Rohan Weeden
+# Rohan Weeden, William Horn
 # June 14, 2018
 
 # Database setup functions. Need to pull them out from lambda_function to avoid
@@ -63,7 +63,6 @@ def make_hyp3_admin_user(db):
     )
 
     db.session.add(admin_user)
-    db.session.commit()
 
 
 def add_default_processes(db):
@@ -80,4 +79,3 @@ def add_default_processes(db):
     )
 
     db.session.add(notify_only_process)
-    db.session.commit()
