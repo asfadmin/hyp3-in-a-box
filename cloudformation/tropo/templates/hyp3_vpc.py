@@ -16,8 +16,8 @@ Resources
 * **Internet Gateway:** Enables internet traffic to and from the public subnets
 * **Route Tables:**
 
-  * Private
   * Public
+  * Private
 
 * **Subnets:**
 
