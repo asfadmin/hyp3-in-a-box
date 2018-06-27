@@ -41,7 +41,7 @@ from troposphere.elasticbeanstalk import (
 from troposphere.iam import InstanceProfile, Role
 
 from .hyp3_rds import hyp3_db
-from .hyp3hyp3_db_params import db_name, db_user, db_pass
+from .hyp3_db_params import db_name, db_user, db_pass
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
 
