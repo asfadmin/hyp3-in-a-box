@@ -7,27 +7,29 @@
 
 import os
 
-from hyp3_db.hyp3_models.base import Base
-from hyp3_db import hyp3_models
 from sqlalchemy.sql import text
 
+import hyp3_db
+from hyp3_db import hyp3_models
+from hyp3_db.hyp3_models.base import Base
 import custom_resource
 
 
-def setup_db(event, db):
-    resp = DBSetup(event, db) \
+def setup_db(event, db_admin_creds):
+    resp = DBSetup(event, db_admin_creds) \
         .get_response()
 
     custom_resource.send(event, resp)
 
 
 class DBSetup(custom_resource.Base):
-    def __init__(self, event, db):
+    def __init__(self, event, db_admin_creds):
         super().__init__(event)
-        self.db = db
+        self.db_creds = db_admin_creds
 
     def _process(self):
-        setup_db_main(self.db)
+        with hyp3_db.connect(*self.db_creds) as db:
+            setup_db_main(db)
 
         return {
             'Data': {},

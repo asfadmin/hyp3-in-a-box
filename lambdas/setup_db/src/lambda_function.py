@@ -6,7 +6,6 @@
 
 import os
 
-import hyp3_db
 from init_db import setup_db
 
 
@@ -18,9 +17,7 @@ def lambda_handler(aws_event, aws_context):
         :param aws_event: lambda event data
         :param aws_context: lambda runtime info
     """
-    db = get_db_creds()
-    with hyp3_db.connect(*get_db_creds()) as db:
-        setup_db(aws_event, db)
+    setup_db(aws_event, get_db_creds())
 
 
 def get_db_creds():
