@@ -9,6 +9,7 @@ SQLAlchemy = "==1.2.8"
 
 [dev-packages]
 pytest = "*"
+mock = "*"
 
 [requires]
 python_version = "3.6"

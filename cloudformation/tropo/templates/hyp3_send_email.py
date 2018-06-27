@@ -38,8 +38,8 @@ source_email = t.add_parameter(Parameter(
 ))
 
 lambda_name = t.add_parameter(Parameter(
-    "SendEmailName",
-    Description="Name of the email sending lambda function (Optional)",
+    "LambdaSendEmailName",
+    Description="Name of the email sending lambda function",
     Default="hyp3_send_email",
     Type="String"
 ))

@@ -10,7 +10,7 @@ def send_email_main(aws_event):
     subject, address = finish_event.subject, finish_event.address
     message = render.email_with(finish_event)
 
-    if finish_event.browse_url == "":
+    if not finish_event.browse_url:
         return
 
     ses.send(

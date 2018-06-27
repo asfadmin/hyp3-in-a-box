@@ -29,7 +29,8 @@ def get_new_granule_strategy():
         hyp3_events.NewGranuleEvent,
         name=st.from_regex(gu.SentinelGranule.pattern_exact),
         polygon=cmr_polygon_list(),  # pylint: disable=E1120
-        download_url=get_url_strategy()
+        download_url=get_url_strategy(),
+        browse_url=get_url_strategy()
     )
 
 

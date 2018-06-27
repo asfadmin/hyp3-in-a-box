@@ -29,8 +29,8 @@ def get_db_creds():
         :returns: hyp3_db module database object
         :rtype: hyp3_db.Hyp3DB
     """
-    HOST = os.environ.get("Hyp3DBHost")
-    USER = os.environ.get("Hyp3DBRootUser")
-    PASS = os.environ.get("Hyp3DBRootPass")
+    HOST = os.environ["Hyp3DBHost"]
+    USER = os.environ["Hyp3DBRootUser"]
+    PASS = os.environ["Hyp3DBRootPass"]
 
     return HOST, USER, PASS
