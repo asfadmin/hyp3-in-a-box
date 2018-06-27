@@ -11,17 +11,42 @@ from hyp3_db.hyp3_models.base import Base
 from hyp3_db import hyp3_models
 from sqlalchemy.sql import text
 
+import custom_resource
 
-def setup_db(db):
+
+def setup_db(event, db):
+    resp = DBSetup(event, db) \
+        .get_response()
+
+    custom_resource.send(event, resp)
+
+
+class DBSetup(custom_resource.Base):
+    def __init__(self, event, db):
+        super().__init__(event)
+        self.db = db
+
+    def _process(self):
+        setup_db_main(self.db)
+
+        return {
+            'Data': {},
+            'Reason': 'Successfully setup hyp3 db'
+        }
+
+
+def setup_db_main(db):
     """ Creates hyp3 user as well as all database tables """
-    install_postgis(db)
+    steps = [
+        install_postgis,
+        add_db_user,
+        make_tables,
+        make_hyp3_admin_user,
+        add_default_processes,
+    ]
 
-    add_db_admin_user(db)
-
-    make_tables(db)
-    make_hyp3_admin_user(db)
-
-    add_default_processes(db)
+    for step in steps:
+        step(db)
 
     db.session.commit()
 
@@ -33,7 +58,7 @@ def install_postgis(db):
     db.engine.execute(create_postgis_sql)
 
 
-def add_db_admin_user(db):
+def add_db_user(db):
     user, password, db_name = [
         os.environ[f'Hyp3DB{k}'] for k in ('User', 'Pass', 'Name')
     ]

@@ -20,7 +20,7 @@ def lambda_handler(aws_event, aws_context):
     """
     db = get_db_creds()
     with hyp3_db.connect(*get_db_creds()) as db:
-        setup_db(db)
+        setup_db(aws_event, db)
 
 
 def get_db_creds():

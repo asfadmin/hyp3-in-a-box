@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 SQLAlchemy = "==1.2.8"
 "3da5cae" = {path = "./../../modules/hyp3_db"}
+"c65d5b0" = {path = "./../../modules/custom_resource"}
 
 [dev-packages]
 pytest = "*"

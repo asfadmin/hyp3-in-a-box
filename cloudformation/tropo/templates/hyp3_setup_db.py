@@ -20,8 +20,9 @@ Resources
 
 """
 
-from troposphere import GetAtt, Parameter, Ref, Output
+from troposphere import GetAtt, Parameter, Ref
 from troposphere.awslambda import Environment, Function
+from troposphere.cloudformation import CustomResource
 from troposphere.iam import Role
 
 from environment import environment
@@ -86,11 +87,8 @@ setup_db = t.add_resource(Function(
     )
 ))
 
-setup_db_output = t.add_output(Output(
-    'SetupDBLambdaFunctionOutput',
-    Description=(
-        "Lambda function for setting up the database. "
-        "Should be run when the template is finished creating."
-    ),
-    Value=Ref(setup_db)
+
+db_setup = t.add_resource(CustomResource(
+    "RunDBSetup",
+    ServiceToken=GetAtt(setup_db, "Arn")
 ))

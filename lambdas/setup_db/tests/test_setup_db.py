@@ -9,7 +9,7 @@ import mock
 import import_setup_db
 
 import hyp3_db
-from init_db import setup_db
+from init_db import setup_db_main
 
 
 @mock.patch(
@@ -26,7 +26,7 @@ def test_lambda_function(environ_mock):
     setup_db_for_test()
 
     with hyp3_db.test_db() as db:
-        setup_db(db)
+        setup_db_main(db)
 
 
 def setup_db_for_test():
