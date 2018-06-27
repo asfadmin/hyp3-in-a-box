@@ -1,6 +1,6 @@
 """
-Troposphere template responsible for adding parameters for entering
-data base credentials.
+Troposphere template responsible for adding parameters for entering database
+credentials.
 """
 
 from troposphere import Parameter

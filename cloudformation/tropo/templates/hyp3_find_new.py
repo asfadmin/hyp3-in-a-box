@@ -1,12 +1,12 @@
 """
-Troposphere template responsible for generating :ref:`find_new_lambda`
+Troposphere template responsible for generating :ref:`find_new_lambda`.
 
 Resources
 ~~~~~~~~~
 
-* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
-* **S3 Bucket:** Used to store the previous runtimes of the lambda.
-* **Cloudwatch Event:** Triggers the lambda after a scheduled amount of time.
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
+* **S3 Bucket:** Used to store the previous runtimes of the lambda
+* **Cloudwatch Event:** Triggers the lambda after a scheduled amount of time
 * **IAM Policies:**
 
   * Lambda basic execution

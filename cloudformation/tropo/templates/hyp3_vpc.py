@@ -1,5 +1,32 @@
-# Example modified from:
-# https://github.com/cloudtools/troposphere/blob/master/examples/NatGateway.py
+# hyp3_vpc.py
+# William Horn
+# Created: June 2018
+
+"""
+Troposphere template responsible for generating the VPC which the HyP3 system
+operates in.
+
+Example modified from:
+https://github.com/cloudtools/troposphere/blob/master/examples/NatGateway.py
+
+Resources
+~~~~~~~~~
+
+* **VPC:** The VPC which all other HyP3 infrastructure is connected to
+* **Internet Gateway:** Enables internet traffic to and from the public subnets
+* **Route Tables:**
+
+  * Private
+  * Public
+
+* **Subnets:**
+
+  * Public net 1 in availability zone 'a'
+  * Public net 2 in availability zone 'b'
+  * Private net
+
+
+"""
 
 import troposphere as ts
 from troposphere import ec2

@@ -3,12 +3,12 @@
 # Created: June 5, 2018
 
 """
-Troposphere template responsible for generating :ref:`send_email_lambda`
+Troposphere template responsible for generating :ref:`send_email_lambda`.
 
 Resources
 ~~~~~~~~~
 
-* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
 * **IAM Policies:**
 
   * Lambda basic execution

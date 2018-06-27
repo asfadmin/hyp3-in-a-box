@@ -1,5 +1,25 @@
-# Example modified from:
-# http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
+# hyp3_rds.py
+# Rohan Weeden, William Horn
+# Created: June, 2018
+
+"""
+Troposphere template responsible for generating the HyP3 database.
+
+Example modified from:
+http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
+
+Requires
+~~~~~~~~
+* :ref:`vpc_template`
+* :ref:`db_params_template`
+
+Resources
+~~~~~~~~~
+
+* **RDS:** PostgreSQL database for the HyP3 system
+* **Security Group:** Allows all traffic on port 5432 inbound and outbound
+
+"""
 
 from troposphere import GetAtt, Output, Ref, ec2, rds
 

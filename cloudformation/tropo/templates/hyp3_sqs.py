@@ -1,4 +1,19 @@
+# hyp3_sqs.py
+# William Horn
+# Created: June, 2018
 
+"""
+Troposphere template responsible for generating SQS job queues.
+
+Resources
+~~~~~~~~~
+
+* **SQS Fifo:**
+
+  * Start Events queue for incoming jobs
+  * Failed Events queue for jobs which are not correctly recieved from the Start Events queue
+
+"""
 
 from troposphere import GetAtt
 from troposphere.sqs import Queue, RedrivePolicy
