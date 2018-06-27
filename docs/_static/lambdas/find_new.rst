@@ -30,14 +30,3 @@ Submodule: S3
 
 .. automodule:: find_new.s3
    :members:
-
-Module: Results
-~~~~~~~~~~~~~~~
-
-.. automodule:: results
-   :members:
-
-.. autoclass:: results.granule_package.GranulePackage
-   :members:
-
-   .. automethod:: __init__
