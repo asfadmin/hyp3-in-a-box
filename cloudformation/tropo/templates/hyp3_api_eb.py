@@ -41,6 +41,7 @@ from troposphere.elasticbeanstalk import (
 from troposphere.iam import InstanceProfile, Role
 
 from .hyp3_rds import hyp3_db
+from .hyp3hyp3_db_params import db_name, db_user, db_pass
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
 
@@ -110,7 +111,7 @@ app_version = t.add_resource(ApplicationVersion(
 
 config_template = t.add_resource(ConfigurationTemplate(
     "Hyp3ApiConfigurationTemplate",
-    DependsOn="Hyp3VPC",
+    DependsOn=["Hyp3VPC", "Hyp3DB"],
     ApplicationName=Ref(app),
     Description="",
     SolutionStackName="64bit Amazon Linux 2018.03 v2.7.0 running Python 3.6",
@@ -154,6 +155,26 @@ config_template = t.add_resource(ConfigurationTemplate(
             Namespace="aws::elasticbeanstalk:application:environment",
             OptionName="DB_URL",
             Value=GetAtt(hyp3_db, "Endpoint.Address")
+        ),
+        OptionSettings(
+            Namespace="aws::elasticbeanstalk:application:environment",
+            OptionName="DB_PORT",
+            Value="5432"
+        ),
+        OptionSettings(
+            Namespace="aws::elasticbeanstalk:application:environment",
+            OptionName="DB_NAME",
+            Value=Ref(db_name)
+        ),
+        OptionSettings(
+            Namespace="aws::elasticbeanstalk:application:environment",
+            OptionName="DB_USER",
+            Value=Ref(db_user)
+        ),
+        OptionSettings(
+            Namespace="aws::elasticbeanstalk:application:environment",
+            OptionName="DB_PASS",
+            Value=Ref(db_pass)
         )
     ]
 ))
