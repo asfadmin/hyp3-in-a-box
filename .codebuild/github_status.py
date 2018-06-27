@@ -21,12 +21,10 @@ GITHUB_COMMIT_HASH = os.environ["CODEBUILD_RESOLVED_SOURCE_VERSION"]
 
 
 def set_github_ci_status(status, description=None):
-    svg_status = "passing"
-    if status != "success":
-        svg_status = "failing"
+    svg_status = "passing" if status == "success" else "failing"
 
     color = "brightgreen"
-    if status == "failing":
+    if svg_status == "failing":
         color = "red"
 
     write_status_to_s3("build", svg_status, color)
@@ -37,15 +35,16 @@ def write_status_to_s3(subject, status, color):
     if not os.path.exists(subject):
         os.makedirs(subject)
 
-    with open(f"{subject}/status.svg", "w") as f:
+    svg_path = os.path.join(subject, "status.svg")
+    with open(svg_path, "w") as f:
         f.write(get_svg_status(subject, status, color))
 
     s3_object_name = "s3://{}".format(
-        os.path.join(S3_STATUS_BUCKET, MATURITY + f"-{subject}-status.svg")
+        os.path.join(S3_STATUS_BUCKET, MATURITY + "-{}-status.svg".format(subject))
     )
 
     subprocess.check_call([
-        "aws", "s3", "cp", f"{subject}/status.svg",
+        "aws", "s3", "cp", svg_path,
         s3_object_name, "--acl", "public-read",
         "--cache-control", "no-cache"
     ])
