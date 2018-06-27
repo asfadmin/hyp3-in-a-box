@@ -11,8 +11,6 @@ class Environment:
         self.scheduler_version = None
         self.setup_db_version = None
 
-        self.db_host = ""
-
     def get_variables(self):
         return [
             (k, get_var_type(v))
