@@ -1,6 +1,6 @@
 
 Module: Hyp3 DB
-===================
+===============
 
 .. image:: ../images/python.png
    :alt: alternate text

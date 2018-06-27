@@ -10,8 +10,7 @@ python3 create_stack.py \
     --scheduler \
     --send_email \
     --lambda_bucket hyp3-in-a-box-lambdas \
-    --maturity test \
-    --db_host $HOST \
+    --maturity unittest \
     $TEMPLATE
 
 if [ "$2" = "create" ]

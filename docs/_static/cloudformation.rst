@@ -19,6 +19,7 @@ AWS CloudFormation
    cloudformation/setup_db.rst
 
    cloudformation/rds.rst
+   cloudformation/api_eb.rst
 
    cloudformation/sns.rst
 

@@ -6,7 +6,7 @@
 
 import os
 
-from hyp3_db import Hyp3DB
+import hyp3_db
 from init_db import setup_db
 
 
@@ -18,22 +18,19 @@ def lambda_handler(aws_event, aws_context):
         :param aws_event: lambda event data
         :param aws_context: lambda runtime info
     """
-    db = get_db()
-    setup_db(db)
+    db = get_db_creds()
+    with hyp3_db.connect(*get_db_creds()) as db:
+        setup_db(db)
 
 
-def get_db():
+def get_db_creds():
     """ Create a database connection using SQLAlchemy.
 
         :returns: hyp3_db module database object
         :rtype: hyp3_db.Hyp3DB
     """
-    HOST = os.environ.get("Hyp3DBHost")
-    USER = os.environ.get("Hyp3DBRootUser")
-    PASS = os.environ.get("Hyp3DBRootPass")
+    HOST = os.environ["Hyp3DBHost"]
+    USER = os.environ["Hyp3DBRootUser"]
+    PASS = os.environ["Hyp3DBRootPass"]
 
-    return Hyp3DB(
-        host=HOST,
-        user=USER,
-        password=PASS
-    )
+    return HOST, USER, PASS
