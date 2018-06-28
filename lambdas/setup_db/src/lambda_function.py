@@ -5,6 +5,7 @@
 # Lambda function for creating the Hyp3 Database
 
 import os
+import json
 
 from init_db import setup_db
 
@@ -17,6 +18,7 @@ def lambda_handler(aws_event, aws_context):
         :param aws_event: lambda event data
         :param aws_context: lambda runtime info
     """
+    print(json.dump(aws_event))
     setup_db(aws_event, get_db_creds())
 
 

@@ -28,7 +28,9 @@ class DBSetup(custom_resource.Base):
         self.db_creds = db_admin_creds
 
     def _process(self):
+        print('connecting to hyp3_db')
         with hyp3_db.connect(*self.db_creds) as db:
+            print('connected')
             setup_db_main(db)
 
         return {
@@ -39,6 +41,7 @@ class DBSetup(custom_resource.Base):
 
 def setup_db_main(db):
     """ Creates hyp3 user as well as all database tables """
+    print('Setting up database:')
     steps = [
         install_postgis,
         add_db_user,
@@ -47,7 +50,9 @@ def setup_db_main(db):
         add_default_processes,
     ]
 
-    for step in steps:
+    for i, step in enumerate(steps):
+        count, num_steps = i + 1, len(steps)
+        print(f'   ({count}/{num_steps}) - {step.__name__}')
         step(db)
 
     db.session.commit()
