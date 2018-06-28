@@ -15,10 +15,7 @@ class Environment:
 
         self.maturity = "test"
 
-        self.find_new_granules_version = None
-        self.send_email_version = None
-        self.scheduler_version = None
-        self.setup_db_version = None
+        self.set_lambda_version_variables()
 
         self.use_name_parameters = True
         self.should_create_db = True
@@ -28,6 +25,23 @@ class Environment:
             (k, get_var_type(v))
             for k, v in self.__dict__.items()
         ]
+
+    def set_lambda_version_variables(self):
+        for lambda_name in get_lambdas_names():
+            setattr(self, f'{lambda_name}_version', None)
+
+
+def get_lambdas_names():
+    path = pl.Path(__file__).parent / '../../lambdas/'
+
+    return [
+        d.name for d in path.iterdir()
+        if is_lambda_directory(d)
+    ]
+
+
+def is_lambda_directory(d):
+    return d.is_dir() and not d.name.startswith('.')
 
 
 def load_process_cfg():
