@@ -147,7 +147,6 @@ def get_latest_lambda_versions():
 
 
 def build_hyp3_api():
-    print(f'(GITHUB_HYP3_API_CLONE_TOKEN)')
     hyp3_api_url = "https://{}@github.com/asfadmin/hyp3-api".format(
         GITHUB_HYP3_API_CLONE_TOKEN
     )
@@ -161,9 +160,9 @@ def build_hyp3_api():
     subprocess.check_call([
         "aws", "s3", "cp", api_cfg_path, "hyp3-api/hyp3_flask/config.json"
     ])
-
+    print(os.getcwd())
     subprocess.check_call([
-        "zip", "../build/hyp3_api.zip", "hyp3_flask"],
+        "zip", "-r", "../build/hyp3_api.zip", "hyp3_flask"],
         cwd="hyp3-api"
     )
     subprocess.check_call([
