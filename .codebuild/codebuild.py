@@ -114,7 +114,7 @@ def build_lambdas():
         "aws", "s3", "cp", "build/lambdas",
         "s3://{}".format(BUCKET_BASE_DIR),
         "--recursive",
-        "--include", ""*""
+        "--include", '"*"'
     ])
     print("Latest Source Versions:")
     versions = get_latest_lambda_versions()
