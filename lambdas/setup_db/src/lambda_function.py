@@ -18,7 +18,7 @@ def lambda_handler(aws_event, aws_context):
         :param aws_event: lambda event data
         :param aws_context: lambda runtime info
     """
-    print(json.dump(aws_event))
+    print(json.dumps(aws_event))
     setup_db(aws_event, get_db_creds())
 
 
