@@ -109,7 +109,7 @@ html_theme = 'alabaster'
 html_theme_options = {
     'logo': 'images/satellite.png',
     'logo_name': True,
-    'description': "Portable version of asf's HyP3 procecssing system",
+    'description': "Portable version of ASF's HyP3 procecssing system",
     'github_user': 'asfadmin',
     'github_repo': 'hyp3-in-a-box',
     'extra_nav_links': {
