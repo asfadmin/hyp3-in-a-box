@@ -6,7 +6,10 @@
 # naming conflicts during unit test imports
 
 import os
+import json
+import pathlib as pl
 
+import boto3
 from sqlalchemy.sql import text
 
 import hyp3_db
@@ -16,6 +19,8 @@ import custom_resource
 
 
 def setup_db(event, db_admin_creds):
+    print(json.dumps(event))
+
     resp = DBSetup(event, db_admin_creds) \
         .get_response()
 
@@ -66,9 +71,12 @@ def install_postgis(db):
 
 
 def add_db_user(db):
-    user, password, db_name = [
-        os.environ[f'Hyp3DB{k}'] for k in ('User', 'Pass', 'Name')
-    ]
+
+    user, password, db_name = get_environ_params(
+        'Hyp3DBUser',
+        'Hyp3DBPass',
+        'Hyp3DBName'
+    )
 
     add_user_sql = text(f"""
         CREATE USER {user} WITH PASSWORD :password;
@@ -86,9 +94,14 @@ def make_tables(db):
 
 
 def make_hyp3_admin_user(db):
+    username, user_email = get_environ_params(
+        'Hyp3AdminUsername',
+        'Hyp3AdminEmail'
+    )
+
     admin_user = hyp3_models.User(
-        username="admin",
-        email="wbhorn@alaska.edu",
+        username=username,
+        email=user_email,
         is_admin=True,
         is_authorized=True,
         granules_processed=0
@@ -98,16 +111,38 @@ def make_hyp3_admin_user(db):
 
 
 def add_default_processes(db):
-    notify_only_process = hyp3_models.Process(
-        name="Notify Only",
-        description="Notify users when new data arives via email",
-        script="N/A",
-        suffix="N/A",
-        database_info_required=False,
-        ami_id="N/A",
-        ec2_size="N/A",
-        supports_pair_processing=False,
-        text_id="notify_only"
+    processes = [
+        hyp3_models.Process(**process) for process in get_processes()
+    ]
+
+    db.session.bulk_save_objects(processes)
+
+
+def get_processes():
+    bucket, key = get_environ_params(
+        'DefaultProcessesBucket',
+        'DefaultProcessesKey'
     )
 
-    db.session.add(notify_only_process)
+    s3 = boto3.resource('s3')
+
+    base_path = pl.Path('/tmp') if \
+        'prod' in os.environ.get('Maturity', 'prod') \
+        else pl.Path('.')
+
+    file_path = (base_path / pl.Path(key).name)
+
+    print('downloading default processes')
+    s3.Bucket(bucket) \
+        .download_file(key, str(file_path))
+
+    with file_path.open('r') as f:
+        processes = json.load(f)
+
+    return processes
+
+
+def get_environ_params(*args):
+    return [
+        os.environ[k] for k in args
+    ]

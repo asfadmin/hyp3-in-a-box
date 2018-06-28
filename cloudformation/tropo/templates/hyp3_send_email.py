@@ -34,7 +34,7 @@ source_email = t.add_parameter(Parameter(
     "VerifiedSourceEmail",
     Description="Source email to send notifications",
     Type="String",
-    AllowedPattern=r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
+    AllowedPattern=utils.get_email_pattern()
 ))
 
 lambda_name = t.add_parameter(Parameter(

@@ -10,6 +10,10 @@ from environment import environment
 from template import t
 
 
+def get_email_pattern():
+    return r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
+
+
 def get_host_address():
     if environment.should_create_db:
         from .hyp3_rds import hyp3_db

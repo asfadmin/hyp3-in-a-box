@@ -18,14 +18,16 @@ Resources
 
   * Lambda basic execution
 
+* **Custom Resource:** This is to trigger a lambda function that sets up the db
 """
 
-from troposphere import GetAtt, Ref
-from troposphere.awslambda import Environment, VPCConfig
+from troposphere import GetAtt, Ref, Parameter
+from troposphere.awslambda import Environment
 from troposphere.cloudformation import CustomResource
 from troposphere.iam import Role
 
 from template import t
+from environment import environment
 
 from . import utils
 from .hyp3_db_params import (
@@ -52,6 +54,20 @@ role = t.add_resource(Role(
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc')
 ))
 
+admin_email = t.add_parameter(Parameter(
+    "Hyp3AdminEmail",
+    Description="Email for the admin hyp3 user",
+    Type="String",
+    AllowedPattern=utils.get_email_pattern()
+))
+
+admin_username = t.add_parameter(Parameter(
+    "Hyp3AdminUsername",
+    Description="Username for the admin hyp3 user",
+    Type="String",
+    AllowedPattern="[a-zA-Z][a-zA-Z0-9]*"
+))
+
 setup_db = t.add_resource(utils.make_lambda_function(
     name='setup_db',
     role=role,
@@ -61,10 +77,18 @@ setup_db = t.add_resource(utils.make_lambda_function(
             Variables={
                 "Hyp3DBHost": utils.get_host_address(),
                 "Hyp3DBName": Ref(db_name),
+
                 "Hyp3DBRootUser": Ref(db_super_user),
                 "Hyp3DBRootPass": Ref(db_super_user_pass),
+
                 "Hyp3DBUser": Ref(db_user),
-                "Hyp3DBPass": Ref(db_pass)
+                "Hyp3DBPass": Ref(db_pass),
+
+                "Hyp3AdminUsername": Ref(admin_username),
+                "Hyp3AdminEmail": Ref(admin_email),
+
+                "DefaultProcessesBucket": environment.hyp3_data_bucket,
+                "DefaultProcessesKey": environment.default_processes_key
             }
         ),
         "Timeout": 40
