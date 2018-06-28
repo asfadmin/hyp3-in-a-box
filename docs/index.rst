@@ -31,6 +31,7 @@ HyP3 In A Box's Documentation
    :maxdepth: 1
    :caption: Contents:
 
+   _static/setup
    _static/cloudformation
    _static/lambdas-main
    _static/modules
