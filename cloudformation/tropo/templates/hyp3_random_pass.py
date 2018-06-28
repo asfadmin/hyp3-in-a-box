@@ -1,4 +1,20 @@
+"""
+Troposphere template responsible for creating a custom resource that generates
+random strings. This is intended to be used for random passwords and to test
+the custom resource wrapper.
 
+
+Resources
+~~~~~~~~~
+
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
+* **IAM Policies:**
+
+  * Lambda basic execution
+
+* **Custom Resource:** This is a random string that can be used in the template
+
+"""
 from troposphere import GetAtt, Output
 from troposphere.awslambda import Function
 from troposphere.cloudformation import CustomResource
