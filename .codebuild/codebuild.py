@@ -160,7 +160,7 @@ def build_hyp3_api():
     subprocess.check_call([
         "aws", "s3", "cp", api_cfg_path, "hyp3-api/hyp3_flask/config.json"
     ])
-    print(os.getcwd())
+
     subprocess.check_call([
         "zip", "-r", "../build/hyp3_api.zip", "hyp3_flask"],
         cwd="hyp3-api"
