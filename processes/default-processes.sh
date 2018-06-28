@@ -1,7 +1,7 @@
 #!/bin/bash
 
-BUCKET=$(cat .config.json | jq -r '.processes_bucket')
-KEY=$(cat .config.json | jq -r '.default_processes_key')
+BUCKET=$(jq -r '.processes_bucket' < .config.json)
+KEY=$(jq -r '.default_processes_key' < .config.json)
 OBJ_KEY=$BUCKET/$KEY
 
 if [ "$1" = "down" ]

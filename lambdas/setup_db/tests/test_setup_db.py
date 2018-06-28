@@ -4,14 +4,14 @@
 
 # Test cases for seting up the database
 
-import mock
 import pathlib as pl
 import json
 
-import import_setup_db
-
+import mock
 import hyp3_db
 from hyp3_db import hyp3_models
+
+import import_setup_db
 from init_db import setup_db
 
 testing_user = 'hyp3_user'
