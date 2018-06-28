@@ -87,8 +87,8 @@ def make_tables(db):
 
 def make_hyp3_admin_user(db):
     admin_user = hyp3_models.User(
-        username='admin',
-        email='wbhorn@alaska.edu',
+        username="admin",
+        email="wbhorn@alaska.edu",
         is_admin=True,
         is_authorized=True,
         granules_processed=0
@@ -100,7 +100,7 @@ def make_hyp3_admin_user(db):
 def add_default_processes(db):
     notify_only_process = hyp3_models.Process(
         name="Notify Only",
-        description='Notify users when new data arives via email',
+        description="Notify users when new data arives via email",
         script="N/A",
         suffix="N/A",
         database_info_required=False,
