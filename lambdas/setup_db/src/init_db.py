@@ -73,7 +73,7 @@ def add_db_user(db):
     add_user_sql = text(f"""
         CREATE USER {user} WITH PASSWORD :password;
         GRANT ALL PRIVILEGES ON DATABASE {db_name} to {user};
-    """.format(db, user))
+    """)
 
     db.engine.execute(
         add_user_sql,
