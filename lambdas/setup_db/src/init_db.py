@@ -71,7 +71,7 @@ def add_db_user(db):
     ]
 
     add_user_sql = text(f"""
-        CREATE USER hyp3_user WITH PASSWORD :password;
+        CREATE USER {user} WITH PASSWORD :password;
         GRANT ALL PRIVILEGES ON DATABASE {db_name} to {user};
     """.format(db, user))
 
