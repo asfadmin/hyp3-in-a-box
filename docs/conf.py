@@ -114,7 +114,7 @@ html_theme_options = {
     'github_repo': 'hyp3-in-a-box',
     'extra_nav_links': {
         'HyP3 On-Demand Processing': 'http://hyp3.asf.alaska.edu/',
-        'HyP3 API': 'http://hyp3.asf.alaska.edu://api.hyp3.asf.alaska.edu/',
+        'HyP3 API': 'https://api.hyp3.asf.alaska.edu/',
         'Find Granules': 'https://vertex.daac.asf.alaska.edu/',
         'ASF Website': 'https://www.asf.alaska.edu/'
     },
