@@ -1,0 +1,14 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+"c65d5b0" = {path = "./../../modules/custom_resource"}
+
+[dev-packages]
+mock = "*"
+pytest = "*"
+
+[requires]
+python_version = "3.6"

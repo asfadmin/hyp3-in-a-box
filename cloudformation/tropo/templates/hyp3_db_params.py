@@ -7,6 +7,11 @@ from troposphere import Parameter
 
 from template import t
 
+hyp3_db = Parameter(
+    "Hyp3DBHostUrl",
+    Description="The host url for an existing hyp3 database",
+    Type="String",
+)
 
 db_super_user = t.add_parameter(Parameter(
     "Hyp3DBSuperUser",
