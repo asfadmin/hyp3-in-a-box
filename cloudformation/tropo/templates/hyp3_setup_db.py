@@ -3,7 +3,7 @@
 # Created: June 13, 2018
 
 """
-Troposphere template responsible for generating :ref:`setup_db_lambda`
+Troposphere template responsible for generating :ref:`setup_db_lambda`.
 
 Requires
 ~~~~~~~~

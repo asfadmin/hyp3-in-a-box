@@ -1,6 +1,6 @@
-.. _rds_template:
+.. _api_eb_template:
 
-Template: HyP3 API
-==================
+Template: API ElasticBeanstalk
+==============================
 
 .. automodule:: cloudformation.tropo.templates.hyp3_api_eb

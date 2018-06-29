@@ -20,6 +20,7 @@ AWS CloudFormation
 
    cloudformation/rds.rst
    cloudformation/api_eb.rst
+   cloudformation/vpc.rst
 
    cloudformation/sns.rst
 

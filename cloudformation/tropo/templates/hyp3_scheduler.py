@@ -3,7 +3,7 @@
 # Created: June 12, 2018
 
 """
-Troposphere template responsible for generating :ref:`scheduler_lambda`
+Troposphere template responsible for generating :ref:`scheduler_lambda`.
 
 Requires
 ~~~~~~~~
@@ -15,8 +15,8 @@ Requires
 Resources
 ~~~~~~~~~
 
-* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
-* **SNS Topic:** This is where notify only/finish events get put.
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
+* **SNS Topic:** This is where notify only/finish events get put
 * **IAM Policies:**
 
   * Lambda basic execution

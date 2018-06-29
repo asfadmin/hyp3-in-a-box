@@ -46,6 +46,7 @@ class DBSetup(custom_resource.Base):
 
 def setup_db_main(db):
     """ Creates hyp3 user as well as all database tables """
+
     print('Setting up database:')
     steps = [
         install_postgis,

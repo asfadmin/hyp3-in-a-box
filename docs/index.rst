@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 HyP3 In A Box's Documentation
-=========================================
+=============================
 
 .. cssclass:: badge-margin
 
@@ -31,13 +31,14 @@ HyP3 In A Box's Documentation
    :maxdepth: 1
    :caption: Contents:
 
+   _static/setup
    _static/cloudformation
    _static/lambdas-main
    _static/modules
 
 
 The Hybrid Plugable Processing Pipeline (HyP3) System
-----------------------------------------------
+-----------------------------------------------------
 
 .. figure:: _static/images/diagram.png
    :scale: 80 %

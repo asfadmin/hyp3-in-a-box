@@ -114,12 +114,12 @@ html_theme = 'alabaster'
 html_theme_options = {
     'logo': 'images/satellite.png',
     'logo_name': True,
-    'description': "Portable version of asf's HyP3 procecssing system",
+    'description': "Portable version of ASF's HyP3 procecssing system",
     'github_user': 'asfadmin',
     'github_repo': 'hyp3-in-a-box',
     'extra_nav_links': {
         'HyP3 On-Demand Processing': 'http://hyp3.asf.alaska.edu/',
-        'HyP3 API': 'http://hyp3.asf.alaska.edu://api.hyp3.asf.alaska.edu/',
+        'HyP3 API': 'https://api.hyp3.asf.alaska.edu/',
         'Find Granules': 'https://vertex.daac.asf.alaska.edu/',
         'ASF Website': 'https://www.asf.alaska.edu/'
     },
