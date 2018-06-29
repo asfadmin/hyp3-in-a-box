@@ -47,7 +47,7 @@ def make_notify_only_event(sub, user, granule):
             'name': 'Granule',
             'value': granule.name
         }],
-        browse_url='',
+        browse_url=granule.browse_url,
         download_url=granule.download_url
     )
 

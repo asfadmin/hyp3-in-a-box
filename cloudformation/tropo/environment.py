@@ -1,23 +1,54 @@
+import json
+import pathlib as pl
+
+
 class Environment:
     """Environment variables for the troposphere templates"""
 
     def __init__(self):
         self.lambda_bucket = "asf-hyp3-in-a-box-source"
         self.eb_bucket = "asf-hyp3-in-a-box-source"
+
+        process_cfg = load_process_cfg()
+        self.hyp3_data_bucket = process_cfg['processes_bucket']
+        self.default_processes_key = process_cfg['default_processes_key']
+
         self.maturity = "test"
 
-        self.find_new_granules_version = None
-        self.send_email_version = None
-        self.scheduler_version = None
-        self.setup_db_version = None
+        self.set_lambda_version_variables()
 
-        self.db_host = ""
+        self.use_name_parameters = True
+        self.should_create_db = True
 
     def get_variables(self):
         return [
             (k, get_var_type(v))
             for k, v in self.__dict__.items()
         ]
+
+    def set_lambda_version_variables(self):
+        for lambda_name in get_lambdas_names():
+            setattr(self, f'{lambda_name}_version', None)
+
+
+def get_lambdas_names():
+    path = pl.Path(__file__).parent / '../../lambdas/'
+
+    return [
+        d.name for d in path.iterdir()
+        if is_lambda_directory(d)
+    ]
+
+
+def is_lambda_directory(d):
+    return d.is_dir() and not d.name.startswith('.')
+
+
+def load_process_cfg():
+    path = pl.Path(__file__).parent / '../../processes/.config.json'
+
+    with path.open('r') as f:
+        return json.load(f)
 
 
 def get_var_type(v):

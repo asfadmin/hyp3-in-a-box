@@ -20,16 +20,21 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../lambdas/find_new_granules/src'))
-sys.path.insert(0, os.path.abspath('../lambdas/scheduler/src'))
-sys.path.insert(0, os.path.abspath('../lambdas/send_email/src'))
-sys.path.insert(0, os.path.abspath('../lambdas'))
-sys.path.insert(0, os.path.abspath('../lambdas/setup_db/src'))
-sys.path.insert(0, os.path.abspath('../cloudformation/tropo'))
-sys.path.insert(0, os.path.abspath('../modules/hyp3_db/src'))
-sys.path.insert(0, os.path.abspath('../modules/hyp3_events/src'))
-sys.path.insert(0, os.path.abspath('../modules/granule_search/src'))
-sys.path.insert(0, os.path.abspath('..'))
+paths = [
+    '../lambdas/find_new_granules/src',
+    '../lambdas/scheduler/src',
+    '../lambdas/send_email/src',
+    '../lambdas',
+    '../lambdas/setup_db/src',
+    '../cloudformation/tropo',
+    '../modules/hyp3_db/src',
+    '../modules/hyp3_events/src',
+    '../modules/granule_search/src',
+    '..'
+]
+
+for p in paths:
+    sys.path.insert(0, os.path.abspath(p))
 
 
 def setup(app):
@@ -109,12 +114,12 @@ html_theme = 'alabaster'
 html_theme_options = {
     'logo': 'images/satellite.png',
     'logo_name': True,
-    'description': "Portable version of asf's HyP3 procecssing system",
+    'description': "Portable version of ASF's HyP3 procecssing system",
     'github_user': 'asfadmin',
     'github_repo': 'hyp3-in-a-box',
     'extra_nav_links': {
         'HyP3 On-Demand Processing': 'http://hyp3.asf.alaska.edu/',
-        'HyP3 API': 'http://hyp3.asf.alaska.edu://api.hyp3.asf.alaska.edu/',
+        'HyP3 API': 'https://api.hyp3.asf.alaska.edu/',
         'Find Granules': 'https://vertex.daac.asf.alaska.edu/',
         'ASF Website': 'https://www.asf.alaska.edu/'
     },

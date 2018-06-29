@@ -11,5 +11,5 @@ elif [ "$1" = "up" ]
 then
     aws s3 cp $CONF s3://$OBJ_KEY
 else
-    echo "cloudformation-config.sh [down|up]"
+    echo "$0 [down|up]"
 fi

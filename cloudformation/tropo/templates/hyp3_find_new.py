@@ -1,12 +1,12 @@
 """
-Troposphere template responsible for generating :ref:`find_new_lambda`
+Troposphere template responsible for generating :ref:`find_new_lambda`.
 
 Resources
 ~~~~~~~~~
 
-* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
-* **S3 Bucket:** Used to store the previous runtimes of the lambda.
-* **Cloudwatch Event:** Triggers the lambda after a scheduled amount of time.
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
+* **S3 Bucket:** Used to store the previous runtimes of the lambda
+* **Cloudwatch Event:** Triggers the lambda after a scheduled amount of time
 * **IAM Policies:**
 
   * Lambda basic execution
@@ -30,8 +30,8 @@ print('  adding find_new lambda')
 
 
 lambda_name = t.add_parameter(ts.Parameter(
-    "FindNewName",
-    Description="Name of the find new granules lambda function (Optional).",
+    "LambdaFindNewName",
+    Description="Name of the find new granules lambda function",
     Default="hyp3_find_new",
     Type="String"
 ))

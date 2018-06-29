@@ -1,10 +1,10 @@
-.. Hyp3 In A Box documentation master file, created by
+.. HyP3 In A Box documentation master file, created by
    sphinx-quickstart on Tue Jun  5 11:11:18 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Hyp3 In A Box's Documentation
-=========================================
+HyP3 In A Box's Documentation
+=============================
 
 .. cssclass:: badge-margin
 
@@ -31,20 +31,21 @@ Hyp3 In A Box's Documentation
    :maxdepth: 1
    :caption: Contents:
 
+   _static/setup
    _static/cloudformation
    _static/lambdas-main
    _static/modules
 
 
-The Hybrid Pluggable Procecssing (HyP3) System
-----------------------------------------------
+The Hybrid Plugable Processing Pipeline (HyP3) System
+-----------------------------------------------------
 
 .. figure:: _static/images/diagram.png
    :scale: 80 %
    :alt: flowchart of the hyp3 system
 
-   Diagram of the hyp3 system. All these resourse get automatically created
-   using `AWS Cloudformation`_.
+   Diagram of the hyp3 system. All these resources get automatically created
+   using `AWS CloudFormation`_.
 
 Indices and tables
 ------------------

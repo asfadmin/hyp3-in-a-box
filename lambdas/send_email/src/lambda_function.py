@@ -1,9 +1,7 @@
 import os
 
 from environment import environment
-import sns
-import render
-import ses
+from send_email_main import send_email_main
 
 
 def lambda_handler(aws_event, aws_context):
@@ -19,17 +17,7 @@ def lambda_handler(aws_event, aws_context):
         :param aws_context: lambda runtime info
     """
     setup_env()
-
-    notify_event = sns.get_hyp3_event_from(aws_event)
-
-    subject, address = notify_event.subject, notify_event.address
-    message = render.email_with(notify_event)
-
-    ses.send(
-        address,
-        subject,
-        message
-    )
+    send_email_main(aws_event)
 
 
 def setup_env():

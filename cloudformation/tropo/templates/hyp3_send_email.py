@@ -3,12 +3,12 @@
 # Created: June 5, 2018
 
 """
-Troposphere template responsible for generating :ref:`send_email_lambda`
+Troposphere template responsible for generating :ref:`send_email_lambda`.
 
 Resources
 ~~~~~~~~~
 
-* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
 * **IAM Policies:**
 
   * Lambda basic execution
@@ -34,12 +34,12 @@ source_email = t.add_parameter(Parameter(
     "VerifiedSourceEmail",
     Description="Source email to send notifications",
     Type="String",
-    AllowedPattern=r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
+    AllowedPattern=utils.get_email_pattern()
 ))
 
 lambda_name = t.add_parameter(Parameter(
-    "SendEmailName",
-    Description="Name of the email sending lambda function (Optional)",
+    "LambdaSendEmailName",
+    Description="Name of the email sending lambda function",
     Default="hyp3_send_email",
     Type="String"
 ))

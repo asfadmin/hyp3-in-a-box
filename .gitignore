@@ -1,7 +1,6 @@
 lambdas/upload_lambda.sh
 db_creds.sh
 configuration.json
-*.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

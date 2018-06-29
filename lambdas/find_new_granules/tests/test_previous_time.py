@@ -3,7 +3,7 @@ import mock
 
 import import_find_new
 
-import custom_mocks
+import find_new_mocks
 from find_new import previous_time, environment as env
 
 TESTING_TIME = dt.datetime(2017, 12, 6, 15, 29, 43, 79060)
@@ -20,7 +20,7 @@ def test_set_time(mock_upload):
 
 @mock.patch(
     'find_new.previous_time.s3.download',
-    side_effect=custom_mocks.get_s3_download_func(time=TESTING_TIME)
+    side_effect=find_new_mocks.get_s3_download_func(time=TESTING_TIME)
 )
 def test_get_time(mock_download):
     t = previous_time.get_time()
