@@ -1,4 +1,2 @@
 -i https://pypi.org/simple
 ./../../modules/custom_resource
-./../../modules/hyp3_db
-sqlalchemy==1.2.8

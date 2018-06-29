@@ -1,0 +1,4 @@
+{
+    "processes_bucket" : "asf-hyp3-in-a-box-source",
+    "default_processes_key" : "data/default-processes.json"
+}

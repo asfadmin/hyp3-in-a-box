@@ -1,0 +1,11 @@
+[{
+    "name":"Notify Only",
+    "description":"Notify users when new data arives via email",
+    "script":"N/A",
+    "suffix":"N/A",
+    "database_info_required": false,
+    "ami_id":"N/A",
+    "ec2_size":"N/A",
+    "supports_pair_processing": false,
+    "text_id":"notify_only"
+}]

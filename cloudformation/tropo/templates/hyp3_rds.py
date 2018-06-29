@@ -21,9 +21,10 @@ Resources
 
 """
 
-from troposphere import GetAtt, Output, Ref, ec2, rds
+from troposphere import GetAtt, Output, Ref, ec2, rds, Parameter
 
 from template import t
+from environment import environment
 
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .hyp3_db_params import db_super_user_pass, db_super_user, db_name
@@ -62,9 +63,8 @@ mydbsubnetgroup = t.add_resource(rds.DBSubnetGroup(
 
 # Only certain versions of postgres are supported on the smaller instance types
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html
-hyp3_db = t.add_resource(rds.DBInstance(
+db = rds.DBInstance(
     "Hyp3DB",
-    DBInstanceIdentifier="hyp3-in-a-box",
     AllocatedStorage="5",
     DBInstanceClass="db.t2.micro",
     DBName=Ref(db_name),
@@ -76,7 +76,18 @@ hyp3_db = t.add_resource(rds.DBInstance(
     MasterUsername=Ref(db_super_user),
     MasterUserPassword=Ref(db_super_user_pass),
     DependsOn=('Hyp3VPC'),
-))
+)
+
+if environment.use_name_parameters:
+    db_instance_name = t.add_parameter(Parameter(
+        "Hyp3DBInstanceId",
+        Description="The name of the rds instance within aws.",
+        Type="String"
+    ))
+
+    db.DBInstanceIdentifier = Ref(db_instance_name)
+
+hyp3_db = t.add_resource(db)
 
 t.add_output(
     Output(

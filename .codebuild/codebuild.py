@@ -64,7 +64,8 @@ def run_tests():
 def check_coverage():
     cov_xml_path = pl.Path("/tmp/cov.xml")
     subprocess.check_call(
-        ["py.test", "--cov=.", "--cov-report", "xml:{}".format(cov_xml_path), "."]
+        ["py.test", "--cov=.", "--cov-report",
+            "xml:{}".format(cov_xml_path), "."]
     )
 
     r = ElementTree.parse(str(cov_xml_path)).getroot()
@@ -72,7 +73,8 @@ def check_coverage():
     coverage_percent = int(coverage * 100)
 
     url_percent_sign = "%25"
-    subject, status = "coverage", "{}{}".format(coverage_percent, url_percent_sign)
+    subject, status = "coverage", "{}{}".format(
+        coverage_percent, url_percent_sign)
     color = get_badge_color(coverage)
 
     write_status_to_s3(subject, status, color)
@@ -114,7 +116,7 @@ def build_lambdas():
         "aws", "s3", "cp", "build/lambdas",
         "s3://{}".format(BUCKET_BASE_DIR),
         "--recursive",
-        "--include", ""*""
+        "--include", '"*"'
     ])
     print("Latest Source Versions:")
     versions = get_latest_lambda_versions()
@@ -145,17 +147,24 @@ def get_latest_lambda_versions():
 
 
 def build_hyp3_api():
+    hyp3_api_url = "https://{}@github.com/asfadmin/hyp3-api".format(
+        GITHUB_HYP3_API_CLONE_TOKEN
+    )
     subprocess.check_call([
-        "git", "clone",
-        "https://{}@github.com/asfadmin/hyp3-api".format(GITHUB_HYP3_API_CLONE_TOKEN),
-        "--depth", "1"
+        "git", "clone", hyp3_api_url, "--depth", "1"
     ])
+
+    api_cfg_path = "s3://{}".format(
+        os.path.join(BUCKET_BASE_DIR, "config/hyp3_api_config.json")
+    )
     subprocess.check_call([
-        "aws", "s3", "cp", "s3://{}".format(
-            os.path.join(BUCKET_BASE_DIR, "config/hyp3_api_config.json")
-        ), "hyp3-api/hyp3_flask/config.json"
+        "aws", "s3", "cp", api_cfg_path, "hyp3-api/hyp3_flask/config.json"
     ])
-    subprocess.check_call(["zip", "../build/hyp3_api.zip", "hyp3_flask"], cwd="hyp3-api")
+
+    subprocess.check_call([
+        "zip", "-r", "../build/hyp3_api.zip", "hyp3_flask"],
+        cwd="hyp3-api"
+    )
     subprocess.check_call([
         "aws", "s3", "cp", "build/hyp3_api.zip",
         "s3://{}".format(BUCKET_BASE_DIR)
