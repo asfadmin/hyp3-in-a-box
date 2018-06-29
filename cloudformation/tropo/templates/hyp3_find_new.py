@@ -29,14 +29,6 @@ source_zip = "find_new_granules.zip"
 print('  adding find_new lambda')
 
 
-lambda_name = t.add_parameter(ts.Parameter(
-    "LambdaFindNewName",
-    Description="Name of the find new granules lambda function",
-    Default="hyp3_find_new",
-    Type="String"
-))
-
-
 previous_time_bucket = t.add_resource(s3.Bucket("S3Bucket"))
 
 logs_policy = iam.Policy(
@@ -84,32 +76,24 @@ lambda_exe_role = t.add_resource(iam.Role(
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
-find_new_granules_function = t.add_resource(awslambda.Function(
-    "Hyp3FindNewGranulesFunction",
-    FunctionName=ts.Ref(lambda_name),
-    Code=utils.make_lambda_code(
-        S3Bucket=environment.lambda_bucket,
-        S3Key="{maturity}/{source_zip}".format(
-            maturity=environment.maturity,
-            source_zip=source_zip
+find_new_granules_function = t.add_resource(utils.make_lambda_function(
+    name="find_new_granules",
+    role=lambda_exe_role,
+    lambda_params={
+        "Environment": awslambda.Environment(
+            Variables={
+                'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket),
+                'SCHEDULER_LAMBDA_NAME': ts.Ref(hyp3_scheduler.scheduler)}
         ),
-        S3ObjectVersion=environment.find_new_granules_version
-    ),
-    Handler='lambda_function.lambda_handler',
-    Environment=awslambda.Environment(
-        Variables={
-            'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket),
-            'SCHEDULER_LAMBDA_NAME': ts.Ref(hyp3_scheduler.scheduler)}
-    ),
-    Role=ts.GetAtt(lambda_exe_role, 'Arn'),
-    Runtime='python3.6',
-    MemorySize=128,
-    Timeout=300
+        "MemorySize": 128,
+        "Timeout": 300
+    }
 ))
+
 
 find_new_target = events.Target(
     "FindNewTarget",
-    Arn=ts.GetAtt("Hyp3FindNewGranulesFunction", 'Arn'),
+    Arn=ts.GetAtt(find_new_granules_function, 'Arn'),
     Id="FindNewFunction1"
 )
 
@@ -122,7 +106,7 @@ find_new_event_rule = t.add_resource(events.Rule(
 
 PermissionForEventsToInvokeLambda = t.add_resource(awslambda.Permission(
     "EventSchedulePermissions",
-    FunctionName=ts.Ref("Hyp3FindNewGranulesFunction"),
+    FunctionName=ts.Ref(find_new_granules_function),
     Action="lambda:InvokeFunction",
     Principal="events.amazonaws.com",
     SourceArn=ts.GetAtt("FindNewGranulesSchedule", "Arn")
