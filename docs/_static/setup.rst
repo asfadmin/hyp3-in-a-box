@@ -13,8 +13,8 @@ Overview
 --------
 
 Here is an outline of the steps required to get the HyP3 stack running
-successfully. Further details on each of these steps will be available in the
-following sections.
+successfully. Our goal is to make this list as short as possible. Further
+details on each of these steps will be available in the following sections.
 
 1. Zip Lambda code/dependencies and upload to an S3 Bucket
 2. Generate an EC2 Key Pair
@@ -22,8 +22,13 @@ following sections.
 4. Generate the CloudFormation template
 5. Launch a new stack from the CloudFormation template
 
+Optional
+~~~~~~~~
+1. Enable EarthData login for the HyP3 API
+2. Enable HTTPS on the HyP3 API (`recommended`)
+
 1. Zipping Lambda Code With Dependencies
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------
 
 **Note:** `You do not need to do this step if you have the prebuilt zip files
 provided by ASF.`
@@ -46,7 +51,7 @@ defined in the ``requirements.txt`` file into a zip file and place it into the
 ``psycopg2`` package which needs to be specially built for AWS Lambda.
 
 2. Generating an EC2 Key Pair
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 In order to connect to a running EC2 instance you will need to generate an SSH
 key pair. When an EC2 instance is launched with a key pair, AWS places the
@@ -79,12 +84,12 @@ the permissions to be readable only by you with
 For more information see the official `AWS Key Pair Documentation`_.
 
 3. Authorizing an email for SES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------
 
 4. Generating the CloudFormation template
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------
 
 5. Launching the CloudFormation stack
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------
 
 .. _AWS Key Pair Documentation: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
