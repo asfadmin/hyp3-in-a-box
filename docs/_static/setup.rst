@@ -30,8 +30,9 @@ Optional
 1. Zipping Lambda Code With Dependencies
 ----------------------------------------
 
-**Note:** `You do not need to do this step if you have the prebuilt zip files
-provided by ASF.`
+**Note:** `You can skip the zipping step if you have the prebuilt zip files
+provided by ASF. However, you will still need to upload them to your own S3
+Bucket.`
 
 Building AWS Lambda function source bundles is as simple as zipping up the
 source code. However, if the code has any external dependencies, those must also
@@ -40,15 +41,29 @@ time. For creating the HyP3 Lambdas you can use the :ref:`build_lambda_script`
 helper script.
 
 To build all lambda functions in the ``lambdas/`` directory:
-  1. cd hyp3-in-a-box/
-  2. mkdir -p build/lambdas
-  3. python3 build_lambda.py -a -o build/lambdas/ lambdas/
+  1. ``cd hyp3-in-a-box/``
+  2. ``mkdir -p build/lambdas``
+  3. ``python3 build_lambda.py -a -o build/lambdas/ lambdas/``
 
 This command will tell ``build_lambda.py`` to look through the ``lambdas/``
 directory and bundle the source for each lambda along with any dependencies
 defined in the ``requirements.txt`` file into a zip file and place it into the
 ``build/lambdas/`` directory. This also handles the special case for the
 ``psycopg2`` package which needs to be specially built for AWS Lambda.
+
+Upload to S3
+~~~~~~~~~~~~
+You will need to store the source code for the lambda functions in an S3 Bucket
+`in the same region as the rest of the HyP3 system`. If the bucket is not in the
+same region, CloudFormation will fail to locate it.
+
+1. Create an S3 bucket named ``your-organization-hyp3-source``
+2. Create a folder called ``prod/``
+3. Upload each of the lambda zip files into the ``prod/`` folder
+
+You must upload the zip files prior to launching the CloudFormation stack, as
+CloudFormation will attempt to create the components of HyP3 using the source
+packages in this bucket.
 
 2. Generating an EC2 Key Pair
 -----------------------------
@@ -118,6 +133,30 @@ see the official `AWS Removing SES Sandbox Documentation`_.
 
 4. Generating the CloudFormation template
 -----------------------------------------
+
+You can generate the template using the ``create_stack.py`` script located in
+``cloudformation/tropo/``. The script requires a few dependencies which you can
+install to a virtual environment.
+
+**Note:** `You will need Python 3 to create the template! Make sure your
+virtual environment is using Python 3.`
+
+1. ``cd cloudformation``
+2. ``virtualenv -p python3 .venv``
+3. ``source .venv/bin/activate``
+4. ``pip install -r requirements.txt``
+5. ``python3 tropo/create_stack.py --lambda_bucket MY_BUCKET --eb_bucket MY_BUCKET --maturity prod tropo/outputs/hyp3_stack.json``
+
+Make sure that ``MY_BUCKET`` is the bucket you created in step 1 which contains
+all of the source code for the HyP3 components. Also make sure that the maturity
+matches the name of the folder that you placed the bundles into.
+
+The resulting template will be written to ``tropo/outputs/hyp3_stack.json``. You
+can now use this to launch your own HyP3 stack.
+
+**Note:** `If you will be launching the stack programmatically or through the
+AWS CLI, you will need a configuration.json file. You can create this by passing
+the` ``--config`` `option to` ``create_stack.py``.
 
 5. Launching the CloudFormation stack
 -------------------------------------
