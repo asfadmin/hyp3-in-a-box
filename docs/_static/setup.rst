@@ -24,8 +24,8 @@ details on each of these steps will be available in the following sections.
 
 Optional
 ~~~~~~~~
-1. Enable EarthData login for the HyP3 API
-2. Enable HTTPS on the HyP3 API (`recommended`)
+6. Enable EarthData login for the HyP3 API
+7. Enable HTTPS on the HyP3 API (`recommended`)
 
 1. Zipping Lambda Code With Dependencies
 ----------------------------------------
@@ -86,6 +86,36 @@ For more information see the official `AWS Key Pair Documentation`_.
 3. Authorizing an email for SES
 -------------------------------
 
+There are 2 steps to fully authorizing an email address with Amazon. First you
+will need to verify that you own the email address through the
+`SES management console <https://console.amazonaws.com/ses>`_. Go to ``Email
+Addresses`` and click "Verify a New Email Address". Enter the email address
+which HyP3 will use to send notification emails once new data is available and
+click "Verify This Email Address". Amazon will send an email containing a
+verification link to this address.
+
+.. image:: images/verify_email.png
+   :alt: Verify Email Image
+
+This will allow you to send emails `to` the HyP3 email address, but your account
+will likely still be in sandbox mode, preventing you from sending emails to any
+non verified addresses. This is to prevent email spammers from abusing SES.
+
+To get the sandbox restriction removed from your account, you will need to open
+a sending limit increase request with the Support Center. This request will both
+allow your account to get out of sandbox mode, and increase the daily email
+limit of 200 emails every 24 hours.
+
+We recommend that you request a limit of at least 50 emails per expected
+subscription (across all users). So if you expect to have 10 users with 10
+subscriptions each, you should request a rate limit of at least
+``10 * 10 * 50 = 5000``. In future iterations of the HyP3 system this number may
+be lower as we work on implementing a notification accumulator, which will
+combine notifications which occur close to each other into a single email.
+
+For more details on opening the Support Center sending limit increase request
+see the official `AWS Removing SES Sandbox Documentation`_.
+
 4. Generating the CloudFormation template
 -----------------------------------------
 
@@ -93,3 +123,4 @@ For more information see the official `AWS Key Pair Documentation`_.
 -------------------------------------
 
 .. _AWS Key Pair Documentation: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+.. _AWS Removing SES Sandbox Documentation: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html
