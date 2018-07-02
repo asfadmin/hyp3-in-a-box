@@ -17,14 +17,17 @@ def get_email_pattern():
 def get_host_address():
     if environment.should_create_db:
         from .hyp3_rds import hyp3_db
-    else:
-        from .hyp3_db_params import hyp3_db
-        t.add_parameter(hyp3_db)
 
-    if environment.should_create_db:
         return GetAtt(hyp3_db, "Endpoint.Address")
 
+    from .hyp3_db_params import hyp3_db
+    t.add_parameter(hyp3_db)
+
     return Ref(hyp3_db)
+
+
+def get_param_prefix():
+    return 'Existing' if not environment.should_create_db else ''
 
 
 def get_map(name):
@@ -50,15 +53,16 @@ def load_json_from(directory, name):
 
 def make_lambda_function(name, lambda_params, role):
     camel_case_name = get_camel_case(name)
+    s3_key = "{maturity}/{source_zip}".format(
+        maturity=environment.maturity,
+        source_zip="{}.zip".format(name)
+    )
 
     lambda_func = Function(
         "{}Function".format(camel_case_name),
         Code=make_lambda_code(
             S3Bucket=environment.lambda_bucket,
-            S3Key="{maturity}/{source_zip}".format(
-                maturity=environment.maturity,
-                source_zip="{}.zip".format(name)
-            ),
+            S3Key=s3_key,
             S3ObjectVersion=getattr(environment, "{}_version".format(name))
         ),
         Handler="lambda_function.lambda_handler",

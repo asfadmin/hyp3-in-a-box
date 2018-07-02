@@ -53,7 +53,7 @@ def main():
 
 
 def set_environment_variables(args):
-    print('ENVIRONMENT')
+    print('ENVIRONMENT:')
     for arg_name, arg_value in args.items():
 
         if arg_value is None or not is_env_arg(arg_name):
@@ -69,8 +69,7 @@ def is_env_arg(arg_name):
 
 def get_parser():
     parser = argparse.ArgumentParser(
-        description=('Generate select parts of the hyp3'
-                     ' cloudformation template.')
+        description='Generate hyp3-in-a-box cloudformation templates.'
     )
 
     add_output_folder(parser)
@@ -79,16 +78,26 @@ def get_parser():
         parser, 'debug',
         desc='print out the generated template.'
     )
+
     parser.add_argument(
         '--config',
         help="generate a configuration template with the provided name"
     )
 
+    template_group = parser.add_argument_group(
+        'template flags',
+        description='Templates to include in the stack being created'
+    )
     for section_name in TEMPLATE_SECTIONS:
-        add_flag_argument(parser, section_name)
+        add_flag_argument(template_group, section_name)
+
+    env_group = parser.add_argument_group(
+        'environment variables',
+        description='Set template generation environment variables'
+    )
 
     for var_name, var_type in environment.get_variables():
-        add_env_var_to(parser, var_name, var_type)
+        add_env_var_to(env_group, var_name, var_type)
 
     return parser
 
@@ -141,7 +150,7 @@ def get_should_make_all(args):
 
 
 def add_sections_to_template(should_make_all, args):
-    print('BUILD')
+    print('TEMPLATE:')
     for section, module_name in TEMPLATE_SECTIONS.items():
         if should_make_all or args[section]:
             import_module('templates.{}'.format(module_name))
@@ -153,12 +162,12 @@ def generate_template(output_path, debug):
 
 def generate_config_template(output_path, debug):
     params = {}
-    for (param_name, param_value) in t.parameters.items():
+    for param_name, param_value in t.parameters.items():
         print("{}: ".format(param_name), end='')
         params[param_name] = input()
-    config = {
-        "Parameters": params
-    }
+
+    config = {"Parameters": params}
+
     if debug:
         print(json.dumps(config, indent=4))
     else:

@@ -27,6 +27,7 @@ Resources
 
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.sts import AssumeRole
+
 from environment import environment
 from template import t
 from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref
@@ -44,20 +45,12 @@ from .hyp3_rds import hyp3_db
 from .hyp3_db_params import db_name, db_user, db_pass
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
+from .hyp3_keypairname_param import keyname
 
 source_zip = "hyp3_api.zip"
 
 
 print('  adding api_eb')
-
-
-keyname = t.add_parameter(Parameter(
-    "KeyPairName",
-    Description="Name of an existing EC2 KeyPair to enable SSH access to "
-                "the AWS Elastic Beanstalk instance",
-    Type="AWS::EC2::KeyPair::KeyName",
-    ConstraintDescription="must be the name of an existing EC2 KeyPair."
-))
 
 t.add_mapping("Region2Principal", get_map('region2principal'))
 
