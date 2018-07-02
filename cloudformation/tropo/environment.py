@@ -28,7 +28,7 @@ class Environment:
 
     def set_lambda_version_variables(self):
         for lambda_name in get_lambdas_names():
-            setattr(self, f'{lambda_name}_version', None)
+            setattr(self, '{}_version'.format(lambda_name), None)
 
 
 def get_lambdas_names():
