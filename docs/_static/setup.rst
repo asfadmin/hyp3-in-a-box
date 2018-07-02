@@ -24,8 +24,8 @@ details on each of these steps will be available in the following sections.
 
 Optional
 ~~~~~~~~
-6. Enable EarthData login for the HyP3 API
-7. Enable HTTPS on the HyP3 API (`recommended`)
+6. Enable HTTPS on the HyP3 API (`recommended`)
+7. Enable EarthData login for the HyP3 API
 
 1. Zipping Lambda Code With Dependencies
 ----------------------------------------
@@ -161,5 +161,94 @@ the` ``--config`` `option to` ``create_stack.py``.
 5. Launching the CloudFormation stack
 -------------------------------------
 
+Head over to the
+`CloudFormation management console <https://console.amazonaws.com/cloudformation>`_
+and click "Create Stack".
+
+1. Under "Choose a template" select "Upload a template to Amazon S3"
+2. Click "Browse..." and select ``hyp3_stack.json`` from the previous step. Hit "Next"
+
+.. image:: images/cloudformation_create_stack.png
+   :alt: Create stack
+
+3. Enter a stack name
+4. Configure parameters as needed. Hit "Next"
+
+**Note:** `You can leave some parameters blank and they will be generated
+randomly. Important parameters like passwords will appear in the template
+outputs.`
+
+5. On the "Options" page hit "Next"
+6. On the "Review" page check the "I acknowledge that AWS CloudFormation might create IAM resources" box and hit "Create"
+
+6. Enabling HTTPS (Recommended)
+-------------------------------
+
+By default the HyP3 API will only be running on an unsecured HTTP connection.
+This is because the API is running through ElasticBeanstalk which Amazon does
+not sign SSL certificates for by default. If the API is migrated to API Gateway
+in the future this step may not be necessary as API Gateway exclusively supports
+HTTPS.
+
+It is a good idea to enable HTTPS because users will need to authenticate with
+the API using their API key. The API key is intended to be kept secret, and
+sending it over an unencrypted connection allows anyone sniffing the network to
+read it and gain access to your processing resources.
+
+There are 3 components which you will need to enable HTTPS:
+
+1. A Domain Name for the API
+2. A `CNAME Record`_ linking your domain to the ElasticBeanstalk domain
+3. An SSL Certificate signed for your domain
+
+How you obtain a domain name and CNAME record for the API depends on your
+organization. Larger organizations like Academic Institutions often run their
+own DNS servers and you will have to ask them about getting your own subdomain.
+If your organization is not associated with a University you can get your domain
+through any number of providers such as Google Domains or Amazon Route 53.
+
+Once you have your domain you will also need to obtain a signed SSL certificate
+for it. If you are associated with an Academic Institution you will likely have
+to do this through them again. Otherwise you are free to submit a certificate
+signing request to any recognized Certificate Authority.
+
+The easiest way to sign certificates is with `Let's Encrypt`_. It's completely
+free and only takes a few minutes. The down side is that Let's Encrypt
+certificates need to be renewed every 90 days.
+
+Once you have your signed certificate, you will need to import it into Amazon
+Certificate Manager. Go to the
+`ACM management console <https://console.amazonaws.com/acm>`_ and choose
+"Import a Certificate".
+
+1. Copy and paste the contents of your certificate (usually ``.crt``) into the "Certificate body" field.
+2. Copy and paste the contents of your private key file (usually ``.pem``) into the "Certificate private key" field.
+3. Copy and paste the contents of your certificate chain file (usually ``.pem``) into the "Certificate chain" field.
+
+Click "Review and Import" to save and name the certificate.
+
+Now head over to the
+`ElasticBeanstalk management console <https://console.amazonaws.com/elasticbeanstalk>`_
+and find the ``hyp3-api`` application created by CloudFormation. Select the
+``prod`` environment and click on "Configuration". Under "Load Balancer" click
+"modify". If there is no "modify" button make sure that load balancing is
+enabled under the "Capacity" section.
+
+Click "Add listener" and choose HTTPS for the "Listener protocol". This should
+populate the port and instance protocol automatically. If it doesn't, make sure
+they are set to 443 and HTTPS respectively.
+
+.. image:: images/configure_eb_https.png
+   :alt: Configure HTTPS
+
+Under "SSL certificate" you should be able to see the certificate which you
+imported earlier. Select the certificate and click "Add". You can now disable
+the HTTP listener and click "Apply".
+
+7. Enabling EarthData Login (Optional)
+--------------------------------------
+
 .. _AWS Key Pair Documentation: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 .. _AWS Removing SES Sandbox Documentation: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html
+.. _CNAME Record: https://en.wikipedia.org/wiki/CNAME_record
+.. _Let's Encrypt: https://letsencrypt.org/
