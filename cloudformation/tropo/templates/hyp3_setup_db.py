@@ -21,7 +21,7 @@ Resources
 * **Custom Resource:** This is to trigger a lambda function that sets up the db
 """
 
-from troposphere import GetAtt, Ref, Parameter
+from troposphere import GetAtt, Ref, Parameter, Output
 from troposphere.awslambda import Environment
 from troposphere.cloudformation import CustomResource
 from troposphere.iam import Role
@@ -98,4 +98,14 @@ setup_db = t.add_resource(utils.make_lambda_function(
 db_setup = t.add_resource(CustomResource(
     "RunDBSetup",
     ServiceToken=GetAtt(setup_db, "Arn")
+))
+
+t.add_output(Output(
+    "Hyp3ApiKey",
+    Description=(
+        "HyP3 API Key. WARNING: This is the only "
+        "way to access the hyp3 api, make sure to "
+        "save it in a secure location."
+    ),
+    Value=GetAtt(db_setup, 'ApiKey')
 ))
