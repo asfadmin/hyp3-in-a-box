@@ -8,8 +8,11 @@
 import os
 import json
 import pathlib as pl
+import random
+import string
 
 import boto3
+from passlib.hash import pbkdf2_sha512
 from sqlalchemy.sql import text
 
 import hyp3_db
@@ -36,10 +39,10 @@ class DBSetup(custom_resource.Base):
         print('connecting to hyp3_db')
         with hyp3_db.connect(*self.db_creds) as db:
             print('connected')
-            setup_db_main(db)
+            setup_outputs = setup_db_main(db)
 
         return {
-            'Data': {},
+            'Data': setup_outputs,
             'Reason': 'Successfully setup hyp3 db'
         }
 
@@ -56,12 +59,20 @@ def setup_db_main(db):
         add_default_processes,
     ]
 
+    output = {}
     for i, step in enumerate(steps):
         count, num_steps = i + 1, len(steps)
         print(f'   ({count}/{num_steps}) - {step.__name__}')
-        step(db)
+        step_output = step(db)
+
+        if not step_output:
+            continue
+
+        output.update(step_output)
 
     db.session.commit()
+
+    return output
 
 
 def install_postgis(db):
@@ -72,7 +83,6 @@ def install_postgis(db):
 
 
 def add_db_user(db):
-
     user, password, db_name = get_environ_params(
         'Hyp3DBUser',
         'Hyp3DBPass',
@@ -100,7 +110,16 @@ def make_hyp3_admin_user(db):
         'Hyp3AdminEmail'
     )
 
-    admin_user = hyp3_models.User(
+    admin_user = add_hyp3_user(db, username, user_email)
+    api_key = add_api_key(db, admin_user.id)
+
+    return {
+        'ApiKey': api_key
+    }
+
+
+def add_hyp3_user(db, username, user_email):
+    new_user = hyp3_models.User(
         username=username,
         email=user_email,
         is_admin=True,
@@ -108,7 +127,43 @@ def make_hyp3_admin_user(db):
         granules_processed=0
     )
 
-    db.session.add(admin_user)
+    db.session.add(new_user)
+
+    update_with_db_id(db, new_user)
+
+    return new_user
+
+
+def update_with_db_id(db, obj):
+    db.session.flush()
+    db.session.refresh(obj)
+
+
+def add_api_key(db, user_id):
+    key = make_new_api_key()
+
+    api_key = hyp3_models.ApiKey(
+        user_id=user_id,
+        hash=get_hashed(key)
+    )
+    db.session.add(api_key)
+
+    return key
+
+
+def make_new_api_key():
+    valid_characters = string.ascii_letters + string.digits
+    seed = random.SystemRandom()
+
+    key = ''.join(
+        seed.choice(valid_characters) for _ in range(64)
+    )
+
+    return key
+
+
+def get_hashed(api_key):
+    return pbkdf2_sha512.encrypt(api_key, salt_size=16)
 
 
 def add_default_processes(db):
