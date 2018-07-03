@@ -16,16 +16,17 @@ Here is an outline of the steps required to get the HyP3 stack running
 successfully. Our goal is to make this list as short as possible. Further
 details on each of these steps will be available in the following sections.
 
-1. Zip Lambda code/dependencies and upload to an S3 Bucket
-2. Generate an EC2 Key Pair
-3. Authorize an email address in SES
-4. Generate the CloudFormation template
-5. Launch a new stack from the CloudFormation template
+1. Zip Lambda code/dependencies and upload to S3 Bucket
+2. Zip HyP3 API code and upload to S3 Bucket
+3. Generate an EC2 Key Pair
+4. Authorize an email address in SES
+5. Generate the CloudFormation template
+6. Launch a new stack from the CloudFormation template
 
 Optional
 ~~~~~~~~
-6. Enable HTTPS on the HyP3 API (`recommended`)
-7. Enable EarthData login for the HyP3 API
+7. Enable HTTPS on the HyP3 API (`recommended`)
+8. Enable EarthData login for the HyP3 API
 
 1. Zipping Lambda Code With Dependencies
 ----------------------------------------
@@ -65,7 +66,36 @@ You must upload the zip files prior to launching the CloudFormation stack, as
 CloudFormation will attempt to create the components of HyP3 using the source
 packages in this bucket.
 
-2. Generating an EC2 Key Pair
+2. Zipping HyP3 API
+-------------------
+
+**Note:** `You can skip the zipping step if you have the prebuilt zip file
+provided by ASF. However, you will still need to upload it to your own S3
+Bucket.`
+
+Currently, the HyP3 API requires a config file containing OAuth credentials for
+enabling login with EarthData SSO as well as database credentials. This means
+you will have to include the config file in the zip bundle for the HyP3 API to
+launch correctly.
+
+1. Clone the hyp3-api repo
+2. ``cd hyp3-api/hyp3-flask/``
+3. ``cp config_template.json config.json``
+4. Delete the "mysql" section and optionally fill out the "oauth" section. You can leave the "oauth" section blank if you don't plan on authenticating with EarthData SSO
+5. ``cd hyp3-api`` (back to the parent directory)
+6. ``python3 zip_app.py``
+
+The zip package will now be available in ``build/hyp3-api.zip``.
+
+`This step is subject to change in future iterations as we move towards using
+environment variables for configuration instead of a file packaged with the
+zip. Currently only database credentials support environment variables.`
+
+Upload to S3
+~~~~~~~~~~~~
+Upload the ``hyp3-api.zip`` to the same place as the lambda zip files.
+
+3. Generating an EC2 Key Pair
 -----------------------------
 
 In order to connect to a running EC2 instance you will need to generate an SSH
@@ -98,7 +128,7 @@ the permissions to be readable only by you with
 
 For more information see the official `AWS Key Pair Documentation`_.
 
-3. Authorizing an email for SES
+4. Authorizing an email for SES
 -------------------------------
 
 There are 2 steps to fully authorizing an email address with Amazon. First you
@@ -131,7 +161,7 @@ combine notifications which occur close to each other into a single email.
 For more details on opening the Support Center sending limit increase request
 see the official `AWS Removing SES Sandbox Documentation`_.
 
-4. Generating the CloudFormation template
+5. Generating the CloudFormation template
 -----------------------------------------
 
 You can generate the template using the ``create_stack.py`` script located in
@@ -158,7 +188,7 @@ can now use this to launch your own HyP3 stack.
 AWS CLI, you will need a configuration.json file. You can create this by passing
 the` ``--config`` `option to` ``create_stack.py``.
 
-5. Launching the CloudFormation stack
+6. Launching the CloudFormation stack
 -------------------------------------
 
 Head over to the
@@ -181,7 +211,7 @@ outputs.`
 5. On the "Options" page hit "Next"
 6. On the "Review" page check the "I acknowledge that AWS CloudFormation might create IAM resources" box and hit "Create"
 
-6. Enabling HTTPS (Recommended)
+7. Enabling HTTPS (Recommended)
 -------------------------------
 
 By default the HyP3 API will only be running on an unsecured HTTP connection.
@@ -245,7 +275,7 @@ Under "SSL certificate" you should be able to see the certificate which you
 imported earlier. Select the certificate and click "Add". You can now disable
 the HTTP listener and click "Apply".
 
-7. Enabling EarthData Login (Optional)
+8. Enabling EarthData Login (Optional)
 --------------------------------------
 
 .. _AWS Key Pair Documentation: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
