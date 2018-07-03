@@ -15,7 +15,7 @@ def browse(granule_wkt):
 
     fig, ax = plt.subplots(1, figsize=(20, 10))
 
-    countries_gdf.plot(ax=ax, cmap='Pastel1', edgecolor='#dddddd')
+    countries_gdf.plot(ax=ax, facecolor='#2d74ad', edgecolor='#cccccc')
     granule.plot(ax=ax, facecolor='#e83c3c', edgecolor='#163f60', linewidth=2)
 
     set_bounds(gran_poly)
