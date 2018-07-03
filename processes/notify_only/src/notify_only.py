@@ -2,7 +2,6 @@
 import matplotlib.pyplot as plt
 from shapely import wkt
 import geopandas as gpd
-import pandas as pd
 
 import countries
 
@@ -14,10 +13,10 @@ def browse(granule_wkt):
     gran_poly = wkt.loads(granule_wkt)
     granule = get_granule(gran_poly)
 
-    fig, ax = plt.subplots(1, figsize=(12, 6))
+    fig, ax = plt.subplots(1, figsize=(20, 10))
 
-    granule.plot(ax=ax, facecolor='#e83c3c', edgecolor='#163f60', linewidth=2)
     countries_gdf.plot(ax=ax, cmap='Pastel1', edgecolor='#dddddd')
+    granule.plot(ax=ax, facecolor='#e83c3c', edgecolor='#163f60', linewidth=2)
 
     set_bounds(gran_poly)
 
@@ -37,11 +36,7 @@ def get_countries_from(shapefile):
 
 
 def get_granule(granule_poly):
-    granule = gpd.GeoDataFrame(pd.DataFrame({
-        'Granule': [(
-            'S1B_IW_GRDH_1SDV_20180628T052743'
-            '_20180628T052808_011569_01543E_B22A')]
-    }),
+    granule = gpd.GeoDataFrame(
         geometry=[granule_poly]
     )
 
