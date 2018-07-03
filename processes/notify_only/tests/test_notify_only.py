@@ -15,7 +15,7 @@ def get_data_path():
     'notify_only.countries.get_base_path',
     side_effect=lambda: pl.Path(__file__).parent
 )
-def cache_browse_data(path_mock):
+def test_countries_download(path_mock):
     path = get_data_path() / 'countries'
 
     if path.exists():
@@ -26,10 +26,8 @@ def cache_browse_data(path_mock):
 
 def get_shapefile_path(dl_path):
     path = get_data_path() / 'countries'
+
     return countries.get_shapefile_in(path)
-
-
-cache_browse_data()
 
 
 @mock.patch(
