@@ -156,7 +156,7 @@ subscription (across all users). So if you expect to have 10 users with 10
 subscriptions each, you should request a rate limit of at least
 ``10 * 10 * 50 = 5000``. In future iterations of the HyP3 system this number may
 be lower as we work on implementing a notification accumulator, which will
-combine notifications which occur close to each other into a single email.
+combine notifications occurring close to each other into a single email.
 
 For more details on opening the Support Center sending limit increase request
 see the official `AWS Removing SES Sandbox Documentation`_.
@@ -257,12 +257,11 @@ Certificate Manager. Go to the
 
 Click "Review and Import" to save and name the certificate.
 
-Now head over to the
-`ElasticBeanstalk management console <https://console.amazonaws.com/elasticbeanstalk>`_
-and find the ``hyp3-api`` application created by CloudFormation. Select the
-``prod`` environment and click on "Configuration". Under "Load Balancer" click
-"modify". If there is no "modify" button make sure that load balancing is
-enabled under the "Capacity" section.
+Now head over to the `ElasticBeanstalk management console`_ and find the
+``hyp3-api`` application created by CloudFormation. Select the ``prod``
+environment and click on "Configuration". Under "Load Balancer" click "modify".
+If there is no "modify" button make sure that load balancing is enabled under
+the "Capacity" section.
 
 Click "Add listener" and choose HTTPS for the "Listener protocol". This should
 populate the port and instance protocol automatically. If it doesn't, make sure
@@ -278,7 +277,21 @@ the HTTP listener and click "Apply".
 8. Enabling EarthData Login (Optional)
 --------------------------------------
 
+If you want your users to be able to authenticate with the HyP3 API using NASA
+EarthData SSO (Single Sign On), you will first need to register an application
+with EarthData. For details see the EarthData `How To Register An Application`_
+page.
+
+Once you have an active application you will need to repeat step 2 (Zipping
+HyP3 API) with the credentials for your application. After you have uploaded the
+zip file you will need to get ElasticBeanstalk to use the new zip file by
+deploying a new application version in the
+`ElasticBeanstalk management console`_.
+
 .. _AWS Key Pair Documentation: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 .. _AWS Removing SES Sandbox Documentation: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html
 .. _CNAME Record: https://en.wikipedia.org/wiki/CNAME_record
 .. _Let's Encrypt: https://letsencrypt.org/
+.. _How To Register An Application: https://developer.earthdata.nasa.gov/urs/urs-integration/how-to-register-an-application
+
+.. _ElasticBeanstalk management console: https://console.amazonaws.com/elasticbeanstalk
