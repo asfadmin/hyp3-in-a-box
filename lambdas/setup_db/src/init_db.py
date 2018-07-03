@@ -53,7 +53,6 @@ def setup_db_main(db):
         add_db_user,
         make_tables,
         make_hyp3_admin_user,
-        make_api_key,
         add_default_processes
     ]
 
