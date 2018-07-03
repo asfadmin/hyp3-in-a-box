@@ -69,7 +69,11 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Hyp3 In A Box'
-copyright = '2018, William Horn, Rohan Weeden'  # pylint: disable=E0102
+setattr(
+    globals()['__builtins__'],
+    'copyright',
+    '2018, William Horn, Rohan Weeden'
+)
 author = 'William Horn, Rohan Weeden'
 
 # The version info for the project you're documenting, acts as replacement for
