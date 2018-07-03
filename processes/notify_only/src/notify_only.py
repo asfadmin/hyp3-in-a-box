@@ -1,43 +1,36 @@
-import pathlib as pl
 
 import matplotlib.pyplot as plt
-
 from shapely import wkt
-
 import geopandas as gpd
 import pandas as pd
 
-DATA_PATH = pl.Path(__file__).parent / 'data'
+import countries
 
 
 def browse(granule_wkt):
-    countries = get_countries()
+    shapefile = countries.download('data/countries/countries.zip')
+    countries_gdf = get_countries_from(shapefile)
 
     gran_poly = wkt.loads(granule_wkt)
     granule = get_granule(gran_poly)
 
-    ax = granule.plot(
-        ax=countries.plot(cmap='Pastel1', figsize=(20, 10)),
-        facecolor='#e83c3c', edgecolor='#163f60', linewidth=2
-    )
+    fig, ax = plt.subplots(1, figsize=(12, 6))
+
+    granule.plot(ax=ax, facecolor='#e83c3c', edgecolor='#163f60', linewidth=2)
+    countries_gdf.plot(ax=ax, cmap='Pastel1', edgecolor='#dddddd')
 
     set_bounds(gran_poly)
 
-    ax.set_xticks([])
-    ax.set_yticks([])
+    ax.set_xticks([]), ax.set_yticks([])
 
-    png_path = str(get_base_path() / 'world.png')
+    png_path = str(countries.get_base_path() / 'world.png')
     plt.savefig(png_path, bbox_inches='tight')
 
     return png_path
 
 
-def get_countries():
-    countries_path = DATA_PATH / \
-        '10m' / 'countries' / 'ne_10m_admin_0_countries.shp'
-
-    countries = gpd.read_file(str(countries_path))
-
+def get_countries_from(shapefile):
+    countries = gpd.read_file(str(shapefile))
     countries.crs = {'init': 'epsg:4326'}
 
     return countries
@@ -58,14 +51,10 @@ def get_granule(granule_poly):
 
 
 def set_bounds(poly):
-    bounds, area = poly.bounds, poly.area * 4.5
+    bounds, scaled_area = poly.bounds, poly.area * 4.5
 
     xmin, xmax = bounds[::2]
     ymin, ymax = bounds[1::2]
 
-    plt.xlim([xmin - 2*area, xmax + 2*area])
-    plt.ylim([ymin - area, ymax + area])
-
-
-def get_base_path():
-    return pl.Path('/tmp') if False else pl.Path(__file__).parent
+    plt.xlim([xmin - 2*scaled_area, xmax + 2*scaled_area])
+    plt.ylim([ymin - scaled_area, ymax + scaled_area])
