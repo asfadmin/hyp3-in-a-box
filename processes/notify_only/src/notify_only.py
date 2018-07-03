@@ -20,7 +20,8 @@ def browse(granule_wkt):
 
     set_bounds(gran_poly)
 
-    ax.set_xticks([]), ax.set_yticks([])
+    ax.set_xticks([])
+    ax.set_yticks([])
 
     png_path = str(countries.get_base_path() / 'world.png')
     plt.savefig(png_path, bbox_inches='tight')
@@ -29,10 +30,10 @@ def browse(granule_wkt):
 
 
 def get_countries_from(shapefile):
-    countries = gpd.read_file(str(shapefile))
-    countries.crs = {'init': 'epsg:4326'}
+    countries_gdf = gpd.read_file(str(shapefile))
+    countries_gdf.crs = {'init': 'epsg:4326'}
 
-    return countries
+    return countries_gdf
 
 
 def get_granule(granule_poly):
