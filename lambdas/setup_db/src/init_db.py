@@ -53,7 +53,7 @@ def setup_db_main(db):
         add_db_user,
         make_tables,
         make_hyp3_admin_user,
-        add_default_processes,
+        add_default_processes
     ]
 
     for i, step in enumerate(steps):
