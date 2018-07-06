@@ -46,6 +46,24 @@ def get_download_from(geom):
             scale='10m',
             data_classification='cultural',
             zip_name='ne_10m_admin_0_countries.zip'
+        ),
+        'land': NaturalEarthUrl(
+            geom_name='land',
+            scale='10m',
+            data_classification='physical',
+            zip_name='ne_10m_land.zip'
+        ),
+        'rivers': NaturalEarthUrl(
+            geom_name='rivers',
+            scale='10m',
+            data_classification='physical',
+            zip_name='ne_10m_rivers_lake_centerlines.zip'
+        ),
+        'lakes': NaturalEarthUrl(
+            geom_name='lakes',
+            scale='10m',
+            data_classification='physical',
+            zip_name='ne_10m_lakes.zip'
         )
     }[geom]
 
