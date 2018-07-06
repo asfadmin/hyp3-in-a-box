@@ -61,7 +61,7 @@ def browse(granule_wkt, subscription_wkt):
 
 
 def get_natural_earth_geom(name):
-    shapefile = natural_earth.download('countries')
+    shapefile = natural_earth.download(name)
 
     return get_geometry_from(shapefile)
 
