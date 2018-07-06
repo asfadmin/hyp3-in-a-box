@@ -46,7 +46,7 @@ source_zip = "setup_db.zip"
 print('  adding setup_db lambda')
 
 role = t.add_resource(Role(
-    "FindNewGranulesExecutionRole",
+    "SetupDbExecutionRole",
     Path="/",
     ManagedPolicyArns=[
         "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
