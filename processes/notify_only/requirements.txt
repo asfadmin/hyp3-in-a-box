@@ -1,0 +1,24 @@
+-i https://pypi.org/simple
+certifi==2018.4.16
+chardet==3.0.4
+click-plugins==1.0.3
+click==6.7
+cligj==0.4.0
+cycler==0.10.0
+descartes==1.1.0
+fiona==1.7.12
+geopandas==0.3.0
+idna==2.7
+kiwisolver==1.0.1
+matplotlib==2.2.2
+munch==2.3.2
+numpy==1.14.5
+pandas==0.23.1
+pyparsing==2.2.0
+pyproj==1.9.5.1
+python-dateutil==2.7.3
+pytz==2018.5
+requests==2.19.1
+shapely==1.6.4.post1
+six==1.11.0
+urllib3==1.23
