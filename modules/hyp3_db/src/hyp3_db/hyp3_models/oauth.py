@@ -3,7 +3,10 @@
 # Created: June 7, 2017
 
 # Database models for authentication table
+import string
+import random
 
+from passlib.hash import pbkdf2_sha512
 from sqlalchemy import (
     Boolean,
     Column,
@@ -32,3 +35,27 @@ class ApiKey(Base):
     )
 
     user = orm.relationship('User')
+
+    @classmethod
+    def generate_new(cls, user_id):
+        key = make_new_api_key()
+
+        return key, cls(
+            user_id=user_id,
+            hash=get_hashed(key)
+        )
+
+
+def make_new_api_key():
+    valid_characters = string.ascii_letters + string.digits
+    seed = random.SystemRandom()
+
+    key = ''.join(
+        seed.choice(valid_characters) for _ in range(64)
+    )
+
+    return key
+
+
+def get_hashed(api_key):
+    return pbkdf2_sha512.encrypt(api_key, salt_size=16)
