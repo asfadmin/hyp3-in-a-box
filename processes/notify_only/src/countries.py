@@ -4,23 +4,34 @@ import pathlib as pl
 import requests
 
 
-DOWNLOAD_URL = (
+DOWNLOAD_URL_BASE = (
     'https://www.naturalearthdata.com/http//www.naturalearthdata.com'
-    '/download/10m/cultural/ne_10m_admin_0_countries.zip'
+    '/download/10m/cultural/'
 )
 
 
-def download(path_str):
-    return get_countries_shapefile(path_str)
+def download(geom_name):
+    zip_file = get_zip_file_from(geom_name)
+    download_path_str = f'data/{geom_name}/{geom_name}.zip'
+
+    return get_shapefile(download_path_str, geom=zip_file)
 
 
-def get_countries_shapefile(path_str):
+def get_zip_file_from(geom):
+    return {
+        'oceans': 'ne_10m_ocean.zip',
+        'countries': 'ne_10m_admin_0_countries.zip'
+    }[geom]
+
+
+def get_shapefile(path_str, zip_file):
     print('starting download')
     path = get_base_path() / path_str
 
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    dl_path = download_file(DOWNLOAD_URL, path)
+    url = DOWNLOAD_URL_BASE + zip_file
+    dl_path = download_file(url, path)
 
     unzip(dl_path)
 

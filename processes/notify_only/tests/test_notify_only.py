@@ -4,7 +4,7 @@ import mock
 
 import import_notify_only
 import notify_only
-import countries
+import natural_earth
 
 
 def get_data_path():
@@ -12,26 +12,29 @@ def get_data_path():
 
 
 @mock.patch(
-    'notify_only.countries.get_base_path',
+    'notify_only.utils.get_base_path',
     side_effect=lambda: pl.Path(__file__).parent
 )
 def test_countries_download(path_mock):
-    path = get_data_path() / 'countries'
+    for geom in ('countries', 'oceans'):
+        path = get_data_path() / geom
+        print(path)
 
-    if path.exists():
-        return
+        if path.exists():
+            return
 
-    countries.download('data/countries/countries.zip')
+        natural_earth.download(geom)
 
 
 def get_shapefile_path(dl_path):
-    path = get_data_path() / 'countries'
+    print(dl_path)
+    path = get_data_path() / dl_path
 
-    return countries.get_shapefile_in(path)
+    return natural_earth.get_shapefile_in(path)
 
 
 @mock.patch(
-    'notify_only.countries.download',
+    'notify_only.natural_earth.download',
     side_effect=get_shapefile_path)
 def test_notify_only_browse(download_mock):
     gran_poly = (
