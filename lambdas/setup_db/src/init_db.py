@@ -5,20 +5,17 @@
 # Database setup functions. Need to pull them out from lambda_function to avoid
 # naming conflicts during unit test imports
 
-import os
 import json
-import pathlib as pl
-import random
-import string
 
-import boto3
-from passlib.hash import pbkdf2_sha512
 from sqlalchemy.sql import text
 
 import hyp3_db
-from hyp3_db import hyp3_models
 from hyp3_db.hyp3_models.base import Base
 import custom_resource
+
+import utils
+import hyp3_user
+import hyp3_processes
 
 
 def setup_db(event, db_admin_creds):
@@ -83,7 +80,7 @@ def install_postgis(db):
 
 
 def add_db_user(db):
-    user, password, db_name = get_environ_params(
+    user, password, db_name = utils.get_environ_params(
         'Hyp3DBUser',
         'Hyp3DBPass',
         'Hyp3DBName'
@@ -105,100 +102,10 @@ def make_tables(db):
 
 
 def make_hyp3_admin_user(db):
-    username, user_email = get_environ_params(
-        'Hyp3AdminUsername',
-        'Hyp3AdminEmail'
-    )
-
-    admin_user = add_hyp3_user(db, username, user_email)
-    api_key = add_api_key(db, admin_user.id)
-
-    return {
-        'ApiKey': api_key
-    }
-
-
-def add_hyp3_user(db, username, user_email):
-    new_user = hyp3_models.User(
-        username=username,
-        email=user_email,
-        is_admin=True,
-        is_authorized=True,
-        granules_processed=0
-    )
-
-    db.session.add(new_user)
-
-    update_with_db_id(db, new_user)
-
-    return new_user
-
-
-def update_with_db_id(db, obj):
-    db.session.flush()
-    db.session.refresh(obj)
-
-
-def add_api_key(db, user_id):
-    key = make_new_api_key()
-
-    api_key = hyp3_models.ApiKey(
-        user_id=user_id,
-        hash=get_hashed(key)
-    )
-    db.session.add(api_key)
-
-    return key
-
-
-def make_new_api_key():
-    valid_characters = string.ascii_letters + string.digits
-    seed = random.SystemRandom()
-
-    key = ''.join(
-        seed.choice(valid_characters) for _ in range(64)
-    )
-
-    return key
-
-
-def get_hashed(api_key):
-    return pbkdf2_sha512.encrypt(api_key, salt_size=16)
+    hyp3_user.add_to(db)
 
 
 def add_default_processes(db):
-    processes = [
-        hyp3_models.Process(**process) for process in get_processes()
-    ]
+    processes = hyp3_processes.make_default()
 
     db.session.bulk_save_objects(processes)
-
-
-def get_processes():
-    bucket, key = get_environ_params(
-        'DefaultProcessesBucket',
-        'DefaultProcessesKey'
-    )
-
-    s3 = boto3.resource('s3')
-
-    base_path = pl.Path('/tmp') if \
-        'prod' in os.environ.get('Maturity', 'prod') \
-        else pl.Path('.')
-
-    file_path = (base_path / pl.Path(key).name)
-
-    print('downloading default processes')
-    s3.Bucket(bucket) \
-        .download_file(key, str(file_path))
-
-    with file_path.open('r') as f:
-        processes = json.load(f)
-
-    return processes
-
-
-def get_environ_params(*args):
-    return [
-        os.environ[k] for k in args
-    ]
