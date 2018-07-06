@@ -8,42 +8,17 @@ import natural_earth
 
 
 def browse(granule_wkt, subscription_wkt):
-    countrie_shapefile = natural_earth.download('countries')
-    countries = get_geometry_from(countrie_shapefile)
+    countries, oceans, lakes = [
+        get_natural_earth_geom(g) for g in ['countries', 'oceans', 'lakes']
+    ]
 
-    oceans_shapefile = natural_earth.download('oceans')
-    oceans = get_geometry_from(oceans_shapefile)
-
-    lakes_shp = natural_earth.download('lakes')
-    lakes = get_geometry_from(lakes_shp)
-
-    gran_poly = wkt.loads(granule_wkt)
-    granule = get_geo_data_frame_from(gran_poly)
-
-    sub_poly = wkt.loads(subscription_wkt)
-    subscription = get_geo_data_frame_from(sub_poly)
+    granule, subscription = [
+        get_wkt_geom(wkt_str) for wkt_str in [granule_wkt, subscription_wkt]
+    ]
 
     fig, ax = plt.subplots(1, figsize=(20, 10))
 
-    colors = {
-        'water': {
-            'main': '#bae4fc',
-            'edge': '#66c1ff'
-
-        },
-        'land': {
-            'main': '#cccccc',
-            'edge': '#888888'
-        },
-        'subscription': {
-            'main': '#236192',
-            'edge': '#000000'
-        },
-        'granule': {
-            'main': '#e83c3c',
-            'edge': '#163f60'
-        }
-    }
+    colors = get_colors()
 
     oceans.plot(
         ax=ax,
@@ -60,21 +35,21 @@ def browse(granule_wkt, subscription_wkt):
         edgecolor=colors['water']['edge'],
         facecolor=colors['water']['main']
     )
-    subscription.plot(
+    subscription['gdf'].plot(
         ax=ax,
         edgecolor=colors['subscription']['edge'],
         facecolor=colors['subscription']['main'],
         alpha=0.3,
         linewidth=5
     )
-    granule.plot(
+    granule['gdf'].plot(
         ax=ax,
         edgecolor=colors['granule']['edge'],
         facecolor=colors['granule']['main'],
         linewidth=2
     )
 
-    set_bounds(gran_poly)
+    set_bounds(granule['poly'])
 
     ax.set_xticks([])
     ax.set_yticks([])
@@ -83,6 +58,21 @@ def browse(granule_wkt, subscription_wkt):
     plt.savefig(png_path, bbox_inches='tight')
 
     return png_path
+
+
+def get_natural_earth_geom(name):
+    shapefile = natural_earth.download('countries')
+
+    return get_geometry_from(shapefile)
+
+
+def get_wkt_geom(wkt_str):
+    poly = wkt.loads(wkt_str)
+
+    return {
+        'poly': poly,
+        'gdf': get_geo_data_frame_from(poly)
+    }
 
 
 def get_geometry_from(shapefile):
@@ -106,3 +96,25 @@ def set_bounds(poly):
 
     plt.xlim([xmin - 2*scaled_area, xmax + 2*scaled_area])
     plt.ylim([ymin - scaled_area, ymax + scaled_area])
+
+
+def get_colors():
+    return {
+        'water': {
+            'main': '#bae4fc',
+            'edge': '#66c1ff'
+
+        },
+        'land': {
+            'main': '#cccccc',
+            'edge': '#888888'
+        },
+        'subscription': {
+            'main': '#236192',
+            'edge': '#000000'
+        },
+        'granule': {
+            'main': '#e83c3c',
+            'edge': '#163f60'
+        }
+    }
