@@ -5,7 +5,7 @@
 # Database models for subscription table
 
 
-from geoalchemy2 import Geography
+from geoalchemy2 import Geometry
 from sqlalchemy import (ARRAY, Boolean, Column, Date, ForeignKey, Integer,
                         Text, orm, sql)
 from sqlalchemy.dialects import postgresql
@@ -34,7 +34,7 @@ class Subscription(Base):
     )
 
     location = Column(
-        Geography(geometry_type='MULTIPOLYGON', srid=4326),
+        Geometry(geometry_type='MULTIPOLYGON', srid=4326),
         index=True,
         nullable=False
     )
