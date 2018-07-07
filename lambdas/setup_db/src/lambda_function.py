@@ -27,5 +27,10 @@ def get_db_creds():
     """
 
     return [
-        os.environ[f'Hyp3DB{k}'] for k in ('Host', 'User', 'Pass')
+        os.environ[k] for k in (
+            'Hyp3DBHost',
+            'Hyp3DBRootUser',
+            'Hyp3DBRootPass',
+            'Hyp3DBName'
+        )
     ]

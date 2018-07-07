@@ -21,10 +21,10 @@ Resources
 * **Custom Resource:** This is to trigger a lambda function that sets up the db
 """
 
-from troposphere import GetAtt, Ref, Parameter
+from troposphere import GetAtt, Ref, Parameter, Output
 from troposphere.awslambda import Environment
 from troposphere.cloudformation import CustomResource
-from troposphere.iam import Role
+from troposphere.iam import Role, Policy
 
 from template import t
 from environment import environment
@@ -45,12 +45,31 @@ source_zip = "setup_db.zip"
 
 print('  adding setup_db lambda')
 
+
+default_processes_s3_read = Policy(
+    PolicyName='DefaultProcessesS3Read',
+    PolicyDocument={
+        "Version": "2012-10-17",
+        "Statement": [{
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:HeadObject"
+            ],
+            "Resource": 'arn:aws:s3:::{bucket}/{obj}'.format(
+                bucket=environment.hyp3_data_bucket,
+                obj=environment.default_processes_key
+            ),
+        }]}
+)
+
 role = t.add_resource(Role(
-    "FindNewGranulesExecutionRole",
+    "SetupDbExecutionRole",
     Path="/",
     ManagedPolicyArns=[
         "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
     ],
+    Policies=[default_processes_s3_read],
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc')
 ))
 
@@ -91,11 +110,21 @@ setup_db = t.add_resource(utils.make_lambda_function(
                 "DefaultProcessesKey": environment.default_processes_key
             }
         ),
-        "Timeout": 40
+        "Timeout": 60
     }
 ))
 
 db_setup = t.add_resource(CustomResource(
     "RunDBSetup",
     ServiceToken=GetAtt(setup_db, "Arn")
+))
+
+t.add_output(Output(
+    "Hyp3ApiKey",
+    Description=(
+        "HyP3 API Key. WARNING: This is the only "
+        "way to access the hyp3 api, make sure to "
+        "save it in a secure location."
+    ),
+    Value=GetAtt(db_setup, 'ApiKey')
 ))

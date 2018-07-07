@@ -31,7 +31,7 @@ class Base(abc.ABC):
         try:
             process_output = self._process()
             validate_process_ouptut(process_output)
-        except CustomResourceException as e:
+        except Exception as e:
             response.update({
                 'Status': 'FAILED',
                 'Reason': str(e)

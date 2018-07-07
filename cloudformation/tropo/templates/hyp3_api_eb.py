@@ -30,7 +30,7 @@ from awacs.sts import AssumeRole
 
 from environment import environment
 from template import t
-from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref
+from troposphere import FindInMap, GetAtt, Join, Output, Ref
 from troposphere.elasticbeanstalk import (
     Application,
     ApplicationVersion,

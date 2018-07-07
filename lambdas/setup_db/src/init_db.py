@@ -5,17 +5,18 @@
 # Database setup functions. Need to pull them out from lambda_function to avoid
 # naming conflicts during unit test imports
 
-import os
 import json
-import pathlib as pl
 
-import boto3
-from sqlalchemy.sql import text
+import sqlalchemy
+from sqlalchemy import sql
 
 import hyp3_db
-from hyp3_db import hyp3_models
 from hyp3_db.hyp3_models.base import Base
 import custom_resource
+
+import utils
+import hyp3_user
+import hyp3_processes
 
 
 def setup_db(event, db_admin_creds):
@@ -36,10 +37,12 @@ class DBSetup(custom_resource.Base):
         print('connecting to hyp3_db')
         with hyp3_db.connect(*self.db_creds) as db:
             print('connected')
-            setup_db_main(db)
+            setup_outputs = setup_db_main(db)
 
+        print(setup_outputs)
+        assert 'ApiKey' in setup_outputs
         return {
-            'Data': {},
+            'Data': setup_outputs,
             'Reason': 'Successfully setup hyp3 db'
         }
 
@@ -56,30 +59,49 @@ def setup_db_main(db):
         add_default_processes
     ]
 
+    output = {}
     for i, step in enumerate(steps):
         count, num_steps = i + 1, len(steps)
-        print(f'   ({count}/{num_steps}) - {step.__name__}')
-        step(db)
+
+        padding, step_log = '  ', f'({count}/{num_steps})'
+        print(f'{padding}{step_log} - {step.__name__}')
+        utils.set_print_padding(len(padding + step_log))
+
+        step_output = step(db)
+
+        if not step_output:
+            continue
+
+        output.update(step_output)
 
     db.session.commit()
 
+    return output
+
 
 def install_postgis(db):
-    create_postgis_sql = text("""
+    create_postgis_sql = sql.text("""
         CREATE EXTENSION postgis;
     """)
-    db.engine.execute(create_postgis_sql)
+
+    try:
+        db.engine.execute(create_postgis_sql)
+    except sqlalchemy.exc.ProgrammingError:
+        utils.step_print('postgis already installed')
 
 
 def add_db_user(db):
-
-    user, password, db_name = get_environ_params(
+    user, password, db_name = utils.get_environ_params(
         'Hyp3DBUser',
         'Hyp3DBPass',
         'Hyp3DBName'
     )
 
-    add_user_sql = text(f"""
+    if does_db_user_exists(db, user):
+        utils.step_print(f'user {user} already exists')
+        return
+
+    add_user_sql = sql.text(f"""
         CREATE USER {user} WITH PASSWORD :password;
         GRANT ALL PRIVILEGES ON DATABASE {db_name} to {user};
     """)
@@ -90,60 +112,30 @@ def add_db_user(db):
     )
 
 
+def does_db_user_exists(db, user):
+    check_user_sql = sql.text("""
+        SELECT 1 FROM pg_roles WHERE rolname=:user;
+    """)
+
+    return db.engine.execute(
+        check_user_sql,
+        user=user
+    ).fetchone()
+
+
 def make_tables(db):
     Base.metadata.create_all(db.engine)
 
 
 def make_hyp3_admin_user(db):
-    username, user_email = get_environ_params(
-        'Hyp3AdminUsername',
-        'Hyp3AdminEmail'
-    )
+    if hyp3_user.already_exists_in(db):
+        utils.step_print('hyp3 user already exists')
+        return {'ApiKey': '******'}
 
-    admin_user = hyp3_models.User(
-        username=username,
-        email=user_email,
-        is_admin=True,
-        is_authorized=True,
-        granules_processed=0
-    )
-
-    db.session.add(admin_user)
+    return hyp3_user.add_to(db)
 
 
 def add_default_processes(db):
-    processes = [
-        hyp3_models.Process(**process) for process in get_processes()
-    ]
+    new_processes = hyp3_processes.new(db)
 
-    db.session.bulk_save_objects(processes)
-
-
-def get_processes():
-    bucket, key = get_environ_params(
-        'DefaultProcessesBucket',
-        'DefaultProcessesKey'
-    )
-
-    s3 = boto3.resource('s3')
-
-    base_path = pl.Path('/tmp') if \
-        'prod' in os.environ.get('Maturity', 'prod') \
-        else pl.Path('.')
-
-    file_path = (base_path / pl.Path(key).name)
-
-    print('downloading default processes')
-    s3.Bucket(bucket) \
-        .download_file(key, str(file_path))
-
-    with file_path.open('r') as f:
-        processes = json.load(f)
-
-    return processes
-
-
-def get_environ_params(*args):
-    return [
-        os.environ[k] for k in args
-    ]
+    db.session.bulk_save_objects(new_processes)
