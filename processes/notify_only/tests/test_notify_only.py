@@ -13,13 +13,13 @@ def get_data_path():
 
 
 @mock.patch(
-    'notify_only.utils.get_base_path',
+    'notify_only_utils.get_base_path',
     side_effect=lambda: pl.Path(__file__).parent
 )
 def test_countries_download(path_mock):
     pool = mp.Pool(3)
 
-    pool.map(download_geom, ['countries', 'oceans', 'land', 'rivers', 'lakes'])
+    pool.map(download_geom, ['countries', 'oceans', 'lakes'])
 
 
 def download_geom(geom_name):
@@ -39,7 +39,7 @@ def get_shapefile_path(dl_path):
 
 
 @mock.patch(
-    'notify_only.natural_earth.download',
+    'natural_earth.download',
     side_effect=get_shapefile_path)
 def test_notify_only_browse(download_mock):
     gran_poly = (

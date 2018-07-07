@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from shapely import wkt
 import geopandas as gpd
 
-import utils
+import notify_only_utils as utils
 import natural_earth
 
 
