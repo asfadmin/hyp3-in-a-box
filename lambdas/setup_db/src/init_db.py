@@ -60,7 +60,11 @@ def setup_db_main(db):
     output = {}
     for i, step in enumerate(steps):
         count, num_steps = i + 1, len(steps)
-        print(f'   ({count}/{num_steps}) - {step.__name__}')
+
+        padding, step_log = '  ', f'({count}/{num_steps})'
+        print(f'{padding}{step_log} - {step.__name__}')
+        utils.set_print_padding(len(padding + step_log))
+
         step_output = step(db)
 
         if not step_output:

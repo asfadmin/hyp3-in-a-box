@@ -39,7 +39,7 @@ def get_processes():
 
     file_path = (base_path / pl.Path(key).name)
 
-    print('downloading default processes')
+    utils.step_print('downloading default processes')
     s3.Bucket(bucket) \
         .download_file(key, str(file_path))
 
