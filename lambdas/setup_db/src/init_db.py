@@ -39,6 +39,8 @@ class DBSetup(custom_resource.Base):
             print('connected')
             setup_outputs = setup_db_main(db)
 
+        print(setup_outputs)
+        assert 'ApiKey' in setup_outputs
         return {
             'Data': setup_outputs,
             'Reason': 'Successfully setup hyp3 db'
@@ -96,6 +98,7 @@ def add_db_user(db):
     )
 
     if does_db_user_exists(db, user):
+        utils.step_print(f'user {user} already exists')
         return
 
     add_user_sql = sql.text(f"""
@@ -127,9 +130,9 @@ def make_tables(db):
 def make_hyp3_admin_user(db):
     if hyp3_user.already_exists_in(db):
         utils.step_print('hyp3 user already exists')
-        return
+        return {'ApiKey': '******'}
 
-    hyp3_user.add_to(db)
+    return hyp3_user.add_to(db)
 
 
 def add_default_processes(db):

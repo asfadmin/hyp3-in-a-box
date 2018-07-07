@@ -4,6 +4,7 @@ from hyp3_db import hyp3_models
 
 
 def already_exists_in(db):
+    utils.step_print('checking if user exists')
     username = utils.get_environ_params('Hyp3AdminUsername').pop()
 
     users = db.session \
