@@ -9,10 +9,20 @@ from hyp3_db import hyp3_models
 import utils
 
 
-def make_default():
-    return [
-        hyp3_models.Process(**process) for process in get_processes()
+def new(db):
+    exisiting_processes_text_ids = [
+        p.text_id for p in db.session.query(hyp3_models.Process).all()
     ]
+
+    new_default_processes = [
+        hyp3_models.Process(**p) for p in get_processes()
+        if p['text_id'] not in exisiting_processes_text_ids
+    ]
+
+    for p in new_default_processes:
+        utils.step_print(f'adding new process {p.text_id}')
+
+    return new_default_processes
 
 
 def get_processes():

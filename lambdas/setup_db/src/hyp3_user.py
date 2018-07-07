@@ -2,6 +2,18 @@ import utils
 
 from hyp3_db import hyp3_models
 
+
+def already_exists_in(db):
+    username = utils.get_environ_params('Hyp3AdminUsername').pop()
+
+    users = db.session \
+        .query(hyp3_models.User) \
+        .filter(hyp3_models.User.username == username) \
+        .all()
+
+    return len(users) > 0
+
+
 def add_to(db):
     username, user_email = utils.get_environ_params(
         'Hyp3AdminUsername',

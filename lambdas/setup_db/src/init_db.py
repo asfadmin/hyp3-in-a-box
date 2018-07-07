@@ -7,7 +7,8 @@
 
 import json
 
-from sqlalchemy.sql import text
+import sqlalchemy
+from sqlalchemy import sql
 
 import hyp3_db
 from hyp3_db.hyp3_models.base import Base
@@ -73,10 +74,14 @@ def setup_db_main(db):
 
 
 def install_postgis(db):
-    create_postgis_sql = text("""
+    create_postgis_sql = sql.text("""
         CREATE EXTENSION postgis;
     """)
-    db.engine.execute(create_postgis_sql)
+
+    try:
+        db.engine.execute(create_postgis_sql)
+    except sqlalchemy.exc.ProgrammingError:
+        utils.step_print('postgis already installed')
 
 
 def add_db_user(db):
@@ -86,7 +91,10 @@ def add_db_user(db):
         'Hyp3DBName'
     )
 
-    add_user_sql = text(f"""
+    if does_db_user_exists(db, user):
+        return
+
+    add_user_sql = sql.text(f"""
         CREATE USER {user} WITH PASSWORD :password;
         GRANT ALL PRIVILEGES ON DATABASE {db_name} to {user};
     """)
@@ -97,15 +105,30 @@ def add_db_user(db):
     )
 
 
+def does_db_user_exists(db, user):
+    check_user_sql = sql.text("""
+        SELECT 1 FROM pg_roles WHERE rolname=:user;
+    """)
+
+    return db.engine.execute(
+        check_user_sql,
+        user=user
+    ).fetchone()
+
+
 def make_tables(db):
     Base.metadata.create_all(db.engine)
 
 
 def make_hyp3_admin_user(db):
+    if hyp3_user.already_exists_in(db):
+        utils.step_print('hyp3 user already exists')
+        return
+
     hyp3_user.add_to(db)
 
 
 def add_default_processes(db):
-    processes = hyp3_processes.make_default()
+    new_processes = hyp3_processes.new(db)
 
-    db.session.bulk_save_objects(processes)
+    db.session.bulk_save_objects(new_processes)
