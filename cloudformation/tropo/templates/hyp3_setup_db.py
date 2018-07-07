@@ -21,7 +21,7 @@ Resources
 * **Custom Resource:** This is to trigger a lambda function that sets up the db
 """
 
-from troposphere import GetAtt, Ref, Parameter, Output, Join
+from troposphere import GetAtt, Ref, Parameter, Output
 from troposphere.awslambda import Environment
 from troposphere.cloudformation import CustomResource
 from troposphere.iam import Role, Policy
@@ -56,11 +56,10 @@ default_processes_s3_read = Policy(
                 "s3:GetObject",
                 "s3:HeadObject"
             ],
-            "Resource": Join("/", [
-                'arn:aws:s3:::',
-                environment.hyp3_data_bucket,
-                environment.default_processes_key
-            ])
+            "Resource": 'arn:aws:s3:::{bucket}/{obj}'.format(
+                bucket=environment.hyp3_data_bucket,
+                obj=environment.default_processes_key
+            ),
         }]}
 )
 
@@ -111,7 +110,7 @@ setup_db = t.add_resource(utils.make_lambda_function(
                 "DefaultProcessesKey": environment.default_processes_key
             }
         ),
-        "Timeout": 40
+        "Timeout": 60
     }
 ))
 
