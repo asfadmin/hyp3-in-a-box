@@ -21,10 +21,10 @@ Resources
 * **Custom Resource:** This is to trigger a lambda function that sets up the db
 """
 
-from troposphere import GetAtt, Ref, Parameter, Output
+from troposphere import GetAtt, Ref, Parameter, Output, Join
 from troposphere.awslambda import Environment
 from troposphere.cloudformation import CustomResource
-from troposphere.iam import Role
+from troposphere.iam import Role, Policy
 
 from template import t
 from environment import environment
@@ -45,12 +45,32 @@ source_zip = "setup_db.zip"
 
 print('  adding setup_db lambda')
 
+
+default_processes_s3_read = Policy(
+    PolicyName='DefaultProcessesS3Read',
+    PolicyDocument={
+        "Version": "2012-10-17",
+        "Statement": [{
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:HeadObject"
+            ],
+            "Resource": Join("/", [
+                'arn:aws:s3:::',
+                environment.hyp3_data_bucket,
+                environment.default_processes_key
+            ])
+        }]}
+)
+
 role = t.add_resource(Role(
     "SetupDbExecutionRole",
     Path="/",
     ManagedPolicyArns=[
         "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
     ],
+    Policies=[default_processes_s3_read],
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc')
 ))
 
