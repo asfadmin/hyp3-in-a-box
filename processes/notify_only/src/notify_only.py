@@ -1,5 +1,9 @@
+import multiprocessing as mp
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
 from shapely import wkt
 import geopandas as gpd
 
@@ -8,16 +12,13 @@ import natural_earth
 
 
 def browse(granule_wkt, subscription_wkt):
-    countries, oceans, lakes = [
-        get_natural_earth_geom(g) for g in ['countries', 'oceans', 'lakes']
-    ]
+    countries, oceans, lakes = get_geometries(['countries', 'oceans', 'lakes'])
 
     granule, subscription = [
         get_wkt_geom(wkt_str) for wkt_str in [granule_wkt, subscription_wkt]
     ]
 
     fig, ax = plt.subplots(1, figsize=(20, 10))
-
     colors = get_colors()
 
     oceans.plot(
@@ -56,6 +57,15 @@ def browse(granule_wkt, subscription_wkt):
     plt.savefig(png_path, bbox_inches='tight')
 
     return png_path
+
+
+def get_geometries(geom_names):
+    pool = mp.Pool(len(geom_names))
+
+    return pool.map(
+        get_natural_earth_geom,
+        geom_names
+    )
 
 
 def get_natural_earth_geom(name):
