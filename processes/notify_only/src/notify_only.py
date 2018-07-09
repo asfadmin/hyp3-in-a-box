@@ -1,7 +1,6 @@
 import multiprocessing as mp
 
-import matplotlib
-matplotlib.use('Agg')
+from agg_matplotlib import matplotlib
 import matplotlib.pyplot as plt
 
 from shapely import wkt
