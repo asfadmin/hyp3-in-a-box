@@ -20,6 +20,7 @@ Resources
 
 * **Custom Resource:** This is to trigger a lambda function that sets up the db
 """
+import uuid
 
 from troposphere import GetAtt, Ref, Parameter, Output
 from troposphere.awslambda import Environment
@@ -116,7 +117,9 @@ setup_db = t.add_resource(utils.make_lambda_function(
 
 db_setup = t.add_resource(CustomResource(
     "RunDBSetup",
-    ServiceToken=GetAtt(setup_db, "Arn")
+    ServiceToken=GetAtt(setup_db, "Arn"),
+    # This is to always run the setup_db function on template updates
+    ForceUpdateId=str(uuid.uuid4())
 ))
 
 t.add_output(Output(
