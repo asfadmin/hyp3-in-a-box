@@ -40,7 +40,7 @@ def browse(granule_wkt, subscription_wkt):
         ax=ax,
         edgecolor=colors['subscription']['edge'],
         facecolor=colors['subscription']['main'],
-        alpha=0.3,
+        alpha=0.25,
         linewidth=5
     )
     granule['gdf'].plot(
