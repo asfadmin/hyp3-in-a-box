@@ -82,6 +82,7 @@ if environment.use_name_parameters:
     db_instance_name = t.add_parameter(Parameter(
         "Hyp3DBInstanceId",
         Description="The name of the rds instance within aws.",
+        Default="hyp3-rds-instance",
         Type="String"
     ))
 
