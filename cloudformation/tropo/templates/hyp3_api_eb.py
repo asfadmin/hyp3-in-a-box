@@ -145,27 +145,27 @@ config_template = t.add_resource(ConfigurationTemplate(
             Value=Ref(get_public_subnets()[0])
         ),
         OptionSettings(
-            Namespace="aws::elasticbeanstalk:application:environment",
+            Namespace="aws:elasticbeanstalk:application:environment",
             OptionName="DB_URL",
             Value=GetAtt(hyp3_db, "Endpoint.Address")
         ),
         OptionSettings(
-            Namespace="aws::elasticbeanstalk:application:environment",
+            Namespace="aws:elasticbeanstalk:application:environment",
             OptionName="DB_PORT",
             Value="5432"
         ),
         OptionSettings(
-            Namespace="aws::elasticbeanstalk:application:environment",
+            Namespace="aws:elasticbeanstalk:application:environment",
             OptionName="DB_NAME",
             Value=Ref(db_name)
         ),
         OptionSettings(
-            Namespace="aws::elasticbeanstalk:application:environment",
+            Namespace="aws:elasticbeanstalk:application:environment",
             OptionName="DB_USER",
             Value=Ref(db_user)
         ),
         OptionSettings(
-            Namespace="aws::elasticbeanstalk:application:environment",
+            Namespace="aws:elasticbeanstalk:application:environment",
             OptionName="DB_PASS",
             Value=Ref(db_pass)
         )
