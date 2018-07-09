@@ -33,7 +33,7 @@ def browse(granule_wkt, subscription_wkt):
         facecolor=colors['land']['main'],
         edgecolor=colors['land']['edge']
     )
-    grid.plot(ax=ax, edgecolor='#000000', alpha=.2)
+    grid.plot(ax=ax, linestyle=':', edgecolor='#000000', alpha=.1)
     lakes.plot(
         ax=ax,
         edgecolor=colors['water']['edge'],
