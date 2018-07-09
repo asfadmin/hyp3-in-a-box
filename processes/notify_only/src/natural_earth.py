@@ -15,7 +15,7 @@ def download(geom_name):
     )
 
 
-def get_url_for(geom):
+def get_natural_earth_geoms():
     return {
         "countries": (
             "https://www.naturalearthdata.com/http/"
@@ -32,12 +32,19 @@ def get_url_for(geom):
             "/www.naturalearthdata.com/download/10m/physical/"
             "ne_10m_lakes.zip"
         ),
-        "grid": "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_graticules_15.zip"
-    }[geom]
+        "grid": (
+            "https://www.naturalearthdata.com/http/"
+            "/www.naturalearthdata.com/download/10m/physical"
+            "/ne_10m_graticules_15.zip"
+        )
+    }
+
+
+def get_url_for(geom):
+    return get_natural_earth_geoms()[geom]
 
 
 def get_shapefile(path_str, natural_earth_download_url):
-    print('starting download')
     path = utils.get_base_path() / path_str
     path.parent.mkdir(parents=True, exist_ok=True)
 

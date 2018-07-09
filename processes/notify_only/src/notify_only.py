@@ -9,10 +9,13 @@ import geopandas as gpd
 
 import notify_only_utils as utils
 import natural_earth
+import bounds
+
+PROJECTION_EPSG = '3857'
 
 
 def browse(granule_wkt, subscription_wkt):
-    countries, oceans, lakes = get_geometries(['countries', 'oceans', 'lakes'])
+    countries, oceans, lakes, grid = get_geometries()
 
     granule, subscription = [
         get_wkt_geom(wkt_str) for wkt_str in [granule_wkt, subscription_wkt]
@@ -65,8 +68,14 @@ def get_geometries(geom_names):
 
     return pool.map(
         get_natural_earth_geom,
-        geom_names
+        names
     )
+
+
+def get_geometry_names():
+    return natural_earth \
+        .get_natural_earth_geoms() \
+        .keys()
 
 
 def get_natural_earth_geom(name):
