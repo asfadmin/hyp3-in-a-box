@@ -129,19 +129,18 @@ def get_latest_lambda_versions():
     s3 = boto3.resource("s3")
     bucket = s3.Bucket(S3_SOURCE_BUCKET)
     for lambda_zip in os.listdir("build/lambdas"):
-        if ".zip" not in lambda_zip:
+        if not lambda_zip.endswith(".zip"):
             continue
-        latest_versions = bucket.object_versions.filter(
-            Prefix="{}/{}".format(MATURITY, lambda_zip),
-            MaxKeys=1
-        ).limit(
-            count=1
-        )
-        for version in latest_versions:
-            versions.append((
-                lambda_zip[:-4],
-                version.id
-            ))
+
+        latest_versions = bucket.object_versions \
+            .filter(
+                Prefix="{}/{}".format(MATURITY, lambda_zip),
+                MaxKeys=1
+            ).limit(count=1)
+
+        versions += [
+            (lambda_zip[:-4], v.id) for v in latest_versions
+        ]
 
     return versions
 
