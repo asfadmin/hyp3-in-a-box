@@ -51,7 +51,7 @@ def load_json_from(directory, name):
     return loaded_json
 
 
-def make_lambda_function(name, lambda_params, role):
+def make_lambda_function(*, name, lambda_params=None, role):
     camel_case_name = get_camel_case(name)
     s3_key = "{maturity}/{source_zip}".format(
         maturity=environment.maturity,
@@ -70,8 +70,9 @@ def make_lambda_function(name, lambda_params, role):
         Runtime="python3.6"
     )
 
-    for param_name, param_val in lambda_params.items():
-        setattr(lambda_func, param_name, param_val)
+    if lambda_params is not None:
+        for param_name, param_val in lambda_params.items():
+            setattr(lambda_func, param_name, param_val)
 
     if environment.use_name_parameters:
         lambda_name = t.add_parameter(Parameter(
