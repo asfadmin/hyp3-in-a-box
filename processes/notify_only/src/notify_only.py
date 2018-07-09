@@ -53,7 +53,9 @@ def browse(granule_wkt, subscription_wkt):
         linewidth=2
     )
 
-    set_bounds(granule['poly'])
+    plt_bounds = bounds.zoom_out_around(granule['poly'])
+    set_bounds_to(plt_bounds)
+
     remove_ticks_from(ax)
 
     png_path = str(utils.get_base_path() / 'world.png')
@@ -62,8 +64,14 @@ def browse(granule_wkt, subscription_wkt):
     return png_path
 
 
-def get_geometries(geom_names):
-    pool = mp.Pool(len(geom_names))
+def set_bounds_to(plt_bounds):
+    plt.xlim(plt_bounds['lon'])
+    plt.ylim(plt_bounds['lat'])
+
+
+def get_geometries():
+    names = get_geometry_names()
+    pool = mp.Pool(len(names))
 
     return pool.map(
         get_natural_earth_geom,
@@ -94,25 +102,16 @@ def get_wkt_geom(wkt_str):
 
 def get_geometry_from(shapefile):
     geometry = gpd.read_file(str(shapefile))
-    geometry.crs = {'init': 'epsg:4326'}
+    geometry.crs = {'init': PROJECTION_EPSG}
 
     return geometry
 
 
 def get_geo_data_frame_from(poly):
     gdf = gpd.GeoDataFrame(geometry=[poly])
-    gdf.crs = {'init': 'epsg:4326'}
+    gdf.crs = {'init': PROJECTION_EPSG}
 
     return gdf
-
-
-def set_bounds(poly):
-    bounds, scaled_area = poly.bounds, poly.area * 4.5
-
-    xmin, ymin, xmax, ymax = bounds
-
-    plt.xlim([xmin - 2*scaled_area, xmax + 2*scaled_area])
-    plt.ylim([ymin - scaled_area, ymax + scaled_area])
 
 
 def remove_ticks_from(ax):
