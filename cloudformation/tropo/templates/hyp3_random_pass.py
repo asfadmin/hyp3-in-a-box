@@ -15,15 +15,14 @@ Resources
 * **Custom Resource:** This is a random string that can be used in the template
 
 """
-from troposphere import GetAtt, Output
-from troposphere.awslambda import Function
+from troposphere import GetAtt, Output, Template
 from troposphere.cloudformation import CustomResource
 from troposphere.iam import Role
 
-from template import t
-from environment import environment
-
 from . import utils
+
+# Dummy template
+t = Template()
 
 print('  adding random_pass')
 source_zip = 'random_password.zip'
@@ -38,19 +37,9 @@ lambda_role = t.add_resource(Role(
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
-random_password = t.add_resource(Function(
-    "RandomPasswordLambda",
-    Code=utils.make_lambda_code(
-        S3Bucket=environment.lambda_bucket,
-        S3Key="{maturity}/{source_zip}".format(
-            maturity=environment.maturity,
-            source_zip=source_zip
-        ),
-        S3ObjectVersion=environment.find_new_granules_version
-    ),
-    Handler='lambda_function.lambda_handler',
-    Role=GetAtt(lambda_role, "Arn"),
-    Runtime="python3.6"
+random_password = t.add_resource(utils.make_lambda_function(
+    name="random_password",
+    role=lambda_role
 ))
 
 password = t.add_resource(CustomResource(
