@@ -8,17 +8,20 @@ import notify_only
 import natural_earth
 
 
+def get_testing_base_path():
+    return pl.Path(__file__).parent
+
+
 def get_data_path():
-    return pl.Path(__file__).parent / 'data'
+    return get_testing_base_path() / 'data'
 
 
 @mock.patch(
     'notify_only_utils.get_base_path',
-    side_effect=lambda: pl.Path(__file__).parent
+    side_effect=get_testing_base_path
 )
 def test_countries_download(path_mock):
     pool = mp.Pool(3)
-
     pool.map(download_geom, ['countries', 'oceans', 'lakes'])
 
 

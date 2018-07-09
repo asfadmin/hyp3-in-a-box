@@ -69,4 +69,4 @@ def get_shapefile_in(dl_path):
         f for f in dl_path.iterdir() if str(f).endswith('.shp')
     ]
 
-    return shapefiles.pop()
+    return shapefiles[0]

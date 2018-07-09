@@ -50,9 +50,7 @@ def browse(granule_wkt, subscription_wkt):
     )
 
     set_bounds(granule['poly'])
-
-    ax.set_xticks([])
-    ax.set_yticks([])
+    remove_ticks_from(ax)
 
     png_path = str(utils.get_base_path() / 'world.png')
     plt.savefig(png_path, bbox_inches='tight')
@@ -96,6 +94,11 @@ def set_bounds(poly):
 
     plt.xlim([xmin - 2*scaled_area, xmax + 2*scaled_area])
     plt.ylim([ymin - scaled_area, ymax + scaled_area])
+
+
+def remove_ticks_from(ax):
+    ax.set_xticks([])
+    ax.set_yticks([])
 
 
 def get_colors():
