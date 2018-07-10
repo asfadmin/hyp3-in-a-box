@@ -2,6 +2,8 @@ import utils
 
 from hyp3_db import hyp3_models
 
+import setup_db_utils as utils
+
 
 def already_exists_in(db):
     utils.step_print('checking if user exists')

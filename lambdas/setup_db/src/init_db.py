@@ -14,7 +14,7 @@ import hyp3_db
 from hyp3_db.hyp3_models.base import Base
 import custom_resource
 
-import utils
+import setup_db_utils as utils
 import hyp3_user
 import hyp3_processes
 
@@ -133,6 +133,7 @@ def make_hyp3_admin_user(db):
         return {'ApiKey': '******'}
 
     return hyp3_user.add_to(db)
+
 
 
 def add_default_processes(db):
