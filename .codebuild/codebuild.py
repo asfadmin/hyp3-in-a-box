@@ -220,18 +220,18 @@ def build_hyp3_api():
     subprocess.check_call([
         "git", "clone", hyp3_api_url, "--depth", "1"
     ])
+    api_flask_path = pl.Path('hyp3-api/hyp3-flask')
 
     api_cfg_path = "s3://{}".format(
         os.path.join(BUCKET_BASE_DIR, "config/hyp3_api_config.json")
     )
     subprocess.check_call([
-        "aws", "s3", "cp", api_cfg_path, "hyp3-api/hyp3_flask/config.json"
+        "aws", "s3", "cp", api_cfg_path, str(api_flask_path / "config.json")
     ])
 
-    print(f"Hyp3 api directories: {os.listdir('hyp3-api/hyp3_flask')}")
+    print(f"Hyp3 api directories: {os.listdir('hyp3-api/hyp3-flask')}")
     subprocess.check_call([
-        "zip", "-r", "../build/hyp3_api.zip", "hyp3_flask"],
-        cwd="hyp3-api"
+        "zip", "-r", "../build/hyp3_api.zip", str(api_flask_path)]
     )
 
     print(f'uploading to {BUCKET_BASE_DIR}')
