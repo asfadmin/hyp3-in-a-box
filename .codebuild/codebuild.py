@@ -229,10 +229,10 @@ def build_hyp3_api():
         "aws", "s3", "cp", api_cfg_path, str(api_flask_path / "config.json")
     ])
 
-    print(f"Hyp3 api directories: {os.listdir('hyp3-api/hyp3-flask')}")
+    print(f"Hyp3 api directories: {os.listdir(str(api_flask_path))}")
     subprocess.check_call([
-        "zip", "-r", "../build/hyp3_api.zip", str(api_flask_path)]
-    )
+        "zip", "-r", "build/hyp3_api.zip", str(api_flask_path)
+    ])
 
     print(f'uploading to {BUCKET_BASE_DIR}')
     subprocess.check_call([
