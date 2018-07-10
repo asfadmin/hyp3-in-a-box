@@ -232,7 +232,7 @@ def build_hyp3_api():
 
     print(f"Hyp3 api directories: {os.listdir(str(api_flask_path))}")
     subprocess.check_call([
-        "zip", "-r", "../../build/hyp3_api.zip", "*"],
+        "zip", "-r", "../../build/hyp3_api.zip", "."],
         cwd=str(api_flask_path)
     )
 
