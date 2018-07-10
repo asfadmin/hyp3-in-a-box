@@ -1,0 +1,5 @@
+{
+    "api_key": <Your Api Key Here>,
+    "url": <Url to hyp3 api>,
+    "username": <Username in hyp3>
+}
