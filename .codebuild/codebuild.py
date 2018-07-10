@@ -228,7 +228,7 @@ def build_hyp3_api():
         "aws", "s3", "cp", api_cfg_path, "hyp3-api/hyp3_flask/config.json"
     ])
 
-    print(f"Hyp3 api directories: {os.path.listdir('hyp3_flask')}")
+    print(f"Hyp3 api directories: {os.listdir('hyp3_flask')}")
     subprocess.check_call([
         "zip", "-r", "../build/hyp3_api.zip", "hyp3_flask"],
         cwd="hyp3-api"
