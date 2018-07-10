@@ -231,8 +231,9 @@ def build_hyp3_api():
 
     print(f"Hyp3 api directories: {os.listdir(str(api_flask_path))}")
     subprocess.check_call([
-        "zip", "-r", "build/hyp3_api.zip", str(api_flask_path)
-    ])
+        "zip", "-r", "../build/hyp3_api.zip", str(api_flask_path.name)],
+        cwd=str(api_flask_path.parent)
+    )
 
     print(f'uploading to {BUCKET_BASE_DIR}')
     subprocess.check_call([
