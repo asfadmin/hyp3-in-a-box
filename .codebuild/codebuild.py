@@ -19,11 +19,7 @@ from defusedxml import ElementTree
 
 import boto3
 
-from github_status import (
-    set_github_ci_status,
-    update_github_status,
-    write_status_to_s3
-)
+import github_status as gs
 
 S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
 MATURITY = os.environ["MATURITY"]
@@ -32,10 +28,56 @@ BUCKET_BASE_DIR = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
 BUILD_STEP_MESSAGES = {}
 
 
+def main(step=None):
+    if not os.path.exists("build"):
+        os.mkdir("build")
+
+    step_function_table = {
+        "install": install,
+        "pre_build": pre_build,
+        "build": build,
+        "post_build": post_build
+    }
+
+    try:
+        if get_config("BUILD_STATUS", 0) != 0:
+            return None
+
+        save_config("BUILD_STATUS", 0)
+
+        step = step_function_table.get(step, lambda: None)
+        print(f'Starting {step.__name__}:')
+
+        return step()
+
+    except subprocess.CalledProcessError as e:
+        desc = step
+        if "failure" in BUILD_STEP_MESSAGES is not None:
+            desc = BUILD_STEP_MESSAGES["failure"]
+
+        gs.set_github_ci_status("failure", description=desc)
+        save_config("BUILD_STATUS", e.returncode)
+        raise
+    except Exception:
+        gs.set_github_ci_status("error")
+        save_config("BUILD_STATUS", -1337)
+        raise
+
+
 def install():
-    update_github_status("pending", description="Build in progress")
+    gs.update_github_status("pending", description="Build in progress")
     install_all_requirements_txts(".")
     os.chmod("upload.sh", stat.S_IEXEC)
+
+
+def install_all_requirements_txts(root_dir):
+    for path, dirs, files in os.walk(root_dir):
+        for name in files:
+            if "requirements" in name:
+                subprocess.check_call(
+                    ["pip", "install", "-U", "-r", name],
+                    cwd=path
+                )
 
 
 def pre_build():
@@ -77,7 +119,7 @@ def check_coverage():
         coverage_percent, url_percent_sign)
     color = get_badge_color(coverage)
 
-    write_status_to_s3(subject, status, color)
+    gs.write_status_to_s3(subject, status, color)
 
 
 def get_badge_color(coverage):
@@ -94,17 +136,36 @@ def get_badge_color(coverage):
 def build():
     os.makedirs("build/lambdas")
     object_versions = build_lambdas()
+
     version_options = []
     for v in object_versions:
+        print(f'adding object version {v}')
         version_options += ["--{}_version".format(v[0]), v[1]]
 
     build_hyp3_api()
+
+    template_path = 'build/template.json'
     subprocess.check_call([
         "python3", "cloudformation/tropo/create_stack.py",
-        "build/template.json", "--maturity", MATURITY
+        template_path, "--maturity", MATURITY
     ] + version_options
     )
     subprocess.check_call(["make", "clean", "html"], cwd="docs")
+
+    upload_template(template_path)
+
+
+def upload_template(file_path):
+    s3 = boto3.resource('s3')
+
+    key = 'template/hyp3-in-a-box-template.json'
+    bucket = s3.Bucket(S3_SOURCE_BUCKET)
+
+    with open(file_path, 'rb') as f:
+        return bucket.put_object(
+            Key=key,
+            Body=f
+        )
 
 
 def build_lambdas():
@@ -118,9 +179,11 @@ def build_lambdas():
         "--recursive",
         "--include", '"*"'
     ])
-    print("Latest Source Versions:")
     versions = get_latest_lambda_versions()
+
+    print("Latest Source Versions:")
     print(versions)
+
     return versions
 
 
@@ -129,7 +192,7 @@ def get_latest_lambda_versions():
     s3 = boto3.resource("s3")
     bucket = s3.Bucket(S3_SOURCE_BUCKET)
     for lambda_zip in os.listdir("build/lambdas"):
-        if not lambda_zip.endswith(".zip"):
+        if ".zip" not in lambda_zip:
             continue
 
         latest_versions = bucket.object_versions \
@@ -142,13 +205,18 @@ def get_latest_lambda_versions():
             (lambda_zip[:-4], v.id) for v in latest_versions
         ]
 
+    print(f'found lambda versions: {versions}')
+
     return versions
 
 
 def build_hyp3_api():
+    print('building hyp3 api')
     hyp3_api_url = "https://{}@github.com/asfadmin/hyp3-api".format(
         GITHUB_HYP3_API_CLONE_TOKEN
     )
+
+    print('cloning hyp3 api')
     subprocess.check_call([
         "git", "clone", hyp3_api_url, "--depth", "1"
     ])
@@ -160,10 +228,13 @@ def build_hyp3_api():
         "aws", "s3", "cp", api_cfg_path, "hyp3-api/hyp3_flask/config.json"
     ])
 
+    print(f"Hyp3 api directories: {os.path.listdir('hyp3_flask')}")
     subprocess.check_call([
         "zip", "-r", "../build/hyp3_api.zip", "hyp3_flask"],
         cwd="hyp3-api"
     )
+
+    print(f'uploading to {BUCKET_BASE_DIR}')
     subprocess.check_call([
         "aws", "s3", "cp", "build/hyp3_api.zip",
         "s3://{}".format(BUCKET_BASE_DIR)
@@ -181,18 +252,8 @@ def post_build():
         "s3://asf-docs/hyp3-in-a-box",
         "--recursive", "--acl", "public-read"
     ])
-    set_github_ci_status("success", description=get_config(
+    gs.set_github_ci_status("success", description=get_config(
         "TEST_RESULT_SUMMARY", "Build completed"))
-
-
-def install_all_requirements_txts(root_dir):
-    for path, dirs, files in os.walk(root_dir):
-        for name in files:
-            if "requirements" in name:
-                subprocess.check_call(
-                    ["pip", "install", "-U", "-r", name],
-                    cwd=path
-                )
 
 
 def save_config(key, value):
@@ -214,36 +275,6 @@ def get_config(key, default=None):
             return config.get(key, default)
     except FileNotFoundError:
         return default
-
-
-def main(step=None):
-    if not os.path.exists("build"):
-        os.mkdir("build")
-
-    step_function_table = {
-        "install": install,
-        "pre_build": pre_build,
-        "build": build,
-        "post_build": post_build
-    }
-
-    try:
-        if get_config("BUILD_STATUS", 0) == 0:
-            save_config("BUILD_STATUS", 0)
-            return step_function_table.get(step, lambda: None)()
-
-        return None
-    except subprocess.CalledProcessError as e:
-        desc = step
-        if "failure" in BUILD_STEP_MESSAGES is not None:
-            desc = BUILD_STEP_MESSAGES["failure"]
-        set_github_ci_status("failure", description=desc)
-        save_config("BUILD_STATUS", e.returncode)
-        raise
-    except Exception:
-        set_github_ci_status("error")
-        save_config("BUILD_STATUS", -1337)
-        raise
 
 
 if __name__ == "__main__":
