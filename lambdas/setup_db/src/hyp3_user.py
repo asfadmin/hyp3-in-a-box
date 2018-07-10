@@ -1,4 +1,4 @@
-import utils
+import boto3
 
 from hyp3_db import hyp3_models
 
@@ -25,6 +25,8 @@ def add_to(db):
 
     admin_user = add_hyp3_user(db, username, user_email)
     api_key = add_api_key(db, admin_user.id)
+
+    add_to_parameter_store(api_key)
 
     return {
         'ApiKey': api_key
@@ -57,3 +59,13 @@ def add_api_key(db, user_id):
     db.session.add(api_key)
 
     return key
+
+def add_to_parameter_store(key):
+    ssm = boto3.resource('ssm')
+
+    ssm.pu_parameter(
+        Name='hyp3-in-a-box/api-key',
+        Value=key,
+        Description='API Key for hyp3 in a box',
+        Type='SecureString'
+    )
