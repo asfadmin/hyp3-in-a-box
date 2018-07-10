@@ -42,7 +42,7 @@ from troposphere.elasticbeanstalk import (
 from troposphere.iam import InstanceProfile, Role
 
 from .hyp3_rds import hyp3_db
-from .hyp3_db_params import db_name, db_user, db_pass
+from .hyp3_db_params import db_name, db_super_user, db_super_user_pass
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
 from .hyp3_keypairname_param import keyname
@@ -162,12 +162,27 @@ config_template = t.add_resource(ConfigurationTemplate(
         OptionSettings(
             Namespace="aws:elasticbeanstalk:application:environment",
             OptionName="DB_USER",
-            Value=Ref(db_user)
+            Value=Ref(db_super_user)
         ),
         OptionSettings(
             Namespace="aws:elasticbeanstalk:application:environment",
             OptionName="DB_PASS",
-            Value=Ref(db_pass)
+            Value=Ref(db_super_user_pass)
+        ),
+        OptionSettings(
+            Namespace="aws:elasticbeanstalk:application:environment",
+            OptionName="OAUTH_CONSUMER_KEY",
+            Value='dummy-val'
+        ),
+        OptionSettings(
+            Namespace="aws:elasticbeanstalk:application:environment",
+            OptionName="OAUTH_CONSUMER_SECRET",
+            Value='dummy-val'
+        ),
+        OptionSettings(
+            Namespace="aws:elasticbeanstalk:application:environment",
+            OptionName="OAUTH_PASSWORD",
+            Value='dummy-val'
         )
     ]
 ))

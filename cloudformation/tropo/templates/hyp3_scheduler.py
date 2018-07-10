@@ -31,7 +31,7 @@ from troposphere.awslambda import Environment, VPCConfig
 from troposphere.iam import Policy, Role
 
 from . import utils
-from .hyp3_db_params import db_name, db_pass, db_user
+from .hyp3_db_params import db_name, db_super_user_pass, db_super_user
 from .hyp3_kms_key import kms_key
 from .hyp3_sns import finish_sns
 
@@ -72,8 +72,8 @@ scheduler = utils.make_lambda_function(
             Variables={
                 'SNS_ARN': Ref(finish_sns),
                 'DB_HOST': utils.get_host_address(),
-                'DB_USER': Ref(db_user),
-                'DB_PASSWORD': Ref(db_pass),
+                'DB_USER': Ref(db_super_user),
+                'DB_PASSWORD': Ref(db_super_user_pass),
                 'DB_NAME': Ref(db_name)
             }),
         "KmsKeyArn": GetAtt(kms_key, "Arn"),
