@@ -85,7 +85,6 @@ def pre_build():
 
 
 def run_tests():
-    return
     try:
         subprocess.check_call(
             ["python3", "-m", "pytest", "--junitxml=/tmp/test_results.xml"])
