@@ -75,7 +75,7 @@ lambda_exe_role = t.add_resource(iam.Role(
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
-find_new_granules_function = t.add_resource(utils.make_lambda_function(
+find_new_granules = t.add_resource(utils.make_lambda_function(
     name="find_new_granules",
     role=lambda_exe_role,
     lambda_params={
@@ -92,7 +92,7 @@ find_new_granules_function = t.add_resource(utils.make_lambda_function(
 
 find_new_target = events.Target(
     "FindNewTarget",
-    Arn=ts.GetAtt(find_new_granules_function, 'Arn'),
+    Arn=ts.GetAtt(find_new_granules, 'Arn'),
     Id="FindNewFunction1"
 )
 
@@ -105,7 +105,7 @@ find_new_event_rule = t.add_resource(events.Rule(
 
 PermissionForEventsToInvokeLambda = t.add_resource(awslambda.Permission(
     "EventSchedulePermissions",
-    FunctionName=ts.Ref(find_new_granules_function),
+    FunctionName=ts.Ref(find_new_granules),
     Action="lambda:InvokeFunction",
     Principal="events.amazonaws.com",
     SourceArn=ts.GetAtt("FindNewGranulesSchedule", "Arn")
