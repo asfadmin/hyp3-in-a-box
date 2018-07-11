@@ -138,9 +138,11 @@ def make_hyp3_admin_user(db):
     user = get_user()
     param_paths = get_param_store_paths()
 
-    if hyp3_user.is_new(db, user.name):
+    if hyp3_user.is_new(db, user):
+        utils.step_print('Creating new user')
         step_output = add_new_user(db, user, param_paths)
     else:
+        utils.step_print('User already exists')
         step_output = reference_old_user_params(param_paths)
 
     return step_output
@@ -166,7 +168,7 @@ def get_user():
 
 
 def add_new_user(db, user, param_paths):
-    api_key = hyp3_user.add_to(db, user.name, user.email)
+    api_key = hyp3_user.add_to(db, user)
 
     ssm.save_params({
         param_paths['api-key']: api_key,

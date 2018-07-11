@@ -86,8 +86,11 @@ def pre_build():
 
 def run_tests():
     try:
-        subprocess.check_call(
-            ["python3", "-m", "pytest", "--junitxml=/tmp/test_results.xml"])
+        subprocess.check_call([
+            "python3", "-m",
+            "pytest", "-s",
+            "--junitxml=/tmp/test_results.xml"
+        ])
     except subprocess.CalledProcessError as e:
         raise e
     else:
