@@ -77,7 +77,9 @@ def get_mock_environment():
         'DefaultProcessesBucket': process_cfg["processes_bucket"],
         'DefaultProcessesKey': process_cfg["default_processes_key"],
 
-        'Maturity': 'test'
+        'Maturity': 'test',
+
+        'Hyp3StackName': 'unittesting-hyp3-in-a-box-stack'
     }
 
 

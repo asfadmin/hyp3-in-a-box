@@ -1,36 +1,25 @@
-import boto3
-
 from hyp3_db import hyp3_models
 
 import setup_db_utils as utils
 
 
-def already_exists_in(db):
+def is_new(db, username):
     utils.step_print('checking if user exists')
-    username = utils.get_environ_params('Hyp3AdminUsername').pop()
 
     users = db.session \
         .query(hyp3_models.User) \
         .filter(hyp3_models.User.username == username) \
         .all()
 
-    return len(users) > 0
+    return len(users) == 0
 
 
-def add_to(db):
-    username, user_email = utils.get_environ_params(
-        'Hyp3AdminUsername',
-        'Hyp3AdminEmail'
-    )
+def add_to(db, username, email):
 
-    admin_user = add_hyp3_user(db, username, user_email)
+    admin_user = add_hyp3_user(db, username, email)
     api_key = add_api_key(db, admin_user.id)
 
-    add_to_parameter_store(api_key)
-
-    return {
-        'ApiKey': api_key
-    }
+    return api_key
 
 
 def add_hyp3_user(db, username, user_email):
@@ -58,20 +47,6 @@ def add_api_key(db, user_id):
     key, api_key = hyp3_models.ApiKey.generate_new(user_id)
     db.session.add(api_key)
 
-    add_to_parameter_store('/hyp3-api-key', key)
-
     return key
 
 
-def add_to_parameter_store(param_name, value):
-    ssm = boto3.client('ssm')
-
-    resp = ssm.put_parameter(
-        Name=param_name,
-        Value=value,
-        Description='API Key for hyp3 in a box',
-        Type='SecureString',
-        Overwrite=True
-    )
-
-    print(resp)

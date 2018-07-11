@@ -5,7 +5,9 @@
 # Database setup functions. Need to pull them out from lambda_function to avoid
 # naming conflicts during unit test imports
 
+import collections
 import json
+import pathlib as pl
 
 import sqlalchemy
 from sqlalchemy import sql
@@ -17,6 +19,7 @@ import custom_resource
 import setup_db_utils as utils
 import hyp3_user
 import hyp3_processes
+import ssm
 
 
 def setup_db(event, db_admin_creds):
@@ -39,7 +42,8 @@ class DBSetup(custom_resource.Base):
             print('connected')
             setup_outputs = setup_db_main(db)
 
-        assert 'ApiKey' in setup_outputs
+        assert 'Hyp3ApiKey' in setup_outputs
+        assert 'Hyp3Username' in setup_outputs
 
         return {
             'Data': setup_outputs,
@@ -127,12 +131,63 @@ def make_tables(db):
     Base.metadata.create_all(db.engine)
 
 
-def make_hyp3_admin_user(db):
-    if hyp3_user.already_exists_in(db):
-        utils.step_print('hyp3 user already exists')
-        return {'ApiKey': '******'}
+User = collections.namedtuple('User', ['name', 'email'])
 
-    return hyp3_user.add_to(db)
+
+def make_hyp3_admin_user(db):
+    user = get_user()
+    param_paths = get_param_store_paths()
+
+    if hyp3_user.is_new(db, user.name):
+        step_output = add_new_user(db, user, param_paths)
+    else:
+        step_output = reference_old_user_params(param_paths)
+
+    return step_output
+
+
+def get_param_store_paths():
+    stack_name = utils.get_environ_params('Hyp3StackName').pop()
+    utils.step_print(stack_name)
+
+    return {
+        k: str(pl.Path('/') / stack_name / f'hyp3-{k}')
+        for k in ('username', 'api-key')
+    }
+
+
+def get_user():
+    name, email = utils.get_environ_params(
+        'Hyp3AdminUsername',
+        'Hyp3AdminEmail'
+    )
+
+    return User(name, email)
+
+
+def add_new_user(db, user, param_paths):
+    api_key = hyp3_user.add_to(db, user.name, user.email)
+
+    ssm.save_params({
+        param_paths['api-key']: api_key,
+        param_paths['username']: user.name
+    })
+
+    return {
+        'Hyp3ApiKey': api_key,
+        'Hyp3Username': user.name
+    }
+
+
+def reference_old_user_params(param_paths):
+    utils.step_print('hyp3 user already exists')
+
+    prefix = 'SSM Parameter Store Path -> '
+
+    return {
+        'Hyp3ApiKey': prefix + param_paths['api-key'],
+        'Hyp3Username': prefix + param_paths['username']
+    }
 
 
 def add_default_processes(db):
