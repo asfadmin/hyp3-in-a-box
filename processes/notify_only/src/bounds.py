@@ -2,6 +2,8 @@ import collections
 
 import numpy as np
 
+LAT_LIMIT, LON_LIMIT = 90, 180
+
 
 def zoom_out_around(poly):
     poly_bounds = np.array(poly.bounds)
@@ -21,15 +23,19 @@ def zoom_bounds_out_around(poly_bounds):
 
 
 def shift_back_into_map(bounds):
-    lons, lats = bounds[::2], bounds[1::2]
+    axes = zip([bounds[::2], bounds[1::2]], [LAT_LIMIT, LON_LIMIT])
 
     try:
-        return [
-            shift_to_fit_within_limits(min_val, max_val, limit) for
-            (min_val, max_val), limit in [(lats, 90), (lons, 180)]
+        bounds = [
+            shift_to_fit_within_limits(lower_bound, upper_bound, limit) for
+            (lower_bound, upper_bound), limit in axes
         ]
     except PolygonWrapError:
-        return [[-90, 90], [-180, 180]]
+        bounds = [
+            [-LAT_LIMIT, LAT_LIMIT], [-LON_LIMIT, LON_LIMIT]
+        ]
+
+    return bounds
 
 
 def labeled_dict_of(axis_bounds):
@@ -41,47 +47,44 @@ def labeled_dict_of(axis_bounds):
     }
 
 
-Extrema = collections.namedtuple('Extrema', ['min', 'max'])
+Bound = collections.namedtuple('Bound', ['lower', 'upper'])
 
 
-def shift_to_fit_within_limits(min_val, max_val, limit):
-    extrema = Extrema(min_val, max_val)
+def shift_to_fit_within_limits(lower, upper, limit):
+    bounds = Bound(lower, upper)
 
-    if bounds_are_off_both_sides(extrema, limit):
-        raise PolygonWrapError
+    if bounds_are_off_both_sides(bounds, limit):
+        raise PolygonWrapError()
 
-    elif bounds_are_off_to_the_left(extrema, limit):
-        return bounds_shifted_to_the_right(extrema, limit)
+    elif bounds_are_off_to_the_left(bounds, limit):
+        return bounds_shifted_to_the_right(bounds, limit)
 
-    elif bounds_are_off_to_the_right(extrema, limit):
-        return bounds_shifted_to_the_left(extrema, limit)
+    elif bounds_are_off_to_the_right(bounds, limit):
+        return bounds_shifted_to_the_left(bounds, limit)
 
-    return extrema.min, extrema.max
+    else:
+        return bounds.lower, bounds.upper
 
 
 class PolygonWrapError(Exception):
     pass
 
 
-def bounds_are_off_both_sides(extrema, limit):
-    return extrema.min < -limit and extrema.max > limit
+def bounds_are_off_both_sides(bound, limit):
+    return bound.lower < -limit and bound.upper > limit
 
 
-def bounds_zoomed_out_to(limit):
-    return -limit, limit
+def bounds_are_off_to_the_left(bound, limit):
+    return bound.lower < -limit
 
 
-def bounds_are_off_to_the_left(extrema, limit):
-    return extrema.min < -limit
+def bounds_are_off_to_the_right(bound, limit):
+    return bound.upper > limit
 
 
-def bounds_shifted_to_the_right(extrema, limit):
-    return -limit, extrema.max + abs(extrema.min + limit)
+def bounds_shifted_to_the_right(bound, limit):
+    return -limit, bound.upper + abs(bound.lower + limit)
 
 
-def bounds_are_off_to_the_right(extrema, limit):
-    return extrema.max > limit
-
-
-def bounds_shifted_to_the_left(extrema, limit):
-    return extrema.min - abs(extrema.max - limit), limit
+def bounds_shifted_to_the_left(bound, limit):
+    return bound.lower - abs(bound.upper - limit), limit
