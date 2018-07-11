@@ -182,7 +182,11 @@ def write_file(template, file_name, debug):
         if debug:
             print(generated_template)
 
-        f.write(generated_template)
+        f.write(minify(generated_template))
+
+
+def minify(json_str):
+    return json.dumps(json.loads(json_str), separators=(',', ':'))
 
 
 if __name__ == '__main__':
