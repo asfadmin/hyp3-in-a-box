@@ -39,8 +39,8 @@ class DBSetup(custom_resource.Base):
             print('connected')
             setup_outputs = setup_db_main(db)
 
-        print(setup_outputs)
         assert 'ApiKey' in setup_outputs
+
         return {
             'Data': setup_outputs,
             'Reason': 'Successfully setup hyp3 db'
@@ -133,7 +133,6 @@ def make_hyp3_admin_user(db):
         return {'ApiKey': '******'}
 
     return hyp3_user.add_to(db)
-
 
 
 def add_default_processes(db):

@@ -6,7 +6,7 @@ import boto3
 
 from hyp3_db import hyp3_models
 
-import utils
+import setup_db_utils as utils
 
 
 def new(db):

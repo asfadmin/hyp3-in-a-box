@@ -17,7 +17,7 @@ from init_db import setup_db
 testing_user = 'hyp3_user'
 
 
-@mock.patch('utils.os.environ')
+@mock.patch('setup_db_utils.os.environ')
 @mock.patch(
     'init_db.hyp3_db.connect',
     side_effect=hyp3_db.test_db

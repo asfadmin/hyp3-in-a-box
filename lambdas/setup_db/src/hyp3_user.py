@@ -58,14 +58,20 @@ def add_api_key(db, user_id):
     key, api_key = hyp3_models.ApiKey.generate_new(user_id)
     db.session.add(api_key)
 
+    add_to_parameter_store('/hyp3-api-key', key)
+
     return key
 
-def add_to_parameter_store(key):
-    ssm = boto3.resource('ssm')
 
-    ssm.pu_parameter(
-        Name='hyp3-in-a-box/api-key',
-        Value=key,
+def add_to_parameter_store(param_name, value):
+    ssm = boto3.client('ssm')
+
+    resp = ssm.put_parameter(
+        Name=param_name,
+        Value=value,
         Description='API Key for hyp3 in a box',
-        Type='SecureString'
+        Type='SecureString',
+        Overwrite=True
     )
+
+    print(resp)
