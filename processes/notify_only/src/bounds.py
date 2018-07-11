@@ -23,7 +23,8 @@ def zoom_bounds_out_around(poly_bounds):
 
 
 def shift_back_into_map(bounds):
-    axes = zip([bounds[::2], bounds[1::2]], [LAT_LIMIT, LON_LIMIT])
+    lons, lats = get_lat_lon_ranges_from(bounds)
+    axes = [(lats, LAT_LIMIT), (lons, LON_LIMIT)]
 
     try:
         bounds = [
@@ -36,6 +37,10 @@ def shift_back_into_map(bounds):
         ]
 
     return bounds
+
+
+def get_lat_lon_ranges_from(bounds):
+    return bounds[::2], bounds[1::2]
 
 
 def labeled_dict_of(axis_bounds):
