@@ -1,3 +1,5 @@
+import collections
+
 import numpy as np
 
 
@@ -21,10 +23,13 @@ def zoom_bounds_out_around(poly_bounds):
 def shift_back_into_map(bounds):
     lons, lats = bounds[::2], bounds[1::2]
 
-    return [
-        shift_to_fit_within_limits(min_val, max_val, limit) for
-        (min_val, max_val), limit in [(lats, 90), (lons, 180)]
-    ]
+    try:
+        return [
+            shift_to_fit_within_limits(min_val, max_val, limit) for
+            (min_val, max_val), limit in [(lats, 90), (lons, 180)]
+        ]
+    except PolygonWrapError:
+        return [[-90, 90], [-180, 180]]
 
 
 def labeled_dict_of(axis_bounds):
@@ -36,39 +41,47 @@ def labeled_dict_of(axis_bounds):
     }
 
 
+Extrema = collections.namedtuple('Extrema', ['min', 'max'])
+
+
 def shift_to_fit_within_limits(min_val, max_val, limit):
-    if bounds_are_off_both_sides(min_val, max_val, limit):
-        return bounds_zoomed_out_to(limit)
+    extrema = Extrema(min_val, max_val)
 
-    elif bounds_are_off_to_the_left(min_val, max_val, limit):
-        return bounds_shifted_to_the_right(min_val, max_val, limit)
+    if bounds_are_off_both_sides(extrema, limit):
+        raise PolygonWrapError
 
-    elif bounds_are_off_to_the_right(min_val, max_val, limit):
-        return bounds_shifted_to_the_left(min_val, max_val, limit)
+    elif bounds_are_off_to_the_left(extrema, limit):
+        return bounds_shifted_to_the_right(extrema, limit)
 
-    else:
-        return min_val, max_val
+    elif bounds_are_off_to_the_right(extrema, limit):
+        return bounds_shifted_to_the_left(extrema, limit)
+
+    return extrema.min, extrema.max
 
 
-def bounds_are_off_both_sides(min_val, max_val, limit):
-    min_val < -limit and max_val > limit
+class PolygonWrapError(Exception):
+    pass
+
+
+def bounds_are_off_both_sides(extrema, limit):
+    return extrema.min < -limit and extrema.max > limit
 
 
 def bounds_zoomed_out_to(limit):
     return -limit, limit
 
 
-def bounds_are_off_to_the_left(min_val, max_val, limit):
-    return min_val < -limit
+def bounds_are_off_to_the_left(extrema, limit):
+    return extrema.min < -limit
 
 
-def bounds_shifted_to_the_right(min_val, max_val, limit):
-    return -limit, max_val + abs(min_val + limit)
+def bounds_shifted_to_the_right(extrema, limit):
+    return -limit, extrema.max + abs(extrema.min + limit)
 
 
-def bounds_are_off_to_the_right(min_val, max_val, limit):
-    return max_val > limit
+def bounds_are_off_to_the_right(extrema, limit):
+    return extrema.max > limit
 
 
-def bounds_shifted_to_the_left(min_val, max_val, limit):
-    return min_val - abs(max_val - limit), limit
+def bounds_shifted_to_the_left(extrema, limit):
+    return extrema.min - abs(extrema.max - limit), limit
