@@ -108,7 +108,9 @@ setup_db = t.add_resource(utils.make_lambda_function(
                 "Hyp3AdminEmail": Ref(admin_email),
 
                 "DefaultProcessesBucket": environment.hyp3_data_bucket,
-                "DefaultProcessesKey": environment.default_processes_key
+                "DefaultProcessesKey": environment.default_processes_key,
+
+                "Hyp3StackName": Ref("AWS::StackName")
             }
         ),
         "Timeout": 60
@@ -123,11 +125,13 @@ db_setup = t.add_resource(CustomResource(
 ))
 
 t.add_output(Output(
+    "Hyp3Username",
+    Description="HyP3 username",
+    Value=GetAtt(db_setup, 'Hyp3Username')
+))
+
+t.add_output(Output(
     "Hyp3ApiKey",
-    Description=(
-        "HyP3 API Key. WARNING: This is the only "
-        "way to access the hyp3 api, make sure to "
-        "save it in a secure location."
-    ),
-    Value=GetAtt(db_setup, 'ApiKey')
+    Description="Api key for hyp3 access",
+    Value=GetAtt(db_setup, 'Hyp3ApiKey')
 ))
