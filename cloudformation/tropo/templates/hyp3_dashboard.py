@@ -5,10 +5,10 @@ from troposphere.cloudwatch import Dashboard
 
 from template import t
 
-from hyp3_rds import db
-from hyp3_find_new import find_new_granules
-from hyp3_scheduler import scheduler
-from hyp3_send_email import send_email
+from .hyp3_rds import db
+from .hyp3_find_new import find_new_granules
+from .hyp3_scheduler import scheduler
+from .hyp3_send_email import send_email
 
 print('  adding hyp3 dashboard')
 
