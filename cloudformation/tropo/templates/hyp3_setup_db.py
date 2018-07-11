@@ -28,7 +28,7 @@ from troposphere.cloudformation import CustomResource
 from troposphere.iam import Role, Policy
 
 from template import t
-from environment import environment
+from tropo_env import environment
 
 from . import utils
 from .hyp3_db_params import (

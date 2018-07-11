@@ -3,7 +3,7 @@ import pathlib as pl
 import boto3
 import botocore
 
-from .environment import environment as env
+from .find_new_env import environment as env
 
 s3 = boto3.resource('s3')
 

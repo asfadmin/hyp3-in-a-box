@@ -1,6 +1,6 @@
 import hyp3_db
 
-from environment import environment
+from scheduler_env import environment
 from . import queries
 
 

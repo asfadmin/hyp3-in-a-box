@@ -24,7 +24,7 @@ Resources
 
 """
 
-from environment import environment
+from tropo_env import environment
 from template import t
 from troposphere import GetAtt, Ref
 from troposphere.awslambda import Environment, VPCConfig

@@ -7,7 +7,7 @@ import time
 import granule_search
 
 from . import previous_time, s3
-from .environment import environment
+from .find_new_env import environment
 
 
 def granule_events():

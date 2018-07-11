@@ -24,7 +24,7 @@ Resources
 from troposphere import GetAtt, Output, Ref, ec2, rds, Parameter
 
 from template import t
-from environment import environment
+from tropo_env import environment
 
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .hyp3_db_params import db_super_user_pass, db_super_user, db_name

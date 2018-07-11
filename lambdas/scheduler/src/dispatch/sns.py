@@ -1,6 +1,6 @@
 import boto3
 
-from environment import environment
+from scheduler_env import environment
 
 sns = boto3.client('sns')
 

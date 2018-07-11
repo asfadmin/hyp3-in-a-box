@@ -10,7 +10,7 @@ import pathlib as pl
 import re
 from importlib import import_module
 
-from environment import environment
+from tropo_env import environment
 from template import t
 
 TEMPLATE_DIR = 'templates'

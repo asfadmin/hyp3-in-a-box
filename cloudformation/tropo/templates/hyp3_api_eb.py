@@ -28,7 +28,7 @@ Resources
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.sts import AssumeRole
 
-from environment import environment
+from tropo_env import environment
 from template import t
 from troposphere import FindInMap, GetAtt, Join, Output, Ref
 from troposphere.elasticbeanstalk import (

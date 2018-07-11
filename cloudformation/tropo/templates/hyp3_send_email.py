@@ -20,7 +20,7 @@ from troposphere import GetAtt, Parameter, Ref
 from troposphere.awslambda import Function, Environment
 from troposphere.iam import Policy, Role
 
-from environment import environment
+from tropo_env import environment
 from template import t
 
 from . import utils

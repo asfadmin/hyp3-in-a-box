@@ -6,7 +6,7 @@ from troposphere.awslambda import Code
 from troposphere import GetAtt, Parameter, Ref
 from troposphere.awslambda import Function
 
-from environment import environment
+from tropo_env import environment
 from template import t
 
 

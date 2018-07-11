@@ -1,6 +1,6 @@
 import os
 
-from environment import environment
+from send_email_env import environment
 from send_email_main import send_email_main
 
 
