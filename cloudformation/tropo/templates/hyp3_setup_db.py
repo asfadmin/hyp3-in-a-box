@@ -146,7 +146,8 @@ setup_db = t.add_resource(utils.make_lambda_function(
 db_setup = t.add_resource(CustomResource(
     "RunDBSetup",
     ServiceToken=GetAtt(setup_db, "Arn"),
-    # This is to always run the setup_db function on template updates
+    # This is to always run the setup_db function on template updates.
+    # Cloudformation only updates resources that change in the template.
     ForceUpdateId=str(uuid.uuid4())
 ))
 
