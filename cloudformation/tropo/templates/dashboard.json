@@ -1,0 +1,418 @@
+{
+    "widgets": [
+        {
+            "type": "text",
+            "x": 0,
+            "y": 0,
+            "width": 24,
+            "height": 2,
+            "properties": {
+                "markdown": "\n# Hybrid Plugable Processing Pipeline (HyP3) Dashboard\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 10,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "markdown": "\n# Lambda: Find New Granules\nStart scheduling jobs with new granules from cmr. This lambda gets triggered by a cloudwatch event on a fixed schedule.\n\n[button:primary:Docs](http://asf-docs.s3-website-us-west-2.amazonaws.com/hyp3-in-a-box/_static/cloudformation/find_new.html)\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 24,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "markdown": "\n# Lambda: Send Email\nRender and send email notification for the hyp3 system \n\n[button:primary:Docs](http://asf-docs.s3-website-us-west-2.amazonaws.com/hyp3-in-a-box/_static/cloudformation/send_email.html)\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 10,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${FindNewGranulesName}", { "period": 300, "label": "Find New Duration" } ]
+                ],
+                "region": "${AWS::Region}",
+                "period": 300,
+                "yAxis": {
+                    "left": {
+                        "min": 700,
+                        "max": 3000
+                    }
+                },
+                "title": "Duration Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 3,
+            "y": 10,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "view": "singleValue",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${FindNewGranulesName}", { "period": 3600, "stat": "Sum", "color": "#2ca02c" } ],
+                    [ ".", "Errors", ".", ".", { "period": 3600, "stat": "Sum", "color": "#d62728" } ]
+                ],
+                "region": "${AWS::Region}",
+                "period": 300,
+                "title": "Past Hour"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 10,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${FindNewGranulesName}", "Resource", "${FindNewGranulesName}", { "id": "errors", "stat": "Sum", "color": "#d62728" } ],
+                    [ ".", "Invocations", ".", ".", ".", ".", { "id": "invocations", "stat": "Sum", "visible": false } ],
+                    [ { "expression": "100 - 100 * errors / invocations", "label": "Availability (%)", "id": "availability", "yAxis": "right" } ]
+                ],
+                "region": "${AWS::Region}",
+                "title": "Errors, Availability (%)",
+                "yAxis": {
+                    "right": {
+                        "max": 100
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": true,
+                "period": 300
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 16,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 17,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${SchedulerName}", "Resource", "${SchedulerName}", { "id": "errors", "stat": "Sum", "color": "#d62728" } ],
+                    [ ".", "Invocations", ".", ".", ".", ".", { "id": "invocations", "stat": "Sum", "visible": false } ],
+                    [ { "expression": "100 - 100 * errors / invocations", "label": "Availability (%)", "id": "availability", "yAxis": "right" } ]
+                ],
+                "region": "${AWS::Region}",
+                "title": "Errors, Availability (%)",
+                "yAxis": {
+                    "right": {
+                        "max": 100
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": true,
+                "period": 300
+            }
+        },
+        {
+            "type": "metric",
+            "x": 3,
+            "y": 17,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "view": "singleValue",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${SchedulerName}", { "period": 3600, "stat": "Sum", "color": "#2ca02c", "yAxis": "left" } ],
+                    [ ".", "Errors", ".", ".", { "period": 3600, "stat": "Sum", "color": "#d62728" } ]
+                ],
+                "region": "${AWS::Region}",
+                "period": 300,
+                "title": "Past Hour"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 17,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${SchedulerName}", { "period": 300, "label": "Scheduler Duration" } ]
+                ],
+                "region": "${AWS::Region}",
+                "period": 300,
+                "title": "Duration Average"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 23,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 17,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "markdown": "\n# Lambda: Job Scheduler\nSchedule new HyP3 jobs, this can either be a processing job or just a email notification. \n\n[button:primary:Docs](http://asf-docs.s3-website-us-west-2.amazonaws.com/hyp3-in-a-box/_static/cloudformation/scheduler.html)\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 3,
+            "y": 24,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "view": "singleValue",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${SendEmailName}", "Resource", "${SendEmailName}", { "period": 3600, "stat": "Sum", "color": "#2ca02c" } ],
+                    [ ".", "Errors", ".", ".", ".", ".", { "period": 3600, "stat": "Sum", "color": "#d62728" } ]
+                ],
+                "region": "${AWS::Region}",
+                "period": 300,
+                "title": "Past Hour"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 24,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${SendEmailName}", { "period": 300, "label": "Send Email Duration" } ]
+                ],
+                "region": "${AWS::Region}",
+                "period": 300,
+                "title": "Duration Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 24,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${SendEmailName}", "Resource", "${SendEmailName}", { "id": "errors", "stat": "Sum", "color": "#d62728" } ],
+                    [ ".", "Invocations", ".", ".", ".", ".", { "id": "invocations", "stat": "Sum", "visible": false } ],
+                    [ { "expression": "100 - 100 * errors / invocations", "label": "Availability (%)", "id": "availability", "yAxis": "right" } ]
+                ],
+                "region": "${AWS::Region}",
+                "title": "Errors, Availability (%)",
+                "yAxis": {
+                    "right": {
+                        "max": 100
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": true,
+                "period": 300
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 30,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 3,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "markdown": "\n# RDS: Hyp3 DB\n\nThis holds all the information on the hyp3 system\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 3,
+            "y": 3,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "view": "singleValue",
+                "metrics": [
+                    [ "AWS/RDS", "FreeStorageSpace", "DBInstanceIdentifier", "${Hyp3DBInsatnceIdentifier}" ],
+                    [ ".", "DatabaseConnections", ".", "." ]
+                ],
+                "region": "${AWS::Region}",
+                "period": 300,
+                "title": "Current DB State"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 3,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", "${Hyp3DBInsatnceIdentifier}", { "label": "Hyp3 DB CPU Utilization" } ]
+                ],
+                "region": "${AWS::Region}",
+                "title": "DB CPUUtilization",
+                "period": 300
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 3,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/RDS", "WriteIOPS", "DBInstanceIdentifier", "${Hyp3DBInsatnceIdentifier}", { "color": "#2ca02c" } ],
+                    [ ".", "ReadIOPS", ".", ".", { "color": "#1f77b4" } ]
+                ],
+                "region": "${AWS::Region}",
+                "title": "DB Read/Write IOPS",
+                "period": 300
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 2,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n# Database\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 9,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n# Lambdas\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 31,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${SetupDBName}", "Resource", "${SetupDBName}", { "id": "errors", "stat": "Sum", "color": "#d62728" } ],
+                    [ ".", "Invocations", ".", ".", ".", ".", { "id": "invocations", "stat": "Sum", "visible": false } ],
+                    [ { "expression": "100 - 100 * errors / invocations", "label": "Availability (%)", "id": "availability", "yAxis": "right" } ]
+                ],
+                "region": "${AWS::Region}",
+                "title": "Errors, Availability (%)",
+                "yAxis": {
+                    "right": {
+                        "max": 100
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": true,
+                "period": 300
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 31,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "markdown": "\n# Lambda: Setup DB\nThis lambda is run when the stack is created or on updates. It should be called very infrequently. \n\n[button:primary:Docs](http://asf-docs.s3-website-us-west-2.amazonaws.com/hyp3-in-a-box/_static/cloudformation/setup_db.html)\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 37,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 3,
+            "y": 31,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "view": "singleValue",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${SetupDBName}1", { "period": 3600, "stat": "Sum", "color": "#2ca02c", "label": "Invocations" } ],
+                    [ ".", "Errors", ".", "${SetupDBName}", { "period": 3600, "stat": "Sum", "color": "#d62728" } ]
+                ],
+                "region": "${AWS::Region}",
+                "period": 300,
+                "title": "Past Hour"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 31,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${SetupDBName}" ]
+                ],
+                "region": "${AWS::Region}",
+                "period": 300,
+                "title": "Duration Average"
+            }
+        }
+    ]
+}

@@ -3,7 +3,7 @@ import json
 import pytest
 
 import testing_utils as utils
-from environment import environment
+from scheduler_env import environment
 
 creds_path = utils.data_path / 'creds.json'
 

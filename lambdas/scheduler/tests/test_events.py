@@ -11,7 +11,8 @@ import testing_utils as utils
 @given(st.lists(st.fixed_dictionaries({
     'name': st.text(),
     'polygon': st.lists(st.floats(), min_size=2),
-    'download_url': st.text()
+    'download_url': st.text(),
+    'browse_url': st.text()
 })))
 def test_make_new_granule_events(granule_events):
     new_granule_events = events.make_new_granule_events_with(granule_events)

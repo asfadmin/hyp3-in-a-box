@@ -12,3 +12,4 @@ Python Modules
 
    modules/hyp3_db
    modules/hyp3_events
+   modules/granule_search

@@ -4,11 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-troposphere = "*"
 "jinja2" = "*"
 "61ea59b" = {path = "./../../modules/hyp3_events"}
+"3da5cae" = {path = "./../../modules/hyp3_db"}
 
 [dev-packages]
+pytest = "*"
+mock = "*"
+"boto3" = "*"
 
 [requires]
 python_version = "3.6"

@@ -1,39 +1,36 @@
 # setup_db/lambda_function.py
-# Rohan Weeden
+# Rohan Weeden, William Horn
 # Created: June 13, 2018
 
 # Lambda function for creating the Hyp3 Database
 
 import os
 
-from hyp3_db import Hyp3DB
 from init_db import setup_db
 
 
 def lambda_handler(aws_event, aws_context):
-    """ AWS Lambda entry point. Sets up the hyp3 database for the rest of the
-        hyp3 system to use. The lambda is responsible for creating a new user
-        and installing the postgis plugin.
+    """ AWS Lambda entry point. This is a cloudformation CustomResource that
+        Sets up the hyp3 database for the hyp3 system to use.
 
         :param aws_event: lambda event data
         :param aws_context: lambda runtime info
     """
-    db = get_db()
-    setup_db(db)
+    setup_db(aws_event, get_db_creds())
 
 
-def get_db():
-    """ Create a database connection using SQLAlchemy.
+def get_db_creds():
+    """ Get the db params from environment
 
-        :returns: hyp3_db module database object
-        :rtype: hyp3_db.Hyp3DB
+        :returns: host, username, password in that order
+        :rtype: list[str]
     """
-    HOST = os.environ.get("Hyp3DBHost")
-    USER = os.environ.get("Hyp3DBRootUser")
-    PASS = os.environ.get("Hyp3DBRootPass")
 
-    return Hyp3DB(
-        host=HOST,
-        user=USER,
-        password=PASS
-    )
+    return [
+        os.environ[k] for k in (
+            'Hyp3DBHost',
+            'Hyp3DBRootUser',
+            'Hyp3DBRootPass',
+            'Hyp3DBName'
+        )
+    ]

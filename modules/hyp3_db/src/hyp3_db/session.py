@@ -1,4 +1,5 @@
 import sqlalchemy as sqla
+from sqlalchemy import pool
 from sqlalchemy import orm
 
 
@@ -10,9 +11,11 @@ def make_session(engine):
 
 def make_engine(user, password, host, db):
     connection_str = get_connection_str(user, password, host, db)
-    print(connection_str)
 
-    return sqla.create_engine(connection_str)
+    return sqla.create_engine(
+        connection_str,
+        poolclass=pool.NullPool
+    )
 
 
 def get_connection_str(user, password, host, db):

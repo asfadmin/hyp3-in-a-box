@@ -1,7 +1,10 @@
+cloudformation/tropo/make_setup_db_stack.sh
+curr.json
+default-processes.json
+configuration.json
+output.html
 lambdas/upload_lambda.sh
 db_creds.sh
-configuration.json
-*.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

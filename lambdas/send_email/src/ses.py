@@ -1,6 +1,6 @@
 import boto3
 
-from environment import environment
+from send_email_env import environment
 
 ses = boto3.client('ses')
 

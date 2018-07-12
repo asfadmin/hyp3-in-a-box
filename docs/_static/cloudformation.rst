@@ -19,11 +19,15 @@ AWS CloudFormation
    cloudformation/setup_db.rst
 
    cloudformation/rds.rst
+   cloudformation/api_eb.rst
+   cloudformation/vpc.rst
 
    cloudformation/sns.rst
+   cloudformation/autoscaling_group.rst
 
    cloudformation/kms_key.rst
    cloudformation/db_params.rst
+   cloudformation/keypair_name_param.rst
 
 Troposphere
 -----------

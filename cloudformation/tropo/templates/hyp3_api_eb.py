@@ -1,44 +1,61 @@
 # hyp3_api_eb.py
-# Rohan Weeden
+# Rohan Weeden, William Horn
 # Created: May 24, 2018
 
-# Troposphere definitions for the HyP3 API Elastic beanstalk application
+"""
+Troposphere definitions for the HyP3 API Elastic beanstalk application.
 
-# Converted from ElasticBeanstalk_Nodejs.template located at:
-# http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
+Converted from ElasticBeanstalk_Nodejs.template located at:
+http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
+
+Requires
+~~~~~~~~
+* :ref:`rds_template`
+* :ref:`vpc_template`
+
+Resources
+~~~~~~~~~
+
+* **ElasticBeanstalk:** Python 3.6 web server
+* **IAM Policies:**
+
+  * ElasticBeanstalk Web Tier
+  * S3 read/write on ``previous time`` bucket
+  * Allow cloudwatch event to trigger the lambda
+
+"""
 
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.sts import AssumeRole
-from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref
-from troposphere.elasticbeanstalk import (Application, ApplicationVersion,
-                                          ConfigurationTemplate, Environment,
-                                          OptionSettings, SourceBundle)
+
+from tropo_env import environment
+from template import t
+from troposphere import FindInMap, GetAtt, Join, Output, Ref
+from troposphere.elasticbeanstalk import (
+    Application,
+    ApplicationVersion,
+    ConfigurationTemplate,
+    Environment,
+    OptionSettings,
+    SourceBundle
+)
 from troposphere.iam import InstanceProfile, Role
 
-from environment import environment
-from template import t
-
+from .hyp3_rds import hyp3_db
+from .hyp3_db_params import db_name, db_super_user, db_super_user_pass
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
+from .hyp3_keypairname_param import keyname
 
 source_zip = "hyp3_api.zip"
 
 
 print('  adding api_eb')
 
-
-keyname = t.add_parameter(Parameter(
-    "KeyPairName",
-    Description="Name of an existing EC2 KeyPair to enable SSH access to "
-                "the AWS Elastic Beanstalk instance",
-    Type="AWS::EC2::KeyPair::KeyName",
-    ConstraintDescription="must be the name of an existing EC2 KeyPair."
-))
-
 t.add_mapping("Region2Principal", get_map('region2principal'))
 
 role = t.add_resource(Role(
-    "WebServerRole",
+    "HyP3ApiWebServerRole",
     AssumeRolePolicyDocument=Policy(
         Statement=[
             Statement(
@@ -87,7 +104,7 @@ app_version = t.add_resource(ApplicationVersion(
 
 config_template = t.add_resource(ConfigurationTemplate(
     "Hyp3ApiConfigurationTemplate",
-    DependsOn="Hyp3VPC",
+    DependsOn=["Hyp3VPC", "Hyp3DB"],
     ApplicationName=Ref(app),
     Description="",
     SolutionStackName="64bit Amazon Linux 2018.03 v2.7.0 running Python 3.6",
@@ -126,6 +143,46 @@ config_template = t.add_resource(ConfigurationTemplate(
             Namespace="aws:ec2:vpc",
             OptionName="Subnets",
             Value=Ref(get_public_subnets()[0])
+        ),
+        OptionSettings(
+            Namespace="aws:elasticbeanstalk:application:environment",
+            OptionName="DB_URL",
+            Value=GetAtt(hyp3_db, "Endpoint.Address")
+        ),
+        OptionSettings(
+            Namespace="aws:elasticbeanstalk:application:environment",
+            OptionName="DB_PORT",
+            Value="5432"
+        ),
+        OptionSettings(
+            Namespace="aws:elasticbeanstalk:application:environment",
+            OptionName="DB_NAME",
+            Value=Ref(db_name)
+        ),
+        OptionSettings(
+            Namespace="aws:elasticbeanstalk:application:environment",
+            OptionName="DB_USER",
+            Value=Ref(db_super_user)
+        ),
+        OptionSettings(
+            Namespace="aws:elasticbeanstalk:application:environment",
+            OptionName="DB_PASS",
+            Value=Ref(db_super_user_pass)
+        ),
+        OptionSettings(
+            Namespace="aws:elasticbeanstalk:application:environment",
+            OptionName="OAUTH_CONSUMER_KEY",
+            Value='dummy-val'
+        ),
+        OptionSettings(
+            Namespace="aws:elasticbeanstalk:application:environment",
+            OptionName="OAUTH_CONSUMER_SECRET",
+            Value='dummy-val'
+        ),
+        OptionSettings(
+            Namespace="aws:elasticbeanstalk:application:environment",
+            OptionName="OAUTH_PASSWORD",
+            Value='dummy-val'
         )
     ]
 ))
@@ -141,7 +198,7 @@ test_environment = t.add_resource(Environment(
 
 t.add_output(
     Output(
-        "URL",
+        "HyP3ApiUrl",
         Description="HyP3 API url",
         Value=Join("", ["http://", GetAtt(test_environment, "EndpointURL")])
     )

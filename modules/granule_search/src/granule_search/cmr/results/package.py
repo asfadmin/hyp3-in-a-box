@@ -1,5 +1,3 @@
-import json
-
 import asf_granule_util as gu
 
 import hyp3_events
@@ -11,7 +9,7 @@ def package(search_results):
         :param list[dict] search_results: package results from CMR
 
         :returns: List of new granule packages
-        :rtype: list[GranulePackage]
+        :rtype: list[hyp3_events.NewGranuleEvent]
     """
     hyp3_granules = [
         get_relevant_metadata_from(result) for result in search_results
@@ -28,9 +26,16 @@ def get_relevant_metadata_from(result):
 
     polygon_str = get_polygon_str(polygons)
     polygon = parse_points(polygon_str)
-    download_url = get_download_url(links)
 
-    return hyp3_events.NewGranuleEvent(name, polygon, download_url)
+    download_url = get_download_url(links)
+    browse_url = get_browse_url(links)
+
+    return hyp3_events.NewGranuleEvent(
+        name,
+        polygon,
+        download_url,
+        browse_url
+    )
 
 
 def get_polygon_str(polygons):
@@ -44,13 +49,45 @@ def parse_points(points_str):
 
 
 def get_download_url(links):
+    url = get_valid_url(links, validator_func=is_zip_url)
+
+    if url == "":
+        raise RuntimeError(
+            f"No url found in granule links matching "
+            f"validator: {is_zip_url.__name__}"
+        )
+
+    return url
+
+
+def get_browse_url(links):
+    return get_valid_url(links, validator_func=is_img_url)
+
+
+def get_valid_url(links, *, validator_func):
     for link in links:
         url = link['href']
 
-        if not url.endswith('.zip'):
-            continue
+        if validator_func(url):
+            return url
 
-        return url
+    return ""
+
+
+def is_zip_url(url):
+    return url.endswith('.zip')
+
+
+def is_img_url(url):
+    img_extensions = ('jpg', 'png', 'jpeg')
+
+    return any(
+        has_extension(url, extension) for extension in img_extensions
+    )
+
+
+def has_extension(url, extension):
+    return url.lower().endswith(f'.{extension}')
 
 
 def is_relevant(result):
@@ -83,11 +120,3 @@ def make_granule_from(result):
 
 def is_relevant_type(granule_type):
     return granule_type in ('SLC', 'GRD')
-
-
-def format_into_json(new_granules_events):
-    event_dicts = [e.to_dict() for e in new_granules_events]
-
-    return json.dumps({
-        'new_granules': event_dicts
-    })
