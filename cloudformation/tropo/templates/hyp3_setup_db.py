@@ -75,9 +75,16 @@ ssm_param_read_write = Policy(
                 "Action": [
                     "ssm:PutParameter",
                     "ssm:DeleteParameter",
+                    "ssm:GetParameters",
+                    "ssm:GetParameter",
                     "ssm:DeleteParameters"
                 ],
-                "Resource": Join('', ['/', Ref('AWS::StackName'), '/*'])
+                "Resource": Join(":", [
+                    "arn:aws:ssm",
+                    Ref("AWS::Region"),
+                    Ref("AWS::AccountId"),
+                    "parameter/*"
+                ])
             }
         ]
     }
