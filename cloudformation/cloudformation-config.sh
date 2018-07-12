@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CONF=configuration.json
-BUCKET=asf-hyp3-in-a-box-source
+BUCKET=hyp3-in-a-box
 OBJ_KEY=$BUCKET/test/config/$CONF
 
 if [ "$1" = "down" ]

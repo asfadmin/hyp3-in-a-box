@@ -22,6 +22,7 @@ import boto3
 import github_status as gs
 
 S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
+TEMPLATE_CONFIG_BUCKET = "hyp3-in-a-box"
 MATURITY = os.environ["MATURITY"]
 GITHUB_HYP3_API_CLONE_TOKEN = os.environ["GITHUB_HYP3_API_CLONE_TOKEN"]
 BUCKET_BASE_DIR = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
@@ -225,13 +226,6 @@ def build_hyp3_api():
     ])
     api_flask_path = pl.Path('hyp3-api/hyp3-flask')
 
-    api_cfg_path = "s3://{}".format(
-        os.path.join(BUCKET_BASE_DIR, "config/hyp3_api_config.json")
-    )
-    subprocess.check_call([
-        "aws", "s3", "cp", api_cfg_path, str(api_flask_path / "config.json")
-    ])
-
     print(f"Hyp3 api directories: {os.listdir(str(api_flask_path))}")
     subprocess.check_call([
         "zip", "-r", "../../build/hyp3_api.zip", "."],
@@ -247,7 +241,7 @@ def build_hyp3_api():
 
 def post_build():
     bucket_uri = "s3://{}".format(
-        os.path.join(BUCKET_BASE_DIR, "config/configuration.json")
+        os.path.join(TEMPLATE_CONFIG_BUCKET, "config/configuration.json")
     )
 
     subprocess.check_call(["aws", "s3", "cp", bucket_uri, "build/"])
