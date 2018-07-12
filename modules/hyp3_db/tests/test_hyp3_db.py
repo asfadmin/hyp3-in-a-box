@@ -19,8 +19,6 @@ def test_api_key_generation(db):
     key, api_key = hyp3_models.ApiKey.generate_new(user.id)
     db.session.add(api_key)
 
-    print(f"key: {key} \n hash: {api_key.hash}")
-
 
 def update_db_with(db, obj):
     db.session.flush()
