@@ -22,7 +22,7 @@ Resources
 """
 import uuid
 
-from troposphere import GetAtt, Ref, Parameter, Output
+from troposphere import GetAtt, Ref, Parameter, Output, Join
 from troposphere.awslambda import Environment
 from troposphere.cloudformation import CustomResource
 from troposphere.iam import Role, Policy
@@ -64,13 +64,32 @@ default_processes_s3_read = Policy(
         }]}
 )
 
+ssm_param_read_write = Policy(
+    PolicyName="SsmParamReadWrite",
+    PolicyDocument={
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "VisualEditor0",
+                "Effect": "Allow",
+                "Action": [
+                    "ssm:PutParameter",
+                    "ssm:DeleteParameter",
+                    "ssm:DeleteParameters"
+                ],
+                "Resource": Join('', ['/', Ref('AWS::StackName'), '/*'])
+            }
+        ]
+    }
+)
+
 role = t.add_resource(Role(
     "SetupDbExecutionRole",
     Path="/",
     ManagedPolicyArns=[
         "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
     ],
-    Policies=[default_processes_s3_read],
+    Policies=[default_processes_s3_read, ssm_param_read_write],
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc')
 ))
 
