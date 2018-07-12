@@ -16,7 +16,7 @@ with (pl.Path(__file__).parent / 'dashboard.json').open('r') as f:
     dashboard_json = f.read()
 
 dashboad_name = t.add_parameter(Parameter(
-    'DashBoardName',
+    'Hyp3DashBoardName',
     Description="Name of the hyp3 monitoring dashboard",
     Default='hyp3-monitoring',
     Type="String"

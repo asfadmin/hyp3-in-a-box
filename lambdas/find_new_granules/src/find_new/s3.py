@@ -24,7 +24,6 @@ def download(path):
 def get_correct_exception(e, key):
     if e.response['Error']['Code'] != "404":
         error_msg = get_no_object_error_msg(key)
-        print(error_msg)
 
         return ObjectDoesntExist(error_msg)
 
