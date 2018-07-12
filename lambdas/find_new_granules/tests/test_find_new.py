@@ -28,5 +28,15 @@ def test_get_new(mock_get):
     mock_get.assert_called()
 
 
-def test_s3_upload():
+@mock.patch(
+    'find_new.find_new.get_new_granules_between',
+    side_effect=find_new_mocks.asf_api_requests_get
+)
+@mock.patch(
+    'find_new.s3.upload'
+)
+def test_s3_upload(mock_s3_upload, mock_find_new):
     find_new.granule_events()
+
+    mock_s3_upload.assert_called_once()
+    mock_find_new.assert_called_once()
