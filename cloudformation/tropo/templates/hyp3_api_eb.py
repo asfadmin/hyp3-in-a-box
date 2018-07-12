@@ -1,5 +1,5 @@
 # hyp3_api_eb.py
-# Rohan Weeden
+# Rohan Weeden, William Horn
 # Created: May 24, 2018
 
 """
