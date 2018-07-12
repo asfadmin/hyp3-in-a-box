@@ -240,9 +240,9 @@ def build_hyp3_api():
 
 
 def post_build():
-    bucket_uri = "s3://{}".format(
-        os.path.join(TEMPLATE_CONFIG_BUCKET, "config/configuration.json")
-    )
+    bucket_uri = "s3://{}".format(os.path.join(
+        TEMPLATE_CONFIG_BUCKET, MATURITY, "config/configuration.json"
+    ))
 
     subprocess.check_call(["aws", "s3", "cp", bucket_uri, "build/"])
     subprocess.check_call([
