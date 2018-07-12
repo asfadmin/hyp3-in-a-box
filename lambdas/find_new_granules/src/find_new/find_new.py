@@ -15,7 +15,7 @@ def granule_events():
         :returns: new granules before the previous runtime of the lambda
         :rtype: list[dict]
     """
-    prev_time = get_previous_time_formatted()
+    prev_time = get_previous_time()
 
     request_time = dt.datetime.utcnow()
     print('time-range: {} -> {}'.format(
@@ -29,7 +29,7 @@ def granule_events():
     return results
 
 
-def get_previous_time_formatted():
+def get_previous_time():
     try:
         prev_time = previous_time.get_time()
     except s3.ObjectDoesntExist:
