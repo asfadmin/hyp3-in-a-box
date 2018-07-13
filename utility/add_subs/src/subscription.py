@@ -1,4 +1,6 @@
+import argparse
 import collections
+import textwrap
 import json
 import pathlib as pl
 
@@ -11,16 +13,51 @@ Subscription = collections.namedtuple(
 )
 
 
+class CustomFormatter(
+        argparse.ArgumentDefaultsHelpFormatter,
+        argparse.RawDescriptionHelpFormatter
+):
+    pass
+
+
 def main():
-    make()
+    parser = get_parser()
+    args = vars(parser.parse_args())
+
+    make(args)
 
 
-def make():
+def get_parser():
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=textwrap.dedent("""\
+            Create a list of subscriptions from a  json file
+            each sub in the file will have the shape:
+
+            {
+                "name": <String name>,
+                "location": "MULTIPOLYGON(((<multipolygon here>)))",
+                "process_name": <valid hyp3 process name>
+            }
+
+            Subscription with the same name will not be recreated.
+        """)
+    )
+
+    parser.add_argument(
+        '--subs-file-path',
+        required=True,
+        help="path to the subscription json file"
+    )
+
+    return parser
+
+
+def make(args):
     api = get_api()
 
-    subs = [
-        Subscription(**sub) for sub in get_new_subs(api)
-    ]
+    path = args['subs_file_path']
+    subs = list(set(Subscription(**sub) for sub in get_new_subs_from(path)))
 
     return [
         make_sub(api, sub) for sub in subs if not sub_exists(api, sub.name)
@@ -42,26 +79,9 @@ def sub_exists(api, sub_name):
     return sub_name in sub_names
 
 
-def get_new_subs(api):
-    return [{
-        'name': 'Middle East',
-        'location': 'MULTIPOLYGON (((56.89 48.61,80.10 48.96,'
-                    '94.51 31.85,62.52 33.48,56.89 48.61)))',
-        'process_name': 'Notify Only'
-    }, {
-        'name': 'America',
-        'location': 'MULTIPOLYGON (((-22.04 78.05,164.98 '
-                    '78.05,164.98 6.97,-22.04 6.97,-22.04 78.05)))',
-
-        'process_name': 'Notify Only'
-    }, {
-        'name': 'Europe/Asia',
-        'location': 'MULTIPOLYGON (((-21.537449265565783 76.65326953894953,'
-                    '155.65005073443422 76.65326953894953,155.65005073443422 '
-                    '-73.4611845300788,-21.537449265565783 -73.46118453005788,'
-                    '-21.537449265565783 76.65326953894953)))',
-        'process_name': 'Notify Only'
-    }]
+def get_new_subs_from(subs_file_path):
+    with pl.Path(subs_file_path).open('r') as f:
+        return json.load(f)
 
 
 def make_sub(api, sub):
