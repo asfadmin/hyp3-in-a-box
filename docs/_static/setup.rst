@@ -34,7 +34,7 @@ Launching the CloudFormation stack
    The template is bound to a specific region referenced in the name.
    The naming convension for the template is as follows:
 
-      ``hyp3.<aws region here>.json``
+      ``hyp3-in-a-box_<aws region here>.json``
 
    Be sure to create the template in the correct region or the template will no work.
    Currently the only supported region is ``us-west-2``.
@@ -58,7 +58,7 @@ Launching
 
     To launch the cloudformation stack
 
-    * Download the `hyp3 cloudformation template`_.
+    * Download a version of the hyp3 cloudformation template: :ref:`releases`.
     * Login to the **AWS conosle**.
     * Go to the **Cloudformation** section and click **Create Stack**.
     * Under **Choose a template**, select the option to **upload a file**.
@@ -70,8 +70,9 @@ Launching
     which is linked in stack ouptuts, create a subscription over your area of intreset
     and start recieving data.
 
+Basic Usage
+~~~~~~~~~~~
+
 .. _Generate Ec2 Key Pairs: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 .. _Verify Your Email: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses-procedure.html?shortFooter=true
 .. _random.org: https://www.random.org/strings/
-.. _hyp3 cloudformation
-
