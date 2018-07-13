@@ -22,7 +22,10 @@ import boto3
 import github_status as gs
 
 S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
+
 TEMPLATE_CONFIG_BUCKET = "hyp3-in-a-box"
+TEMPLATE_NAME = 'hyp3-in-a-box_US-WEST-2.json'
+
 MATURITY = os.environ["MATURITY"]
 GITHUB_HYP3_API_CLONE_TOKEN = os.environ["GITHUB_HYP3_API_CLONE_TOKEN"]
 BUCKET_BASE_DIR = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
@@ -162,7 +165,7 @@ def build():
 def upload_template(file_path):
     s3 = boto3.resource('s3')
 
-    key = 'template/hyp3-in-a-box-template.json'
+    key = 'template/hyp3-in-a-box.us-west-2.json'
     bucket = s3.Bucket(S3_SOURCE_BUCKET)
 
     with open(file_path, 'rb') as f:
@@ -179,6 +182,7 @@ def build_lambdas():
     ])
     subprocess.check_call([
         "aws", "s3", "cp", "build/lambdas",
+
         "s3://{}".format(BUCKET_BASE_DIR),
         "--recursive",
         "--include", '"*"'
