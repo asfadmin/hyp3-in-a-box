@@ -32,6 +32,7 @@ HyP3 In A Box's Documentation
    :caption: Contents:
 
    _static/setup
+   _static/releases
    _static/dev-setup
    _static/cloudformation
    _static/lambdas-main
