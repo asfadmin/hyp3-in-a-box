@@ -15,10 +15,6 @@ def send_email_main(aws_event):
     subject, address = finish_event.subject, finish_event.address
     message = render.email_with(finish_event)
 
-    if not finish_event.browse_url:
-        print("no browse_url so not sending email...")
-        return
-
     print('sending email')
     ses.send(
         address,
