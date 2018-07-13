@@ -165,7 +165,7 @@ def build():
 def upload_template(file_path):
     s3 = boto3.resource('s3')
 
-    key = 'template/hyp3-in-a-box.us-west-2.json'
+    key = pl.Path('template') / TEMPLATE_NAME
     bucket = s3.Bucket(S3_SOURCE_BUCKET)
 
     with open(file_path, 'rb') as f:
