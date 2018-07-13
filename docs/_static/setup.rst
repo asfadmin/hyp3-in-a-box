@@ -58,7 +58,7 @@ Launching
 
     To launch the cloudformation stack
 
-    * Download the `hyp3 cloudformation template`_.
+    * Download a version of the hyp3 cloudformation template: :ref:`releases`.
     * Login to the **AWS conosle**.
     * Go to the **Cloudformation** section and click **Create Stack**.
     * Under **Choose a template**, select the option to **upload a file**.
@@ -76,4 +76,3 @@ Basic Usage
 .. _Generate Ec2 Key Pairs: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 .. _Verify Your Email: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses-procedure.html?shortFooter=true
 .. _random.org: https://www.random.org/strings/
-.. _hyp3 cloudformation: www.s3-tempalte-link.here.com
