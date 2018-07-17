@@ -68,11 +68,13 @@ Launching
 
     When stack is finished creating your ready to start using HyP3! Using the api,
     which is linked in stack ouptuts, create a subscription over your area of intreset
-    and start recieving data.
+    and start recieving data. The username and api-key for the newly created HyP3 API is stored
+    in AWS `Systems Manager`_ parameter store.
 
 Basic Usage
 ~~~~~~~~~~~
 
 .. _Generate Ec2 Key Pairs: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 .. _Verify Your Email: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses-procedure.html?shortFooter=true
-.. _random.org: https://www.random.org/strings/
+.. _random.org: https://www.random.org/password/
+.. _Systems Manager: https://aws.amazon.com/systems-manager/
