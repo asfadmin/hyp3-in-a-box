@@ -1,7 +1,7 @@
 .. _releases:
 
-Hyp3-In-A-Box Releases
-======================
+Releases
+========
 
 Notify Only (0.1.0)
 -------------------

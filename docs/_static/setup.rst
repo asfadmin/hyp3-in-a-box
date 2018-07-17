@@ -1,7 +1,7 @@
 .. _setup:
 
-Hyp3 In A Box Installation
-==========================
+Installation
+============
 
 Generate an EC2 Key Pair
 ^^^^^^^^^^^^^^^^^^^^^^^^
