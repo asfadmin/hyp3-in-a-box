@@ -89,7 +89,7 @@ def pre_build():
 
 
 def run_tests():
-    cov_xml_path, = pl.Path("/tmp/cov.xml")
+    cov_xml_path = pl.Path("/tmp/cov.xml")
     test_results = pl.Path("/tmp/test_results.xml")
 
     try:
