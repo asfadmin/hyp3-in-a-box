@@ -89,16 +89,19 @@ def pre_build():
 
 
 def run_tests():
+    cov_xml_path = pl.Path("/tmp/cov.xml")
+
     try:
         subprocess.check_call([
-            "python3", "-m",
-            "pytest", "-s",
-            "--junitxml=/tmp/test_results.xml"
+            "py.test",
+            "--junitxml=/tmp/test_results.xml",
+            "--cov=.", "--cov-report",
+            "xml:{}".format(cov_xml_path), "-s", "."
         ])
     except subprocess.CalledProcessError as e:
         raise e
     else:
-        check_coverage()
+        check_coverage(cov_xml_path)
     finally:
         r = ElementTree.parse("/tmp/test_results.xml").getroot()
         test_result_summary = "{} Tests, {} Failed, {} Errors".format(
@@ -110,13 +113,7 @@ def run_tests():
         save_config("TEST_RESULT_SUMMARY", test_result_summary)
 
 
-def check_coverage():
-    cov_xml_path = pl.Path("/tmp/cov.xml")
-    subprocess.check_call(
-        ["py.test", "--cov=.", "--cov-report",
-            "xml:{}".format(cov_xml_path), "."]
-    )
-
+def check_coverage(cov_xml_path):
     r = ElementTree.parse(str(cov_xml_path)).getroot()
     coverage = float(r.get("line-rate"))
     coverage_percent = int(coverage * 100)
