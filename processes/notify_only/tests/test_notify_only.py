@@ -1,5 +1,7 @@
 import multiprocessing as mp
+import os
 
+import pytest
 import mock
 
 import import_notify_only
@@ -8,6 +10,13 @@ import notify_only
 import natural_earth
 
 
+skip_if_running_in_codebuild = pytest.mark.skipif(
+    lambda: 'CODEBUILD_BUILD_ARN' in os.environ,
+    reason="Don't run test if running in codebuild"
+)
+
+
+@skip_if_running_in_codebuild
 @mock.patch(
     'notify_only_utils.get_base_path',
     side_effect=utils.get_testing_base_path
@@ -34,6 +43,7 @@ def get_shapefile_path(dl_path):
     return natural_earth.get_shapefile_in(path)
 
 
+@skip_if_running_in_codebuild
 @mock.patch(
     'natural_earth.download',
     side_effect=get_shapefile_path)

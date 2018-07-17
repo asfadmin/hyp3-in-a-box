@@ -94,7 +94,7 @@ def run_tests():
 
     try:
         subprocess.check_call([
-            "py.test", "-n", "auto",
+            "py.test", "-n", "4",
             "--junitxml={}".format(test_results),
             "--cov=.", "--cov-report",
             "xml:{}".format(cov_xml_path), "-s", "."
