@@ -17,14 +17,14 @@ class CustomFormatter(
         argparse.ArgumentDefaultsHelpFormatter,
         argparse.RawDescriptionHelpFormatter
 ):
-    pass
+    """ Custom formatter for the argument parser"""
 
 
 def main():
     parser = get_parser()
     args = vars(parser.parse_args())
 
-    make(args)
+    make(**args)
 
 
 def get_parser():
@@ -53,11 +53,12 @@ def get_parser():
     return parser
 
 
-def make(args):
+def make(*, subs_file_path):
     api = get_api()
 
-    path = args['subs_file_path']
-    subs = list(set(Subscription(**sub) for sub in get_new_subs_from(path)))
+    subs = list(set(
+        Subscription(**sub) for sub in get_new_subs_from(subs_file_path)
+    ))
 
     return [
         make_sub(api, sub) for sub in subs if not sub_exists(api, sub.name)
