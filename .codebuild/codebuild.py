@@ -90,11 +90,12 @@ def pre_build():
 
 def run_tests():
     cov_xml_path = pl.Path("/tmp/cov.xml")
+    test_results = pl.Path("/tmp/test_results.xml")
 
     try:
         subprocess.check_call([
-            "py.test",
-            "--junitxml=/tmp/test_results.xml",
+            "py.test", "-n", "auto",
+            "--junitxml={}".format(test_results),
             "--cov=.", "--cov-report",
             "xml:{}".format(cov_xml_path), "-s", "."
         ])
@@ -103,7 +104,7 @@ def run_tests():
     else:
         check_coverage(cov_xml_path)
     finally:
-        r = ElementTree.parse("/tmp/test_results.xml").getroot()
+        r = ElementTree.parse(str(test_results)).getroot()
         test_result_summary = "{} Tests, {} Failed, {} Errors".format(
             int(r.get("tests", 0)) - int(r.get("skips", 0)),
             r.get("failures"),

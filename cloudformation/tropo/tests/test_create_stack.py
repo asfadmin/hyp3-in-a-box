@@ -21,8 +21,6 @@ def test_create_stack(params):
 
     assert os.path.isfile(template_file)
 
-    os.remove(template_file)
-
 
 @settings(max_examples=3)
 @given(st.fixed_dictionaries({
@@ -44,4 +42,3 @@ def test_create_stack_makes_valid_stack(params):
     )
 
     assert response
-    os.remove(template_file)

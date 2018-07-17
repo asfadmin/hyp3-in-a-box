@@ -1,7 +1,7 @@
 import multiprocessing as mp
 
 from agg_matplotlib import matplotlib
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 
 from shapely import wkt
 import geopandas as gpd
