@@ -24,7 +24,7 @@ def python3(volume_size):
 
 def notify_only(volume_size):
     return create_ami(
-        base_ami_id='not created yet...',
+        base_ami_id='ami-c7336cbf',
         user_data_filename='notify_only',
         ami_name='hyp3-notify-only-process',
         volume_size=22
