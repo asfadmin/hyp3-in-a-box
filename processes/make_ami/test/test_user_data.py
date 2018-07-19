@@ -26,6 +26,12 @@ def test_load_user_data(name):
         for shebang in ('#!/bin/bash', '#! /bin/bash')
     )
 
+    assert ami_user_data.endswith(
+        user_data.self_termination_script()
+    )
+
+    print(ami_user_data)
+
 
 def test_load_user_data_with_empty_name():
-    assert user_data.load("") == ""
+    assert user_data.load("") == user_data.self_termination_script()
