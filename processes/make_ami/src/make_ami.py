@@ -40,7 +40,7 @@ def create_ami(**kwargs):
         return ec2.get_existing_image_from(images)
     else:
         print('creating new image', ami_name)
-        make_new_image(**kwargs)
+        return make_new_image(**kwargs)
 
 
 def make_new_image(*, base_ami_id, user_data_filename, ami_name, volume_size):
