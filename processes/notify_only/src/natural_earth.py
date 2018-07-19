@@ -1,3 +1,4 @@
+import collections
 import zipfile
 
 import requests
@@ -7,7 +8,9 @@ import notify_only_utils as utils
 
 def download(geom_name):
     natural_earth_download_url = get_url_for(geom_name)
-    download_path_str = f'data/{geom_name}/{geom_name}.zip'
+    download_path_str = 'data/{geom_name}/{geom_name}.zip'.format(
+        geom_name=geom_name
+    )
 
     return get_shapefile(
         download_path_str,
@@ -16,7 +19,7 @@ def download(geom_name):
 
 
 def get_natural_earth_geoms():
-    return {
+    return collections.OrderedDict({
         "countries": (
             "https://www.naturalearthdata.com/http/"
             "/www.naturalearthdata.com/download/10m/cultural/"
@@ -37,7 +40,7 @@ def get_natural_earth_geoms():
             "/www.naturalearthdata.com/download/10m/physical"
             "/ne_10m_graticules_15.zip"
         )
-    }
+    })
 
 
 def get_url_for(geom):

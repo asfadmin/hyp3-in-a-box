@@ -11,7 +11,7 @@ import natural_earth
 
 
 skip_if_running_in_codebuild = pytest.mark.skipif(
-    lambda: 'CODEBUILD_BUILD_ARN' in os.environ,
+    'CODEBUILD_BUILD_ARN' in os.environ,
     reason="Don't run test if running in codebuild"
 )
 

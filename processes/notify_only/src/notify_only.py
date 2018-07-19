@@ -20,6 +20,7 @@ def browse(granule_wkt, subscription_wkt):
         get_wkt_geom(wkt_str) for wkt_str in [granule_wkt, subscription_wkt]
     ]
 
+    print('plotting geometries')
     fig, ax = plt.subplots(1, figsize=(20, 10))
     colors = get_colors()
 
@@ -53,11 +54,13 @@ def browse(granule_wkt, subscription_wkt):
         linewidth=2
     )
 
+    print('setting bounds')
     plt_bounds = bounds.zoom_out_around(granule['poly'])
     set_bounds_to(plt_bounds)
 
     remove_ticks_from(ax)
 
+    print('saving plot to png')
     png_path = str(utils.get_base_path() / 'world.png')
     plt.savefig(png_path, bbox_inches='tight')
 
@@ -86,6 +89,7 @@ def get_geometry_names():
 
 
 def get_natural_earth_geom(name):
+    print('download geom from natural_earth: ', name)
     shapefile = natural_earth.download(name)
 
     return get_geometry_from(shapefile)
