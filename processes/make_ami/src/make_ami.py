@@ -61,6 +61,9 @@ def image_already_exists(images):
 
 
 def make_ami(instance, image_name):
+    print('waiting for instance to stop after user data is finished')
+    wait_for_user_data()
+
     print("Creating AMI from running instance")
     image = instance.create_image(
         Description='Compute environment resource for time series processing',
@@ -69,10 +72,10 @@ def make_ami(instance, image_name):
 
     print(image)
 
-    # Wait for the ami to get created
+    print('waiting for image to finish creating')
     while image.state == 'pending':
         time.sleep(5)
-        image.update()
+        image.load()
 
     if image.state == 'available':
         print("AMI created successfully")
@@ -80,3 +83,16 @@ def make_ami(instance, image_name):
         print("!!!!AMI creation FAILED!!!!")
 
     return image.id
+
+
+def wait_for_user_data():
+    print('View logs user data logs in instance at:'
+          ' \n  /var/log/cloud-init-output.log\n')
+    print(f'"{user_data.user_data_finish_file()}"',
+          'will be created at the end of the user data script',
+          'in the home directory.')
+
+    while True:
+        user_in = input("User data finished? (yes/no) ")
+        if 'yes' in user_in:
+            return
