@@ -11,7 +11,7 @@ Notify Only (0.1.0)
     be enabled/disabled by users.
 
     * **Supported Regions:** us-west-2
-    * `Download <https://s3-us-west-2.amazonaws.com/asf-hyp3-in-a-box-source/template/hyp3-in-a-box_US-WEST-2.json?versionId=edgMg9nVNHx8MKAgXpBzEXFZ5a_rp1EX>`_
+    * `Download <https://s3-us-west-2.amazonaws.com/asf-hyp3-in-a-box-source/template/hyp3-in-a-box_US-WEST-2.json?versionId=qZ9O5bq5gB5foPF5gnJHk.UYN7RSUnWf>`_
     * :ref:`setup`
 
 

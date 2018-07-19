@@ -76,5 +76,5 @@ Basic Usage
 
 .. _Generate Ec2 Key Pairs: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 .. _Verify Your Email: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses-procedure.html?shortFooter=true
-.. _random.org: https://www.random.org/password/
+.. _random.org: https://www.random.org/passwords/
 .. _Systems Manager: https://aws.amazon.com/systems-manager/
