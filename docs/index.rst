@@ -32,12 +32,15 @@ HyP3 In A Box's Documentation
    :caption: Contents:
 
    _static/setup
+   _static/releases
+   _static/dev-setup
    _static/cloudformation
    _static/lambdas-main
    _static/modules
+   _static/ci_testing
 
 
-The Hybrid Plugable Processing Pipeline (HyP3) System
+The Hybrid Plugable Processing Pipeline (HyP3)
 -----------------------------------------------------
 
 .. figure:: _static/images/diagram.png

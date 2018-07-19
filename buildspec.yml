@@ -4,7 +4,7 @@ phases:
   install:
     commands:
       - apt-get update && apt-get install zip
-      - pip install -U requests sphinx pytest subprocess32 pytest-cov defusedxml
+      - pip install -U requests sphinx pytest subprocess32 pytest-cov defusedxml pytest-xdist
       - python3 .codebuild/codebuild.py install
   pre_build:
     commands:

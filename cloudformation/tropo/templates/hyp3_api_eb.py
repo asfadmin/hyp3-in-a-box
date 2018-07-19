@@ -107,7 +107,7 @@ config_template = t.add_resource(ConfigurationTemplate(
     DependsOn=["Hyp3VPC", "Hyp3DB"],
     ApplicationName=Ref(app),
     Description="",
-    SolutionStackName="64bit Amazon Linux 2018.03 v2.7.0 running Python 3.6",
+    SolutionStackName=environment.eb_solution_stack_name,
     OptionSettings=[
         OptionSettings(
             Namespace="aws:autoscaling:launchconfiguration",

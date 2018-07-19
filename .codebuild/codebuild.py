@@ -22,7 +22,10 @@ import boto3
 import github_status as gs
 
 S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
+
 TEMPLATE_CONFIG_BUCKET = "hyp3-in-a-box"
+TEMPLATE_NAME = 'hyp3-in-a-box_US-WEST-2.json'
+
 MATURITY = os.environ["MATURITY"]
 GITHUB_HYP3_API_CLONE_TOKEN = os.environ["GITHUB_HYP3_API_CLONE_TOKEN"]
 BUCKET_BASE_DIR = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
@@ -86,18 +89,22 @@ def pre_build():
 
 
 def run_tests():
+    cov_xml_path = pl.Path("/tmp/cov.xml")
+    test_results = pl.Path("/tmp/test_results.xml")
+
     try:
         subprocess.check_call([
-            "python3", "-m",
-            "pytest", "-s",
-            "--junitxml=/tmp/test_results.xml"
+            "py.test", "-n", "4",
+            "--junitxml={}".format(test_results),
+            "--cov=.", "--cov-report",
+            "xml:{}".format(cov_xml_path), "-s", "."
         ])
     except subprocess.CalledProcessError as e:
         raise e
     else:
-        check_coverage()
+        check_coverage(cov_xml_path)
     finally:
-        r = ElementTree.parse("/tmp/test_results.xml").getroot()
+        r = ElementTree.parse(str(test_results)).getroot()
         test_result_summary = "{} Tests, {} Failed, {} Errors".format(
             int(r.get("tests", 0)) - int(r.get("skips", 0)),
             r.get("failures"),
@@ -107,13 +114,7 @@ def run_tests():
         save_config("TEST_RESULT_SUMMARY", test_result_summary)
 
 
-def check_coverage():
-    cov_xml_path = pl.Path("/tmp/cov.xml")
-    subprocess.check_call(
-        ["py.test", "--cov=.", "--cov-report",
-            "xml:{}".format(cov_xml_path), "."]
-    )
-
+def check_coverage(cov_xml_path):
     r = ElementTree.parse(str(cov_xml_path)).getroot()
     coverage = float(r.get("line-rate"))
     coverage_percent = int(coverage * 100)
@@ -162,7 +163,7 @@ def build():
 def upload_template(file_path):
     s3 = boto3.resource('s3')
 
-    key = 'template/hyp3-in-a-box-template.json'
+    key = str(pl.Path('template') / TEMPLATE_NAME)
     bucket = s3.Bucket(S3_SOURCE_BUCKET)
 
     with open(file_path, 'rb') as f:
@@ -179,6 +180,7 @@ def build_lambdas():
     ])
     subprocess.check_call([
         "aws", "s3", "cp", "build/lambdas",
+
         "s3://{}".format(BUCKET_BASE_DIR),
         "--recursive",
         "--include", '"*"'

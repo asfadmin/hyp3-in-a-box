@@ -14,7 +14,8 @@ from hyp3_db import hyp3_models
 import import_setup_db
 from init_db import setup_db
 
-testing_user = 'hyp3_user'
+TESTING_USER = 'hyp3_user'
+TESTING_DB = 'setup_db_testing_db'
 
 
 @mock.patch('setup_db_utils.os.environ')
@@ -29,9 +30,9 @@ def test_custom_resource_wrapper(dbmock, environ_mock):
     environ_mock.__getitem__.side_effect = env.__getitem__
     environ_mock.get.side_effect = env.get
 
-    setup_db(load_json_from('data/sample_event.json'), ['hyp3db'])
+    setup_db(load_json_from('data/sample_event.json'), [TESTING_DB])
 
-    with hyp3_db.test_db() as db:
+    with hyp3_db.test_db(db=TESTING_DB) as db:
         check_new_user(db, env)
         check_processes(db, env)
 
@@ -52,15 +53,15 @@ def check_processes(db, mock_env):
 
 
 def check_setup_db_still_works():
-    setup_db(load_json_from('data/sample_event.json'), ['hyp3db'])
+    setup_db(load_json_from('data/sample_event.json'), [TESTING_DB])
 
 
 def reset_hyp3_db():
     with hyp3_db.test_db(db='postgres') as admindb:
         admindb.session.connection().connection.set_isolation_level(0)
-        admindb.session.execute("DROP DATABASE hyp3db;")
-        admindb.session.execute("CREATE DATABASE hyp3db;")
-        admindb.session.execute(f"DROP USER IF EXISTS {testing_user};")
+        admindb.session.execute(f"DROP DATABASE {TESTING_DB};")
+        admindb.session.execute(f"CREATE DATABASE {TESTING_DB};")
+        admindb.session.execute(f"DROP USER IF EXISTS {TESTING_USER};")
         admindb.session.connection().connection.set_isolation_level(1)
 
 
@@ -68,8 +69,9 @@ def get_mock_environment():
     process_cfg = load_json_from('../../../processes/.config.json')
 
     return {
-        'Hyp3DBUser': testing_user,
-        'Hyp3DBName': 'hyp3db',
+        'Hyp3DBUser': TESTING_USER,
+        'Hyp3DBName': TESTING_DB,
+
         'Hyp3DBPass': 'testingpassword',
         'Hyp3AdminUsername': 'testuser',
         'Hyp3AdminEmail': 'test@alaska.edu',
