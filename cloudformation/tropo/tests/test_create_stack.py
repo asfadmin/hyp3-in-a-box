@@ -1,23 +1,38 @@
 import os
+import json
 
 import boto3
+from hypothesis import given, settings, strategies as st
 
 from create_stack import make_template
 
 client = boto3.client('cloudformation')
 
-def test_create_stack():
+
+@given(st.fixed_dictionaries({
+    'maturity': st.sampled_from(['test', 'unittest', 'prod']),
+    'use_name_parameters': st.booleans(),
+    'should_create_db': st.booleans()
+}))
+def test_create_stack(params):
     template_file = 'template.json'
-    make_template({'maturity': 'test', 'output': template_file})
+    params['output'] = template_file
+    make_template(params)
 
     assert os.path.isfile(template_file)
 
-    os.remove(template_file)
 
-
-def test_create_stack_makes_valid_stack():
+@settings(max_examples=3)
+@given(st.fixed_dictionaries({
+    'maturity': st.sampled_from(['test', 'unittest', 'prod']),
+    'use_name_parameters': st.booleans(),
+    'should_create_db': st.booleans()
+}))
+def test_create_stack_makes_valid_stack(params):
     template_file = 'template.json'
-    make_template({'maturity': 'test', 'output': template_file})
+    params['output'] = template_file
+    make_template(params)
+    print('validating template')
 
     with open(template_file, 'r') as f:
         template = f.read()
@@ -27,5 +42,3 @@ def test_create_stack_makes_valid_stack():
     )
 
     assert response
-    print(response)
-    os.remove(template_file)

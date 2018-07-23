@@ -5,14 +5,15 @@ name = "pypi"
 
 [packages]
 requests = "*"
-"boto3" = "*"
 "61ea59b" = {path = "./../../modules/hyp3_events"}
 asf-granule-util = "*"
+"22c4475" = {path = "./../../modules/granule_search"}
 
 [dev-packages]
 pytest = "*"
 pytest-cov = "*"
 mock = "*"
+"boto3" = "*"
 
 [requires]
 python_version = "3.6"

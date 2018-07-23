@@ -3,7 +3,7 @@ import pathlib as pl
 import boto3
 import botocore
 
-from .environment import environment as env
+from .find_new_env import environment as env
 
 s3 = boto3.resource('s3')
 
@@ -18,13 +18,12 @@ def download(path):
     try:
         do_download(key, path)
     except botocore.exceptions.ClientError as e:
-        raise get_correct_exception(e, key)
+        raise get_correct_exception(e, key) from None
 
 
 def get_correct_exception(e, key):
     if e.response['Error']['Code'] != "404":
         error_msg = get_no_object_error_msg(key)
-        print(error_msg)
 
         return ObjectDoesntExist(error_msg)
 

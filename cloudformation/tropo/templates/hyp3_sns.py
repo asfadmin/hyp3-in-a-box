@@ -1,4 +1,19 @@
+# hyp3_sns.py
+# William Horn
+# Created: June, 2018
 
+"""
+
+Requires
+~~~~~~~~
+* :ref:`send_email_template`
+
+Resources
+~~~~~~~~~
+
+* **SNS:**
+
+"""
 from troposphere import GetAtt, Ref
 from troposphere.awslambda import Permission
 from troposphere.sns import Subscription, Topic

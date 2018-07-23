@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 "3da5cae" = {path = "./../../modules/hyp3_db"}
-"boto3" = "*"
 "61ea59b" = {path = "./../../modules/hyp3_events"}
 
 [dev-packages]
@@ -14,6 +13,7 @@ mock = "*"
 coverage = "*"
 pytest-cov = "*"
 hypothesis = "*"
+"boto3" = "*"
 
 [requires]
 python_version = "3.6"

@@ -4,103 +4,70 @@ import json
 import pathlib as pl
 import time
 
-import requests
+import granule_search
 
 from . import previous_time, s3
-from .environment import environment
-
-MAX_RESULTS = 2000
+from .find_new_env import environment
 
 
-def granules():
+def granule_events():
     """
-        :returns: new granules before previous runtime
+        :returns: new granules before the previous runtime of the lambda
         :rtype: list[dict]
     """
-    prev_time = get_previous_time_formatted()
+    prev_time = get_previous_time()
 
     request_time = dt.datetime.utcnow()
     print('time-range: {} -> {}'.format(
         prev_time,
-        cmr_date_format(request_time)
+        request_time
     ))
-    results = get_new_granules_after(prev_time)
 
+    results = get_new_granules_between(prev_time, request_time)
     previous_time.set_time(request_time)
 
     return results
 
 
-def get_previous_time_formatted():
+def get_previous_time():
     try:
         prev_time = previous_time.get_time()
     except s3.ObjectDoesntExist:
         prev_time = get_init_prev_time()
 
-    return cmr_date_format(prev_time)
+    return prev_time
 
 
 def get_init_prev_time():
     return dt.datetime.now() - dt.timedelta(minutes=5)
 
 
-def cmr_date_format(date):
-    return date.strftime('%Y-%m-%dT%H:%M:%SZ')
-
-
-def get_new_granules_after(prev_time):
+def get_new_granules_between(prev_time, request_time):
     """
         :param datetime.datetime prev_time: previous lambda runtime
+        :param datetime.datetime request_time: time the request is getting made
 
         :returns: response from cmr
-        :rtype: dict
+        :rtype: hyp3_events.NewGranuleEvent
     """
     print('making api request with: {}'.format(prev_time))
-    cmr_data = make_cmr_query(prev_time)
-    print("cmr returned {} results".format(len(cmr_data)))
+    new_granule_events = make_cmr_query(prev_time, request_time)
+    print("cmr returned {} results".format(len(new_granule_events)))
 
-    return cmr_data['feed']['entry']
+    return new_granule_events
 
 
-def make_cmr_query(prev_time):
-    api = CMRSearchAPI()
+def make_cmr_query(prev_time, request_time):
+    api = granule_search.CMR()
 
-    resp = api.query({
-        'provider': 'ASF',
-        'created_at[]': ["{},".format(prev_time)],
-        'platform[]': ['Sentinel-1A', 'Sentinel-1B'],
-        'page_size': MAX_RESULTS
-    })
-
-    data = resp.json()
+    new_granule_events = api        \
+        .between(prev_time, request_time) \
+        .get_new_granule_events()
 
     if 'test' in environment.maturity:
-        cache_output(data)
+        cache_output(new_granule_events)
 
-    return data
-
-
-class SearchAPI:
-    """ Class to wrap searching an generic api"""
-
-    def __init__(self, api_url):
-        self.api_url = api_url
-
-    def query(self, params):
-        """
-            :param params: dict
-
-            :returns: response from cmr
-            :rtype: requests.Response
-
-        """
-        with timing('request took {runtime} secs to complete'):
-            return requests.get(self.api_url, params=params)
-
-
-class CMRSearchAPI(SearchAPI):
-    def __init__(self):
-        super().__init__("https://cmr.earthdata.nasa.gov/search/granules.json")
+    return new_granule_events
 
 
 @cl.contextmanager
@@ -121,7 +88,3 @@ def cache_output(data):
 
     with (output_path / 'output.json').open('w') as f:
         json.dump(data, f, indent=2)
-
-
-if __name__ == "__main__":
-    new_time = granules()

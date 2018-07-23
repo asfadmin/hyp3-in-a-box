@@ -8,6 +8,7 @@ SQLAlchemy = "*"
 "geoalchemy2" = "*"
 "psycopg2" = "*"
 "d20dddb" = {path = "./."}
+passlib = "*"
 
 [dev-packages]
 pytest = "*"

@@ -3,7 +3,7 @@ import json
 import pathlib as pl
 
 from . import s3
-from .environment import environment
+from .find_new_env import environment
 
 
 def get_time():
