@@ -32,7 +32,10 @@ print('  adding send_email lambda')
 
 source_email = t.add_parameter(Parameter(
     "VerifiedSourceEmail",
-    Description="Source email to send notifications",
+    Description=(
+        "Verified source email. "
+        "This is where emails will be sent from."
+    ),
     Type="String",
     AllowedPattern=utils.get_email_pattern()
 ))

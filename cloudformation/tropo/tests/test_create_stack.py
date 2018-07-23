@@ -1,5 +1,4 @@
 import os
-import json
 
 import boto3
 from hypothesis import given, settings, strategies as st
@@ -22,7 +21,7 @@ def test_create_stack(params):
     assert os.path.isfile(template_file)
 
 
-@settings(max_examples=3)
+@settings(max_examples=3, deadline=2000)
 @given(st.fixed_dictionaries({
     'maturity': st.sampled_from(['test', 'unittest', 'prod']),
     'use_name_parameters': st.booleans(),
