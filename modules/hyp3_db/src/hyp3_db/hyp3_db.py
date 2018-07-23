@@ -13,8 +13,8 @@ def connect_from_env(db='hyp3db'):
     (host, user, password) = (
         os.environ[k] for k in ['DB_HOST', 'DB_USER', 'DB_PASSWORD']
     )
-    with connect(host, user, password, db=db) as db:
-        yield db
+    with connect(host, user, password, db=db) as db_obj:
+        yield db_obj
 
 
 @contextlib.contextmanager
