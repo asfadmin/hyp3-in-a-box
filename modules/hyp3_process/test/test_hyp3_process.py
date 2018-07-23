@@ -1,6 +1,8 @@
-import json
+import random
+import string
 
 import boto3
+import pytest
 
 import import_hyp3_process
 import hyp3_process
@@ -10,13 +12,8 @@ sqs_client = boto3.client('sqs')
 TESTING_QUEUE = 'UnittestingHyp3Queue.fifo'
 
 
-def test_hyp3_process():
-    queue = get_testing_queue()
-    print(queue)
-    assert hyp3_process.process('Notify Only')
-
-
-def get_testing_queue():
+@pytest.fixture
+def testing_queue():
     resp = sqs_client.list_queues(
         QueueNamePrefix=TESTING_QUEUE
     )
@@ -35,12 +32,26 @@ def get_testing_queue():
     return queue
 
 
-def add_test_event_to_queue():
-    queue = sqs.get_queue_by_name(QueueName=TESTING_QUEUE)
+def test_hyp3_process(testing_queue):
+    event_type = 'NotifyOnly'
+    add_test_event_to_queue(testing_queue, event_type)
+    print(testing_queue)
+    assert hyp3_process.process(testing_queue, event_type)
 
-    queue.send_message(MessageBody='blablabla', MessageAttributes={
-        'ProcessName': {
-            'StringValue': 'Notify Only',
-            'DataType': 'String'
-        }
-    })
+
+def add_test_event_to_queue(testing_queue, event_type):
+    testing_queue.send_message(
+        MessageBody='{}'.format(random_string()),
+        MessageGroupId='1',
+        MessageAttributes={
+            event_type: {
+                'StringValue': 'Process Type',
+                'DataType': 'String'
+            }
+        })
+
+
+def random_string():
+    return ''.join(
+        random.choices(string.ascii_uppercase + string.digits, k=10)
+    )

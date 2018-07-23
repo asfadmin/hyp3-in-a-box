@@ -1,7 +1,8 @@
 from . import sqs
 
 
-def process(event_type):
-    event = sqs.poll(event_type)
+def process(queue, event_type):
+    job = sqs.poll(queue, event_type)
+    job.delete()
 
-    return event
+    return job

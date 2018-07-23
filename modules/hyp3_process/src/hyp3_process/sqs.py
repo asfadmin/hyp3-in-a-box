@@ -1,5 +1,11 @@
 import boto3
+import json
 
 
-def poll(event_type):
-    return True
+def poll(queue, event_type):
+    resp = queue.receive_messages(
+        MaxNumberOfMessages=1,
+        MessageAttributeNames=[event_type]
+    )
+
+    return resp.pop()
