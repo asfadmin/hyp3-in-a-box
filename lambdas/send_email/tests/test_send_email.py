@@ -35,7 +35,7 @@ def test_render_email():
     event = load_example_sns()
 
     hyp3_event = sns.get_hyp3_event_from(event)
-    rendered_email = render.email_with(hyp3_event)
+    rendered_email = render.email_with(hyp3_event.to_dict())
 
     assert isinstance(rendered_email, str)
 
