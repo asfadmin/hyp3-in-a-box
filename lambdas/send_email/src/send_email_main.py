@@ -1,13 +1,12 @@
 import json
-
-import sns
-import render
-import ses
 import os
 from hashlib import sha1
 
 import hyp3_db
-from hyp3_db.hyp3_models import User, OneTimeAction
+import render
+import ses
+import sns
+from hyp3_db.hyp3_models import OneTimeAction, User
 
 
 def send_email_main(aws_event):
