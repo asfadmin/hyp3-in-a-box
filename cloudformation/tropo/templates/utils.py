@@ -3,7 +3,7 @@ import pathlib as pl
 
 from troposphere.awslambda import Code
 
-from troposphere import GetAtt, Parameter, Ref
+from troposphere import GetAtt, Parameter, Ref, Sub
 from troposphere.awslambda import Function
 
 from tropo_env import environment
@@ -60,6 +60,11 @@ def make_lambda_function(*, name, lambda_params=None, role):
 
     lambda_func = Function(
         "{}Function".format(camel_case_name),
+        FunctionName=Sub(
+            "${StackName}_hyp3_${FunctionName}",
+            StackName=Ref('AWS::StackName'),
+            FunctionName=name
+        ),
         Code=make_lambda_code(
             S3Bucket=environment.lambda_bucket,
             S3Key=s3_key,
@@ -73,16 +78,6 @@ def make_lambda_function(*, name, lambda_params=None, role):
     if lambda_params is not None:
         for param_name, param_val in lambda_params.items():
             setattr(lambda_func, param_name, param_val)
-
-    if environment.use_name_parameters:
-        lambda_name = t.add_parameter(Parameter(
-            "Lambda{}Name".format(camel_case_name),
-            Description="Name of the {} lambda function".format(name),
-            Default="hyp3_{}".format(name),
-            Type="String"
-        ))
-
-        lambda_func.FunctionName = Ref(lambda_name)
 
     return lambda_func
 
