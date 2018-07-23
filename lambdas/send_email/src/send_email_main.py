@@ -6,6 +6,7 @@ import hyp3_db
 import render
 import ses
 import sns
+
 from hyp3_db.hyp3_models import OneTimeAction, User
 
 
@@ -21,7 +22,10 @@ def send_email_main(aws_event):
             print('user does not want emails, aborting...')
             return
 
-        unsub_action = db.session.query(OneTimeAction).filter_by(user_id=user.id).filter_by(action='unsubscribe').first()
+        unsub_action = db.session.query(OneTimeAction) \
+            .filter_by(user_id=user.id) \
+            .filter_by(action='unsubscribe') \
+            .first()
         if not unsub_action:
             unsub_action = create_unsubscribe_action(user)
             db.session.add(unsub_action)
