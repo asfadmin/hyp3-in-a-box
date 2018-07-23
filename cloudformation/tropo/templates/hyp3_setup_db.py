@@ -104,7 +104,7 @@ admin_email = t.add_parameter(Parameter(
     "Hyp3AdminEmail",
     Description=(
         "Email for the admin hyp3 user. "
-        "This is where emails will be sent too."
+        "This is where emails will be sent to."
     ),
     Type="String",
     AllowedPattern=utils.get_email_pattern()
