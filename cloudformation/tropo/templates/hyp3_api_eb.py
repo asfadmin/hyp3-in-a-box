@@ -193,8 +193,14 @@ config_template = t.add_resource(ConfigurationTemplate(
 
 test_environment = t.add_resource(Environment(
     "Hyp3ApiTestEnvironment",
-    EnvironmentName="test",
-    Description="HyP3 API maturity: 'test'",
+    EnvironmentName=Sub(
+        "${StackName}-${Maturity}",
+        StackName=Ref('AWS::StackName'),
+        Maturity=environment.maturity
+    ),
+    Description="HyP3 API maturity: '{}'".format(
+        environment.maturity
+    ),
     ApplicationName=Ref(app),
     TemplateName=Ref(config_template),
     VersionLabel=Ref(app_version)
