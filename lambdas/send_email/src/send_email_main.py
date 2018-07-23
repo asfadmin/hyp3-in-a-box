@@ -25,6 +25,8 @@ def send_email_main(aws_event):
         unsub_action = db.session.query(OneTimeAction).filter_by(user_id=user.id).filter_by(action='unsubscribe').first()
         if not unsub_action:
             unsub_action = create_unsubscribe_action(user)
+            db.session.add(unsub_action)
+            db.session.commit()
 
         print("rendering email")
         subject, address = finish_event.subject, finish_event.address
