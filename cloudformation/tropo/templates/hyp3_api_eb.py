@@ -28,9 +28,7 @@ Resources
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.sts import AssumeRole
 
-from tropo_env import environment
-from template import t
-from troposphere import FindInMap, GetAtt, Join, Output, Ref
+from troposphere import FindInMap, GetAtt, Join, Output, Ref, Sub
 from troposphere.elasticbeanstalk import (
     Application,
     ApplicationVersion,
@@ -40,6 +38,9 @@ from troposphere.elasticbeanstalk import (
     SourceBundle
 )
 from troposphere.iam import InstanceProfile, Role
+
+from tropo_env import environment
+from template import t
 
 from .hyp3_rds import hyp3_db
 from .hyp3_db_params import db_name, db_super_user, db_super_user_pass
@@ -84,7 +85,10 @@ instance_profile = t.add_resource(InstanceProfile(
 
 app = t.add_resource(Application(
     "Hyp3Api",
-    ApplicationName="hyp3-api",
+    ApplicationName=Sub(
+        "${StackName}-hyp3-api",
+        StackName=Ref('AWS::StackName')
+    ),
     Description=("AWS Elastic Beanstalk API for "
                  "interacting with the HyP3 system")
 ))
