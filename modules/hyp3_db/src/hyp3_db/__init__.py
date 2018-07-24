@@ -35,4 +35,4 @@ def get_test_db_creds(db):
 
 
 __all__ = ['Hyp3DB', 'connect',
-           'connect_using_environment_variables' 'hyp3_models', 'test_db']
+           'connect_using_environment_variables', 'hyp3_models', 'test_db']
