@@ -1,14 +1,14 @@
 # models.py
-# Hal DiMarchi, Rohan Weeden
+# Hal DiMarchi, Rohan Weeden, William Horn
 # Created May 25, 2017
+
+import os
+from hashlib import sha1
 
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, Table,
                         Text, orm, sql)
 
 from .base import Base
-
-import os
-from hashlib import sha1
 
 
 class User(Base):
