@@ -66,7 +66,7 @@ class OneTimeAction(Base):
 
     user = orm.relationship('User')
 
-    @staticmethod
+    @classmethod
     def new_unsub_action(cls, user_id):
         return cls(
             user_id=user_id,
