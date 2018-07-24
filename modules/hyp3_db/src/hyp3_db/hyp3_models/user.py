@@ -7,6 +7,9 @@ from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, Table,
 
 from .base import Base
 
+import os
+from hashlib import sha1
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -62,3 +65,23 @@ class OneTimeAction(Base):
                      server_default=sql.expression.text('true'))
 
     user = orm.relationship('User')
+
+    @staticmethod
+    def new_unsub_action(cls, user_id):
+        return cls(
+            user_id=user_id,
+            action='unsubscribe',
+            hash=caclulate_hash()
+        )
+
+    def url(self, api_url):
+        return "{}/onetime/{}?id={}&key={}".format(
+            api_url,
+            self.action,
+            self.id,
+            self.hash
+        )
+
+
+def caclulate_hash():
+    return sha1().update(os.urandom(128)).hexdigest()
