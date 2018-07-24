@@ -5,7 +5,7 @@ and mainly handles connecting to the database.
 """
 import contextlib
 
-from .hyp3_db import Hyp3DB, connect
+from .hyp3_db import Hyp3DB, connect, connect_using_environment_variables
 from . import hyp3_models
 
 
@@ -18,15 +18,21 @@ def test_db(db="hyp3db"):
         :returns: connection to the hyp3_db database
         :rtype: hyp3_db.Hyp3DB
     """
-    db = Hyp3DB(
-        host="unit-testing.cxpvv5ynyjaw.us-west-2.rds.amazonaws.com",
-        user="unittest",
-        password="unittestpass",
-        db=db
-    )
+    creds = get_test_db_creds(db)
+    db = Hyp3DB(**creds)
 
     yield db
     db.close()
 
 
-__all__ = ['Hyp3DB', 'connect', 'hyp3_models', 'test_db']
+def get_test_db_creds(db):
+    return {
+        "host": "unit-testing.cxpvv5ynyjaw.us-west-2.rds.amazonaws.com",
+        "user": "unittest",
+        "password": "unittestpass",
+        "db": db
+    }
+
+
+__all__ = ['Hyp3DB', 'connect',
+           'connect_using_environment_variables' 'hyp3_models', 'test_db']
