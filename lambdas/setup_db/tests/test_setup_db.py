@@ -30,7 +30,8 @@ def test_custom_resource_wrapper(dbmock, environ_mock):
     environ_mock.__getitem__.side_effect = env.__getitem__
     environ_mock.get.side_effect = env.get
 
-    setup_db(load_json_from('data/sample_event.json'), [TESTING_DB])
+    # Creds only need db name because call to connect() is mocked with test_db()
+    setup_db(load_json_from('data/sample_event.json'), [TESTING_DB], [TESTING_DB])
 
     with hyp3_db.test_db(db=TESTING_DB) as db:
         check_new_user(db, env)
@@ -53,7 +54,7 @@ def check_processes(db, mock_env):
 
 
 def check_setup_db_still_works():
-    setup_db(load_json_from('data/sample_event.json'), [TESTING_DB])
+    setup_db(load_json_from('data/sample_event.json'), [TESTING_DB], [TESTING_DB])
 
 
 def reset_hyp3_db():
