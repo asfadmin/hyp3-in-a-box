@@ -12,8 +12,3 @@ def get_unsub_action(db, user_id):
         .filter_by(user_id=user_id) \
         .filter_by(action='unsubscribe') \
         .first()
-
-
-def add_action(db, action):
-    db.session.add(action)
-    db.session.commit()

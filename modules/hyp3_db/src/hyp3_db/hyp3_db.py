@@ -21,7 +21,7 @@ def connect_using_environment_variables(db='hyp3db'):
 def connect(host, user, password, db='hyp3db'):
     db = Hyp3DB(host, user, password, db)
     yield db
-    db.close()
+    db.commit_and_close()
 
 
 class Hyp3DB:
@@ -58,3 +58,12 @@ class Hyp3DB:
     def close(self):
         """ Close the db session"""
         self.session.close()
+
+    def commit_and_close(self):
+        try:
+            self.session.commit()
+        except Exception:
+            self.session.rollback()
+            raise
+        finally:
+            self.session.close()
