@@ -43,7 +43,7 @@ from tropo_env import environment
 from template import t
 
 from .hyp3_rds import hyp3_db
-from .hyp3_db_params import db_name, db_super_user, db_super_user_pass
+from .hyp3_db_params import db_name, db_user, db_pass
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
 from .hyp3_keypairname_param import keyname
@@ -166,12 +166,12 @@ config_template = t.add_resource(ConfigurationTemplate(
         OptionSettings(
             Namespace="aws:elasticbeanstalk:application:environment",
             OptionName="DB_USER",
-            Value=Ref(db_super_user)
+            Value=Ref(db_user)
         ),
         OptionSettings(
             Namespace="aws:elasticbeanstalk:application:environment",
             OptionName="DB_PASS",
-            Value=Ref(db_super_user_pass)
+            Value=Ref(db_pass)
         ),
         OptionSettings(
             Namespace="aws:elasticbeanstalk:application:environment",
