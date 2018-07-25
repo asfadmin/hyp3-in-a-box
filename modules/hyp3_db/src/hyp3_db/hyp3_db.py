@@ -9,7 +9,7 @@ from .session import make_engine, make_session
 
 
 @contextlib.contextmanager
-def connect_from_env(db='hyp3db'):
+def connect_using_environment_variables(db='hyp3db'):
     (host, user, password) = (
         os.environ[k] for k in ['DB_HOST', 'DB_USER', 'DB_PASSWORD']
     )
