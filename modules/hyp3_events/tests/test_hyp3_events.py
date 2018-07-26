@@ -10,6 +10,7 @@ import event_strategies
 
 PARAM_NAMES = 'EventType'
 EVENTS_TO_TEST = [
+    (hyp3_events.StartEvent),
     (hyp3_events.NotifyOnlyEvent),
     (hyp3_events.NewGranuleEvent)
 ]

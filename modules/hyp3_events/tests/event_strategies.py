@@ -4,6 +4,17 @@ import hyp3_events
 import asf_granule_util as gu
 
 
+def get_start_event_strategy():
+    return st.builds(
+        hyp3_events.StartEvent,
+        granule=granules_strategty(),
+        address=st.emails(),
+        username=st.text(),
+        subscription=st.text(),
+        output_files=st.lists(st.text())
+    )
+
+
 def get_notify_only_strategy():
     return st.builds(
         hyp3_events.NotifyOnlyEvent,
@@ -27,11 +38,15 @@ def get_url_strategy():
 def get_new_granule_strategy():
     return st.builds(
         hyp3_events.NewGranuleEvent,
-        name=st.from_regex(gu.SentinelGranule.pattern_exact),
+        name=granules_strategty(),
         polygon=cmr_polygon_list(),  # pylint: disable=E1120
         download_url=get_url_strategy(),
         browse_url=get_url_strategy()
     )
+
+
+def granules_strategty():
+    return st.from_regex(gu.SentinelGranule.pattern_exact)
 
 
 def floats_with_range(min_val, max_val):
@@ -63,5 +78,6 @@ def cmr_polygon_list(draw):
 
 strategies = {
     hyp3_events.NotifyOnlyEvent: get_notify_only_strategy(),
-    hyp3_events.NewGranuleEvent: get_new_granule_strategy()
+    hyp3_events.NewGranuleEvent: get_new_granule_strategy(),
+    hyp3_events.StartEvent: get_start_event_strategy()
 }
