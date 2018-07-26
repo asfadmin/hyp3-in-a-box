@@ -11,7 +11,7 @@ def rtc_snap_jobs():
         address=st.emails(),
         username=st.text(),
         subscription=st.text(),
-        output_files=st.lists(st.text())
+        output_file_patterns=st.lists(st.text())
     )
 
 

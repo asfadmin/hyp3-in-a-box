@@ -7,7 +7,7 @@ RTCSnapJobData = collections.namedtuple('Hyp3ProcessStartData', [
     'address',
     'username',
     'subscription',
-    'output_files'
+    'output_file_patterns'
 ])
 
 
