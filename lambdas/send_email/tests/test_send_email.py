@@ -25,28 +25,27 @@ def make_mock_user(wants_email):
 
 
 @mock.patch('ses.send', side_effect=send_email_mocks.send_mock)
-@mock.patch('send_email_queries.get_user_by_email')
+@mock.patch('send_email_queries.get_user_by_email', side_effect=make_mock_user(wants_email=True))
 @mock.patch('hyp3_db.connect_using_environment_variables')
-def test_main_email(db_mock, user_mock, ses_mock, sns_event):
+def test_main_email_wants_email(db_mock, user_mock, ses_mock, sns_event):
     environment.source_email = "test@test.com"
 
-    user_wants_email(sns_event, user_mock, ses_mock)
-    user_doesnt_want_emails(sns_event, user_mock, ses_mock)
-
-
-def user_wants_email(sns_event, user_mock, ses_mock):
-    user_mock.side_effect = make_mock_user(wants_email=True)
     send_email_main(sns_event)
 
     user_mock.assert_called_once()
     ses_mock.assert_called_once()
 
 
-def user_doesnt_want_emails(sns_event, user_mock, ses_mock):
-    user_mock.side_effect = make_mock_user(wants_email=False)
+@mock.patch('ses.send', side_effect=send_email_mocks.send_mock)
+@mock.patch('send_email_queries.get_user_by_email', side_effect=make_mock_user(wants_email=False))
+@mock.patch('hyp3_db.connect_using_environment_variables')
+def test_main_email_doesnt_want_email(db_mock, user_mock, ses_mock, sns_event):
+    environment.source_email = "test@test.com"
+
     send_email_main(sns_event)
 
-    ses_mock.assert_called_once()
+    user_mock.assert_called_once()
+    ses_mock.assert_not_called()
 
 
 def test_sns_event_from_notification(sns_event):

@@ -22,8 +22,8 @@ def send_email_main(aws_event):
         if not user.wants_email:
             print('user does not want emails, aborting...')
             return
-        else:
-            unsub_action = get_unsub_action(db, user.id)
+
+        unsub_action = get_unsub_action(db, user.id)
 
     send_email_notification(finish_event, unsub_action)
 
@@ -33,6 +33,7 @@ def get_unsub_action(db, user_id):
 
     if not unsub_action:
         unsub_action = hyp3_models.OneTimeAction.new_unsub_action(user_id)
+        db.session.add(unsub_action)
 
     return unsub_action
 
@@ -43,6 +44,7 @@ def send_email_notification(finish_event, unsub_action):
     context = finish_event.to_dict()
 
     context['unsubscribe_url'] = unsub_action.url(
+        # TODO: Put correct API url here
         api_url='www.api.example.com'
     )
 

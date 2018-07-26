@@ -71,7 +71,7 @@ class OneTimeAction(Base):
         return cls(
             user_id=user_id,
             action='unsubscribe',
-            hash=caclulate_hash()
+            hash=_get_random_hash()
         )
 
     def url(self, api_url):
@@ -83,5 +83,7 @@ class OneTimeAction(Base):
         )
 
 
-def caclulate_hash():
-    return sha1().update(os.urandom(128)).hexdigest()
+def _get_random_hash():
+    return sha1().update(
+        os.urandom(128)
+    ).hexdigest()
