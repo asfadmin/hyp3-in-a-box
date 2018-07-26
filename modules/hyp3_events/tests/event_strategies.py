@@ -4,10 +4,10 @@ import hyp3_events
 import asf_granule_util as gu
 
 
-def get_start_event_strategy():
+def rtc_snap_jobs():
     return st.builds(
-        hyp3_events.StartEvent,
-        granule=granules_strategty(),
+        hyp3_events.RTCSnapJob,
+        granule=granules(),
         address=st.emails(),
         username=st.text(),
         subscription=st.text(),
@@ -15,7 +15,7 @@ def get_start_event_strategy():
     )
 
 
-def get_notify_only_strategy():
+def notify_only_events():
     return st.builds(
         hyp3_events.NotifyOnlyEvent,
         address=st.emails(),
@@ -26,26 +26,26 @@ def get_notify_only_strategy():
                 'value': st.text()
             })
         ),
-        browse_url=get_url_strategy(),
-        download_url=get_url_strategy()
+        browse_url=urls(),
+        download_url=urls()
     )
 
 
-def get_url_strategy():
+def urls():
     return st.from_regex(r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+')
 
 
-def get_new_granule_strategy():
+def new_granule_events():
     return st.builds(
         hyp3_events.NewGranuleEvent,
-        name=granules_strategty(),
-        polygon=cmr_polygon_list(),  # pylint: disable=E1120
-        download_url=get_url_strategy(),
-        browse_url=get_url_strategy()
+        name=granules(),
+        polygon=cmr_polygon_lists(),  # pylint: disable=E1120
+        download_url=urls(),
+        browse_url=urls()
     )
 
 
-def granules_strategty():
+def granules():
     return st.from_regex(gu.SentinelGranule.pattern_exact)
 
 
@@ -57,7 +57,7 @@ def floats_with_range(min_val, max_val):
 
 
 @st.composite
-def cmr_polygon_list(draw):
+def cmr_polygon_lists(draw):
     lons = floats_with_range(-180, 180)
     lats = floats_with_range(-90, 90)
 
@@ -74,10 +74,3 @@ def cmr_polygon_list(draw):
         polygon += [lon, lat]
 
     return polygon + polygon[:2]
-
-
-strategies = {
-    hyp3_events.NotifyOnlyEvent: get_notify_only_strategy(),
-    hyp3_events.NewGranuleEvent: get_new_granule_strategy(),
-    hyp3_events.StartEvent: get_start_event_strategy()
-}
