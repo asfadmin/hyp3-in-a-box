@@ -43,7 +43,7 @@ class DBSetup(custom_resource.Base):
         with hyp3_db.connect(*self.db_creds) as db:
             print('connected as root user')
             setup_outputs.update(
-                setup_db_privliged(db)
+                setup_db_priviliged(db)
             )
 
         with hyp3_db.connect(*self.db_user_creds) as db:
@@ -61,7 +61,7 @@ class DBSetup(custom_resource.Base):
         }
 
 
-def setup_db_privliged(db):
+def setup_db_priviliged(db):
     """ Creates hyp3 user and postgis extension """
 
     print('Setting up database:')
