@@ -48,8 +48,6 @@ from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
 from .hyp3_keypairname_param import keyname
 
-source_zip = "hyp3_api.zip"
-
 
 print('  adding api_eb')
 
@@ -101,7 +99,7 @@ app_version = t.add_resource(ApplicationVersion(
         S3Bucket=environment.eb_bucket,
         S3Key="{maturity}/{zip}".format(
             maturity=environment.maturity,
-            zip=source_zip
+            zip=environment.hyp3_api_source_zip
         )
     )
 ))

@@ -29,6 +29,7 @@ TEMPLATE_NAME = 'hyp3-in-a-box_US-WEST-2.json'
 MATURITY = os.environ["MATURITY"]
 GITHUB_HYP3_API_CLONE_TOKEN = os.environ["GITHUB_HYP3_API_CLONE_TOKEN"]
 BUCKET_BASE_DIR = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
+CODEBUILD_START_TIME = os.environ["CODEBUILD_START_TIME"]
 BUILD_STEP_MESSAGES = {}
 
 
@@ -147,12 +148,13 @@ def build():
         print(f'adding object version {v}')
         version_options += ["--{}_version".format(v[0]), v[1]]
 
-    build_hyp3_api()
+    hyp3_api_source_zip = build_hyp3_api()
 
     template_path = 'build/template.json'
     subprocess.check_call([
         "python3", "cloudformation/tropo/create_stack.py",
-        template_path, "--maturity", MATURITY
+        template_path, "--maturity", MATURITY,
+        "--hyp3_api_source_zip", hyp3_api_source_zip
     ] + version_options
     )
     subprocess.check_call(["make", "clean", "html"], cwd="docs")
@@ -221,6 +223,7 @@ def build_hyp3_api():
     hyp3_api_url = "https://{}@github.com/asfadmin/hyp3-api".format(
         GITHUB_HYP3_API_CLONE_TOKEN
     )
+    hyp3_api_zip_name = "hyp3_api_{}.zip".format(CODEBUILD_START_TIME)
 
     print('cloning hyp3 api')
     subprocess.check_call([
@@ -230,7 +233,7 @@ def build_hyp3_api():
 
     print(f"Hyp3 api directories: {os.listdir(str(api_flask_path))}")
     subprocess.check_call([
-        "zip", "-r", "../../build/hyp3_api.zip", "."],
+        "zip", "-r", "../../build/{}".format(hyp3_api_zip_name), "."],
         cwd=str(api_flask_path)
     )
 
@@ -239,6 +242,7 @@ def build_hyp3_api():
         "aws", "s3", "cp", "build/hyp3_api.zip",
         "s3://{}".format(BUCKET_BASE_DIR)
     ])
+    return hyp3_api_zip_name
 
 
 def post_build():
