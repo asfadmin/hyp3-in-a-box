@@ -7,6 +7,7 @@
 import import_ec2_worker
 import mock
 from hyp3_daemon import HyP3Daemon
+from hyp3_worker import WorkerStatus
 
 
 @mock.patch('hyp3_daemon.SQSService')
@@ -22,3 +23,10 @@ def test_daemon_main(process_job_mock, SQSServiceMock):
     process_job_mock.assert_called_once_with(
         sqsservice_mock.get_next_message.return_value
     )
+
+
+def test_status_enum():
+    WorkerStatus.NO_STATUS
+    WorkerStatus.READY
+    WorkerStatus.BUSY
+    WorkerStatus.DONE
