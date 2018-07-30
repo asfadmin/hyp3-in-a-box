@@ -18,7 +18,7 @@ def test_db(db='hyp3db', commit_on_close=False):
         :returns: connection to the hyp3_db database
         :rtype: hyp3_db.Hyp3DB
     """
-    creds = get_test_db_creds(db)
+    creds = testing_creds(db)
 
     db = Hyp3DB(**creds)
     yield db
@@ -29,7 +29,7 @@ def test_db(db='hyp3db', commit_on_close=False):
         db.close()
 
 
-def get_test_db_creds(db):
+def testing_creds(db):
     return {
         "host": "unit-testing.cxpvv5ynyjaw.us-west-2.rds.amazonaws.com",
         "user": "unittest",
@@ -38,5 +38,8 @@ def get_test_db_creds(db):
     }
 
 
-__all__ = ['Hyp3DB', 'connect',
-           'connect_using_environment_variables', 'hyp3_models', 'test_db']
+__all__ = [
+    'Hyp3DB', 'connect',
+    'connect_using_environment_variables', 'hyp3_models',
+    'test_db', 'testing_creds'
+]

@@ -13,7 +13,10 @@ def connect_using_environment_variables(db='hyp3db', commit_on_close=False):
     (host, user, password) = (
         os.environ[k] for k in ['DB_HOST', 'DB_USER', 'DB_PASSWORD']
     )
-    with connect(host, user, password, db=db, commit=commit_on_close) as db_obj:
+    with connect(
+        host, user, password,
+        db=db, commit_on_close=commit_on_close
+    ) as db_obj:
         yield db_obj
 
 
