@@ -1,5 +1,5 @@
 import os
-from environment import environment
+from scheduler_env import environment
 
 from scheduler_main import scheduler
 

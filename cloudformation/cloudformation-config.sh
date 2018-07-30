@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CONF=configuration.json
-BUCKET=asf-hyp3-in-a-box-source
+BUCKET=hyp3-in-a-box
 OBJ_KEY=$BUCKET/test/config/$CONF
 
 if [ "$1" = "down" ]
@@ -11,5 +11,5 @@ elif [ "$1" = "up" ]
 then
     aws s3 cp $CONF s3://$OBJ_KEY
 else
-    echo "cloudformation-config.sh [down|up]"
+    echo "$0 [down|up]"
 fi

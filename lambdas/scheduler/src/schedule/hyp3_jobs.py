@@ -1,6 +1,6 @@
 import hyp3_db
 
-from environment import environment
+from scheduler_env import environment
 from . import queries
 
 
@@ -41,10 +41,14 @@ def get_jobs_for(granule, db):
 def format_polygon(point_vals):
     points = ""
 
-    for lat, lon in zip(point_vals[0::2], point_vals[1::2]):
+    for lat, lon in pair_up_lat_lons(point_vals):
         points += "{} {},".format(lon, lat)
 
     return "POLYGON(({}))".format(points[:-1])
+
+
+def pair_up_lat_lons(point_vals):
+    return zip(point_vals[0::2], point_vals[1::2])
 
 
 def get_users_for(subs, db):

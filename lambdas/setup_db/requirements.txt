@@ -1,2 +1,5 @@
+-i https://pypi.org/simple
+./../../modules/custom_resource
 ./../../modules/hyp3_db
+passlib==1.7.1
 sqlalchemy==1.2.8

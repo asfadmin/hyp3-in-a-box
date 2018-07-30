@@ -7,7 +7,7 @@ import testing_utils as utils
 import hyp3_events
 
 from db_cred_setup import skip_if_creds_not_available
-from environment import environment
+from scheduler_env import environment
 import scheduler_main
 
 
