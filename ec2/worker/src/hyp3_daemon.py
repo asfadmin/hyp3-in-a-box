@@ -59,6 +59,7 @@ class HyP3Daemon(object):
         if self.job_queue:
             return
 
+        # TODO: Configure somehow (parameter store?)
         self.job_queue = SQSService(
             queue_name="hyp3-in-a-box-test-Hyp3StartEvents-1VPMA189B6AFV.fifo"
         )
