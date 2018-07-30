@@ -39,5 +39,3 @@ def get_enabled_intersecting_subs(db, polygon):
         .all()
 
     return intersecting_subs
-
-
