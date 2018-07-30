@@ -54,6 +54,7 @@ class HyP3Daemon(object):
 
         log.debug("Staring new job {}".format(new_job))
         self._process_job(new_job)
+        new_job.delete()
 
     def _connect_sqs(self):
         if self.job_queue:

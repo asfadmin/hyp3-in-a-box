@@ -13,15 +13,17 @@ from hyp3_worker import WorkerStatus
 @mock.patch('hyp3_daemon.SQSService')
 @mock.patch('hyp3_daemon.HyP3Daemon._process_job')
 def test_daemon_main(process_job_mock, SQSServiceMock):
-    sqsservice_mock = SQSServiceMock.return_value
-
     daemon = HyP3Daemon()
     daemon.main()
 
+    sqsservice_mock = SQSServiceMock.return_value
+    message_mock = sqsservice_mock.get_next_message.return_value
+
     SQSServiceMock.assert_called_once()
     sqsservice_mock.get_next_message.assert_called_once()
+    message_mock.delete.assert_called_once()
     process_job_mock.assert_called_once_with(
-        sqsservice_mock.get_next_message.return_value
+        message_mock
     )
 
 

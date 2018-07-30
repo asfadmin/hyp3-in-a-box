@@ -17,6 +17,21 @@ class BadMessageException(Exception):
     pass
 
 
+class SQSJob(object):
+    def __init__(self, message):
+        self.message = message
+        try:
+            self.data = json.loads(message.body)
+        except json.JSONDecodeError:
+            raise BadMessageException("Message could not be parsed!")
+
+    def delete(self):
+        self.message.delete()
+
+    def __getattribute__(self, name):
+        return self.data['name']
+
+
 class SQSService(object):
     def __init__(self, queue_name):
         sqs = boto3.resource('sqs')
@@ -35,10 +50,10 @@ class SQSService(object):
             return None
 
         message = messages[0]
-        job_info = {}
+        job_info = None
         try:
             SQSService.validate_message(message)
-            job_info = SQSService.parse_message(message)
+            job_info = SQSJob(message)
         except BadMessageException as e:
             log.debug("DEBUG: Failed to recieve message due to the following error:\n\t", str(e))
         return job_info
@@ -48,10 +63,3 @@ class SQSService(object):
         """ Raises a BadMessageException if the checksum doesn't match """
         if md5(message.body.encode()).hexdigest() != message.md5_of_body:
             raise BadMessageException("Message checksum did not match!")
-
-    @staticmethod
-    def parse_message(message):
-        try:
-            return json.loads(message.body)
-        except json.JSONDecodeError:
-            raise BadMessageException("Message could not be parsed!")
