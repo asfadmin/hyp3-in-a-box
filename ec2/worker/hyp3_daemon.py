@@ -13,7 +13,7 @@ import logging
 
 from hyp3_worker import HyP3Worker, WorkerStatus
 from services import SQSService
-from hyp3hyp3_logging import getLogger
+from hyp3_logging import getLogger
 
 log = getLogger(__name__)
 
@@ -43,7 +43,7 @@ class HyP3Daemon(object):
 
         status = self._poll_worker_status()
         if status == WorkerStatus.DONE:
-            self._stop_worker()
+            self._join_worker()
             status = WorkerStatus.NO_STATUS
         if status != WorkerStatus.READY and status != WorkerStatus.NO_STATUS:
             return
@@ -76,13 +76,13 @@ class HyP3Daemon(object):
         self.worker = HyP3Worker(child_conn, job)
         self.worker.start()
 
-    def _stop_worker(self):
+    def _join_worker(self):
         self.worker_conn.close()
         self.worker.join()
         self.worker = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
-        log.debug("Worker stopped")
+        log.debug("Worker finished")
 
 
 def main():
