@@ -45,7 +45,8 @@ class SQSService(object):
             MaxNumberOfMessages=1,
         )
         if len(messages) > 1:
-            log.warning("API call returned more messages that it was supposed to. Some jobs might not be processed")
+            log.warning(("API call returned more messages that it was supposed to. ",
+                         "Some jobs might not be processed"))
 
         if not messages:
             return None
