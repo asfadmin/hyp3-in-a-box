@@ -45,7 +45,7 @@ class SQSService(object):
             MaxNumberOfMessages=1,
         )
         if len(messages) > 1:
-            log.warn("API call returned more messages that it was supposed to. Some jobs might not be processed")
+            log.warning("API call returned more messages that it was supposed to. Some jobs might not be processed")
 
         if not messages:
             return None
@@ -56,7 +56,7 @@ class SQSService(object):
             SQSService.validate_message(message)
             job_info = SQSJob(message)
         except BadMessageException as e:
-            log.debug("DEBUG: Failed to recieve message due to the following error:\n\t", str(e))
+            log.debug("DEBUG: Failed to recieve message due to the following error:\n\t%s", str(e))
         return job_info
 
     @staticmethod

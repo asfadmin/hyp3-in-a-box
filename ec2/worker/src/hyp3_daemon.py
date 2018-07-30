@@ -52,7 +52,7 @@ class HyP3Daemon(object):
         if not new_job:
             return
 
-        log.debug("Staring new job {}".format(new_job))
+        log.debug("Staring new job %s", new_job)
         self._process_job(new_job)
         new_job.delete()
 
