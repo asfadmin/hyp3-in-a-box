@@ -23,7 +23,7 @@ TESTING_DB = 'setup_db_testing_db'
     'init_db.hyp3_db.connect',
     side_effect=hyp3_db.test_db
 )
-def test_custom_resource_wrapper(dbmock, environ_mock):
+def test_setup_db(dbmock, environ_mock):
     reset_hyp3_db()
 
     env = get_mock_environment()
