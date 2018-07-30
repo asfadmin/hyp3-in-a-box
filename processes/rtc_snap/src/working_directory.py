@@ -13,24 +13,28 @@ def create(granule):
 
 
 def _setup(granule):
-    path = working_dir_path(granule.unique_id)
+    path = _working_dir_path(granule.unique_id)
 
-    path.mkdir(parents=True)
+    _make(path)
 
     return str(path)
+
+
+def _make(path):
+    path.mkdir(parents=True)
 
 
 def _teardown(directory):
     shutil.rmtree(directory)
 
 
-def working_dir_path(granule_id):
-    name = '{}-GRAN-{}'.format(random_str(4), granule_id)
+def _working_dir_path(granule_id):
+    name = '{}-GRAN-{}'.format(_random_str(4), granule_id)
 
     return pl.Path.home() / 'jobs' / name
 
 
-def random_str(N):
+def _random_str(N):
     choices = string.ascii_uppercase + string.digits
 
     return ''.join(
