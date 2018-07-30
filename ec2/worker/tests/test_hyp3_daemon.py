@@ -11,8 +11,9 @@ from hyp3_worker import WorkerStatus
 
 
 @mock.patch('hyp3_daemon.SQSService')
+@mock.patch('hyp3_daemon.HyP3DaemonConfig')
 @mock.patch('hyp3_daemon.HyP3Daemon._process_job')
-def test_daemon_main(process_job_mock, SQSServiceMock):
+def test_daemon_main(process_job_mock, conf_mock, SQSServiceMock):
     daemon = HyP3Daemon()
     daemon.main()
 
