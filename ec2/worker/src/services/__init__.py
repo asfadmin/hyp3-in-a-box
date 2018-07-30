@@ -20,12 +20,12 @@ class BadMessageException(Exception):
 class SQSService(object):
     def __init__(self, queue_name):
         sqs = boto3.resource('sqs')
-        self.sns_queue = sqs.get_queue_by_name(
+        self.sqs_queue = sqs.get_queue_by_name(
             QueueName=queue_name
         )
 
     def get_next_message(self):
-        messages = self.sns_queue.receive_messages(
+        messages = self.sqs_queue.receive_messages(
             MaxNumberOfMessages=1,
         )
         if len(messages) > 1:

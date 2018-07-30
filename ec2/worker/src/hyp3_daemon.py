@@ -45,7 +45,7 @@ class HyP3Daemon(object):
         if status == WorkerStatus.DONE:
             self._join_worker()
             status = WorkerStatus.NO_STATUS
-        if status != WorkerStatus.READY and status != WorkerStatus.NO_STATUS:
+        if not (status == WorkerStatus.READY or status == WorkerStatus.NO_STATUS):
             return
 
         new_job = self.job_queue.get_next_message()
