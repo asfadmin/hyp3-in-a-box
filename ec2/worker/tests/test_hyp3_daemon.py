@@ -28,7 +28,7 @@ def test_daemon_main(process_job_mock, SQSServiceMock):
 
 
 def test_status_enum():
-    WorkerStatus.NO_STATUS
-    WorkerStatus.READY
-    WorkerStatus.BUSY
-    WorkerStatus.DONE
+    assert WorkerStatus.NO_STATUS
+    assert WorkerStatus.READY
+    assert WorkerStatus.BUSY
+    assert WorkerStatus.DONE

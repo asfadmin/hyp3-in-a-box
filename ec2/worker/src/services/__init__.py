@@ -4,9 +4,10 @@
 
 # This module contains application wrappers around various apis.
 
-import boto3
-from hashlib import md5
 import json
+from hashlib import md5
+
+import boto3
 
 from hyp3_logging import getLogger
 
