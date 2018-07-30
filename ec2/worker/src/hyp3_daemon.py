@@ -6,16 +6,28 @@
 # 'Start Events' sqs queue for new processing jobs, and starts processes if the
 # system has the appropriate dependencies and available resources.
 
+import logging
 import sys
 import time
 from multiprocessing import Pipe
-import logging
 
+import boto3
+
+from hyp3_logging import getLogger
 from hyp3_worker import HyP3Worker, WorkerStatus
 from services import SQSService
-from hyp3_logging import getLogger
 
 log = getLogger(__name__)
+
+
+class HyP3DaemonConfig(object):
+    def __init__(self):
+        ssm = boto3.client('ssm')
+
+        # TODO: Configure Stack Name somehow (user data?)
+        self.queue_name = ssm.get_parameter(
+            Name="/hyp3-in-a-box-test/StartEventQueueName"
+        )['Parameter']['Value']
 
 
 class HyP3Daemon(object):
@@ -26,6 +38,8 @@ class HyP3Daemon(object):
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
 
+        self.config = HyP3DaemonConfig()
+
     def run(self):
         log.info("HyP3 Daemon starting...")
         while True:
@@ -33,7 +47,7 @@ class HyP3Daemon(object):
                 self.main()
                 time.sleep(1)
             except KeyboardInterrupt:
-                log.debug("Shutting down...")
+                log.debug("Stopping hyp3 daemon...")
                 sys.exit(0)
             # For now, just crash on errors
 
@@ -60,9 +74,8 @@ class HyP3Daemon(object):
         if self.job_queue:
             return
 
-        # TODO: Configure somehow (parameter store?)
         self.job_queue = SQSService(
-            queue_name="hyp3-in-a-box-test-Hyp3StartEvents-1VPMA189B6AFV.fifo"
+            queue_name=self.config.queue_name
         )
 
     def _poll_worker_status(self):
