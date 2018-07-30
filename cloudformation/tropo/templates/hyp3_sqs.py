@@ -15,8 +15,9 @@ Resources
 
 """
 
-from troposphere import GetAtt
+from troposphere import GetAtt, Ref, Sub
 from troposphere.sqs import Queue, RedrivePolicy
+from troposphere.ssm import Parameter
 
 from template import t
 
@@ -36,4 +37,14 @@ start_events = t.add_resource(Queue(
         deadLetterTargetArn=GetAtt(failed_start_evets, "Arn"),
         maxReceiveCount=1,
     )
+))
+
+ssm_queue_name = t.add_resource(Parameter(
+    "Hyp3SSMParameterStartEventQueueName",
+    Name=Sub(
+        "/${StackName}/StartEventQueueName",
+        StackName=Ref("AWS::StackName")
+    ),
+    Type="String",
+    Value=GetAtt(start_events, "QueueName")
 ))
