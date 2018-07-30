@@ -33,13 +33,11 @@ def get_enabled_intersecting_subs(db, polygon):
     poly = WKTElement(polygon, srid=4326)
     intersecting = Subscription.location.intersects(poly)
 
-    intersecting_subs = enabled_subs_query(db) \
+    intersecting_subs = db.session.query(Subscription) \
+        .filter_by(enabled=True) \
         .filter(intersecting) \
         .all()
 
     return intersecting_subs
 
 
-def enabled_subs_query(db):
-    return db.session.query(Subscription) \
-        .filter_by(enabled=True)
