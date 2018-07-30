@@ -23,14 +23,6 @@ def load_creds_from_env():
     ]
 
 
-def with_db(func):
-    def wrapper():
-        with hyp3_db.test_db() as db:
-            func(db)
-
-    return wrapper
-
-
 def load_creds():
     path = get_creds_path()
 
