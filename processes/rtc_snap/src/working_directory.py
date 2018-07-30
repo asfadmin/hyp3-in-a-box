@@ -1,14 +1,27 @@
+import contextlib
 import pathlib as pl
 import random
 import string
+import shutil
 
 
-def setup(granule):
+@contextlib.contextmanager
+def create(granule):
+    working_dir = _setup(granule)
+    yield working_dir
+    _teardown(working_dir)
+
+
+def _setup(granule):
     path = working_dir_path(granule.unique_id)
 
     path.mkdir(parents=True)
 
-    return path
+    return str(path)
+
+
+def _teardown(directory):
+    shutil.rmtree(directory)
 
 
 def working_dir_path(granule_id):

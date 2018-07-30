@@ -1,3 +1,5 @@
+import contextlib
+
 import pytest
 import mock
 
@@ -7,8 +9,13 @@ import import_rtc_snap
 import hyp3_process
 
 
+@contextlib.contextmanager
+def mock_create(granule):
+    yield 'tmpdir'
+
+
 @mock.patch('asf_granule_util.download')
-@mock.patch('working_directory.setup', side_effect=lambda g: 'tmpdir')
+@mock.patch('working_directory.create', side_effect=mock_create)
 def test_rtc_snap(download_mock, wrk_dir_mock, rtc_snap_job):
     resp = hyp3_process.hyp3_handler(rtc_snap_job)
 
