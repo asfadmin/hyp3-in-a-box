@@ -32,6 +32,9 @@ class SQSJob(object):
     def __getattribute__(self, name):
         return self.data['name']
 
+    def __str__(self):
+        return str(self.data)
+
 
 class SQSService(object):
     def __init__(self, queue_name):
