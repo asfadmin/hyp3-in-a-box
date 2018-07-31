@@ -1,8 +1,7 @@
-
-from ordered_set import OrderedSet
-
 import pathlib as pl
 import zipfile as zf
+
+from ordered_set import OrderedSet
 
 
 def outputs_from(working_dir, file_patterns):

@@ -1,2 +1,2 @@
 def upload(output_zip, granule):
-    pass
+    return 'www.dummy-link.s3.amazom.com'
