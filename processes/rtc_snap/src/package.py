@@ -4,7 +4,7 @@ import zipfile as zf
 from ordered_set import OrderedSet
 
 
-def outputs_from(zip_name, working_dir, file_patterns):
+def outputs(*, zip_name, working_dir, file_patterns):
     work_dir_path = pl.Path(working_dir)
 
     output_file_paths = find_output_files(
@@ -17,7 +17,11 @@ def outputs_from(zip_name, working_dir, file_patterns):
         work_dir_path
     )
 
-    return create_archive(zip_name, output_file_paths, archive_paths)
+    return create_archive(
+        work_dir_path / zip_name,
+        output_file_paths,
+        archive_paths
+    )
 
 
 def find_output_files(work_dir_path, file_patterns):
@@ -55,11 +59,11 @@ def make_ordered_set_from(path):
     return OrderedSet(path.parts)
 
 
-def create_archive(zip_name, output_paths, archive_paths):
-    with zf.ZipFile(zip_name, 'w') as archive:
+def create_archive(zip_path, output_paths, archive_paths):
+    with zf.ZipFile(str(zip_path), 'w') as archive:
         add_files_to(archive, zip(output_paths, archive_paths))
 
-    return zip_name
+    return zip_path
 
 
 def add_files_to(archive, output_files):

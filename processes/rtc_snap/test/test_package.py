@@ -33,13 +33,13 @@ def test_package(tmpdir, file_paths, patterns, expected):
         working_dir
     )
 
-    output_zip = package.outputs_from(
-        'output.zip',
-        str(tmpdir),
-        patterns
+    output_zip = package.outputs(
+        zip_name='output.zip',
+        working_dir=str(tmpdir),
+        file_patterns=patterns
     )
 
-    assert output_zip.endswith('.zip')
+    assert str(output_zip).endswith('.zip')
     assert zf.is_zipfile(output_zip)
 
     with zf.ZipFile(output_zip, 'r') as z:
@@ -55,5 +55,6 @@ def create_output_files(output_paths, working_dir):
 
 def write_sample_file(path):
     path.parent.mkdir(parents=True, exist_ok=True)
+
     with path.open('w') as f:
         f.write('test')

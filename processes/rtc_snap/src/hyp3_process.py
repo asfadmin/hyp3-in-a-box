@@ -14,7 +14,7 @@ def hyp3_handler(rtc_snap_job):
 
         rtc_snap.process(granule, working_dir)
 
-        output_zip = package.outputs_from(
+        output_zip_path = package.outputs(
             zip_name='output.zip',
             working_dir=working_dir,
             file_patterns=rtc_snap_job.output_file_patterns
