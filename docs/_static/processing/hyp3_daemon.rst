@@ -1,4 +1,9 @@
 .. _daemon_process:
 
-HyP3 Daemon
-===========
+hyp3_daemon.py
+==============
+
+.. automodule:: worker.src.hyp3_daemon
+   :show-inheritance:
+   :members:
+   :special-members:

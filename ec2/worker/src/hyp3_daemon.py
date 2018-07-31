@@ -2,9 +2,13 @@
 # Rohan Weeden
 # Created: June 22 2018
 
-# Entry point for the hyp3 processing glue code. The hyp3 daemon polls the
-# 'Start Events' sqs queue for new processing jobs, and starts processes if the
-# system has the appropriate dependencies and available resources.
+"""
+Entry point for the hyp3 processing glue code. The hyp3 daemon polls the
+'Start Events' sqs queue for new processing jobs, and starts processes if the
+system has the appropriate dependencies and available resources.
+
+This script has an ifmain so it can be called from the command line.
+"""
 
 import logging
 import sys
@@ -21,7 +25,15 @@ log = getLogger(__name__)
 
 
 class HyP3DaemonConfig(object):
+    """ Class HyP3DaemonConfig"""
+
     def __init__(self):
+        """ Querys SSM Parameter Store for configuration variables and maps them
+            to class members.
+
+            Paramaters:
+              * self.queue_name: /stack/StartEventQueueName
+        """
         ssm = boto3.client('ssm')
 
         # TODO: Configure Stack Name somehow (user data?)
@@ -31,8 +43,10 @@ class HyP3DaemonConfig(object):
 
 
 class HyP3Daemon(object):
+    """ Class HyP3Daemon"""
 
     def __init__(self):
+        """ Initialize state. This creates a new HyP3DaemonConfig object."""
         self.job_queue = None
         self.worker = None
         self.worker_conn = None
@@ -41,6 +55,7 @@ class HyP3Daemon(object):
         self.config = HyP3DaemonConfig()
 
     def run(self):
+        """ Calls ``self.main()`` every second until an exception is raised"""
         log.info("HyP3 Daemon starting...")
         while True:
             try:
@@ -52,6 +67,10 @@ class HyP3Daemon(object):
             # For now, just crash on errors
 
     def main(self):
+        """ Polls SQS if the EC2 Instances is idle, and starts a new processing
+            job if one is found. If the instance is currently processing a job
+            already, SQS will not be polled.
+        """
         if not self.job_queue:
             self._connect_sqs()
 
@@ -68,6 +87,8 @@ class HyP3Daemon(object):
 
         log.debug("Staring new job %s", new_job)
         self._process_job(new_job)
+        # TODO: This needs to be moved into _join_worker so that jobs are only
+        # deleted after the process has finished.
         new_job.delete()
 
     def _connect_sqs(self):
@@ -101,6 +122,7 @@ class HyP3Daemon(object):
 
 
 def main():
+    """ Create a new HyP3Daemon instance and run forever."""
     daemon = HyP3Daemon()
     daemon.run()
 

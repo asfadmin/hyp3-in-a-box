@@ -22,11 +22,12 @@ import sys
 
 paths = [
     '../cloudformation/tropo',
+    '../ec2',
     '../ec2/worker/src',
+    '../lambdas',
     '../lambdas/find_new_granules/src',
     '../lambdas/scheduler/src',
     '../lambdas/send_email/src',
-    '../lambdas',
     '../lambdas/setup_db/src',
     '../modules/hyp3_db/src',
     '../modules/hyp3_events/src',
