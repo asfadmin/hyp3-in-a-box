@@ -27,7 +27,7 @@ package_test_cases = [(
     package_test_cases
 )
 def test_package(tmpdir, file_paths, patterns, expected):
-    working_dir = tmpdir.mkdir('product-outputs')
+    working_dir = tmpdir
     create_output_files(
         file_paths,
         working_dir
@@ -35,7 +35,7 @@ def test_package(tmpdir, file_paths, patterns, expected):
 
     output_zip = package.outputs_from(
         'output.zip',
-        str(working_dir),
+        str(tmpdir),
         patterns
     )
 

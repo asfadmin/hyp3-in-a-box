@@ -9,14 +9,11 @@ import import_rtc_snap
 import hyp3_process
 
 
-@contextlib.contextmanager
-def mock_create(granule):
-    yield 'tmpdir'
-
-
 @mock.patch('asf_granule_util.download')
-@mock.patch('working_directory.create', side_effect=mock_create)
-def test_rtc_snap(download_mock, wrk_dir_mock, rtc_snap_job):
+@mock.patch('working_directory.create')
+def test_rtc_snap(wrk_dir_mock, download_mock, rtc_snap_job, tmpdir):
+    wrk_dir_mock.side_effect = mock_working_dir_with(tmpdir)
+
     resp = hyp3_process.hyp3_handler(rtc_snap_job)
 
     download_mock.assert_called_once()
@@ -35,3 +32,11 @@ def rtc_snap_job():
             "*_TC_G??.tif", "*.png", "*.txt"
         ]
     )
+
+
+def mock_working_dir_with(mock_directory):
+    @contextlib.contextmanager
+    def mock_create(*args, **kwargs):
+        yield mock_directory
+
+    return mock_create
