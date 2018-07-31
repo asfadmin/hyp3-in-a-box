@@ -14,11 +14,11 @@ Resources
 * **SNS:**
 
 """
-from troposphere import GetAtt, Ref
+from template import t
+from troposphere import GetAtt, Ref, Sub
 from troposphere.awslambda import Permission
 from troposphere.sns import Subscription, Topic
-
-from template import t
+from troposphere.ssm import Parameter
 
 from .hyp3_send_email import send_email
 
@@ -40,4 +40,14 @@ sns_invoke_permissions = t.add_resource(Permission(
     Principal="sns.amazonaws.com",
     SourceArn=Ref(finish_sns),
     FunctionName=GetAtt(send_email, "Arn")
+))
+
+ssm_sns_arn = t.add_resource(Parameter(
+    "Hyp3SSMParameterFinishEventSNSArn",
+    Name=Sub(
+        "/${StackName}/FinishEventSNSArn",
+        StackName=Ref("AWS::StackName")
+    ),
+    Type="String",
+    Value=Ref(finish_sns)
 ))
