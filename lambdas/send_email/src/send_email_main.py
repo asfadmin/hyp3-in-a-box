@@ -37,6 +37,8 @@ def get_unsub_action(db, user_id):
     if not unsub_action:
         unsub_action = hyp3_models.OneTimeAction.new_unsub_action(user_id)
         db.session.add(unsub_action)
+        db.session.flush()
+        db.session.refresh(unsub_action)
 
     return unsub_action
 
