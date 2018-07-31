@@ -16,7 +16,7 @@ def send_email_main(aws_event):
     print("getting start event")
     finish_event = sns.get_hyp3_event_from(aws_event)
 
-    with hyp3_db.connect_using_environment_variables() as db:
+    with hyp3_db.connect_using_environment_variables(commit_on_close=True) as db:
         user = queries.get_user_by_email(db, finish_event.address)
 
         if not user:
