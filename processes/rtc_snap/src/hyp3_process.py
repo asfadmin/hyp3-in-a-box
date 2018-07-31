@@ -20,8 +20,15 @@ def hyp3_handler(rtc_snap_job):
             file_patterns=rtc_snap_job.output_file_patterns
         )
 
-        product_link = products.upload(output_zip, granule)
+        product_urls = products.upload(
+            paths=[output_zip_path],
+            bucket_name=get_bucket_name()
+        )
 
     return {
-        'product_link': product_link
+        'product_url': product_urls[0]
     }
+
+
+def get_bucket_name():
+    return 'hyp3-in-a-box-products'

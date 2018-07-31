@@ -14,6 +14,7 @@ def mock_rtc_script_path():
     return pl.Path(__file__).parent / 'fake-rtc-script.py'
 
 
+@mock.patch('hyp3_process.get_bucket_name')
 @mock.patch('rtc_snap.script_path', side_effect=mock_rtc_script_path)
 @mock.patch('asf_granule_util.download')
 @mock.patch('working_directory.create')
@@ -21,15 +22,18 @@ def test_rtc_snap(
         wrk_dir_mock,
         download_mock,
         rtc_script_mock,
+        bucket_name_mock,
+        testing_bucket,
         rtc_snap_job,
         tmpdir
 ):
+    bucket_name_mock.side_effect = lambda: testing_bucket
     wrk_dir_mock.side_effect = mock_working_dir_with(tmpdir)
 
     resp = hyp3_process.hyp3_handler(rtc_snap_job)
 
     download_mock.assert_called_once()
-    assert 'product_link' in resp
+    assert 'product_url' in resp
 
 
 @pytest.fixture()

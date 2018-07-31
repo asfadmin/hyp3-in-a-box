@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 "61ea59b" = {path = "./../../modules/hyp3_events"}
 ordered-set = "*"
+"boto3" = "*"
 
 [dev-packages]
 hypothesis = "*"
