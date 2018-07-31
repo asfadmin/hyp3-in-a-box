@@ -19,7 +19,7 @@ import boto3
 
 from hyp3_logging import getLogger
 from hyp3_worker import HyP3Worker, WorkerStatus
-from services import SQSService
+from services import SQSService, SNSService, SQSJob
 
 log = getLogger(__name__)
 
@@ -40,6 +40,9 @@ class HyP3DaemonConfig(object):
         self.queue_name = ssm.get_parameter(
             Name="/hyp3-in-a-box-test/StartEventQueueName"
         )['Parameter']['Value']
+        self.ssn_arn = ssm.get_parameter(
+            Name="/hyp3-in-a-box-test/FinishEventSNSArn"
+        )['Parameter']['Value']
 
 
 class HyP3Daemon(object):
@@ -48,6 +51,7 @@ class HyP3Daemon(object):
     def __init__(self):
         """ Initialize state. This creates a new HyP3DaemonConfig object."""
         self.job_queue = None
+        self.sns_topic = None
         self.worker = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
@@ -99,12 +103,20 @@ class HyP3Daemon(object):
             queue_name=self.config.queue_name
         )
 
+    def _connect_sns(self):
+        if self.sns_topic:
+            return
+
+        self.sns_topic = SNSService(
+            arn=self.config.sns_arn
+        )
+
     def _poll_worker_status(self):
         if self.worker and self.worker_conn.poll():
             self.previous_worker_status = self.worker_conn.recv()
         return self.previous_worker_status
 
-    def _process_job(self, job):
+    def _process_job(self, job: SQSJob):
         if self.worker:
             raise Exception("Worker already processing")
 
@@ -115,10 +127,19 @@ class HyP3Daemon(object):
     def _join_worker(self):
         self.worker_conn.close()
         self.worker.join()
+
+        self._finish_job(self.worker.job)
+
         self.worker = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
         log.debug("Worker finished")
+
+    def _finish_job(self, job: SQSJob):
+        if not self.sns_topic:
+            self._connect_sns()
+
+        self.sns_topic.push(job)
 
 
 def main():
