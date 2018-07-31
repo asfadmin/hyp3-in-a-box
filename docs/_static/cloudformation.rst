@@ -23,6 +23,7 @@ AWS CloudFormation
    cloudformation/vpc.rst
 
    cloudformation/sns.rst
+   cloudformation/sqs.rst
    cloudformation/autoscaling_group.rst
 
    cloudformation/kms_key.rst
