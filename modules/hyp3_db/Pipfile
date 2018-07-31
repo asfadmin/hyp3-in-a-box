@@ -9,6 +9,7 @@ SQLAlchemy = "*"
 "psycopg2" = "*"
 "d20dddb" = {path = "./."}
 passlib = "*"
+"hyp3-db" = "*"
 
 [dev-packages]
 pytest = "*"

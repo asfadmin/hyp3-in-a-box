@@ -7,4 +7,5 @@ from .jobs import LocalQueue
 from .oauth import ApiKey
 
 __all__ = ['User', 'Product', 'Process',
-           'Subscription', 'Group', 'LocalQueue', 'ApiKey', 'OneTimeAction']
+           'Subscription', 'Group', 'LocalQueue',
+           'ApiKey', 'OneTimeAction']

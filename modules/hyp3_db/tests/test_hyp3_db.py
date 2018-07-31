@@ -1,6 +1,7 @@
 import pytest
 import mock
 
+import import_hyp3_db
 import hyp3_db
 
 
