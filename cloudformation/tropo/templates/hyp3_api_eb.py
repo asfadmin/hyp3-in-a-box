@@ -191,8 +191,8 @@ config_template = t.add_resource(ConfigurationTemplate(
     ]
 ))
 
-test_environment = t.add_resource(Environment(
-    "Hyp3ApiTestEnvironment",
+environment = t.add_resource(Environment(
+    "Hyp3ApiEnvironment",
     EnvironmentName=Sub(
         "${StackName}-${Maturity}",
         StackName=Ref('AWS::StackName'),
@@ -206,10 +206,11 @@ test_environment = t.add_resource(Environment(
     VersionLabel=Ref(app_version)
 ))
 
+api_url = Join("", ["http://", GetAtt(environment, "EndpointURL")])
 t.add_output(
     Output(
         "HyP3ApiUrl",
         Description="HyP3 API url",
-        Value=Join("", ["http://", GetAtt(test_environment, "EndpointURL")])
+        Value=api_url
     )
 )
