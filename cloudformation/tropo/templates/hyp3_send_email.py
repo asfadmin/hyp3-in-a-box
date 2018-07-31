@@ -24,6 +24,7 @@ from template import t
 
 from . import utils
 from .hyp3_db_params import db_name, db_pass, db_user
+from .hyp3_api_eb import api_url
 
 source_zip = "send_email.zip"
 
@@ -66,7 +67,8 @@ send_email = t.add_resource(utils.make_lambda_function(
                 'DB_HOST': utils.get_host_address(),
                 'DB_USER': Ref(db_user),
                 'DB_PASSWORD': Ref(db_pass),
-                'DB_NAME': Ref(db_name)
+                'DB_NAME': Ref(db_name),
+                'API_URL': api_url
             }
         )
     }

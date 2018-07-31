@@ -1,12 +1,12 @@
 import json
 
 import hyp3_db
-from hyp3_db import hyp3_models
-
-import send_email_queries as queries
 import render
+import send_email_queries as queries
 import ses
 import sns
+from hyp3_db import hyp3_models
+from send_email_env import environment
 
 
 def send_email_main(aws_event):
@@ -49,8 +49,7 @@ def send_email_notification(finish_event, unsub_action):
     context = finish_event.to_dict()
 
     context['unsubscribe_url'] = unsub_action.url(
-        # TODO: Put correct API url here
-        api_url='www.api.example.com'
+        api_url=environment.api_url
     )
 
     message = render.email_with(context)
