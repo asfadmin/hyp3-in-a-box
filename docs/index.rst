@@ -31,11 +31,12 @@ HyP3 In A Box's Documentation
    :maxdepth: 1
    :caption: Contents:
 
-   _static/setup
    _static/releases
+   _static/setup
    _static/dev-setup
    _static/cloudformation
    _static/lambdas-main
+   _static/instance-processing
    _static/modules
    _static/ci_testing
 
