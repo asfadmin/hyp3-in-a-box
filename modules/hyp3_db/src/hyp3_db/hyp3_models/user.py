@@ -83,6 +83,6 @@ class OneTimeAction(Base):
 
 
 def _get_random_hash():
-    return sha1().update(
+    return sha1(
         os.urandom(128)
     ).hexdigest()
