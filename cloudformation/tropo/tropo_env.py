@@ -19,6 +19,7 @@ class Environment:
         self.maturity = "test"
 
         self.set_lambda_version_variables()
+        self.hyp3_api_source_zip = "hyp3_api.zip"
 
         self.use_name_parameters = True
         self.should_create_db = True
