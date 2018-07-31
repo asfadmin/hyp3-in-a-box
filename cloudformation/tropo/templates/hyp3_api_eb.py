@@ -191,7 +191,7 @@ config_template = t.add_resource(ConfigurationTemplate(
     ]
 ))
 
-environment = t.add_resource(Environment(
+eb_environment = t.add_resource(Environment(
     "Hyp3ApiEnvironment",
     EnvironmentName=Sub(
         "${StackName}-${Maturity}",
@@ -206,7 +206,7 @@ environment = t.add_resource(Environment(
     VersionLabel=Ref(app_version)
 ))
 
-api_url = Join("", ["http://", GetAtt(environment, "EndpointURL")])
+api_url = Join("", ["http://", GetAtt(eb_environment, "EndpointURL")])
 t.add_output(
     Output(
         "HyP3ApiUrl",
