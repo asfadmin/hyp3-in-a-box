@@ -69,7 +69,8 @@ class HyP3Daemon(object):
     def main(self):
         """ Polls SQS if the EC2 Instances is idle, and starts a new processing
             job if one is found. If the instance is currently processing a job
-            already, SQS will not be polled.
+            already, SQS will not be polled. After the worker process has
+            succesfully handled a job, the job will be deleted from SQS.
         """
         if not self.job_queue:
             self._connect_sqs()
@@ -87,9 +88,6 @@ class HyP3Daemon(object):
 
         log.debug("Staring new job %s", new_job)
         self._process_job(new_job)
-        # TODO: This needs to be moved into _join_worker so that jobs are only
-        # deleted after the process has finished.
-        new_job.delete()
 
     def _connect_sqs(self):
         if self.job_queue:
@@ -115,10 +113,13 @@ class HyP3Daemon(object):
     def _join_worker(self):
         self.worker_conn.close()
         self.worker.join()
+
+        log.debug("Worker finished, deleting job %s from SQS", self.worker.job)
+        self.worker.job.delete()
+
         self.worker = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
-        log.debug("Worker finished")
 
 
 def main():
