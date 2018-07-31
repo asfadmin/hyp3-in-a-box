@@ -25,7 +25,7 @@ def test_daemon_main(_, process_job_mock, SQSServiceMock):
 
     SQSServiceMock.assert_called_once()
     sqsservice_mock.get_next_message.assert_called_once()
-    message_mock.delete.assert_called_once()
+    message_mock.delete.assert_not_called()
     process_job_mock.assert_called_once_with(
         message_mock
     )
