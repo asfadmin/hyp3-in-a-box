@@ -29,8 +29,8 @@ class SQSJob(object):
     def delete(self):
         self.message.delete()
 
-    def __getattribute__(self, name):
-        return self.data['name']
+    def __getitem__(self, name):
+        return self.data[name]
 
 
 class SQSService(object):
