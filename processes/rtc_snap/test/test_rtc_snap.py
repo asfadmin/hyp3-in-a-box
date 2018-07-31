@@ -36,6 +36,14 @@ def test_rtc_snap(
     assert 'product_url' in resp
 
 
+@pytest.mark.rtc_snap_run
+def test_full_rtc_snap(rtc_snap_job):
+    print('running rtc_snap with processing')
+    resp = hyp3_process.hyp3_handler(rtc_snap_job)
+
+    assert 'product_url' in resp
+
+
 @pytest.fixture()
 def rtc_snap_job():
     return hyp3_events.RTCSnapJob(
