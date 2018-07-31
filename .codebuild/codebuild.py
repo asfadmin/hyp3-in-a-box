@@ -1,5 +1,5 @@
 # codebuild.py
-# Rohan Weeden
+# Rohan Weeden, William Horn
 # Created: June 8, 2018
 
 # Called by buildspec.yml. This script improves the codebuild functionality
