@@ -68,3 +68,20 @@ class SQSService(object):
         """ Raises a BadMessageException if the checksum doesn't match """
         if md5(message.body.encode()).hexdigest() != message.md5_of_body:
             raise BadMessageException("Message checksum did not match!")
+
+
+class SNSService(object):
+    def __init__(self, arn):
+        sns = boto3.resource('sns')
+        self.sns_topic = sns.Topic(arn)
+
+    def push(self, job: SQSJob):
+        self.sns_topic.publish(
+            Subject="Job Finished",
+            Message=json.dumps({
+                "address": "",
+                "subject": "[hyp3] Processing Completed",
+                "browse_url": "",
+                "download_url": ""
+            })
+        )
