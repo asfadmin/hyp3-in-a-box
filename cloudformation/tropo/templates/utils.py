@@ -3,7 +3,7 @@ import pathlib as pl
 
 from troposphere.awslambda import Code
 
-from troposphere import GetAtt, Parameter, Ref, Sub
+from troposphere import GetAtt, Ref, Sub
 from troposphere.awslambda import Function
 
 from tropo_env import environment
