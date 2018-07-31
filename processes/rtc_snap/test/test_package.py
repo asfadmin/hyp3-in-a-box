@@ -34,6 +34,7 @@ def test_package(tmpdir, file_paths, patterns, expected):
     )
 
     output_zip = package.outputs_from(
+        'output.zip',
         str(working_dir),
         patterns
     )

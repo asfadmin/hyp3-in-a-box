@@ -15,8 +15,9 @@ def hyp3_handler(rtc_snap_job):
         rtc_snap.process(granule)
 
         output_zip = package.outputs_from(
-            working_dir,
-            rtc_snap_job.output_file_patterns
+            zip_name='output.zip',
+            working_dir=working_dir,
+            file_patterns=rtc_snap_job.output_file_patterns
         )
 
         product_link = products.upload(output_zip, granule)
