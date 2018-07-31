@@ -1,4 +1,5 @@
 import contextlib
+import pathlib as pl
 
 import pytest
 import mock
@@ -9,9 +10,20 @@ import import_rtc_snap
 import hyp3_process
 
 
+def mock_rtc_script_path():
+    return pl.Path(__file__).parent / 'fake-rtc-script.py'
+
+
+@mock.patch('rtc_snap.script_path', side_effect=mock_rtc_script_path)
 @mock.patch('asf_granule_util.download')
 @mock.patch('working_directory.create')
-def test_rtc_snap(wrk_dir_mock, download_mock, rtc_snap_job, tmpdir):
+def test_rtc_snap(
+        wrk_dir_mock,
+        download_mock,
+        rtc_script_mock,
+        rtc_snap_job,
+        tmpdir
+):
     wrk_dir_mock.side_effect = mock_working_dir_with(tmpdir)
 
     resp = hyp3_process.hyp3_handler(rtc_snap_job)

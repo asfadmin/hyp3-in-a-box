@@ -12,7 +12,7 @@ def hyp3_handler(rtc_snap_job):
     with working_directory.create(granule) as working_dir:
         gu.download(granule, directory=str(working_dir))
 
-        rtc_snap.process(granule)
+        rtc_snap.process(granule, working_dir)
 
         output_zip = package.outputs_from(
             zip_name='output.zip',

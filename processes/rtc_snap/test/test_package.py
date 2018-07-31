@@ -57,8 +57,3 @@ def write_sample_file(path):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open('w') as f:
         f.write('test')
-
-
-@pytest.fixture()
-def output_patterns():
-    return
