@@ -28,7 +28,7 @@ def send_email_main(aws_event):
 
         unsub_action = get_unsub_action(db, user.id)
 
-    send_email_notification(finish_event, unsub_action)
+        send_email_notification(finish_event, unsub_action)
 
 
 def get_unsub_action(db, user_id):
