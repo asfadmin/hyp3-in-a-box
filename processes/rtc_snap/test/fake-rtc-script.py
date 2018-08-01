@@ -11,9 +11,9 @@ def main():
     granule_zip = args['granule_zip']
     granule_safe = granule_zip.replace('.zip', '.SAFE')
 
-    assert all(os.path.exists(f) for f in (granule_zip, granule_safe))
-
     assert gu.SentinelGranule(granule_zip[:-4])
+    assert all(os.path.exists(f) for f in (granule_zip, granule_safe))
+    assert not args['asf']
 
 
 def parse_args():
