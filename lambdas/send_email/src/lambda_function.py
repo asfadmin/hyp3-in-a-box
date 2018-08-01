@@ -27,3 +27,4 @@ def lambda_handler(aws_event, aws_context):
 
 def setup_env():
     environment.source_email = os.environ['SOURCE_EMAIL']
+    environment.api_url = os.environ['API_URL']
