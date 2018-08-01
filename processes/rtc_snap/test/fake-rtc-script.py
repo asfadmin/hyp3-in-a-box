@@ -6,7 +6,6 @@ import asf_granule_util as gu
 
 def main():
     args = parse_args()
-    print(args)
 
     granule_zip = args['granule_zip']
     granule_safe = granule_zip.replace('.zip', '.SAFE')
@@ -74,6 +73,4 @@ def parse_args():
 
 
 if __name__ == "__main__":
-    print('runnign fake rtc process!')
-
     main()
