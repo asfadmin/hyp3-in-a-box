@@ -1,7 +1,5 @@
 import contextlib
 import pathlib as pl
-import random
-import string
 import shutil
 
 
@@ -29,14 +27,6 @@ def _teardown(directory):
 
 
 def _working_dir_path(granule_id):
-    name = '{}-GRAN-{}'.format(_random_str(4), granule_id)
+    name = 'GRAN-{}'.format(granule_id)
 
     return pl.Path.home() / 'jobs' / name
-
-
-def _random_str(N):
-    choices = string.ascii_uppercase + string.digits
-
-    return ''.join(
-        random.SystemRandom().choice(choices) for _ in range(N)
-    )
