@@ -1,22 +1,24 @@
 import pathlib as pl
 
+import pytest
+
 import import_rtc_snap
+from outputs import ProcessOutputs
 import products
 
 
-def test_products(tmpdir, testing_bucket):
-    paths = create_fake_zip_and_browse(tmpdir)
-
+def test_products(process_outputs, testing_bucket):
     product_link = products.upload(
-        paths=paths,
+        outputs=process_outputs,
         bucket_name=testing_bucket
     )
 
     assert product_link
 
 
-def create_fake_zip_and_browse(directory):
-    working_dir = pl.Path(directory)
+@pytest.fixture()
+def process_outputs(tmpdir):
+    working_dir = pl.Path(tmpdir)
 
     paths = [working_dir / f for f in ('output.zip', 'browse.png')]
 
@@ -26,4 +28,6 @@ def create_fake_zip_and_browse(directory):
         with path.open('w') as f:
             f.write('testing dummy file')
 
-    return paths
+    archive, browse = paths
+
+    return ProcessOutputs(archive, browse)

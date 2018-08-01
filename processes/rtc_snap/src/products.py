@@ -4,11 +4,11 @@ s3_resource = boto3.resource('s3')
 s3_client = boto3.client('s3')
 
 
-def upload(*, paths, bucket_name):
+def upload(*, outputs, bucket_name):
     products_bucket = get_bucket(bucket_name)
 
     object_keys = [
-        upload_from(path, products_bucket) for path in paths
+        upload_from(path, products_bucket) for path in outputs
     ]
 
     return [

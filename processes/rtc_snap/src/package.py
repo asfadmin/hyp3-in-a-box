@@ -3,13 +3,15 @@ import zipfile as zf
 
 from ordered_set import OrderedSet
 
+from outputs import ProcessOutputs
 
-def outputs(*, zip_name, working_dir, file_patterns):
+
+def outputs(*, archive_name, working_dir, output_patterns):
     work_dir_path = pl.Path(working_dir)
 
     output_file_paths = find_output_files(
         work_dir_path,
-        file_patterns
+        output_patterns.archive
     )
 
     archive_paths = remove_working_dir_from(
@@ -17,20 +19,38 @@ def outputs(*, zip_name, working_dir, file_patterns):
         work_dir_path
     )
 
-    return create_archive(
-        work_dir_path / zip_name,
+    archive_path = create_archive(
+        work_dir_path / f'{archive_name}.zip',
         output_file_paths,
         archive_paths
     )
 
+    browse_path = find_browse_path(
+        work_dir_path,
+        output_patterns.browse
+    )
+
+    return ProcessOutputs(
+        archive_path,
+        browse_path
+    )
+
 
 def find_output_files(work_dir_path, file_patterns):
-    files_matching_pattern = [
-        find_files_matching(pattern, work_dir_path)
-        for pattern in file_patterns
-    ]
+    output_files = []
 
-    return sum(files_matching_pattern, [])
+    for pattern in file_patterns:
+        files = find_files_matching(pattern, work_dir_path)
+
+        if files == []:
+            raise NoFilesFoundForOutputPattern(
+                f"pattern '{pattern}' has no "
+                f"matching files in working directory {work_dir_path}"
+            )
+
+        output_files.extend(files)
+
+    return output_files
 
 
 def find_files_matching(pattern, work_dir_path):
@@ -69,3 +89,28 @@ def create_archive(zip_path, output_paths, archive_paths):
 def add_files_to(archive, output_files):
     for output_path, archive_path in output_files:
         archive.write(output_path, arcname=archive_path)
+
+
+def find_browse_path(work_dir_path, browse_pattern):
+    possible_browses = find_files_matching(
+        browse_pattern,
+        work_dir_path
+    )
+
+    try:
+        browse = pl.Path(possible_browses[0])
+    except IndexError:
+        raise NoBrowseFound(
+            f"Can't find browse with pattern '{browse_pattern}' "
+            f"in dir '{work_dir_path}')"
+        ) from None
+
+    return browse
+
+
+class NoBrowseFound(Exception):
+    pass
+
+
+class NoFilesFoundForOutputPattern(Exception):
+    pass
