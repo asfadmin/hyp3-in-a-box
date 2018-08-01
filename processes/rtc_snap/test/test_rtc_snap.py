@@ -15,11 +15,21 @@ def mock_rtc_script_path():
     return pl.Path(__file__).parent / 'fake-rtc-script.py'
 
 
+def mock_download(*args, **kwargs):
+    granule = args[0]
+    dl_dir = pl.Path(kwargs['directory'])
+
+    for suffix in ['.zip', '.SAFE']:
+        fname = str(granule) + suffix
+
+        (dl_dir / fname).mkdir(parents=True)
+
+
 @mock.patch('hyp3_process.get_bucket_name')
 @mock.patch('rtc_snap.script_path', side_effect=mock_rtc_script_path)
-@mock.patch('asf_granule_util.download')
+@mock.patch('asf_granule_util.download', side_effect=mock_download)
 @mock.patch('working_directory.create')
-def test_rtc_snap(
+def test_rtc_snap_mocked(
         wrk_dir_mock,
         download_mock,
         rtc_script_mock,

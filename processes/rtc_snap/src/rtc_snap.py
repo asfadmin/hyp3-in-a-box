@@ -4,7 +4,6 @@ import subprocess
 def process(granule_name, working_dir):
     subprocess.check_call([
         'python2', script_path(),
-        '--asf',
         '--ls',
         '-r', '30',
         f'{granule_name}.zip'
