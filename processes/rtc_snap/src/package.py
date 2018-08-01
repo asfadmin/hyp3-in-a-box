@@ -40,15 +40,15 @@ def find_output_files(work_dir_path, file_patterns):
     output_files = []
 
     for pattern in file_patterns:
-        files = find_files_matching(pattern, work_dir_path)
+        paths_matching_pattern = find_files_matching(pattern, work_dir_path)
 
-        if files == []:
+        if paths_matching_pattern == []:
             raise NoFilesFoundForOutputPattern(
                 f"pattern '{pattern}' has no "
                 f"matching files in working directory {work_dir_path}"
             )
 
-        output_files.extend(files)
+        output_files.extend(paths_matching_pattern)
 
     return output_files
 

@@ -1,17 +1,23 @@
 import pathlib as pl
 
 import pytest
+import mock
 
 import import_rtc_snap
 from outputs import ProcessOutputs
 import products
 
 
-def test_products(process_outputs, testing_bucket):
+@mock.patch('products.get_bucket')
+def test_products(bucket_mock, process_outputs):
+    testing_bucket = 'test-bucket'
     product_url, browse_url = products.upload(
         outputs=process_outputs,
         bucket_name=testing_bucket
     )
+
+    put_object_method = bucket_mock.return_value.put_object
+    assert put_object_method.call_count == 2
 
     assert all(
         s3_key_has_no_folder(url, testing_bucket)
