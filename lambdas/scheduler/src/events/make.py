@@ -53,4 +53,13 @@ def make_notify_only_event(sub, user, granule):
 
 
 def make_start_event(sub, user, granule):
-    return hyp3_events.StartEvent()
+    return hyp3_events.RTCSnapJob(
+        granule=granule,
+        address=user.email,
+        username=user.username,
+        subscription=sub.id,
+        output_patterns={
+            'archive': ["*/*_TC_G??.tif", "*/*.png", "*/*.txt"],
+            'browse': '*/*GVV.png'
+        }
+    )
