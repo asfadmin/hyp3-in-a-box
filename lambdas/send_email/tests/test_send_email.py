@@ -12,20 +12,20 @@ import send_email_mocks
 from send_email_main import send_email_main
 from send_email_env import environment
 import sns
-import render
+from render_email import Email
 
 
 def make_mock_user(wants_email):
-    User = collections.namedtuple('User', ['wants_email', 'id'])
+    User = collections.namedtuple('User', ['wants_email', 'id', 'username', 'email'])
 
     def mock_user(*args, **kwargs):
-        return User(wants_email, 1)
+        return User(wants_email, 1, 'testuser', 'test@example.com')
 
     return mock_user
 
 
 @mock.patch('ses.send', side_effect=send_email_mocks.send_mock)
-@mock.patch('send_email_queries.get_user_by_email', side_effect=make_mock_user(wants_email=True))
+@mock.patch('send_email_queries.get_user_by_id', side_effect=make_mock_user(wants_email=True))
 @mock.patch('hyp3_db.connect_using_environment_variables')
 def test_main_email_wants_email(db_mock, user_mock, ses_mock, sns_event):
     environment.source_email = "test@test.com"
@@ -37,7 +37,7 @@ def test_main_email_wants_email(db_mock, user_mock, ses_mock, sns_event):
 
 
 @mock.patch('ses.send', side_effect=send_email_mocks.send_mock)
-@mock.patch('send_email_queries.get_user_by_email', side_effect=make_mock_user(wants_email=False))
+@mock.patch('send_email_queries.get_user_by_id', side_effect=make_mock_user(wants_email=False))
 @mock.patch('hyp3_db.connect_using_environment_variables')
 def test_main_email_doesnt_want_email(db_mock, user_mock, ses_mock, sns_event):
     environment.source_email = "test@test.com"
@@ -56,7 +56,7 @@ def test_sns_event_from_notification(sns_event):
 
 def test_render_email(sns_event):
     hyp3_event = sns.get_hyp3_event_from(sns_event)
-    rendered_email = render.email_with(hyp3_event.to_dict())
+    rendered_email = Email().render(**hyp3_event.to_dict())
 
     assert isinstance(rendered_email, str)
 

@@ -1,10 +1,10 @@
-
 import json
 import pathlib as pl
 
 import hyp3_events
-
 from hyp3_db import hyp3_models
+
+from schedule import Job
 
 data_path = pl.Path(__file__).parent / 'data'
 
@@ -55,7 +55,7 @@ def format_packages(packages):
 def format_package(pack):
     sub, user, granule = pack
 
-    return (
+    return Job(
         hyp3_models.Subscription(**sub),
         hyp3_models.User(**user),
         hyp3_events.NewGranuleEvent(**granule)

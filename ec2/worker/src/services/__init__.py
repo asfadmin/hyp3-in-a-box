@@ -8,6 +8,7 @@ import json
 from hashlib import md5
 
 import boto3
+from hyp3_events import EmailEvent
 
 from hyp3_logging import getLogger
 
@@ -68,3 +69,15 @@ class SQSService(object):
         """ Raises a BadMessageException if the checksum doesn't match """
         if md5(message.body.encode()).hexdigest() != message.md5_of_body:
             raise BadMessageException("Message checksum did not match!")
+
+
+class SNSService(object):
+    def __init__(self, arn):
+        sns = boto3.resource('sns')
+        self.sns_topic = sns.Topic(arn)
+
+    def push(self, event: EmailEvent) -> None:
+        self.sns_topic.publish(
+            Subject=event.event_type,
+            Message=event.to_json()
+        )
