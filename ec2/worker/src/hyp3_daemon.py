@@ -13,15 +13,33 @@ This script has an ifmain so it can be called from the command line.
 import logging
 import sys
 import time
+from datetime import datetime
 from multiprocessing import Pipe
 
 import boto3
+from hyp3_events import EmailEvent
 
 from hyp3_logging import getLogger
 from hyp3_worker import HyP3Worker, WorkerStatus
-from services import SQSService, SNSService, SQSJob
+from services import SNSService, SQSJob, SQSService
 
 log = getLogger(__name__)
+
+# Add implementation for conversion from SQSJob type
+EmailEvent.impl_from(
+    SQSJob,
+    lambda job: EmailEvent(
+        user_id=job['user_id'],
+        sub_id=job['sub_id'],
+        additional_info=[{
+            "name": "Processing Date",
+            "value": str(datetime.now().date())
+        }],
+        granule_name=job['granule_name'],
+        browse_url="",
+        download_url="",
+    )
+)
 
 
 class HyP3DaemonConfig(object):
@@ -140,7 +158,7 @@ class HyP3Daemon(object):
             self._connect_sns()
 
         log.debug("Sending SNS notification")
-        self.sns_topic.push(job)
+        self.sns_topic.push(EmailEvent.from_type(job))
 
 
 def main():

@@ -4,32 +4,18 @@ from hyp3_events import EmailEvent, Hyp3Event, NewGranuleEvent, StartEvent
 
 from schedule import Job
 
-
-# Add some conversion functions on the EmailEvent type
-def email_event_from_type(obj: Any) -> EmailEvent:
-    if isinstance(obj, Job):
-        return email_event_from_job(obj)
-    raise NotImplemented("from_type not implemented for {}".format(type(obj)))
-
-
-def email_event_from_job(job: Job) -> EmailEvent:
-    """ Converts a Job to an EmailEvent.
-
-        :returns: A new EmailEvent object
-        :rtype: EmailEvent
-    """
-    (sub, user, granule) = job
-    return EmailEvent(
-        user_id=user.id,
-        sub_id=sub.id,
+# Add implementation for conversion from Job type
+EmailEvent.impl_from(
+    Job,
+    lambda obj: EmailEvent(
+        user_id=obj.user.id,
+        sub_id=obj.sub.id,
         additional_info=[],
-        browse_url=granule.browse_url,
-        download_url=granule.download_url,
-        granule_name=granule.name
+        browse_url=obj.granule.browse_url,
+        download_url=obj.granule.download_url,
+        granule_name=obj.granule.name
     )
-
-
-setattr(EmailEvent, 'from_type', email_event_from_type)
+)
 
 
 def make_new_granule_events_with(new_granule_dicts: List[Dict[str, Any]]) -> List[NewGranuleEvent]:

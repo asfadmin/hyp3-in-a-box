@@ -103,3 +103,12 @@ def test_sqsjob_parse_successful():
 def test_sqsjob_bad_input_raises():
     with pytest.raises(BadMessageException):
         SQSJob(MockMessage('Not valid json', ''))
+
+
+def test_event_creation():
+    from hyp3_events import EmailEvent
+    with pytest.raises(NotImplementedError):
+        EmailEvent.from_type("A string!")
+    EmailEvent.from_type(
+        SQSJob(MockMessage('{"some": "json"}', ''))
+    )

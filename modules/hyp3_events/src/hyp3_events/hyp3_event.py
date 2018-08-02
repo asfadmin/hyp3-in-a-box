@@ -6,6 +6,8 @@ import json
 class Hyp3Event(abc.ABC):
     """ Base class for all hyp3 events"""
 
+    from_impls = {}
+
     @classmethod
     def from_json(cls, event_json):
         """ Constructor for making hyp3 events from json.
@@ -15,6 +17,18 @@ class Hyp3Event(abc.ABC):
         data = json.loads(event_json)
 
         return cls(**data)
+
+    @classmethod
+    def impl_from(cls, objtype, function) -> None:
+        cls.from_impls[objtype] = function
+
+    @classmethod
+    def from_type(cls, obj):
+        from_fn = cls.from_impls.get(type(obj))
+        if from_fn is None:
+            raise NotImplementedError("from_type is not implemented for {}".format(type(obj)))
+
+        return from_fn(obj)
 
     def to_json(self):
         """ Convert a hyp3 event to json.
