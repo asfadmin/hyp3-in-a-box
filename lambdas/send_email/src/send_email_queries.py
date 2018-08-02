@@ -7,15 +7,15 @@ def get_user_by_email(db, email):
         .first()
 
 
-def get_user_by_id(db, id):
+def get_user_by_id(db, user_id):
     return db.session.query(User) \
-        .filter_by(id=id) \
+        .filter_by(id=user_id) \
         .first()
 
 
-def get_sub_by_id(db, id):
+def get_sub_by_id(db, sub_id):
     return db.session.query(Subscription) \
-        .filter_by(id=id) \
+        .filter_by(id=sub_id) \
         .first()
 
 
