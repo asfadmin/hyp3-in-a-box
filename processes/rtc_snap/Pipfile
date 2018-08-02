@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+"61ea59b" = {path = "./../../modules/hyp3_events"}
+ordered-set = "*"
+"boto3" = "*"
+
+[dev-packages]
+hypothesis = "*"
+mypy = "*"
+
+[requires]
+python_version = "3.6"
