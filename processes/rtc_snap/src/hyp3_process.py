@@ -1,4 +1,7 @@
+from typing import Dict
+
 import asf_granule_util as gu
+from hyp3_events import RTCSnapJob
 
 import working_directory
 import rtc_snap
@@ -7,15 +10,15 @@ import package
 import products
 
 
-def hyp3_handler(rtc_snap_job):
-    granule = gu.SentinelGranule(rtc_snap_job.granule)
+def hyp3_handler(job: RTCSnapJob) -> Dict[str, str]:
+    granule = gu.SentinelGranule(job.granule)
 
     with working_directory.create(granule) as working_dir:
         gu.download(granule, directory=str(working_dir))
 
         rtc_snap.process(granule, working_dir)
 
-        patterns = OutputPatterns(**rtc_snap_job.output_patterns)
+        patterns = OutputPatterns(**job.output_patterns)
 
         process_outputs = package.outputs(
             archive_name=f'{granule}-rtc-snap',
@@ -34,5 +37,5 @@ def hyp3_handler(rtc_snap_job):
     }
 
 
-def get_bucket_name():
+def get_bucket_name() -> str:
     return 'hyp3-in-a-box-products'

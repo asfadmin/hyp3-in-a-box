@@ -1,7 +1,7 @@
 import subprocess
 
 
-def process(granule_name, working_dir):
+def process(granule_name: str, working_dir: str) -> None:
     subprocess.check_call([
         'python2', script_path(),
         '--ls',
@@ -12,7 +12,7 @@ def process(granule_name, working_dir):
     )
 
 
-def script_path():
+def script_path() -> str:
     script_dir = '/usr/local/hyp3-rtc-snap/src'
 
     return f'{script_dir}/procSentinelRTC-3.py'
