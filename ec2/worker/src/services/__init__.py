@@ -8,6 +8,7 @@ import json
 from hashlib import md5
 
 import boto3
+from hyp3_events import EmailEvent
 
 from hyp3_logging import getLogger
 
@@ -75,13 +76,8 @@ class SNSService(object):
         sns = boto3.resource('sns')
         self.sns_topic = sns.Topic(arn)
 
-    def push(self, job: SQSJob):
+    def push(self, event: EmailEvent) -> None:
         self.sns_topic.publish(
-            Subject="Job Finished",
-            Message=json.dumps({
-                "address": "",
-                "subject": "[hyp3] Processing Completed",
-                "browse_url": "",
-                "download_url": ""
-            })
+            Subject=event.event_type,
+            Message=event.to_json()
         )
