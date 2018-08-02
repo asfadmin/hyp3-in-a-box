@@ -101,6 +101,7 @@ class HyP3Daemon(object):
         if status == WorkerStatus.DONE:
             self._join_worker()
             status = WorkerStatus.NO_STATUS
+            return
         if not (status == WorkerStatus.READY or status == WorkerStatus.NO_STATUS):
             return
 
@@ -151,8 +152,8 @@ class HyP3Daemon(object):
         self.previous_worker_status = WorkerStatus.NO_STATUS
 
     def _finish_job(self, job: SQSJob):
-        log.debug("Worker finished, deleting job %s from SQS", self.worker.job)
-        self.worker.job.delete()
+        log.debug("Worker finished, deleting job %s from SQS", job)
+        job.delete()
 
         if not self.sns_topic:
             self._connect_sns()
