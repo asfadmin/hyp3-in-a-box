@@ -13,6 +13,7 @@ EmailData = collections.namedtuple('EmailData', [
     'user_id',
     'sub_id',
     'additional_info',
+    'granule_name',
     'browse_url',
     'download_url',
 ])

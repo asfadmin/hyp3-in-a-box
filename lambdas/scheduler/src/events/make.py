@@ -24,7 +24,8 @@ def email_event_from_job(job: Job) -> EmailEvent:
         sub_id=sub.id,
         additional_info=[],
         browse_url=granule.browse_url,
-        download_url=granule.download_url
+        download_url=granule.download_url,
+        granule_name=granule.name
     )
 
 
