@@ -10,13 +10,16 @@ import package
 import products
 
 
-def hyp3_handler(job: RTCSnapJob) -> Dict[str, str]:
+def hyp3_handler(
+        job: RTCSnapJob,
+        earthdata_creds: Dict[str, str]
+) -> Dict[str, str]:
     granule = gu.SentinelGranule(job.granule)
 
     with working_directory.create(granule) as working_dir:
-        gu.download(granule, directory=str(working_dir))
+        gu.download(granule, earthdata_creds, directory=str(working_dir))
 
-        rtc_snap.process(granule, working_dir)
+        rtc_snap.process(granule, working_dir, job.script_path)
 
         patterns = OutputPatterns(**job.output_patterns)
 
