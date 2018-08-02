@@ -1,0 +1,6 @@
+-i https://pypi.org/simple
+attrs==18.1.0
+coverage==4.5.1
+hypothesis==3.66.23
+mypy==0.620
+typed-ast==1.1.0
