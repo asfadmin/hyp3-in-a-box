@@ -25,7 +25,7 @@ def mock_download(*args, **kwargs):
         (dl_dir / fname).mkdir(parents=True)
 
 
-@mock.patch('hyp3_process.get_bucket_name')
+@mock.patch('products.get_bucket')
 @mock.patch('rtc_snap.script_path', side_effect=mock_rtc_script_path)
 @mock.patch('asf_granule_util.download', side_effect=mock_download)
 @mock.patch('working_directory.create')
@@ -33,14 +33,12 @@ def test_rtc_snap_mocked(
         wrk_dir_mock,
         download_mock,
         rtc_script_mock,
-        bucket_name_mock,
-        testing_bucket,
+        bucket_mock,
         rtc_snap_job,
         make_working_dir
 ):
     working_dir = make_working_dir(strats.rtc_example_files())
 
-    bucket_name_mock.side_effect = lambda: testing_bucket
     wrk_dir_mock.side_effect = mock_working_dir_with(working_dir)
 
     resp = hyp3_process.hyp3_handler(rtc_snap_job)
