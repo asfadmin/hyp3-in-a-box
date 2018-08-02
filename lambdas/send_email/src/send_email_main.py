@@ -66,7 +66,9 @@ def send_email_notification(user: User, context):
     )
 
 
-def make_email_context(db, user: User, unsub_action: OneTimeAction, email_event: EmailEvent) -> Dict:
+def make_email_context(
+    db, user: User, unsub_action: OneTimeAction, email_event: EmailEvent
+) -> Dict:
     sub = queries.get_sub_by_id(db, email_event.sub_id)
     context = {}
     context['unsubscribe_url'] = unsub_action.url(
