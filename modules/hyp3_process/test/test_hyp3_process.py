@@ -75,32 +75,6 @@ def download_has_valid_params(dl_call, job):
     ])
 
 
-@pytest.mark.rtc_snap_run
-def test_full_rtc_snap(rtc_snap_full, earthdata_creds):
-    print('running rtc_snap with processing')
-    resp = hyp3_process.hyp3_handler(rtc_snap_full)
-
-    assert 'product_url' in resp
-
-
-@pytest.fixture()
-def rtc_snap_full():
-    return rtc_job_with_script_path(
-        str(
-            pl.Path(__file__).parent /
-            './../build/hyp3-rtc-snap/src/procSentinelRTC-3.py'
-        )
-    )
-
-
-@pytest.fixture()
-def earthdata_creds():
-    path = pl.Path(__file__).parent / 'earthdata-creds.json'
-
-    with path.open('r') as f:
-        return json.load(f)
-
-
 @pytest.fixture()
 def rtc_snap_fake_script():
     return rtc_job_with_script_path(

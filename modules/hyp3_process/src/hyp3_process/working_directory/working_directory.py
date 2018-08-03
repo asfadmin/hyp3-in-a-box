@@ -9,6 +9,7 @@ import shutil
 @contextlib.contextmanager
 def create(granule: gu.SentinelGranule):
     working_dir = _setup(granule)
+
     try:
         yield working_dir
     except Exception as e:
@@ -28,7 +29,7 @@ def _setup(granule: gu.SentinelGranule) -> str:
 
 
 def _make(path: pl.Path) -> None:
-    path.mkdir(parents=True)
+    path.mkdir(parents=True, exist_ok=True)
 
 
 def _teardown(directory: str) -> None:

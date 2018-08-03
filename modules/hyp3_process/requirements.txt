@@ -1,7 +1,6 @@
 -i https://pypi.org/simple
-./../../modules/hyp3_events
-boto3==1.7.68
-botocore==1.10.68
+boto3==1.7.70
+botocore==1.10.70
 docutils==0.14
 jmespath==0.9.3
 ordered-set==3.0.1
