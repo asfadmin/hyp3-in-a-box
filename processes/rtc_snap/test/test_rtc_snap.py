@@ -26,21 +26,21 @@ def mock_download(*args, **kwargs):
         (dl_dir / fname).mkdir(parents=True)
 
 
-@mock.patch('products.get_bucket')
+@mock.patch('products.products.get_bucket')
 @mock.patch('asf_granule_util.download', side_effect=mock_download)
-@mock.patch('working_directory.create')
+@mock.patch('hyp3_process.working_directory.create')
 def test_rtc_snap_mocked(
         wrk_dir_mock,
         download_mock,
         bucket_mock,
-        rtc_snap_mock,
+        rtc_snap_fake_script,
         make_working_dir
 ):
     working_dir = make_working_dir(strats.rtc_example_files())
 
     wrk_dir_mock.side_effect = mock_working_dir_with(working_dir)
 
-    resp = hyp3_process.hyp3_handler(rtc_snap_mock, {})
+    resp = hyp3_process.hyp3_handler(rtc_snap_fake_script, {})
 
     download_mock.assert_called_once()
     assert 'product_url' in resp
@@ -73,7 +73,7 @@ def earthdata_creds():
 
 
 @pytest.fixture()
-def rtc_snap_mock():
+def rtc_snap_fake_script():
     return rtc_job_with_script_path(
         str(pl.Path(__file__).parent / 'fake-rtc-script.py')
     )
