@@ -9,7 +9,7 @@ import hyp3_events
 
 import rtc_snap_strategies as strats
 import import_rtc_snap
-from hyp3_process import hyp3_process
+import hyp3_process
 
 
 def mock_rtc_script_path():
