@@ -13,7 +13,8 @@ from . import products
 def hyp3_handler(process_func):
     def wrapper(
             job: RTCSnapJob,
-            earthdata_creds: Dict[str, str]
+            earthdata_creds: Dict[str, str],
+            products_bucket
     ) -> Dict[str, str]:
         granule = gu.SentinelGranule(job.granule)
 
@@ -32,7 +33,7 @@ def hyp3_handler(process_func):
 
             product_zip_url, browse_url = products.upload(
                 outputs=process_outputs,
-                bucket_name=get_bucket_name()
+                bucket_name=products_bucket
             )
 
         return {
@@ -41,7 +42,3 @@ def hyp3_handler(process_func):
         }
 
     return wrapper
-
-
-def get_bucket_name() -> str:
-    return 'hyp3-in-a-box-products'

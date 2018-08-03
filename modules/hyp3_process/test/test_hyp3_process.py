@@ -53,7 +53,7 @@ def test_rtc_snap_mocked(
             cwd=working_dir
         )
 
-    resp = process(rtc_snap_fake_script, {'fake': 'creds'})
+    resp = process(rtc_snap_fake_script, {'fake': 'creds'}, 'some-s3-bucket')
 
     dl_call = download_mock.mock_calls[0]
     assert download_has_valid_params(dl_call, rtc_snap_fake_script)
