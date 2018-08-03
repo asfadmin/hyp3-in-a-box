@@ -5,7 +5,6 @@ import asf_granule_util as gu
 from hyp3_events import RTCSnapJob
 
 from . import working_directory
-from . import rtc_snap
 from .outputs import OutputPatterns
 from . import package
 from . import products
