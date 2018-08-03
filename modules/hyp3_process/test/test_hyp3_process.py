@@ -35,7 +35,7 @@ def test_rtc_snap_mocked(
         wrk_dir_mock,
         download_mock,
         bucket_mock,
-        rtc_snap_fake_script,
+        rtc_snap_job,
         make_working_dir
 ):
     working_dir = make_working_dir(strats.rtc_example_files())
@@ -45,10 +45,10 @@ def test_rtc_snap_mocked(
     def process(granule_name: str, working_dir: str, script_path: str) -> None:
         print('hyp3 processing code goes here!')
 
-    resp = process(rtc_snap_fake_script, {'fake': 'creds'}, 'some-s3-bucket')
+    resp = process(rtc_snap_job, {'fake': 'creds'}, 'some-s3-bucket')
 
     dl_call = download_mock.mock_calls[0]
-    assert download_has_valid_params(dl_call, rtc_snap_fake_script)
+    assert download_has_valid_params(dl_call, rtc_snap_job)
 
     assert all([
         'product_url' in resp,
@@ -67,14 +67,8 @@ def download_has_valid_params(dl_call, job):
     ])
 
 
-@pytest.fixture()
-def rtc_snap_fake_script():
-    return rtc_job_with_script_path(
-        str(pl.Path(__file__).parent / 'fake-rtc-script.py')
-    )
-
-
-def rtc_job_with_script_path(path):
+@pytest.fixture
+def rtc_snap_job():
     return hyp3_events.RTCSnapJob(
         granule=('S1A_IW_GRDH_1SDV_20180801T155817'
                  '_20180801T155842_023055_0280C4_749A'),
@@ -85,7 +79,7 @@ def rtc_job_with_script_path(path):
             'archive': ["*/*_TC_G??.tif", "*/*.png", "*/*.txt"],
             'browse': '*/*GVV.png'
         },
-        script_path=path
+        script_path='/users/script/path/here'
     )
 
 
