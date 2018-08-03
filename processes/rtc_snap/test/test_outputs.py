@@ -1,7 +1,7 @@
 import pathlib as pl
 
 import import_rtc_snap
-from outputs import OutputPatterns, ProcessOutputs
+from hyp3_process.outputs import OutputPatterns, ProcessOutputs
 
 
 def test_output_pattern_class():

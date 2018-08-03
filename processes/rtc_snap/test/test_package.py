@@ -5,8 +5,8 @@ import pytest
 
 import rtc_snap_strategies as strats
 import import_rtc_snap
-import package
-from outputs import OutputPatterns
+from hyp3_process import package
+from hyp3_process.outputs import OutputPatterns
 
 
 valid_cases = [({

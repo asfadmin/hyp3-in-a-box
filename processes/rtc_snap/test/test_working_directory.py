@@ -3,11 +3,11 @@ import pytest
 import mock
 
 import import_rtc_snap
-import working_directory
+from hyp3_process import working_directory
 
 
-@mock.patch('working_directory.working_directory._teardown')
-@mock.patch('working_directory.working_directory._make')
+@mock.patch('hyp3_process.working_directory.working_directory._teardown')
+@mock.patch('hyp3_process.working_directory.working_directory._make')
 def test_working_directory(make_mock, teardown_mock, granule):
     with working_directory.create(granule) as wd:
         assert granule.unique_id in wd
@@ -17,8 +17,8 @@ def test_working_directory(make_mock, teardown_mock, granule):
     teardown_mock.assert_called_once()
 
 
-@mock.patch('working_directory.working_directory._move')
-@mock.patch('working_directory.working_directory._make')
+@mock.patch('hyp3_process.working_directory.working_directory._move')
+@mock.patch('hyp3_process.working_directory.working_directory._make')
 def test_failed(make_mock, copy_mock, granule):
     with pytest.raises(Exception):
         with working_directory.create(granule):

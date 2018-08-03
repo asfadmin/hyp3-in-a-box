@@ -9,7 +9,7 @@ import hyp3_events
 
 import rtc_snap_strategies as strats
 import import_rtc_snap
-import hyp3_process
+from hyp3_process import hyp3_process
 
 
 def mock_rtc_script_path():
@@ -26,7 +26,7 @@ def mock_download(*args, **kwargs):
         (dl_dir / fname).mkdir(parents=True)
 
 
-@mock.patch('products.products.get_bucket')
+@mock.patch('hyp3_process.products.products.get_bucket')
 @mock.patch('asf_granule_util.download', side_effect=mock_download)
 @mock.patch('hyp3_process.working_directory.create')
 def test_rtc_snap_mocked(

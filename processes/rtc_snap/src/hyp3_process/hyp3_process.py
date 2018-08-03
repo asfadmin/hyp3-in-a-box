@@ -3,11 +3,11 @@ from typing import Dict
 import asf_granule_util as gu
 from hyp3_events import RTCSnapJob
 
-import working_directory
-import rtc_snap
-from outputs import OutputPatterns
-import package
-import products
+from . import working_directory
+from . import rtc_snap
+from .outputs import OutputPatterns
+from . import package
+from . import products
 
 
 def hyp3_handler(
