@@ -2,6 +2,7 @@ import contextlib
 import pathlib as pl
 import json
 
+import asf_granule_util as gu
 import pytest
 import mock
 
@@ -37,13 +38,25 @@ def test_rtc_snap_mocked(
         make_working_dir
 ):
     working_dir = make_working_dir(strats.rtc_example_files())
-
     wrk_dir_mock.side_effect = mock_working_dir_with(working_dir)
 
-    resp = hyp3_process.hyp3_handler(rtc_snap_fake_script, {})
+    resp = hyp3_process.hyp3_handler(rtc_snap_fake_script, {'fake': 'creds'})
 
-    download_mock.assert_called_once()
+    dl_call = download_mock.mock_calls[0]
+
+    assert download_has_valid_params(dl_call, rtc_snap_fake_script)
     assert 'product_url' in resp
+
+
+def download_has_valid_params(dl_call, job):
+    (dl_granule, creds), kwargs = dl_call[1:3]
+    expected_granule = gu.SentinelGranule(job.granule)
+
+    return all([
+        expected_granule == dl_granule,
+        creds == {'fake': 'creds'},
+        'directory' in kwargs
+    ])
 
 
 @pytest.mark.rtc_snap_run
