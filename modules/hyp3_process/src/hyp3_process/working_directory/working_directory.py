@@ -1,9 +1,9 @@
-
-import asf_granule_util as gu
-
 import contextlib
 import pathlib as pl
 import shutil
+
+import asf_granule_util as gu
+
 
 
 @contextlib.contextmanager

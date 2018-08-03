@@ -1,1 +1,1 @@
-from .outputs import *
+from .outputs import OutputPatterns, ProcessOutputs
