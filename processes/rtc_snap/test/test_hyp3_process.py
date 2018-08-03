@@ -1,6 +1,7 @@
 import contextlib
 import pathlib as pl
 import json
+import subprocess
 
 import asf_granule_util as gu
 import pytest
@@ -40,12 +41,27 @@ def test_rtc_snap_mocked(
     working_dir = make_working_dir(strats.rtc_example_files())
     wrk_dir_mock.side_effect = mock_working_dir_with(working_dir)
 
-    resp = hyp3_process.hyp3_handler(rtc_snap_fake_script, {'fake': 'creds'})
+    @hyp3_process.hyp3_handler
+    def process(granule_name: str, working_dir: str, script_path: str) -> None:
+        print('processing rtc product')
+        subprocess.check_call([
+            'python2', script_path,
+            '--ls',
+            '-r', '30',
+            f'{granule_name}.zip'
+        ],
+            cwd=working_dir
+        )
+
+    resp = process(rtc_snap_fake_script, {'fake': 'creds'})
 
     dl_call = download_mock.mock_calls[0]
-
     assert download_has_valid_params(dl_call, rtc_snap_fake_script)
-    assert 'product_url' in resp
+
+    assert all([
+        'product_url' in resp,
+        'browse_url' in resp
+    ])
 
 
 def download_has_valid_params(dl_call, job):
