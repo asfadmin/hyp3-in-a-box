@@ -88,7 +88,7 @@ class HyP3DaemonConfig(object):
 class HyP3Daemon(object):
     """ Class HyP3Daemon"""
 
-    def __init__(self, config: HyP3DaemonConfig) -> None:
+    def __init__(self, config: HyP3DaemonConfig, handler) -> None:
         """ Initialize state. This creates a new HyP3DaemonConfig object."""
         self.config = config
 
@@ -100,6 +100,7 @@ class HyP3Daemon(object):
         )
         self.last_active_time = time.time()
 
+        self.handler = handler
         self.worker: Union[HyP3Worker, None] = None
         self.worker_conn = None
         self.previous_worker_status = WS.NO_STATUS
@@ -158,7 +159,13 @@ class HyP3Daemon(object):
         self.last_active_time = time.time()
 
         self.worker_conn, child_conn = Pipe()
-        self.worker = HyP3Worker(child_conn, job)
+        self.worker = HyP3Worker(
+            child_conn,
+            job,
+            self.handler,
+            self.config.earthdata_creds,
+            self.config.products_bucket_name
+        )
         self.worker.start()
 
     def _join_worker(self):

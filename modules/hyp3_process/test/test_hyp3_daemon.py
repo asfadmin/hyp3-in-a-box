@@ -19,10 +19,9 @@ from hyp3_process.hyp3_daemon.services import BadMessageException, SQSJob, SQSSe
 
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SQSService')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3Daemon._process_job')
-@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3DaemonConfig')
-def test_daemon_main(_, process_job_mock, SQSServiceMock, config):
+def test_daemon_main(process_job_mock, SQSServiceMock, config, handler):
     log.setLevel(logging.DEBUG)
-    daemon = HyP3Daemon(config)
+    daemon = HyP3Daemon(config, handler)
     daemon.main()
 
     sqsservice_mock = SQSServiceMock.return_value
@@ -38,10 +37,9 @@ def test_daemon_main(_, process_job_mock, SQSServiceMock, config):
 
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SNSService')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SQSService')
-@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3DaemonConfig')
-def test_daemon_main_job_finished(_1, _2, sns_mock, config):
+def test_daemon_main_job_finished(_1, sns_mock, config, handler):
     log.setLevel(logging.DEBUG)
-    daemon = HyP3Daemon(config)
+    daemon = HyP3Daemon(config, handler)
 
     worker_mock = mock.Mock()
     daemon.worker = worker_mock
@@ -70,9 +68,8 @@ def test_daemon_main_job_finished(_1, _2, sns_mock, config):
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.subprocess')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SNSService')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SQSService')
-@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3DaemonConfig')
-def test_shutdown_if_idle(_1, _2, _3, subprocess_mock, sys_mock, event_mock, config):
-    daemon = HyP3Daemon(config)
+def test_shutdown_if_idle(_1, _2, subprocess_mock, sys_mock, event_mock, config, handler):
+    daemon = HyP3Daemon(config, handler)
     daemon.config.MAX_IDLE_TIME_SECONDS = 1
     daemon.run()
 
@@ -179,6 +176,11 @@ def test_event_creation():
             "script_path": ""
         }''', ''))
     )
+
+
+@pytest.fixture
+def handler():
+    return lambda *args, **kwargs: print('processing')
 
 
 @pytest.fixture
