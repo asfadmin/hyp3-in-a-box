@@ -9,19 +9,26 @@ from .session import make_engine, make_session
 
 
 @contextlib.contextmanager
-def connect_using_environment_variables(db='hyp3db'):
+def connect_using_environment_variables(db='hyp3db', commit_on_close=False):
     (host, user, password) = (
         os.environ[k] for k in ['DB_HOST', 'DB_USER', 'DB_PASSWORD']
     )
-    with connect(host, user, password, db=db) as db_obj:
+    with connect(
+        host, user, password,
+        db=db, commit_on_close=commit_on_close
+    ) as db_obj:
         yield db_obj
 
 
 @contextlib.contextmanager
-def connect(host, user, password, db='hyp3db'):
+def connect(host, user, password, db='hyp3db', commit_on_close=False):
     db = Hyp3DB(host, user, password, db)
     yield db
-    db.commit_and_close()
+
+    if commit_on_close:
+        db.commit_and_close()
+    else:
+        db.close()
 
 
 class Hyp3DB:

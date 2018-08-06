@@ -1,16 +1,14 @@
 import contextlib
 import pathlib as pl
-import json
-import subprocess
 
-import asf_granule_util as gu
 import pytest
 import mock
 
+import asf_granule_util as gu
 import hyp3_events
 
-import rtc_snap_strategies as strats
 import import_rtc_snap
+import rtc_snap_strategies as strats
 from hyp3_process import Process
 
 
@@ -82,8 +80,8 @@ def download_has_valid_params(dl_call, job):
 @pytest.fixture
 def rtc_snap_job():
     return hyp3_events.RTCSnapJob(
-        granule=('S1A_IW_SLC__1SSV_20150829T123751'
-                 '_20150829T123821_007478_00A50D_C506'),
+        granule=('S1A_WV_OCN__2SSV_20180805T042601'
+                 '_20180805T043210_023106_028262_4799'),
         address='test@email.com',
         username='test',
         subscription='test',

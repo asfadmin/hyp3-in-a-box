@@ -1,7 +1,17 @@
-import hyp3_db
+from typing import NamedTuple
 
+import hyp3_db
+from hyp3_db.hyp3_models import Subscription, User
+from hyp3_events import NewGranuleEvent
 from scheduler_env import environment
+
 from . import queries
+
+
+class Job(NamedTuple):
+    sub: Subscription
+    user: User
+    granule: NewGranuleEvent
 
 
 def hyp3_jobs(new_granules):
@@ -9,8 +19,8 @@ def hyp3_jobs(new_granules):
 
         :param list[dict] new_granules: New granules from cmr
 
-        :return: A tuple of the form (sub, user, granule)
-        :rtype: list[tuple]
+        :return: A named tuple of the form Job(sub, user, granule)
+        :rtype: list[Job]
     """
     host, name, password, db = environment.db_creds
 
@@ -34,7 +44,7 @@ def get_jobs_for(granule, db):
     users = get_users_for(subs, db)
 
     return [
-        (sub, users[sub.user_id], granule) for sub in subs
+        Job(sub, users[sub.user_id], granule) for sub in subs
     ]
 
 

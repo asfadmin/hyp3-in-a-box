@@ -1,5 +1,3 @@
-.. hyp3_api_eb.py  hyp3_find_new.py  hyp3_rds.py  hyp3_send_email.py  hyp3_vpc.py
-
 .. _cloudformation:
 
 AWS CloudFormation
@@ -23,6 +21,7 @@ AWS CloudFormation
    cloudformation/vpc.rst
 
    cloudformation/sns.rst
+   cloudformation/sqs.rst
    cloudformation/autoscaling_group.rst
 
    cloudformation/kms_key.rst

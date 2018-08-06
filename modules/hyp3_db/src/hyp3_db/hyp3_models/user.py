@@ -7,7 +7,6 @@ from hashlib import sha1
 
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, Table,
                         Text, orm, sql)
-
 from .base import Base
 
 
@@ -84,6 +83,6 @@ class OneTimeAction(Base):
 
 
 def _get_random_hash():
-    return sha1().update(
+    return sha1(
         os.urandom(128)
     ).hexdigest()

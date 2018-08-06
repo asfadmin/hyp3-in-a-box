@@ -10,7 +10,7 @@ from . import hyp3_models
 
 
 @contextlib.contextmanager
-def test_db(db="hyp3db"):
+def test_db(db='hyp3db', commit_on_close=False):
     """ Connect to the hyp3 unittesting database
 
         :param str db: name of the database to make
@@ -18,14 +18,18 @@ def test_db(db="hyp3db"):
         :returns: connection to the hyp3_db database
         :rtype: hyp3_db.Hyp3DB
     """
-    creds = get_test_db_creds(db)
+    creds = testing_creds(db)
+
     db = Hyp3DB(**creds)
-
     yield db
-    db.close()
+
+    if commit_on_close:
+        db.commit_and_close()
+    else:
+        db.close()
 
 
-def get_test_db_creds(db):
+def testing_creds(db):
     return {
         "host": "unit-testing.cxpvv5ynyjaw.us-west-2.rds.amazonaws.com",
         "user": "unittest",
@@ -34,5 +38,8 @@ def get_test_db_creds(db):
     }
 
 
-__all__ = ['Hyp3DB', 'connect',
-           'connect_using_environment_variables', 'hyp3_models', 'test_db']
+__all__ = [
+    'Hyp3DB', 'connect',
+    'connect_using_environment_variables', 'hyp3_models',
+    'test_db', 'testing_creds'
+]

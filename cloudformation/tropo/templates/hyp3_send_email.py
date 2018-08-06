@@ -16,14 +16,15 @@ Resources
 
 """
 
-from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Function, Environment
+from troposphere import Parameter, Ref
+from troposphere.awslambda import Environment
 from troposphere.iam import Policy, Role
 
-from tropo_env import environment
 from template import t
 
 from . import utils
+from .hyp3_db_params import db_name, db_pass, db_user
+from .hyp3_api_eb import api_url
 
 source_zip = "send_email.zip"
 
@@ -62,7 +63,13 @@ send_email = t.add_resource(utils.make_lambda_function(
     lambda_params={
         "Environment": Environment(
             Variables={
-                'SOURCE_EMAIL': Ref(source_email)}
+                'SOURCE_EMAIL': Ref(source_email),
+                'DB_HOST': utils.get_host_address(),
+                'DB_USER': Ref(db_user),
+                'DB_PASSWORD': Ref(db_pass),
+                'DB_NAME': Ref(db_name),
+                'API_URL': api_url
+            }
         )
     }
 ))
