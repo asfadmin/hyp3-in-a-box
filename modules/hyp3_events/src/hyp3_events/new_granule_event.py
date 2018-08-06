@@ -17,9 +17,5 @@ class NewGranuleEvent(NewGranuleData, Hyp3Event):
         * **polygon** - Polygon representing the area of the granule
         * **download_url** - URL where the granule can be downloaded
     """
-    @property
-    def event_type(self):
-        return 'Hyp3NewGranuleEvent'
-
     def to_dict(self):
         return self._asdict()

@@ -4,6 +4,16 @@ import hyp3_events
 import asf_granule_util as gu
 
 
+def new_granule_events():
+    return st.builds(
+        hyp3_events.NewGranuleEvent,
+        name=granules(),
+        polygon=cmr_polygon_lists(),  # pylint: disable=E1120
+        download_url=urls(),
+        browse_url=urls()
+    )
+
+
 def start_events():
     return st.builds(
         hyp3_events.StartEvent,
@@ -16,11 +26,12 @@ def start_events():
     )
 
 
-def notify_only_events():
+def email_events():
     return st.builds(
-        hyp3_events.NotifyOnlyEvent,
-        address=st.emails(),
-        subject=st.text(),
+        hyp3_events.EmailEvent,
+        user_id=st.integers(),
+        sub_id=st.integers(),
+        granule_name=granules(),
         additional_info=st.lists(
             st.fixed_dictionaries({
                 'name': st.text(),
@@ -34,16 +45,6 @@ def notify_only_events():
 
 def urls():
     return st.from_regex(r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+')
-
-
-def new_granule_events():
-    return st.builds(
-        hyp3_events.NewGranuleEvent,
-        name=granules(),
-        polygon=cmr_polygon_lists(),  # pylint: disable=E1120
-        download_url=urls(),
-        browse_url=urls()
-    )
 
 
 def granules():
