@@ -14,7 +14,7 @@ def push_event(event: Hyp3Event) -> None:
     print(f'sending {event.event_type}')
     subject, json_payload = event.event_type, event.to_json()
 
-    resp = sns.push(
+    resp = push(
         subject=subject,
         payload=json_payload
     )
@@ -22,7 +22,7 @@ def push_event(event: Hyp3Event) -> None:
     print(resp)
 
 
-def push(subject: str, payload: str) -> None:
+def push(subject: str, payload: str):
     return sns.publish(
         TopicArn=environment.sns_arn,
         Subject=subject,

@@ -79,7 +79,7 @@ def download_has_valid_params(dl_call, job):
 
 @pytest.fixture
 def rtc_snap_job():
-    return hyp3_events.RTCSnapJob(
+    return hyp3_events.StartEvent(
         granule=('S1A_WV_OCN__2SSV_20180805T042601'
                  '_20180805T043210_023106_028262_4799'),
         address='test@email.com',

@@ -44,4 +44,4 @@ def _make_event(job: Job) -> Hyp3Event:
     if job.sub.process_id == 1:
         return EmailEvent.from_type(job)
 
-    return StartEvent()
+    return StartEvent.from_type(job)
