@@ -54,13 +54,27 @@ def test_daemon_main_job_finished(_1, _2, sns_mock):
     worker_conn_mock = mock.Mock()
     daemon.worker_conn = worker_conn_mock
     worker_conn_mock.poll.return_value = True
-    worker_conn_mock.asdf.return_value = False
     worker_conn_mock.recv.return_value = WorkerStatus.DONE
 
     daemon.main()
 
     assert worker_mock.job.message.times_delete_called == 1
     sns_mock.return_value.push.assert_called_once()
+
+
+@pytest.mark.timeout(5)
+@mock.patch('hyp3_daemon.sys')
+@mock.patch('hyp3_daemon.subprocess')
+@mock.patch('hyp3_daemon.SNSService')
+@mock.patch('hyp3_daemon.SQSService')
+@mock.patch('hyp3_daemon.HyP3DaemonConfig')
+def test_shutdown_if_idle(_1, _2, _3, subprocess_mock, sys_mock):
+    daemon = HyP3Daemon()
+    daemon.config.max_idle_time_seconds = 1
+    daemon.run()
+
+    subprocess_mock.call.assert_called_once_with(['shutdown', '-h', 'now'])
+    sys_mock.exit.assert_called_once()
 
 
 def test_status_enum():
