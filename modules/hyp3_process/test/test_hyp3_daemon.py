@@ -20,9 +20,8 @@ from hyp3_process.hyp3_daemon.services import BadMessageException, SQSJob, SQSSe
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SQSService')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3Daemon._process_job')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3DaemonConfig')
-def test_daemon_main(_, process_job_mock, SQSServiceMock):
+def test_daemon_main(_, process_job_mock, SQSServiceMock, config):
     log.setLevel(logging.DEBUG)
-    config = HyP3DaemonConfig()
     daemon = HyP3Daemon(config)
     daemon.main()
 
@@ -40,9 +39,8 @@ def test_daemon_main(_, process_job_mock, SQSServiceMock):
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SNSService')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SQSService')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3DaemonConfig')
-def test_daemon_main_job_finished(_1, _2, sns_mock):
+def test_daemon_main_job_finished(_1, _2, sns_mock, config):
     log.setLevel(logging.DEBUG)
-    config = HyP3DaemonConfig()
     daemon = HyP3Daemon(config)
 
     worker_mock = mock.Mock()
@@ -67,15 +65,15 @@ def test_daemon_main_job_finished(_1, _2, sns_mock):
 
 
 @pytest.mark.timeout(5)
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.make_email_event_from')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.sys')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.subprocess')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SNSService')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SQSService')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3DaemonConfig')
-def test_shutdown_if_idle(_1, _2, _3, subprocess_mock, sys_mock):
-    config = HyP3DaemonConfig()
+def test_shutdown_if_idle(_1, _2, _3, subprocess_mock, sys_mock, event_mock, config):
     daemon = HyP3Daemon(config)
-    daemon.config.max_idle_time_seconds = 1
+    daemon.config.MAX_IDLE_TIME_SECONDS = 1
     daemon.run()
 
     subprocess_mock.call.assert_called_once_with(['shutdown', '-h', 'now'])
@@ -170,6 +168,7 @@ def test_sqsjob_bad_input_raises():
 def test_event_creation():
     with pytest.raises(NotImplementedError):
         EmailEvent.from_type("A string!")
+
     EmailEvent.from_type(
         SQSJob(MockMessage('''{
             "user_id": 0,
@@ -179,4 +178,15 @@ def test_event_creation():
             "output_patterns": [],
             "script_path": ""
         }''', ''))
+    )
+
+
+@pytest.fixture
+def config():
+    return HyP3DaemonConfig(
+        queue_name='queue-name',
+        sns_arn='sns-arn',
+        earthdata_creds='{"username": "hello", "password": "world"}',
+        products_bucket='prodcuts',
+        are_ssm_param_names=False
     )

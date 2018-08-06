@@ -13,8 +13,6 @@ class Process:
         self
     ) -> None:
         self.process_handler: Union[ProcessingFunction, None] = None
-        self.earthdata_creds = {}
-        self.products_bucket = None
 
     def handler(self, process_func: HandlerFunction):
         if self.process_handler is not None:
@@ -27,8 +25,8 @@ class Process:
     def start(self, job):
         return self.process_handler(
             job,
-            self.earthdata_creds,
-            self.products_bucket
+            {},
+            ''
         )
 
 
