@@ -70,22 +70,23 @@ def make_email_context(
     db, user: User, unsub_action: OneTimeAction, email_event: EmailEvent
 ) -> Dict:
     sub = queries.get_sub_by_id(db, email_event.sub_id)
-    context = {}
-    context['unsubscribe_url'] = unsub_action.url(
-        api_url=environment.api_url
-    )
-    context['additional_info'] = [{
-        'name': 'User',
-        'value': user.username
-    }, {
-        'name': 'Subscripton',
-        'value': sub.name
-    }, {
-        'name': 'Granule',
-        'value': email_event.granule_name
-    }]
+    context = {
+        'unsubscribe_url': unsub_action.url(
+            api_url=environment.api_url
+        ),
+        'additional_info': [{
+            'name': 'User',
+            'value': user.username
+        }, {
+            'name': 'Subscripton',
+            'value': sub.name
+        }, {
+            'name': 'Granule',
+            'value': email_event.granule_name
+        }],
+        'download_url': email_event.download_url,
+        'browse_url': email_event.browse_url
+    }
     context['additional_info'] += email_event.additional_info
-    context['download_url'] = email_event.download_url
-    context['browse_url'] = email_event.browse_url
 
     return context
