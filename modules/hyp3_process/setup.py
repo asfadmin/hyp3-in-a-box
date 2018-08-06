@@ -14,7 +14,7 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     license="GPLv3+",
-    description=("Module for wrapping hyp3 functionality"
-                 " around processing scripts"),
+    description=("Module for wrapping hyp3 functionality "
+                 "around processing scripts"),
     install_requires=requirements
 )

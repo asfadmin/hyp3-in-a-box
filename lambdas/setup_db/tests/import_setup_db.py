@@ -1,7 +1,11 @@
-import os
+import pathlib as pl
 import sys
 
-path = os.path.dirname(os.path.abspath(__file__))
-new_path = os.path.join(path, '../src')
-if new_path not in sys.path:
-    sys.path.append(new_path)
+"""
+This file adds the src directory to the import path of testing files.
+"""
+
+path = pl.Path(__file__).parent / '..' / 'src'
+
+if str(path) not in sys.path:
+    sys.path.append(str(path))
