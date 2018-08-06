@@ -58,7 +58,7 @@ class HyP3DaemonConfig(object):
         self.queue_name = ssm.get_parameter(
             Name="/hyp3-in-a-box-test/StartEventQueueName"
         )['Parameter']['Value']
-        self.ssn_arn = ssm.get_parameter(
+        self.sns_arn = ssm.get_parameter(
             Name="/hyp3-in-a-box-test/FinishEventSNSArn"
         )['Parameter']['Value']
 
