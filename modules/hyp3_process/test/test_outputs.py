@@ -1,6 +1,6 @@
 import pathlib as pl
 
-import import_rtc_snap
+import import_hyp3_process
 from hyp3_process.outputs import OutputPatterns, ProcessOutputs
 
 

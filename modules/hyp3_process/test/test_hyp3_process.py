@@ -7,7 +7,7 @@ import mock
 import asf_granule_util as gu
 import hyp3_events
 
-import import_rtc_snap
+import import_hyp3_process
 import rtc_snap_strategies as strats
 from hyp3_process import Process
 
@@ -82,9 +82,9 @@ def rtc_snap_job():
     return hyp3_events.StartEvent(
         granule=('S1A_WV_OCN__2SSV_20180805T042601'
                  '_20180805T043210_023106_028262_4799'),
-        address='test@email.com',
-        username='test',
-        subscription='test',
+        user_id=80,
+        sub_id=80,
+        additional_info=[],
         output_patterns={
             'archive': ["*.txt"],
             'browse': '*.png'

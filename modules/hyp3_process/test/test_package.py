@@ -4,7 +4,7 @@ import zipfile as zf
 import pytest
 
 import rtc_snap_strategies as strats
-import import_rtc_snap
+import import_hyp3_process
 from hyp3_process import package
 from hyp3_process.outputs import OutputPatterns
 
