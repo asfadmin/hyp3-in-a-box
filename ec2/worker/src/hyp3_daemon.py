@@ -11,14 +11,15 @@ This script has an ifmain so it can be called from the command line.
 """
 
 import logging
+import subprocess
 import sys
 import time
 from datetime import datetime
 from multiprocessing import Pipe
 
 import boto3
-from hyp3_events import EmailEvent
 
+from hyp3_events import EmailEvent
 from hyp3_logging import getLogger
 from hyp3_worker import HyP3Worker, WorkerStatus
 from services import SNSService, SQSJob, SQSService
@@ -61,6 +62,7 @@ class HyP3DaemonConfig(object):
         self.sns_arn = ssm.get_parameter(
             Name="/hyp3-in-a-box-test/FinishEventSNSArn"
         )['Parameter']['Value']
+        self.max_idle_time_seconds = 120
 
 
 class HyP3Daemon(object):
@@ -68,24 +70,35 @@ class HyP3Daemon(object):
 
     def __init__(self):
         """ Initialize state. This creates a new HyP3DaemonConfig object."""
-        self.job_queue = None
-        self.sns_topic = None
+        self.config = HyP3DaemonConfig()
+
+        self.job_queue = SQSService(
+            queue_name=self.config.queue_name
+        )
+        self.sns_topic = SNSService(
+            arn=self.config.sns_arn
+        )
+        self.last_active_time = time.time()
         self.worker = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
-
-        self.config = HyP3DaemonConfig()
 
     def run(self):
         """ Calls ``self.main()`` every second until an exception is raised"""
         log.info("HyP3 Daemon starting...")
         while True:
             try:
+                if self._reached_max_idle_time():
+                    log.info("Max idle time reached, shutting down...")
+                    subprocess.call(["shutdown", "-h", "now"])
+                    sys.exit(0)
+                    return
                 self.main()
                 time.sleep(1)
             except KeyboardInterrupt:
                 log.debug("Stopping hyp3 daemon...")
                 sys.exit(0)
+                return
             # For now, just crash on errors
 
     def main(self):
@@ -96,8 +109,6 @@ class HyP3Daemon(object):
             email notification will be queued via SNS. The notification includes
             the date on which processing occurred.
         """
-        if not self.job_queue:
-            self._connect_sqs()
 
         status = self._poll_worker_status()
         if status == WorkerStatus.DONE:
@@ -114,22 +125,6 @@ class HyP3Daemon(object):
         log.debug("Staring new job %s", new_job)
         self._process_job(new_job)
 
-    def _connect_sqs(self):
-        if self.job_queue:
-            return
-
-        self.job_queue = SQSService(
-            queue_name=self.config.queue_name
-        )
-
-    def _connect_sns(self):
-        if self.sns_topic:
-            return
-
-        self.sns_topic = SNSService(
-            arn=self.config.sns_arn
-        )
-
     def _poll_worker_status(self):
         if self.worker and self.worker_conn.poll():
             self.previous_worker_status = self.worker_conn.recv()
@@ -139,11 +134,14 @@ class HyP3Daemon(object):
         if self.worker:
             raise Exception("Worker already processing")
 
+        self.last_active_time = time.time()
+
         self.worker_conn, child_conn = Pipe()
         self.worker = HyP3Worker(child_conn, job)
         self.worker.start()
 
     def _join_worker(self):
+        self.last_active_time = time.time()
         self.worker_conn.close()
         self.worker.join()
 
@@ -157,11 +155,13 @@ class HyP3Daemon(object):
         log.debug("Worker finished, deleting job %s from SQS", job)
         job.delete()
 
-        if not self.sns_topic:
-            self._connect_sns()
-
         log.debug("Sending SNS notification")
         self.sns_topic.push(EmailEvent.from_type(job))
+
+    def _reached_max_idle_time(self):
+        if self.previous_worker_status == WorkerStatus.BUSY:
+            return False
+        return (time.time() - self.last_active_time) >= self.config.max_idle_time_seconds
 
 
 def main():
