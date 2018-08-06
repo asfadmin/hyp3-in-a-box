@@ -1,4 +1,5 @@
 -i https://pypi.org/simple
+../hyp3_events
 boto3==1.7.70
 botocore==1.10.70
 docutils==0.14
