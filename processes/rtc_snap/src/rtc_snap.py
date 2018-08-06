@@ -1,10 +1,13 @@
 import subprocess
 
-import hyp3_process
+from hyp3_process import Process
 
 
-@hyp3_process.hyp3_handler
-def process(granule_name: str, working_dir: str, script_path: str) -> None:
+rtc_snap = Process()
+
+
+@rtc_snap.handler
+def handler(granule_name: str, working_dir: str, script_path: str) -> None:
     print('processing rtc product')
     subprocess.check_call([
         'python2', script_path,
