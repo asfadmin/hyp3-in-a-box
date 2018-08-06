@@ -2,7 +2,7 @@ from typing import Dict, NamedTuple, Callable, Union
 import functools
 
 import asf_granule_util as gu
-from hyp3_events import RTCSnapJob
+from hyp3_events import StartEvent
 
 from . import working_directory
 from .outputs import OutputPatterns
@@ -15,8 +15,8 @@ class EarthdataCredentials(NamedTuple):
     password: str
 
 
-HandlerFunc = Callable[[
-    RTCSnapJob,
+HandlerFunction = Callable[[
+    StartEvent,
     EarthdataCredentials,
     str
 ], Dict[str, str]
@@ -32,9 +32,9 @@ class Process:
         self.earthdata_creds = earthdata_creds
         self.products_bucket = products_bucket
 
-        self.process_handler: Union[HandlerFunc, None] = None
+        self.process_handler: Union[HandlerFunction, None] = None
 
-    def handler(self, process_func: HandlerFunc):
+    def handler(self, process_func: HandlerFunction):
         if self.process_handler is not None:
             raise HandlerRedefinitionError(
                 'Process is only allowed one handler function'
@@ -50,9 +50,9 @@ class Process:
         )
 
 
-def hyp3_handler(handler_function) -> HandlerFunc:
+def hyp3_handler(handler_function) -> HandlerFunction:
     def hyp3_wrapper(
-            job: RTCSnapJob,
+            job: StartEvent,
             earthdata_creds: EarthdataCredentials,
             products_bucket: str
     ) -> Dict[str, str]:

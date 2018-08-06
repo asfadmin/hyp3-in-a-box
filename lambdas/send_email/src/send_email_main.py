@@ -9,7 +9,7 @@ from hyp3_events import EmailEvent
 from render_email import Email
 import send_email_queries as queries
 import ses
-import sns
+import send_email_sns as sns
 from send_email_env import environment
 
 

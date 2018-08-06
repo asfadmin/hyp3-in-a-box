@@ -8,6 +8,7 @@ import subscription
 FILE_PATH = pl.Path(__file__).parent
 
 
+@pytest.mark.skip
 @pytest.mark.skipif(
     not (FILE_PATH / '../src/cfg/cfg.json').exists(),
     reason="Can't run test without cfg"

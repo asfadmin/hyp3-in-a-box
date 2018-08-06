@@ -1,9 +1,20 @@
 import subprocess
 
-from hyp3_process import Process
+from hyp3_process import Process, EarthdataCredentials
 
 
-rtc_snap = Process()
+def get_creds():
+    pass
+
+
+def get_bucket_name():
+    pass
+
+
+rtc_snap = Process(
+    earthdata_creds=get_creds(),
+    products_bucket=get_bucket_name()
+)
 
 
 @rtc_snap.handler

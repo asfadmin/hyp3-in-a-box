@@ -77,7 +77,7 @@ def rtc_snap_fake_script():
 
 
 def rtc_job_with_script_path(path):
-    return hyp3_events.RTCSnapJob(
+    return hyp3_events.StartEvent(
         granule=('S1A_IW_GRDH_1SDV_20180801T155817'
                  '_20180801T155842_023055_0280C4_749A'),
         address='test@email.com',

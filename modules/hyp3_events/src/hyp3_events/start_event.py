@@ -2,7 +2,7 @@ import collections
 
 from .hyp3_event import Hyp3Event
 
-RTCSnapJobData = collections.namedtuple('Hyp3ProcessStartData', [
+StartEventData = collections.namedtuple('Hyp3ProcessStartData', [
     'granule',
     'address',
     'username',
@@ -12,10 +12,10 @@ RTCSnapJobData = collections.namedtuple('Hyp3ProcessStartData', [
 ])
 
 
-class RTCSnapJob(RTCSnapJobData, Hyp3Event):
+class StartEvent(StartEventData, Hyp3Event):
     @property
     def event_type(self):
-        return 'Hyp3RTCSnapJob'
+        return 'Hyp3StartEvent'
 
     def to_dict(self):
         return self._asdict()
