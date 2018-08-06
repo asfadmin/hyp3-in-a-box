@@ -11,6 +11,7 @@ ordered-set = "*"
 [dev-packages]
 hypothesis = "*"
 mypy = "*"
+pytest-timeout = "*"
 
 [requires]
 python_version = "3.6"
