@@ -1,8 +1,8 @@
-from typing import Dict
+from typing import Dict, NamedTuple, Callable, Union
 import functools
 
 import asf_granule_util as gu
-from hyp3_events import RTCSnapJob
+from hyp3_events import StartEvent
 
 from . import working_directory
 from .outputs import OutputPatterns
@@ -10,18 +10,58 @@ from . import package
 from . import products
 
 
-def hyp3_handler(process_func):
-    def wrapper(
-            job: RTCSnapJob,
-            earthdata_creds: Dict[str, str],
-            products_bucket
+class EarthdataCredentials(NamedTuple):
+    username: str
+    password: str
+
+
+HandlerFunction = Callable[[
+    StartEvent,
+    EarthdataCredentials,
+    str
+], Dict[str, str]
+]
+
+
+class Process:
+    def __init__(
+        self,
+        earthdata_creds: EarthdataCredentials,
+        products_bucket: str
+    ) -> None:
+        self.earthdata_creds = earthdata_creds
+        self.products_bucket = products_bucket
+
+        self.process_handler: Union[HandlerFunction, None] = None
+
+    def handler(self, process_func: HandlerFunction):
+        if self.process_handler is not None:
+            raise HandlerRedefinitionError(
+                'Process is only allowed one handler function'
+            )
+
+        self.process_handler = hyp3_handler(process_func)
+
+    def start(self, job):
+        return self.process_handler(
+            job,
+            self.earthdata_creds,
+            self.products_bucket
+        )
+
+
+def hyp3_handler(handler_function) -> HandlerFunction:
+    def hyp3_wrapper(
+            job: StartEvent,
+            earthdata_creds: EarthdataCredentials,
+            products_bucket: str
     ) -> Dict[str, str]:
         granule = gu.SentinelGranule(job.granule)
 
         with working_directory.create(granule) as working_dir:
             gu.download(granule, earthdata_creds, directory=str(working_dir))
 
-            process_func(granule, working_dir, job.script_path)
+            handler_function(granule, working_dir, job.script_path)
 
             patterns = OutputPatterns(**job.output_patterns)
 
@@ -41,4 +81,8 @@ def hyp3_handler(process_func):
             'browse_url': browse_url
         }
 
-    return wrapper
+    return hyp3_wrapper
+
+
+class HandlerRedefinitionError(Exception):
+    pass

@@ -1,10 +1,24 @@
 import subprocess
 
-import hyp3_process
+from hyp3_process import Process, EarthdataCredentials
 
 
-@hyp3_process.hyp3_handler
-def process(granule_name: str, working_dir: str, script_path: str) -> None:
+def get_creds():
+    pass
+
+
+def get_bucket_name():
+    pass
+
+
+rtc_snap = Process(
+    earthdata_creds=get_creds(),
+    products_bucket=get_bucket_name()
+)
+
+
+@rtc_snap.handler
+def handler(granule_name: str, working_dir: str, script_path: str) -> None:
     print('processing rtc product')
     subprocess.check_call([
         'python2', script_path,

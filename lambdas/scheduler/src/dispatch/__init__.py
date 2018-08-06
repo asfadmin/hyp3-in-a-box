@@ -2,7 +2,7 @@ from typing import List
 
 from schedule import Job
 
-from . import sns
+from . import scheduler_sns as sns
 
 
 def send_all_events(new_hyp3_events: List[Job]) -> None:

@@ -4,14 +4,15 @@ import hyp3_events
 import asf_granule_util as gu
 
 
-def rtc_snap_jobs():
+def start_events():
     return st.builds(
-        hyp3_events.RTCSnapJob,
+        hyp3_events.StartEvent,
         granule=granules(),
         address=st.emails(),
         username=st.text(),
         subscription=st.text(),
-        output_patterns=st.lists(st.text())
+        output_patterns=st.lists(st.text()),
+        script_path=st.text()
     )
 
 

@@ -6,7 +6,7 @@ import pytest
 import hyp3_events
 
 import import_rtc_snap
-import rtc_snap
+from rtc_snap import rtc_snap
 
 
 @pytest.mark.fake_rtc_snap
@@ -14,11 +14,10 @@ def test_rtc_snap_with_fake(
     rtc_snap_fake_job,
     earthdata_creds
 ):
-    resp = rtc_snap.process(
-        rtc_snap_fake_job,
-        earthdata_creds,
-        'hyp3-in-a-box-products'
-    )
+    rtc_snap.earthdata_creds = earthdata_creds,
+    rtc_snap.products_bucket = 'hyp3-in-a-box-products'
+
+    resp = rtc_snap.start(rtc_snap_fake_job)
 
     assert resp_is_correct(resp)
 
@@ -78,7 +77,7 @@ def rtc_snap_fake_script():
 
 
 def rtc_job_with_script_path(path):
-    return hyp3_events.RTCSnapJob(
+    return hyp3_events.StartEvent(
         granule=('S1A_IW_GRDH_1SDV_20180801T155817'
                  '_20180801T155842_023055_0280C4_749A'),
         address='test@email.com',
