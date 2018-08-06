@@ -8,11 +8,16 @@ def start_events():
     return st.builds(
         hyp3_events.StartEvent,
         granule=granules(),
-        address=st.emails(),
-        username=st.text(),
-        subscription=st.text(),
+        user_id=st.integers(),
+        sub_id=st.integers(),
         output_patterns=st.lists(st.text()),
-        script_path=st.text()
+        script_path=st.text(),
+        additional_info=st.lists(
+            st.fixed_dictionaries({
+                'name': st.text(),
+                'value': st.text()
+            })
+        ),
     )
 
 
