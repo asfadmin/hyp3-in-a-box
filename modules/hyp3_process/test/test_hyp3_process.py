@@ -11,7 +11,7 @@ import hyp3_events
 
 import rtc_snap_strategies as strats
 import import_rtc_snap
-import hyp3_process
+from hyp3_process import Process
 
 
 def mock_rtc_script_path():
@@ -41,11 +41,23 @@ def test_rtc_snap_mocked(
     working_dir = make_working_dir(strats.rtc_example_files())
     wrk_dir_mock.side_effect = mock_working_dir_with(working_dir)
 
-    @hyp3_process.hyp3_handler
-    def process(granule_name: str, working_dir: str, script_path: str) -> None:
+    process = Process(
+        earthdata_creds={'fake': 'creds'},
+        products_bucket='some-s3-bucket'
+    )
+
+    @process.handler
+    def handler(granule_name: str, working_dir: str, script_path: str) -> None:
+        output_files = ['test.txt', 'browse.png']
+        wrk_dir = pl.Path(working_dir)
+
+        for ofile in output_files:
+            with (wrk_dir / ofile).open('w') as f:
+                f.write('test')
+
         print('hyp3 processing code goes here!')
 
-    resp = process(rtc_snap_job, {'fake': 'creds'}, 'some-s3-bucket')
+    resp = process.start(job=rtc_snap_job)
 
     dl_call = download_mock.mock_calls[0]
     assert download_has_valid_params(dl_call, rtc_snap_job)
@@ -70,13 +82,14 @@ def download_has_valid_params(dl_call, job):
 @pytest.fixture
 def rtc_snap_job():
     return hyp3_events.RTCSnapJob(
-        granule='some-granule-here',
+        granule=('S1A_IW_SLC__1SSV_20150829T123751'
+                 '_20150829T123821_007478_00A50D_C506'),
         address='test@email.com',
         username='test',
         subscription='test',
         output_patterns={
-            'archive': ["output.*.files"],
-            'browse': '*.for.finding.png.*'
+            'archive': ["*.txt"],
+            'browse': '*.png'
         },
         script_path='/users/script/path/here'
     )

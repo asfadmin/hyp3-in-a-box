@@ -6,7 +6,7 @@ import pytest
 import hyp3_events
 
 import import_rtc_snap
-import rtc_snap
+from rtc_snap import rtc_snap
 
 
 @pytest.mark.fake_rtc_snap
@@ -14,11 +14,10 @@ def test_rtc_snap_with_fake(
     rtc_snap_fake_job,
     earthdata_creds
 ):
-    resp = rtc_snap.process(
-        rtc_snap_fake_job,
-        earthdata_creds,
-        'hyp3-in-a-box-products'
-    )
+    rtc_snap.earthdata_creds = earthdata_creds,
+    rtc_snap.products_bucket = 'hyp3-in-a-box-products'
+
+    resp = rtc_snap.start(rtc_snap_fake_job)
 
     assert resp_is_correct(resp)
 
