@@ -29,9 +29,5 @@ class EmailEvent(EmailData, Hyp3Event):
         * **browse_url** - URL of a browse image to display
         * **download_url** - URL where the processed data can be downloaded
     """
-    @property
-    def event_type(self):
-        return 'Hyp3EmailEvent'
-
     def to_dict(self):
         return self._asdict()
