@@ -2,7 +2,7 @@ import collections
 
 from .hyp3_event import Hyp3Event
 
-StartEventData = collections.namedtuple('Hyp3ProcessStartData', [
+StartEventData = collections.namedtuple('StartEventData', [
     'granule',
     'address',
     'username',
@@ -13,9 +13,5 @@ StartEventData = collections.namedtuple('Hyp3ProcessStartData', [
 
 
 class StartEvent(StartEventData, Hyp3Event):
-    @property
-    def event_type(self):
-        return 'Hyp3StartEvent'
-
     def to_dict(self):
         return self._asdict()

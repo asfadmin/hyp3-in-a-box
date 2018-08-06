@@ -10,15 +10,15 @@ import event_strategies as es
 
 PARAM_NAMES = 'EventType'
 EVENTS_TO_TEST = [
+    (hyp3_events.NewGranuleEvent),
     (hyp3_events.StartEvent),
-    (hyp3_events.NotifyOnlyEvent),
-    (hyp3_events.NewGranuleEvent)
+    (hyp3_events.EmailEvent)
 ]
 
 STRATEGIES = {
-    hyp3_events.NotifyOnlyEvent: es.notify_only_events(),
     hyp3_events.NewGranuleEvent: es.new_granule_events(),
-    hyp3_events.StartEvent: es.start_events()
+    hyp3_events.StartEvent: es.start_events(),
+    hyp3_events.EmailEvent: es.email_events()
 }
 
 
@@ -27,6 +27,7 @@ def test_to_dict(EventType):
 
     @given(STRATEGIES[EventType])
     def to_dict_test(event):
+        assert event.event_type != 'Hyp3Event'
         e_dict = event.to_dict()
 
         assert isinstance(e_dict, dict)

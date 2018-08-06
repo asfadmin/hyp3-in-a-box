@@ -26,7 +26,8 @@ class Hyp3Event(abc.ABC):
     def from_type(cls, obj):
         from_fn = cls.from_impls.get(type(obj))
         if from_fn is None:
-            raise NotImplementedError("from_type is not implemented for {}".format(type(obj)))
+            raise NotImplementedError(
+                "from_type is not implemented for {}".format(type(obj)))
 
         return from_fn(obj)
 
@@ -38,19 +39,18 @@ class Hyp3Event(abc.ABC):
         """
         return json.dumps(self.to_dict())
 
+    @property
+    def event_type(self):
+        """
+            :returns: the events type
+            :rtype: str
+        """
+        return type(self).__name__
+
     @abc.abstractmethod
     def to_dict(self):
         """
             :returns: dictionary representing the event
             :rtype: dict
-        """
-        return NotImplemented
-
-    @property
-    @abc.abstractmethod
-    def event_type(self):
-        """
-            :returns: the events type
-            :rtype: str
         """
         return NotImplemented
