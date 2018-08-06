@@ -4,10 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"61ea59b" = {path = "./../../modules/hyp3_events"}
-"b987687" = {path = "./../../modules/hyp3_process"}
+ordered-set = "*"
+"boto3" = "*"
+"0c4b69c" = {path = "./../hyp3_events"}
 
 [dev-packages]
+hypothesis = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.6"

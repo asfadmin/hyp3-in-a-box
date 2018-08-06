@@ -1,62 +1,83 @@
-import contextlib
 import pathlib as pl
+import json
 
 import pytest
-import mock
 
 import hyp3_events
 
-import rtc_snap_strategies as strats
 import import_rtc_snap
-import hyp3_process
+import rtc_snap
 
 
-def mock_rtc_script_path():
-    return pl.Path(__file__).parent / 'fake-rtc-script.py'
-
-
-def mock_download(*args, **kwargs):
-    granule = args[0]
-    dl_dir = pl.Path(kwargs['directory'])
-
-    for suffix in ['.zip', '.SAFE']:
-        fname = str(granule) + suffix
-
-        (dl_dir / fname).mkdir(parents=True)
-
-
-@mock.patch('products.get_bucket')
-@mock.patch('rtc_snap.script_path', side_effect=mock_rtc_script_path)
-@mock.patch('asf_granule_util.download', side_effect=mock_download)
-@mock.patch('working_directory.create')
-def test_rtc_snap_mocked(
-        wrk_dir_mock,
-        download_mock,
-        rtc_script_mock,
-        bucket_mock,
-        rtc_snap_job,
-        make_working_dir
+@pytest.mark.fake_rtc_snap
+def test_rtc_snap_with_fake(
+    rtc_snap_fake_job,
+    earthdata_creds
 ):
-    working_dir = make_working_dir(strats.rtc_example_files())
+    resp = rtc_snap.process(
+        rtc_snap_fake_job,
+        earthdata_creds,
+        'hyp3-in-a-box-products'
+    )
 
-    wrk_dir_mock.side_effect = mock_working_dir_with(working_dir)
-
-    resp = hyp3_process.hyp3_handler(rtc_snap_job)
-
-    download_mock.assert_called_once()
-    assert 'product_url' in resp
+    assert resp_is_correct(resp)
 
 
-@pytest.mark.rtc_snap_run
-def test_full_rtc_snap(rtc_snap_job):
+@pytest.mark.full_rtc_snap
+def test_rtc_snap_full_run(rtc_snap_full_job, earthdata_creds):
     print('running rtc_snap with processing')
-    resp = hyp3_process.hyp3_handler(rtc_snap_job)
+    resp = rtc_snap.process(
+        rtc_snap_full_job,
+        earthdata_creds,
+        'hyp3-in-a-box-products'
+    )
 
-    assert 'product_url' in resp
+    assert resp_is_correct(resp)
+
+
+def resp_is_correct(resp):
+    return all([
+        isinstance(resp, dict),
+        'product_url' in resp,
+        'browse_url' in resp
+    ])
 
 
 @pytest.fixture()
-def rtc_snap_job():
+def rtc_snap_fake_job():
+    return rtc_job_with_script_path(
+        str(
+            pl.Path(__file__).parent / './fak'
+        )
+    )
+
+
+@pytest.fixture()
+def rtc_snap_full_job():
+    return rtc_job_with_script_path(
+        str(
+            pl.Path(__file__).parent /
+            './../build/hyp3-rtc-snap/src/procSentinelRTC-3.py'
+        )
+    )
+
+
+@pytest.fixture()
+def earthdata_creds():
+    path = pl.Path(__file__).parent / 'earthdata-creds.json'
+
+    with path.open('r') as f:
+        return json.load(f)
+
+
+@pytest.fixture()
+def rtc_snap_fake_script():
+    return rtc_job_with_script_path(
+        str(pl.Path(__file__).parent / 'fake-rtc-script.py')
+    )
+
+
+def rtc_job_with_script_path(path):
     return hyp3_events.RTCSnapJob(
         granule=('S1A_IW_GRDH_1SDV_20180801T155817'
                  '_20180801T155842_023055_0280C4_749A'),
@@ -66,13 +87,6 @@ def rtc_snap_job():
         output_patterns={
             'archive': ["*/*_TC_G??.tif", "*/*.png", "*/*.txt"],
             'browse': '*/*GVV.png'
-        }
+        },
+        script_path=path
     )
-
-
-def mock_working_dir_with(mock_directory):
-    @contextlib.contextmanager
-    def mock_create(*args, **kwargs):
-        yield mock_directory
-
-    return mock_create

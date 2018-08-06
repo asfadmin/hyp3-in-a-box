@@ -4,7 +4,7 @@ from typing import List
 
 from ordered_set import OrderedSet
 
-from outputs import ProcessOutputs, OutputPatterns
+from ..outputs import ProcessOutputs, OutputPatterns
 
 
 def outputs(

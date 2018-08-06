@@ -13,15 +13,33 @@ This script has an ifmain so it can be called from the command line.
 import logging
 import sys
 import time
+from datetime import datetime
 from multiprocessing import Pipe
 
 import boto3
+from hyp3_events import EmailEvent
 
 from hyp3_logging import getLogger
 from hyp3_worker import HyP3Worker, WorkerStatus
-from services import SQSService
+from services import SNSService, SQSJob, SQSService
 
 log = getLogger(__name__)
+
+# Add implementation for conversion from SQSJob type
+EmailEvent.impl_from(
+    SQSJob,
+    lambda job: EmailEvent(
+        user_id=job['user_id'],
+        sub_id=job['sub_id'],
+        additional_info=[{
+            "name": "Processing Date",
+            "value": str(datetime.now().date())
+        }],
+        granule_name=job['granule_name'],
+        browse_url="",
+        download_url="",
+    )
+)
 
 
 class HyP3DaemonConfig(object):
@@ -40,6 +58,9 @@ class HyP3DaemonConfig(object):
         self.queue_name = ssm.get_parameter(
             Name="/hyp3-in-a-box-test/StartEventQueueName"
         )['Parameter']['Value']
+        self.ssn_arn = ssm.get_parameter(
+            Name="/hyp3-in-a-box-test/FinishEventSNSArn"
+        )['Parameter']['Value']
 
 
 class HyP3Daemon(object):
@@ -48,6 +69,7 @@ class HyP3Daemon(object):
     def __init__(self):
         """ Initialize state. This creates a new HyP3DaemonConfig object."""
         self.job_queue = None
+        self.sns_topic = None
         self.worker = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
@@ -79,6 +101,7 @@ class HyP3Daemon(object):
         if status == WorkerStatus.DONE:
             self._join_worker()
             status = WorkerStatus.NO_STATUS
+            return
         if not (status == WorkerStatus.READY or status == WorkerStatus.NO_STATUS):
             return
 
@@ -97,12 +120,20 @@ class HyP3Daemon(object):
             queue_name=self.config.queue_name
         )
 
+    def _connect_sns(self):
+        if self.sns_topic:
+            return
+
+        self.sns_topic = SNSService(
+            arn=self.config.sns_arn
+        )
+
     def _poll_worker_status(self):
         if self.worker and self.worker_conn.poll():
             self.previous_worker_status = self.worker_conn.recv()
         return self.previous_worker_status
 
-    def _process_job(self, job):
+    def _process_job(self, job: SQSJob):
         if self.worker:
             raise Exception("Worker already processing")
 
@@ -114,12 +145,21 @@ class HyP3Daemon(object):
         self.worker_conn.close()
         self.worker.join()
 
-        log.debug("Worker finished, deleting job %s from SQS", self.worker.job)
-        self.worker.job.delete()
+        self._finish_job(self.worker.job)
 
         self.worker = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
+
+    def _finish_job(self, job: SQSJob):
+        log.debug("Worker finished, deleting job %s from SQS", job)
+        job.delete()
+
+        if not self.sns_topic:
+            self._connect_sns()
+
+        log.debug("Sending SNS notification")
+        self.sns_topic.push(EmailEvent.from_type(job))
 
 
 def main():

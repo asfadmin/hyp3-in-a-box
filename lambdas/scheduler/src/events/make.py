@@ -1,65 +1,47 @@
-import hyp3_events
+from typing import Any, Dict, List
+
+from hyp3_events import EmailEvent, Hyp3Event, NewGranuleEvent, StartEvent
+
+from schedule import Job
+
+# Add implementation for conversion from Job type
+EmailEvent.impl_from(
+    Job,
+    lambda obj: EmailEvent(
+        user_id=obj.user.id,
+        sub_id=obj.sub.id,
+        additional_info=[],
+        browse_url=obj.granule.browse_url,
+        download_url=obj.granule.download_url,
+        granule_name=obj.granule.name
+    )
+)
 
 
-def make_new_granule_events_with(new_granule_dicts):
+def make_new_granule_events_with(new_granule_dicts: List[Dict[str, Any]]) -> List[NewGranuleEvent]:
     events = [
-        hyp3_events.NewGranuleEvent(**event)
+        NewGranuleEvent(**event)
         for event in new_granule_dicts
     ]
 
     return events
 
 
-def make_from(email_packages):
+def make_from(jobs: List[Job]) -> List[Hyp3Event]:
     """ make email packages into notify only events
 
-        :param list(tuple): email packages of the form (sub, user, granule)
+        :param list(tuple): email packages of the form schedule.Job(sub, user, granule)
 
         :returns: hyp3 events corresponding to each package
-        :rtype: list[hyp3_events.NotifyOnlyEvent]
+        :rtype: list[hyp3_events.EmailEvent]
     """
-    events = [
-        make_event(sub, user, granule) for
-        sub, user, granule in email_packages
-    ]
+    events = [_make_event(job) for job in jobs]
 
-    return list(filter(lambda e: e is not None, events))
+    return events
 
 
-def make_event(sub, user, granule):
-    if sub.process_id == 1:
-        return make_notify_only_event(sub, user, granule)
+def _make_event(job: Job) -> Hyp3Event:
+    if job.sub.process_id == 1:
+        return EmailEvent.from_type(job)
 
-    return make_start_event(sub, user, granule)
-
-
-def make_notify_only_event(sub, user, granule):
-    return hyp3_events.NotifyOnlyEvent(
-        address=user.email,
-        subject='New Subscription Data',
-        additional_info=[{
-            'name': 'User',
-            'value': user.username
-        }, {
-            'name': 'Subscripton',
-            'value': sub.name
-        }, {
-            'name': 'Granule',
-            'value': granule.name
-        }],
-        browse_url=granule.browse_url,
-        download_url=granule.download_url
-    )
-
-
-def make_start_event(sub, user, granule):
-    return hyp3_events.RTCSnapJob(
-        granule=granule,
-        address=user.email,
-        username=user.username,
-        subscription=sub.id,
-        output_patterns={
-            'archive': ["*/*_TC_G??.tif", "*/*.png", "*/*.txt"],
-            'browse': '*/*GVV.png'
-        }
-    )
+    return StartEvent()

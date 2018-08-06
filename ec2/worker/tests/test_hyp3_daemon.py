@@ -4,19 +4,22 @@
 
 # Tests for hyp3 glue code daemon.
 
+import logging
+
 import mock
 import pytest
 
 import import_ec2_worker
-from hyp3_daemon import HyP3Daemon
+from hyp3_daemon import HyP3Daemon, log
 from hyp3_worker import WorkerStatus
-from services import SQSJob, SQSService, BadMessageException
+from services import BadMessageException, SQSJob, SQSService
 
 
 @mock.patch('hyp3_daemon.SQSService')
 @mock.patch('hyp3_daemon.HyP3Daemon._process_job')
 @mock.patch('hyp3_daemon.HyP3DaemonConfig')
 def test_daemon_main(_, process_job_mock, SQSServiceMock):
+    log.setLevel(logging.DEBUG)
     daemon = HyP3Daemon()
     daemon.main()
 
@@ -31,6 +34,33 @@ def test_daemon_main(_, process_job_mock, SQSServiceMock):
     )
 
 
+@mock.patch('hyp3_daemon.SNSService')
+@mock.patch('hyp3_daemon.SQSService')
+@mock.patch('hyp3_daemon.HyP3DaemonConfig')
+def test_daemon_main_job_finished(_1, _2, sns_mock):
+    log.setLevel(logging.DEBUG)
+    daemon = HyP3Daemon()
+
+    worker_mock = mock.Mock()
+    daemon.worker = worker_mock
+    worker_mock.job = SQSJob(MockMessage('''{
+        "user_id": 0,
+        "sub_id": 0,
+        "additional_info": [],
+        "granule_name": "DUMMY_GRANULE"
+    }''', ''))
+    worker_conn_mock = mock.Mock()
+    daemon.worker_conn = worker_conn_mock
+    worker_conn_mock.poll.return_value = True
+    worker_conn_mock.asdf.return_value = False
+    worker_conn_mock.recv.return_value = WorkerStatus.DONE
+
+    daemon.main()
+
+    assert worker_mock.job.message.times_delete_called == 1
+    sns_mock.return_value.push.assert_called_once()
+
+
 def test_status_enum():
     assert WorkerStatus.NO_STATUS
     assert WorkerStatus.READY
@@ -42,6 +72,10 @@ class MockMessage(object):
     def __init__(self, body, md5_of_body):
         self.body = body
         self.md5_of_body = md5_of_body
+        self.times_delete_called = 0
+
+    def delete(self):
+        self.times_delete_called += 1
 
 
 @mock.patch('boto3.resource')
@@ -103,3 +137,17 @@ def test_sqsjob_parse_successful():
 def test_sqsjob_bad_input_raises():
     with pytest.raises(BadMessageException):
         SQSJob(MockMessage('Not valid json', ''))
+
+
+def test_event_creation():
+    from hyp3_events import EmailEvent
+    with pytest.raises(NotImplementedError):
+        EmailEvent.from_type("A string!")
+    EmailEvent.from_type(
+        SQSJob(MockMessage('''{
+            "user_id": 0,
+            "sub_id": 0,
+            "additional_info": [],
+            "granule_name": "DUMMY_GRANULE"
+        }''', ''))
+    )
