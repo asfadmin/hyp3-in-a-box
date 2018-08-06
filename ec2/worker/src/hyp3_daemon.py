@@ -11,14 +11,15 @@ This script has an ifmain so it can be called from the command line.
 """
 
 import logging
+import subprocess
 import sys
 import time
 from datetime import datetime
 from multiprocessing import Pipe
 
 import boto3
-from hyp3_events import EmailEvent
 
+from hyp3_events import EmailEvent
 from hyp3_logging import getLogger
 from hyp3_worker import HyP3Worker, WorkerStatus
 from services import SNSService, SQSJob, SQSService
@@ -77,6 +78,7 @@ class HyP3Daemon(object):
         self.sns_topic = SNSService(
             arn=self.config.sns_arn
         )
+        self.last_active_time = time.time()
         self.worker = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
@@ -86,11 +88,17 @@ class HyP3Daemon(object):
         log.info("HyP3 Daemon starting...")
         while True:
             try:
+                if self._reached_max_idle_time():
+                    log.info("Max idle time reached, shutting down...")
+                    subprocess.call(["shutdown", "-h", "now"])
+                    sys.exit(0)
+                    return
                 self.main()
                 time.sleep(1)
             except KeyboardInterrupt:
                 log.debug("Stopping hyp3 daemon...")
                 sys.exit(0)
+                return
             # For now, just crash on errors
 
     def main(self):
@@ -126,11 +134,14 @@ class HyP3Daemon(object):
         if self.worker:
             raise Exception("Worker already processing")
 
+        self.last_active_time = time.time()
+
         self.worker_conn, child_conn = Pipe()
         self.worker = HyP3Worker(child_conn, job)
         self.worker.start()
 
     def _join_worker(self):
+        self.last_active_time = time.time()
         self.worker_conn.close()
         self.worker.join()
 
@@ -146,6 +157,11 @@ class HyP3Daemon(object):
 
         log.debug("Sending SNS notification")
         self.sns_topic.push(EmailEvent.from_type(job))
+
+    def _reached_max_idle_time(self):
+        if self.previous_worker_status == WorkerStatus.BUSY:
+            return False
+        return (time.time() - self.last_active_time) >= self.config.max_idle_time_seconds
 
 
 def main():
