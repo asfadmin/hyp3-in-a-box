@@ -23,4 +23,5 @@ def get_unsub_action(db, user_id):
     return db.session.query(OneTimeAction) \
         .filter_by(user_id=user_id) \
         .filter_by(action='unsubscribe') \
+        .filter_by(enabled=True) \
         .first()
