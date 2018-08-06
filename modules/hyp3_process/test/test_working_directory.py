@@ -2,7 +2,7 @@ import asf_granule_util as gu
 import pytest
 import mock
 
-import import_rtc_snap
+import import_hyp3_process
 from hyp3_process import working_directory
 
 

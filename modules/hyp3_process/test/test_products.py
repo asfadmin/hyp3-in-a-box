@@ -3,7 +3,7 @@ import pathlib as pl
 import pytest
 import mock
 
-import import_rtc_snap
+import import_hyp3_process
 from hyp3_process.outputs import ProcessOutputs
 from hyp3_process import products
 
