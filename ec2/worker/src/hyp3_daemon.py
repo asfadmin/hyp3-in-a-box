@@ -92,7 +92,9 @@ class HyP3Daemon(object):
         """ Polls SQS if the EC2 Instances is idle, and starts a new processing
             job if one is found. If the instance is currently processing a job
             already, SQS will not be polled. After the worker process has
-            succesfully handled a job, the job will be deleted from SQS.
+            succesfully handled a job, the job will be deleted from SQS and an
+            email notification will be queued via SNS. The notification includes
+            the date on which processing occurred.
         """
         if not self.job_queue:
             self._connect_sqs()

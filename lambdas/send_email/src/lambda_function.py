@@ -17,7 +17,7 @@ def lambda_handler(aws_event, aws_context):
 
             * Records - Top level object from sns trigger event
                 * Sns - sns notification data
-                    * Message json serialized `Hyp3Event`
+                    * Message json serialized `EmailEvent`
 
         :param aws_context: lambda runtime info
     """
