@@ -1,6 +1,12 @@
+"""
+This file adds the src directory to the import path of testing files.
+"""
+
 import pathlib as pl
 import sys
 
-new_path = str(pl.Path(__file__).parent / '../src')
-if new_path not in sys.path:
-    sys.path.append(new_path)
+
+path = pl.Path(__file__).parent / '..' / 'src'
+
+if str(path) not in sys.path:
+    sys.path.append(str(path))

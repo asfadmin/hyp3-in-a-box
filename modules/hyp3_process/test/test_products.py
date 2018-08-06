@@ -4,11 +4,11 @@ import pytest
 import mock
 
 import import_rtc_snap
-from outputs import ProcessOutputs
-import products
+from hyp3_process.outputs import ProcessOutputs
+from hyp3_process import products
 
 
-@mock.patch('products.get_bucket')
+@mock.patch('hyp3_process.products.products.get_bucket')
 def test_products(bucket_mock, process_outputs):
     testing_bucket = 'test-bucket'
     product_url, browse_url = products.upload(

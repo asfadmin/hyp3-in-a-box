@@ -1,36 +1,4 @@
-import pathlib as pl
-
-import boto3
 import pytest
-
-
-@pytest.fixture()
-def make_working_dir(tmpdir):
-    working_dir = tmpdir
-
-    def make_working_dir(file_paths):
-        create_output_files(
-            file_paths,
-            working_dir
-        )
-
-        return str(working_dir)
-
-    return make_working_dir
-
-
-def create_output_files(output_paths, working_dir):
-    for p in output_paths:
-        full_path = pl.Path(working_dir) / p
-
-        write_sample_file(full_path)
-
-
-def write_sample_file(path):
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-    with path.open('w') as f:
-        f.write('test')
 
 
 def pytest_addoption(parser):
@@ -38,15 +6,24 @@ def pytest_addoption(parser):
         "--full-rtc-snap", action="store_true",
         default=False, help="Full rtc-snap-runthrough"
     )
+    parser.addoption(
+        "--fake-rtc-snap", action="store_true",
+        default=False, help="Fake rtc-snap-runthrough"
+    )
 
 
 def pytest_collection_modifyitems(config, items):
-    if config.getoption("--full-rtc-snap"):
-        return
+    if not config.getoption("--fake-rtc-snap"):
+        skip_funcs_with_flag('fake_rtc_snap', items)
+    if not config.getoption("--full-rtc-snap"):
+        skip_funcs_with_flag('full_rtc_snap', items)
 
+
+def skip_funcs_with_flag(flag, items):
     skip_rtc_runthrough = pytest.mark.skip(
-        reason="need --full-rtc-snap option to run"
+        reason=f"need {flag} option to run"
     )
+
     for item in items:
-        if "rtc_snap_run" in item.keywords:
+        if flag in item.keywords:
             item.add_marker(skip_rtc_runthrough)
