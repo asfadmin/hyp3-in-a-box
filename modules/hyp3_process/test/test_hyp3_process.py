@@ -67,7 +67,7 @@ def download_has_valid_params(dl_call, job):
 @pytest.fixture
 def rtc_snap_job():
     return hyp3_events.RTCSnapJob(
-        granule='some-granule-here',
+        granule='S1A_WV_OCN__2SSV_20180805T042601_20180805T043210_023106_028262_4799',
         address='test@email.com',
         username='test',
         subscription='test',
