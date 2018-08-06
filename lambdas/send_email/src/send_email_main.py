@@ -53,7 +53,7 @@ def get_unsub_action(db, user_id) -> OneTimeAction:
 def send_email_notification(user: User, context):
     print("rendering email")
 
-    subject = "[HyP3] New data available"
+    subject = "New data available"
     address = user.email
 
     message = Email().render(**context)
