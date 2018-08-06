@@ -61,6 +61,7 @@ class HyP3DaemonConfig(object):
         self.sns_arn = ssm.get_parameter(
             Name="/hyp3-in-a-box-test/FinishEventSNSArn"
         )['Parameter']['Value']
+        self.max_idle_time_seconds = 120
 
 
 class HyP3Daemon(object):
@@ -68,13 +69,17 @@ class HyP3Daemon(object):
 
     def __init__(self):
         """ Initialize state. This creates a new HyP3DaemonConfig object."""
-        self.job_queue = None
-        self.sns_topic = None
+        self.config = HyP3DaemonConfig()
+
+        self.job_queue = SQSService(
+            queue_name=self.config.queue_name
+        )
+        self.sns_topic = SNSService(
+            arn=self.config.sns_arn
+        )
         self.worker = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
-
-        self.config = HyP3DaemonConfig()
 
     def run(self):
         """ Calls ``self.main()`` every second until an exception is raised"""
@@ -96,8 +101,6 @@ class HyP3Daemon(object):
             email notification will be queued via SNS. The notification includes
             the date on which processing occurred.
         """
-        if not self.job_queue:
-            self._connect_sqs()
 
         status = self._poll_worker_status()
         if status == WorkerStatus.DONE:
@@ -113,22 +116,6 @@ class HyP3Daemon(object):
 
         log.debug("Staring new job %s", new_job)
         self._process_job(new_job)
-
-    def _connect_sqs(self):
-        if self.job_queue:
-            return
-
-        self.job_queue = SQSService(
-            queue_name=self.config.queue_name
-        )
-
-    def _connect_sns(self):
-        if self.sns_topic:
-            return
-
-        self.sns_topic = SNSService(
-            arn=self.config.sns_arn
-        )
 
     def _poll_worker_status(self):
         if self.worker and self.worker_conn.poll():
@@ -156,9 +143,6 @@ class HyP3Daemon(object):
     def _finish_job(self, job: SQSJob):
         log.debug("Worker finished, deleting job %s from SQS", job)
         job.delete()
-
-        if not self.sns_topic:
-            self._connect_sns()
 
         log.debug("Sending SNS notification")
         self.sns_topic.push(EmailEvent.from_type(job))
