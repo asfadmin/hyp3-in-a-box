@@ -70,14 +70,13 @@ def download_has_valid_params(dl_call, job):
 @pytest.fixture
 def rtc_snap_job():
     return hyp3_events.RTCSnapJob(
-        granule=('S1A_IW_GRDH_1SDV_20180801T155817'
-                 '_20180801T155842_023055_0280C4_749A'),
+        granule='some-granule-here',
         address='test@email.com',
-        username='test-user',
-        subscription='test-subscription',
+        username='test',
+        subscription='test',
         output_patterns={
-            'archive': ["*/*_TC_G??.tif", "*/*.png", "*/*.txt"],
-            'browse': '*/*GVV.png'
+            'archive': ["output.*.files"],
+            'browse': '*.for.finding.png.*'
         },
         script_path='/users/script/path/here'
     )
