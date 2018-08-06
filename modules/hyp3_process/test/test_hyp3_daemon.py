@@ -12,7 +12,7 @@ import pytest
 from hyp3_events import EmailEvent
 
 import import_hyp3_process
-from hyp3_process.hyp3_daemon import HyP3Daemon, log
+from hyp3_process.hyp3_daemon import HyP3Daemon, HyP3DaemonConfig, log
 from hyp3_process.hyp3_daemon.hyp3_worker import WorkerStatus
 from hyp3_process.hyp3_daemon.services import BadMessageException, SQSJob, SQSService
 
@@ -22,7 +22,8 @@ from hyp3_process.hyp3_daemon.services import BadMessageException, SQSJob, SQSSe
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3DaemonConfig')
 def test_daemon_main(_, process_job_mock, SQSServiceMock):
     log.setLevel(logging.DEBUG)
-    daemon = HyP3Daemon()
+    config = HyP3DaemonConfig()
+    daemon = HyP3Daemon(config)
     daemon.main()
 
     sqsservice_mock = SQSServiceMock.return_value
@@ -41,7 +42,8 @@ def test_daemon_main(_, process_job_mock, SQSServiceMock):
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3DaemonConfig')
 def test_daemon_main_job_finished(_1, _2, sns_mock):
     log.setLevel(logging.DEBUG)
-    daemon = HyP3Daemon()
+    config = HyP3DaemonConfig()
+    daemon = HyP3Daemon(config)
 
     worker_mock = mock.Mock()
     daemon.worker = worker_mock
@@ -71,7 +73,8 @@ def test_daemon_main_job_finished(_1, _2, sns_mock):
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SQSService')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3DaemonConfig')
 def test_shutdown_if_idle(_1, _2, _3, subprocess_mock, sys_mock):
-    daemon = HyP3Daemon()
+    config = HyP3DaemonConfig()
+    daemon = HyP3Daemon(config)
     daemon.config.max_idle_time_seconds = 1
     daemon.run()
 

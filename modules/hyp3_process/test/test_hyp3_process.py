@@ -39,10 +39,7 @@ def test_rtc_snap_mocked(
     working_dir = make_working_dir(strats.rtc_example_files())
     wrk_dir_mock.side_effect = mock_working_dir_with(working_dir)
 
-    process = Process(
-        earthdata_creds={'fake': 'creds'},
-        products_bucket='some-s3-bucket'
-    )
+    process = Process()
 
     @process.handler
     def handler(granule_name: str, working_dir: str, script_path: str) -> None:
@@ -72,7 +69,7 @@ def download_has_valid_params(dl_call, job):
 
     return all([
         expected_granule == dl_granule,
-        creds == {'fake': 'creds'},
+        creds == {},
         'directory' in kwargs
     ])
 

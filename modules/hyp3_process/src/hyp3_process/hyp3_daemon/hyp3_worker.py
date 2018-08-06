@@ -3,7 +3,7 @@
 # Created: June 22, 2018
 
 # The worker process which runs science scripts
-
+import abc
 from enum import Enum
 from multiprocessing import Process
 
@@ -24,9 +24,14 @@ class HyP3Worker(Process):
     def run(self):
         self._set_status(WorkerStatus.BUSY)
         print("WORKER: Processed job {}".format(self.job))
+        self.process()
         self._set_status(WorkerStatus.DONE)
 
         self.conn.close()
+
+    @abc.abstractmethod
+    def process(self):
+        return NotImplemented
 
     def _set_status(self, status):
         self.conn.send(status)

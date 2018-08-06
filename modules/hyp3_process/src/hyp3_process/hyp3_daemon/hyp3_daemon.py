@@ -69,9 +69,9 @@ class HyP3DaemonConfig(object):
 class HyP3Daemon(object):
     """ Class HyP3Daemon"""
 
-    def __init__(self):
+    def __init__(self, config: HyP3DaemonConfig) -> None:
         """ Initialize state. This creates a new HyP3DaemonConfig object."""
-        self.config = HyP3DaemonConfig()
+        self.config = config
 
         self.job_queue = SQSService(
             queue_name=self.config.queue_name
