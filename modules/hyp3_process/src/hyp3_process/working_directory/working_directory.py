@@ -5,7 +5,6 @@ import shutil
 import asf_granule_util as gu
 
 
-
 @contextlib.contextmanager
 def create(granule: gu.SentinelGranule):
     working_dir = _setup(granule)
