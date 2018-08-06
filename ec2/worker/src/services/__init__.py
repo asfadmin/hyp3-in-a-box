@@ -8,7 +8,7 @@ import json
 from hashlib import md5
 
 import boto3
-from hyp3_events import EmailEvent
+from hyp3_events import EmailEvent, StartEvent
 
 from hyp3_logging import getLogger
 
@@ -23,15 +23,14 @@ class SQSJob(object):
     def __init__(self, message):
         self.message = message
         try:
-            self.data = json.loads(message.body)
+            self.data = StartEvent.from_json(message.body)
         except json.JSONDecodeError:
             raise BadMessageException("Message could not be parsed!")
+        except TypeError as e:
+            raise BadMessageException(str(e))
 
     def delete(self):
         self.message.delete()
-
-    def __getitem__(self, name):
-        return self.data[name]
 
     def __str__(self):
         return str(self.data)

@@ -4,11 +4,11 @@ from .hyp3_event import Hyp3Event
 
 StartEventData = collections.namedtuple('Hyp3ProcessStartData', [
     'granule',
-    'address',
-    'username',
-    'subscription',
+    'user_id',
+    'sub_id',
     'output_patterns',
-    'script_path'
+    'script_path',
+    'additional_info'
 ])
 
 

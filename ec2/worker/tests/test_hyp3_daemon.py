@@ -6,11 +6,11 @@
 
 import logging
 
+import import_ec2_worker
 import mock
 import pytest
-
-import import_ec2_worker
 from hyp3_daemon import HyP3Daemon, log
+from hyp3_events import EmailEvent
 from hyp3_worker import WorkerStatus
 from services import BadMessageException, SQSJob, SQSService
 
@@ -47,7 +47,9 @@ def test_daemon_main_job_finished(_1, _2, sns_mock):
         "user_id": 0,
         "sub_id": 0,
         "additional_info": [],
-        "granule_name": "DUMMY_GRANULE"
+        "granule": "DUMMY_GRANULE",
+        "output_patterns": [],
+        "script_path": ""
     }''', ''))
     worker_conn_mock = mock.Mock()
     daemon.worker_conn = worker_conn_mock
@@ -129,9 +131,16 @@ def test_validate_bad_message_raises():
 
 
 def test_sqsjob_parse_successful():
-    job = SQSJob(MockMessage('{"some": "json"}', ''))
+    job = SQSJob(MockMessage('''{
+        "user_id": 0,
+        "sub_id": 0,
+        "additional_info": [],
+        "granule": "DUMMY_GRANULE",
+        "output_patterns": [],
+        "script_path": ""
+    }''', ''))
 
-    assert job["some"] == "json"
+    assert job.data.user_id == 0
 
 
 def test_sqsjob_bad_input_raises():
@@ -140,7 +149,6 @@ def test_sqsjob_bad_input_raises():
 
 
 def test_event_creation():
-    from hyp3_events import EmailEvent
     with pytest.raises(NotImplementedError):
         EmailEvent.from_type("A string!")
     EmailEvent.from_type(
@@ -148,6 +156,8 @@ def test_event_creation():
             "user_id": 0,
             "sub_id": 0,
             "additional_info": [],
-            "granule_name": "DUMMY_GRANULE"
+            "granule": "DUMMY_GRANULE",
+            "output_patterns": [],
+            "script_path": ""
         }''', ''))
     )

@@ -29,13 +29,13 @@ log = getLogger(__name__)
 EmailEvent.impl_from(
     SQSJob,
     lambda job: EmailEvent(
-        user_id=job['user_id'],
-        sub_id=job['sub_id'],
+        user_id=job.data.user_id,
+        sub_id=job.data.sub_id,
         additional_info=[{
             "name": "Processing Date",
             "value": str(datetime.now().date())
         }],
-        granule_name=job['granule_name'],
+        granule_name=job.data.granule,
         browse_url="",
         download_url="",
     )
