@@ -2,11 +2,11 @@ from hyp3_process import Process
 
 import hyp3_handler
 
-process = Process()
-
 
 def run():
-    process.add_handler(hyp3_handler.handler)
+    process = Process(
+        handler_function=hyp3_handler.handler
+    )
 
     start_worker(process)
 
