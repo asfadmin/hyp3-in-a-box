@@ -1,5 +1,4 @@
 from typing import Dict, NamedTuple, Callable
-import functools
 
 import asf_granule_util as gu
 from hyp3_events import StartEvent
