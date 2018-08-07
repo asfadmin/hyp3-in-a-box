@@ -67,4 +67,3 @@ def parser():
 
 class HandlerRedefinitionError(Exception):
     pass
-

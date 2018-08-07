@@ -62,5 +62,3 @@ def hyp3_handler(handler_function: HandlerFunction) -> ProcessingFunction:
         }
 
     return hyp3_wrapper
-
-

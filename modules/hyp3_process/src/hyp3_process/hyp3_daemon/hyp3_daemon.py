@@ -199,15 +199,3 @@ class HyP3Daemon(object):
 
 def make_email_event_from(job):
     return EmailEvent.from_type(job)
-
-
-def main():
-    """ Create a new HyP3Daemon instance and run forever."""
-    conf = HyP3DaemonConfig()
-    daemon = HyP3Daemon(conf)
-    daemon.run()
-
-
-if __name__ == '__main__':
-    log.setLevel(logging.DEBUG)
-    main()
