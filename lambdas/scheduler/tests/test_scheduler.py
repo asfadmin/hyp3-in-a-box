@@ -13,20 +13,14 @@ import scheduler_main
 
 @skip_if_creds_not_available
 @mock.patch('dispatch.sns.push')
-def test_scheduler_main(sns_mock):
-    event = utils.load_testing_granules()
-
-    scheduler_main.scheduler(event)
+def test_scheduler_main(sns_mock, testing_granules):
+    scheduler_main.scheduler(testing_granules)
 
     sns_mock.assert_called()
 
 
 @skip_if_creds_not_available
-def test_scheduler():
-    granules = utils.load_testing_granules()['new_granules']
-    granule_events = [
-        hyp3_events.NewGranuleEvent(**e) for e in granules
-    ]
+def test_scheduler(granule_events):
     email_packages = schedule.hyp3_jobs(granule_events)
 
     assert isinstance(email_packages, list)
