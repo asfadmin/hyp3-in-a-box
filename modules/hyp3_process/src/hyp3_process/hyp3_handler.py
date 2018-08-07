@@ -41,7 +41,7 @@ def make_hyp3_processing_function_from(
         granule = gu.SentinelGranule(job.granule)
 
         with working_directory.create(granule) as working_dir:
-            gu.download(granule, earthdata_creds, directory=str(working_dir))
+            download_granule(granule, earthdata_creds, working_dir)
 
             handler_function(granule, working_dir, job.script_path)
 
@@ -64,3 +64,13 @@ def make_hyp3_processing_function_from(
         }
 
     return hyp3_wrapper
+
+
+def download_granule(granule, earthdata_creds, working_dir):
+    print(f'downloading granule {granule}')
+
+    gu.download(
+        granule,
+        earthdata_creds,
+        directory=str(working_dir)
+    )

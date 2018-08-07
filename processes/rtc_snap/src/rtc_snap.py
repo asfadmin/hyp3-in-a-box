@@ -24,4 +24,4 @@ def rtc_snap_handler(
 
 
 if __name__ == "__main__":
-    rtc_snap.process()
+    rtc_snap.run()

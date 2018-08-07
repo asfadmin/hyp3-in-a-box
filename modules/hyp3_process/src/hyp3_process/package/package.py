@@ -13,6 +13,7 @@ def outputs(
     working_dir: str,
     output_patterns: OutputPatterns
 ) -> ProcessOutputs:
+    print(f'packaging outputs into arhcive {archive_name}')
     work_dir_path = pl.Path(working_dir)
 
     output_file_paths = find_output_files(

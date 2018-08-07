@@ -1,11 +1,11 @@
 import contextlib
 import pathlib as pl
+import json
 
 import pytest
 import mock
 
 import asf_granule_util as gu
-import hyp3_events
 
 import import_hyp3_process
 import rtc_snap_strategies as strats
@@ -52,7 +52,11 @@ def test_rtc_snap_mocked(
 
         print('hyp3 processing code goes here!')
 
-    resp = process.start(job=rtc_snap_job)
+    resp = process.start(
+        job=rtc_snap_job,
+        earthdata_creds={},
+        products_bucket=''
+    )
 
     dl_call = download_mock.mock_calls[0]
     assert download_has_valid_params(dl_call, rtc_snap_job)
@@ -74,20 +78,8 @@ def download_has_valid_params(dl_call, job):
     ])
 
 
-@pytest.fixture
-def rtc_snap_job():
-    return hyp3_events.StartEvent(
-        granule=('S1A_WV_OCN__2SSV_20180805T042601'
-                 '_20180805T043210_023106_028262_4799'),
-        user_id=80,
-        sub_id=80,
-        additional_info=[],
-        output_patterns={
-            'archive': ["*.txt"],
-            'browse': '*.png'
-        },
-        script_path='/users/script/path/here'
-    )
+def test_print_start_event(rtc_snap_job):
+    print(json.dumps(rtc_snap_job.to_dict(), indent=2))
 
 
 def mock_working_dir_with(mock_directory):

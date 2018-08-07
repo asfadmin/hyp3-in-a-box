@@ -6,6 +6,7 @@
 
 import json
 from hashlib import md5
+from typing import Union
 
 import boto3
 from hyp3_events import EmailEvent, StartEvent
@@ -37,6 +38,8 @@ class SQSJob(object):
 
 
 class SQSService(object):
+    MAX_MESSAGES = 1
+
     def __init__(self, queue_name):
         sqs = boto3.resource('sqs')
         self.sqs_queue = sqs.get_queue_by_name(
@@ -44,24 +47,32 @@ class SQSService(object):
         )
 
     def get_next_message(self):
+        log.info('checking queue for message')
         messages = self.sqs_queue.receive_messages(
-            MaxNumberOfMessages=1,
+            MaxNumberOfMessages=self.MAX_MESSAGES,
         )
-        if len(messages) > 1:
+        if len(messages) > self.MAX_MESSAGES:
             log.warning(("API call returned more messages that it was supposed to. ",
                          "Some jobs might not be processed"))
 
         if not messages:
+            log.info('no messages found')
             return None
 
         message = messages[0]
-        job_info = None
+
+        return self.get_job_info_from(message)
+
+    def get_job_info_from(self, message) -> Union[SQSJob, None]:
         try:
             SQSService.validate_message(message)
-            job_info = SQSJob(message)
+
+            return SQSJob(message)
         except BadMessageException as e:
-            log.debug("DEBUG: Failed to recieve message due to the following error:\n\t%s", str(e))
-        return job_info
+            log.debug(
+                "DEBUG: Failed to recieve message due to the following error:\n\t%s", str(e))
+
+            return None
 
     @staticmethod
     def validate_message(message):
