@@ -55,7 +55,7 @@ def test_rtc_snap_mocked(
     resp = process.start(
         job=rtc_snap_job,
         earthdata_creds={},
-        products_bucket=''
+        product_bucket=''
     )
 
     dl_call = download_mock.mock_calls[0]

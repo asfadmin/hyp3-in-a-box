@@ -15,6 +15,7 @@ def fake_arguments():
     }
 
 
+@pytest.mark.skip
 @mock.patch(
     'hyp3_process.hyp3_process.get_arguments',
     side_effect=fake_arguments
