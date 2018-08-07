@@ -10,11 +10,6 @@ from . import package
 from . import products
 
 
-class EarthdataCredentials(NamedTuple):
-    username: str
-    password: str
-
-
 HandlerFunction = Callable[[
     gu.SentinelGranule,
     str,
@@ -24,7 +19,7 @@ HandlerFunction = Callable[[
 
 ProcessingFunction = Callable[[
     StartEvent,
-    EarthdataCredentials,
+    Dict[str, str],
     str
 ], Dict[str, str]
 ]
@@ -35,7 +30,7 @@ def make_hyp3_processing_function_from(
 ) -> ProcessingFunction:
     def hyp3_wrapper(
             job: StartEvent,
-            earthdata_creds: EarthdataCredentials,
+            earthdata_creds: Dict[str, str],
             products_bucket: str
     ) -> Dict[str, str]:
         granule = gu.SentinelGranule(job.granule)
