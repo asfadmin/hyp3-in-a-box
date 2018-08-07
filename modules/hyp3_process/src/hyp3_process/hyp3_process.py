@@ -1,4 +1,5 @@
 from typing import Union, Dict
+import os
 import argparse
 
 from hyp3_events import StartEvent
@@ -14,11 +15,15 @@ from .hyp3_daemon import HyP3DaemonConfig, HyP3Daemon
 
 
 class Process:
-    def __init__(self,*, handler_function) -> None:
+    def __init__(self, *, handler_function) -> None:
         self.add_handler(handler_function)
 
     def run(self) -> None:
-        args = get_arguments()
+        if 'STACK_NAME' in os.environ:
+            args = get_arguments_from_environment()
+        else:
+            args = get_arguments_with_cli()
+
         print(args)
 
         config = HyP3DaemonConfig(**args)
@@ -50,7 +55,22 @@ class Process:
         )
 
 
-def get_arguments():
+def get_arguments_from_environment():
+    stack = os.environ['STACK_NAME']
+
+    params = [
+        ('queue_name', 'StartEventQueueName'),
+        ('sns_arn', 'FinishEventSNSArn'),
+        ('earthdata_creds', 'EarthdataCredentials'),
+        ('products_bucket', 'ProductsS3Bucket')
+    ]
+
+    return {
+        param: f"{stack}/{param_name}" for (param, param_name) in params
+    }
+
+
+def get_arguments_with_cli():
     cli = parser()
     return vars(cli.parse_args())
 

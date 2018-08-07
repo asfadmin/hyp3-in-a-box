@@ -11,8 +11,6 @@ This script has an ifmain so it can be called from the command line.
 """
 
 import json
-import logging
-import os
 import subprocess
 import sys
 import time
