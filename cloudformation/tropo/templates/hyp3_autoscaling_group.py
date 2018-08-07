@@ -23,7 +23,7 @@ Resources
 """
 
 from template import t
-from troposphere import Ref
+from troposphere import FindInMap, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
     LaunchConfiguration,
@@ -35,9 +35,11 @@ from troposphere.ec2 import SecurityGroup, SecurityGroupRule
 from .hyp3_keypairname_param import keyname
 from .hyp3_sqs import start_events
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
-
+from .utils import get_map
 
 print('  adding auto scaling group')
+
+t.add_mapping("Region2AMI", get_map('region2ami'))
 
 
 security_group = t.add_resource(SecurityGroup(
@@ -64,12 +66,24 @@ security_group = t.add_resource(SecurityGroup(
     ]
 ))
 
+user_data = """#! /bin/bash
+echo STACK_NAME=${StackName} > ~/env
+
+sudo systemctl restart hyp3
+"""
 launch_config = t.add_resource(LaunchConfiguration(
     "Hyp3LaunchConfiguration",
-    ImageId='ami-db710fa3',  # TODO: Choose correct ami here
+    ImageId=FindInMap(
+        "Region2AMI",
+        Ref("AWS::Region"), "AMIId"
+    ),
     KeyName=Ref(keyname),
     SecurityGroups=[Ref(security_group)],
     InstanceType="m1.small",
+    UserData=Sub(
+        user_data,
+        StackName=Ref('AWS::StackName')
+    )
 ))
 
 processing_group = t.add_resource(AutoScalingGroup(
