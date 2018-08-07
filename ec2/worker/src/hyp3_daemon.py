@@ -11,6 +11,7 @@ This script has an ifmain so it can be called from the command line.
 """
 
 import logging
+import os
 import subprocess
 import sys
 import time
@@ -55,12 +56,12 @@ class HyP3DaemonConfig(object):
         """
         ssm = boto3.client('ssm')
 
-        # TODO: Configure Stack Name somehow (user data?)
+        self.stack_name = os.environ.get('STACK_NAME', 'hyp3-in-a-box-test')
         self.queue_name = ssm.get_parameter(
-            Name="/hyp3-in-a-box-test/StartEventQueueName"
+            Name="/{}/StartEventQueueName".format(self.stack_name)
         )['Parameter']['Value']
         self.sns_arn = ssm.get_parameter(
-            Name="/hyp3-in-a-box-test/FinishEventSNSArn"
+            Name="/{}/FinishEventSNSArn".format(self.stack_name)
         )['Parameter']['Value']
         self.max_idle_time_seconds = 120
 

@@ -1,0 +1,9 @@
+[Unit]
+Description=HyP3 Daemon
+
+[Service]
+ExecStart=/home/ubuntu/hyp3_daemon.py
+EnvironmentFile=-/home/ubuntu/env
+
+[Install]
+WantedBy=multi-user.target
