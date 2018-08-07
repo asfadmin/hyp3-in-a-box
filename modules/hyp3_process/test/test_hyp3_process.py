@@ -1,6 +1,7 @@
 import contextlib
 import pathlib as pl
 import json
+from typing import Dict
 
 import pytest
 import mock
@@ -27,11 +28,9 @@ def mock_download(*args, **kwargs):
 
 
 @mock.patch('hyp3_process.products.products.get_bucket')
-@mock.patch('asf_granule_util.download', side_effect=mock_download)
 @mock.patch('hyp3_process.working_directory.create')
 def test_rtc_snap_mocked(
         wrk_dir_mock,
-        download_mock,
         bucket_mock,
         rtc_snap_job,
         make_working_dir
@@ -41,7 +40,11 @@ def test_rtc_snap_mocked(
 
     process = Process()
 
-    def handler(granule_name: str, working_dir: str, script_path: str) -> None:
+    def handler(
+        granule_name: str,
+        working_dir: str,
+        earthdata_creds: Dict[str, str]
+    ) -> None:
         output_files = ['test.txt', 'browse.png']
         wrk_dir = pl.Path(working_dir)
 
@@ -59,28 +62,10 @@ def test_rtc_snap_mocked(
         product_bucket=''
     )
 
-    dl_call = download_mock.mock_calls[0]
-    assert download_has_valid_params(dl_call, rtc_snap_job)
-
     assert all([
         'product_url' in resp,
         'browse_url' in resp
     ])
-
-
-def download_has_valid_params(dl_call, job):
-    (dl_granule, creds), kwargs = dl_call[1:3]
-    expected_granule = gu.SentinelGranule(job.granule)
-
-    return all([
-        expected_granule == dl_granule,
-        creds == {},
-        'directory' in kwargs
-    ])
-
-
-def test_print_start_event(rtc_snap_job):
-    print(json.dumps(rtc_snap_job.to_dict(), indent=2))
 
 
 def mock_working_dir_with(mock_directory):

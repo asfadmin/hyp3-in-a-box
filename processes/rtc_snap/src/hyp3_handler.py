@@ -1,14 +1,23 @@
 import subprocess
 
+import asf_granule_util as gu
+
 
 def handler(
     granule_name: str,
     working_dir: str,
-    script_path: str
+    earthdata_creds: str
 ) -> None:
     print('processing rtc product')
+
+    gu.download(
+        granule_name,
+        earthdata_creds,
+        directory=str(working_dir)
+    )
+
     subprocess.check_call([
-        'python2', script_path,
+        'python2', 'procSentinel',
         '--ls',
         '-r', '30',
         f'{granule_name}.zip'

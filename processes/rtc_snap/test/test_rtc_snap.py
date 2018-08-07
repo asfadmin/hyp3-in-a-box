@@ -6,19 +6,16 @@ import pytest
 import hyp3_events
 
 import import_rtc_snap
-from hyp3_process import Process
 import hyp3_handler
 
 
 @pytest.mark.full_rtc_snap
-def test_rtc_snap_full_run(rtc_snap_job, earthdata_creds):
+def test_rtc_snap_full_run(tmpdir, rtc_snap_job, earthdata_creds):
     print('running rtc_snap with processing')
-    process = Process()
-    process.add_handler(hyp3_handler.handler)
-    resp = process.start(
+    resp = hyp3_handler(
         rtc_snap_job,
+        str(tmpdir),
         earthdata_creds,
-        'hyp3-in-a-box-products'
     )
 
     assert resp_is_correct(resp)

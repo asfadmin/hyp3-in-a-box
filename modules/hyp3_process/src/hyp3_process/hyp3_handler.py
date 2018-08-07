@@ -13,7 +13,7 @@ from . import products
 HandlerFunction = Callable[[
     gu.SentinelGranule,
     str,
-    str
+    Dict[str, str]
 ], Dict[str, str]
 ]
 
@@ -36,9 +36,11 @@ def make_hyp3_processing_function_from(
         granule = gu.SentinelGranule(job.granule)
 
         with working_directory.create(granule) as working_dir:
-            download_granule(granule, earthdata_creds, working_dir)
-
-            handler_function(granule, working_dir, job.script_path)
+            handler_function(
+                str(granule),
+                working_dir,
+                earthdata_creds
+            )
 
             patterns = OutputPatterns(**job.output_patterns)
 
@@ -59,13 +61,3 @@ def make_hyp3_processing_function_from(
         }
 
     return hyp3_wrapper
-
-
-def download_granule(granule, earthdata_creds, working_dir):
-    print(f'downloading granule {granule}')
-
-    gu.download(
-        granule,
-        earthdata_creds,
-        directory=str(working_dir)
-    )

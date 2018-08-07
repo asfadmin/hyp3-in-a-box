@@ -38,10 +38,13 @@ def _teardown(directory: str) -> None:
 def _save_failed(directory: str) -> None:
     failed_dir = pl.Path.home() / 'failed-jobs' / pl.Path(directory).name
 
-    _move(directory, str(failed_dir))
+    _move(directory, failed_dir)
 
 
-def _move(src, dst):
+def _move(src: str, dst: pl.Path) -> None:
+    if dst.exists():
+        shutil.rmtree(str(dst))
+
     shutil.move(src, dst)
 
 
