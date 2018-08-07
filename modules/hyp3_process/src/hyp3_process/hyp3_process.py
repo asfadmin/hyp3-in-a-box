@@ -3,7 +3,7 @@ import argparse
 
 
 from .hyp3_handler import (
-    hyp3_handler,
+    make_hyp3_processing_function_from,
     HandlerFunction,
     ProcessingFunction
 )
@@ -15,21 +15,9 @@ class Process:
     def __init__(self) -> None:
         self.process_handler: Union[ProcessingFunction, None] = None
 
-    def handler(self, process_func: HandlerFunction):
-        if self.process_handler is not None:
-            raise HandlerRedefinitionError(
-                'Process is only allowed one handler function'
-            )
-
-        self.process_handler = hyp3_handler(process_func)
-
-    def start(self, job):
-        return self.process_handler(
-            job, {}, ''
-        )
-
     def run(self):
         args = get_arguments()
+        print(args)
 
         config = HyP3DaemonConfig(**args)
 
@@ -39,6 +27,19 @@ class Process:
         )
 
         process_daemon.run()
+
+    def handler(self, process_func: HandlerFunction):
+        if self.process_handler is not None:
+            raise HandlerRedefinitionError(
+                'Process is only allowed one handler function'
+            )
+
+        self.process_handler = make_hyp3_processing_function_from(process_func)
+
+    def start(self, job, earthdata_creds, product_bucket):
+        return self.process_handler(
+            job, earthdata_creds, product_bucket
+        )
 
 
 def get_arguments():
@@ -59,7 +60,7 @@ def parser():
     for ssm_arg in ssm_args:
         cli.add_argument(
             f'--{ssm_arg}', type=str, required=True,
-            description=f'SSM Param name for {ssm_arg}'
+            dest=ssm_arg, help=f'SSM Param name for {ssm_arg}'
         )
 
     return cli

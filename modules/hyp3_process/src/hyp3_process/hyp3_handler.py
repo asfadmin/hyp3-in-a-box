@@ -30,7 +30,9 @@ ProcessingFunction = Callable[[
 ]
 
 
-def hyp3_handler(handler_function: HandlerFunction) -> ProcessingFunction:
+def make_hyp3_processing_function_from(
+    handler_function: HandlerFunction
+) -> ProcessingFunction:
     def hyp3_wrapper(
             job: StartEvent,
             earthdata_creds: EarthdataCredentials,
