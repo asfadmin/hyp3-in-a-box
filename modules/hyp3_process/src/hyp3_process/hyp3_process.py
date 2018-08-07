@@ -28,13 +28,15 @@ class Process:
 
         process_daemon.run()
 
-    def handler(self, process_func: HandlerFunction):
+    def add_handler(self, processing_function):
         if self.process_handler is not None:
             raise HandlerRedefinitionError(
                 'Process is only allowed one handler function'
             )
 
-        self.process_handler = make_hyp3_processing_function_from(process_func)
+        self.process_handler = make_hyp3_processing_function_from(
+            processing_function
+        )
 
     def start(self, job, earthdata_creds, product_bucket):
         return self.process_handler(

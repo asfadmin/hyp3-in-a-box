@@ -1,9 +1,16 @@
 -i https://pypi.org/simple
+asf-granule-util==0.0.59
 boto3==1.7.71
 botocore==1.10.71
+certifi==2018.4.16
+chardet==3.0.4
 docutils==0.14
+idna==2.7
 jmespath==0.9.3
 ordered-set==3.0.1
 python-dateutil==2.7.3; python_version >= '2.7'
+requests==2.19.1
 s3transfer==0.1.13
 six==1.11.0
+tqdm==4.24.0
+urllib3==1.23

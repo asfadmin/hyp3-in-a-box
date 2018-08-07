@@ -1,13 +1,7 @@
 import subprocess
 
-from hyp3_process import Process, EarthdataCredentials
 
-
-rtc_snap = Process()
-
-
-@rtc_snap.handler
-def rtc_snap_handler(
+def handler(
     granule_name: str,
     working_dir: str,
     script_path: str
@@ -21,7 +15,3 @@ def rtc_snap_handler(
     ],
         cwd=working_dir
     )
-
-
-if __name__ == "__main__":
-    rtc_snap.run()

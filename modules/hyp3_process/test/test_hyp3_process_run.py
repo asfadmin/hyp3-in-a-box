@@ -31,17 +31,16 @@ def test_process_run_fails_with_no_arguments(process):
 
 def test_process_can_only_have_one_handler(process):
     with pytest.raises(HandlerRedefinitionError):
-        @process.handler
         def second_handler():
             pass
+
+        process.add_handler(second_handler)
 
 
 @pytest.fixture
 def process():
     proc = Process()
 
-    @proc.handler
-    def handler_function():
-        pass
+    proc.add_handler(lambda *args, **kwargs: 'hello!')
 
     return proc

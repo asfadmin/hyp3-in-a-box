@@ -41,7 +41,6 @@ def test_rtc_snap_mocked(
 
     process = Process()
 
-    @process.handler
     def handler(granule_name: str, working_dir: str, script_path: str) -> None:
         output_files = ['test.txt', 'browse.png']
         wrk_dir = pl.Path(working_dir)
@@ -51,6 +50,8 @@ def test_rtc_snap_mocked(
                 f.write('test')
 
         print('hyp3 processing code goes here!')
+
+    process.add_handler(handler)
 
     resp = process.start(
         job=rtc_snap_job,
