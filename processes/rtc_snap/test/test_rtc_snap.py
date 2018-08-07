@@ -12,7 +12,7 @@ import hyp3_handler
 @pytest.mark.full_rtc_snap
 def test_rtc_snap_full_run(tmpdir, rtc_snap_job, earthdata_creds):
     print('running rtc_snap with processing')
-    resp = hyp3_handler(
+    resp = hyp3_handler.handler(
         rtc_snap_job,
         str(tmpdir),
         earthdata_creds,
