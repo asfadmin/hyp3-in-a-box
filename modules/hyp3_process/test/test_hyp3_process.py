@@ -38,7 +38,6 @@ def test_rtc_snap_mocked(
     working_dir = make_working_dir(strats.rtc_example_files())
     wrk_dir_mock.side_effect = mock_working_dir_with(working_dir)
 
-    process = Process()
 
     def handler(
         granule_name: str,
@@ -54,7 +53,7 @@ def test_rtc_snap_mocked(
 
         print('hyp3 processing code goes here!')
 
-    process.add_handler(handler)
+    process = Process(handler_function=handler)
 
     resp = process.start(
         job=rtc_snap_job,

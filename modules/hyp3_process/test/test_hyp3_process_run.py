@@ -2,7 +2,7 @@ import pytest
 import mock
 
 import import_hyp3_process
-from hyp3_process import Process, HandlerRedefinitionError
+from hyp3_process import Process
 
 
 def fake_arguments():
@@ -30,18 +30,10 @@ def test_process_run_fails_with_no_arguments(process):
         process.run()
 
 
-def test_process_can_only_have_one_handler(process):
-    with pytest.raises(HandlerRedefinitionError):
-        def second_handler():
-            pass
-
-        process.add_handler(second_handler)
-
-
 @pytest.fixture
 def process():
-    proc = Process()
-
-    proc.add_handler(lambda *args, **kwargs: 'hello!')
+    proc = Process(
+        handler_function=lambda *args, **kwargs: 'hello!'
+    )
 
     return proc

@@ -1,5 +1,7 @@
-from typing import Union
+from typing import Union, Dict
 import argparse
+
+from hyp3_events import StartEvent
 
 
 from .hyp3_handler import (
@@ -12,14 +14,16 @@ from .hyp3_daemon import HyP3DaemonConfig, HyP3Daemon
 
 
 class Process:
-    def __init__(self) -> None:
-        self.process_handler: Union[ProcessingFunction, None] = None
+    def __init__(self,*, handler_function) -> None:
+        self.add_handler(handler_function)
 
-    def run(self):
+    def run(self) -> None:
         args = get_arguments()
         print(args)
 
         config = HyP3DaemonConfig(**args)
+
+        assert self.process_handler is not None
 
         process_daemon = HyP3Daemon(
             config,
@@ -28,17 +32,19 @@ class Process:
 
         process_daemon.run()
 
-    def add_handler(self, processing_function):
-        if self.process_handler is not None:
-            raise HandlerRedefinitionError(
-                'Process is only allowed one handler function'
-            )
-
+    def add_handler(self, handler_function: HandlerFunction) -> None:
         self.process_handler = make_hyp3_processing_function_from(
-            processing_function
+            handler_function
         )
 
-    def start(self, job, earthdata_creds, product_bucket):
+    def start(
+        self,
+            job: StartEvent,
+            earthdata_creds: Dict[str, str],
+            product_bucket: str
+    ) -> Dict[str, str]:
+        assert self.process_handler is not None
+
         return self.process_handler(
             job, earthdata_creds, product_bucket
         )
@@ -66,7 +72,3 @@ def parser():
         )
 
     return cli
-
-
-class HandlerRedefinitionError(Exception):
-    pass
