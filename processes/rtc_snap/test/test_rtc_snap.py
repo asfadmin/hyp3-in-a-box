@@ -12,13 +12,13 @@ import hyp3_handler
 @pytest.mark.full_rtc_snap
 def test_rtc_snap_full_run(tmpdir, rtc_snap_job, earthdata_creds):
     print('running rtc_snap with processing')
-    resp = hyp3_handler.handler(
-        rtc_snap_job,
+    hyp3_handler.handler(
+        'S1A_IW_GRDH_1SDV_20180801T155817_20180801T155842_023055_0280C4_749A',
         str(tmpdir),
         earthdata_creds,
+        ('/home/ubuntu/hyp3-in-a-box/processes/rtc_snap/build'
+        '/hyp3-rtc-snap/src/procSentinelRTC-3.py')
     )
-
-    assert resp_is_correct(resp)
 
 
 def resp_is_correct(resp):
