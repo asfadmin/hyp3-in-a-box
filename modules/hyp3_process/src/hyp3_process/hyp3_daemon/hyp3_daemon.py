@@ -76,13 +76,12 @@ class HyP3DaemonConfig(object):
         self.products_bucket_name = self._load_param(products_bucket)
 
     def _load_param(self, param):
-        if self.are_ssm_param_names:
-            return ssm.get_parameter(
-                Name=param
-            )['Parameter']['Value']
-
-        else:
+        if not self.are_ssm_param_names:
             return param
+
+        return ssm.get_parameter(
+            Name=param
+        )['Parameter']['Value']
 
 
 class HyP3Daemon(object):
