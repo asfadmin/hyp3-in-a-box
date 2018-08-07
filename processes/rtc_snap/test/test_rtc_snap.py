@@ -13,7 +13,7 @@ import hyp3_handler
 def test_rtc_snap_full_run(tmpdir, rtc_snap_job, earthdata_creds):
     print('running rtc_snap with processing')
     resp = hyp3_handler.handler(
-        rtc_snap_job,
+        'S1A_IW_GRDH_1SDV_20180801T155817_20180801T155842_023055_0280C4_749A',
         str(tmpdir),
         earthdata_creds,
     )

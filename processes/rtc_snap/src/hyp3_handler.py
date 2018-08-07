@@ -17,7 +17,7 @@ def handler(
     )
 
     subprocess.check_call([
-        'python2', 'procSentinel',
+        'python2', 'procSentinelRTC-3.py',
         '--ls',
         '-r', '30',
         f'{granule_name}.zip'
