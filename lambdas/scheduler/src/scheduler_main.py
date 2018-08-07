@@ -24,6 +24,6 @@ def scheduler(event: Dict) -> None:
 
     print('Sending {} new events'.format(len(new_hyp3_events)))
 
-    dispatch.send_all_events(new_hyp3_events)
+    dispatch.all_events(new_hyp3_events)
 
     print('Done!')
