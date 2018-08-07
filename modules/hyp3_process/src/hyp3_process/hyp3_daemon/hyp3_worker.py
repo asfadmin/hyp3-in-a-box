@@ -27,7 +27,11 @@ class HyP3Worker(Process):
     def run(self):
         self._set_status(WorkerStatus.BUSY)
         print("WORKER: Processed job {}".format(self.job))
-        self.handler()
+        self.handler(
+            self.job,
+            self.earthdata_creds,
+            self.products_bucket
+        )
         self._set_status(WorkerStatus.DONE)
 
         self.conn.close()
