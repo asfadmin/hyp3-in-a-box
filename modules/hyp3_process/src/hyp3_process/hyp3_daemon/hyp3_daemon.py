@@ -106,7 +106,10 @@ class HyP3Daemon(object):
         self.previous_worker_status = WS.NO_STATUS
 
     def run(self):
-        """ Calls ``self.main()`` every second until an exception is raised"""
+        """ Calls ``self.main()`` every second until an exception is raised.
+            Initiates a system shutdown if main does not find any jobs to
+            process for a period of time longer than 2 minutes.
+        """
         log.info("HyP3 Daemon starting...")
         while True:
             try:
