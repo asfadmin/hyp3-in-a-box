@@ -1,3 +1,3 @@
 -i https://pypi.org/simple
 ./../../modules/hyp3_events
-file:///home/william/repositories/hyp3/in-a-box/modules/hyp3_events
+./../../modules/hyp3_process

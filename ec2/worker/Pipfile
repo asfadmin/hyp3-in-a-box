@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"f9e3511" = {file = "file:///home/william/repositories/hyp3/in-a-box/modules/hyp3_events"}
 "61ea59b" = {path = "./../../modules/hyp3_events"}
+"b987687" = {path = "./../../modules/hyp3_process"}
 
 [dev-packages]
 
