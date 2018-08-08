@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
 import hyp3_db
-from hyp3_db.hyp3_models import Subscription, User
+from hyp3_db.hyp3_models import Subscription, User, Process
 from hyp3_events import NewGranuleEvent
 from scheduler_env import environment
 
@@ -10,6 +10,7 @@ from . import queries
 
 class Job(NamedTuple):
     sub: Subscription
+    process: Process
     user: User
     granule: NewGranuleEvent
 
@@ -45,9 +46,11 @@ def get_jobs_for(granule, db):
     print('Found {} subs overlapping granule'.format(len(subs)))
 
     users = get_users_for(subs, db)
+    processes = get_processes(db)
 
     return [
-        Job(sub, users[sub.user_id], granule) for sub in subs
+        Job(sub, processes[sub.process_id], users[sub.user_id], granule)
+        for sub in subs
     ]
 
 
@@ -69,8 +72,18 @@ def get_users_for(subs, db):
 
     users = queries.get_users_by_ids(db, user_ids)
 
+    return dict_indexed_by_id(users)
+
+
+def get_processes(db):
+    processes = queries.get_processes(db)
+
+    return dict_indexed_by_id(processes)
+
+
+def dict_indexed_by_id(objs):
     return {
-        user.id: user for user in users
+        obj.id: obj for obj in objs
     }
 
 

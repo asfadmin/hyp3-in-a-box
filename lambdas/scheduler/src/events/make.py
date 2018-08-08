@@ -8,13 +8,26 @@ from schedule import Job
 # Add implementation for conversion from Job type
 EmailEvent.impl_from(
     Job,
-    lambda obj: EmailEvent(
-        user_id=obj.user.id,
-        sub_id=obj.sub.id,
+    lambda job: EmailEvent(
+        user_id=job.user.id,
+        sub_id=job.sub.id,
         additional_info=[],
-        browse_url=obj.granule.browse_url,
-        download_url=obj.granule.download_url,
-        granule_name=obj.granule.name
+        browse_url=job.granule.browse_url,
+        download_url=job.granule.download_url,
+        granule_name=job.granule.name
+    )
+)
+
+StartEvent.impl_from(
+    Job,
+    lambda job: StartEvent(
+        granule=job.granule.name,
+        user_id=job.user.id,
+        sub_id=job.sub.id,
+        # TODO: Add output patterns from process here.
+        output_patterns=[],
+        script_path=job.process.script,
+        additional_info=[]
     )
 )
 
@@ -36,7 +49,7 @@ def make_new_granule_events_with(
 def make_from(jobs: List[Job]) -> List[Hyp3Event]:
     """ make email packages into notify only events
 
-        :param list(tuple): email packages of the form schedule.Job(sub, user, granule)
+        :param list(Job): jobs to make into events
 
         :returns: hyp3 events corresponding to each package
         :rtype: list[hyp3_events.EmailEvent]
@@ -48,7 +61,7 @@ def make_from(jobs: List[Job]) -> List[Hyp3Event]:
 
 def _make_event(job: Job) -> Hyp3Event:
     # NOTE: Scheduler relies on Notify Only being process 1
-    if job.sub.process_id == 1:
+    if 'notify' in job.process.name.lower():
         return EmailEvent.from_type(job)
 
     return StartEvent.from_type(job)
