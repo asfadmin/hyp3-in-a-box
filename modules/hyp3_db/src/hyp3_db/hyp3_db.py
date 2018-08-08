@@ -23,12 +23,18 @@ def connect_using_environment_variables(db='hyp3db', commit_on_close=False):
 @contextlib.contextmanager
 def connect(host, user, password, db='hyp3db', commit_on_close=False):
     db = Hyp3DB(host, user, password, db)
-    yield db
 
-    if commit_on_close:
-        db.commit_and_close()
-    else:
+    try:
+        yield db
+    except Exception as e:
         db.close()
+
+        raise e from None
+    finally:
+        if commit_on_close:
+            db.commit_and_close()
+        else:
+            db.close()
 
 
 class Hyp3DB:
