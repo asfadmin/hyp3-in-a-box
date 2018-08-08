@@ -53,9 +53,9 @@ def check_new_user(db, mock_env):
 
 
 def check_processes(db, mock_env):
-    notify_only = db.session.query(hyp3_models.Process).one()
+    processes = db.session.query(hyp3_models.Process).all()
 
-    assert notify_only.name == 'Notify Only'
+    assert set(p.name for p in processes) == {'Notify Only', 'RTC Snap'}
 
 
 def check_setup_db_still_works(sample_event):
