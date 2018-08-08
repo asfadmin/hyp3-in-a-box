@@ -3,6 +3,7 @@
 # Created June 7, 2017
 
 from sqlalchemy import Boolean, Column, Float, Integer, Text, sql
+from sqlalchemy.dialects.postgresql import JSON
 
 from .base import Base
 
@@ -26,6 +27,10 @@ class Process(Base):
     ami_id = Column(Text, nullable=False)
     ec2_size = Column(Text, nullable=False)
 
+    output_patterns = Column(
+        JSON,
+        nullable=False
+    )
     script = Column(Text, nullable=False)
     supports_pair_processing = Column(Boolean, nullable=False)
     supports_time_series_processing = Column(

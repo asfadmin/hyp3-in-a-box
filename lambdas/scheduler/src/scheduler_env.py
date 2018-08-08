@@ -8,6 +8,7 @@ class Environment:
         ]
 
         self.sns_arn = None
+        self.queue_url = None
         self.maturity = 'test'
 
 

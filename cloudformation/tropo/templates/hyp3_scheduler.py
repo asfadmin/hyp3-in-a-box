@@ -34,6 +34,7 @@ from . import utils
 from .hyp3_db_params import db_name, db_pass, db_user
 from .hyp3_kms_key import kms_key
 from .hyp3_sns import finish_sns
+from .hyp3_sqs import start_events
 
 source_zip = "scheduler.zip"
 
@@ -74,8 +75,10 @@ scheduler = utils.make_lambda_function(
                 'DB_HOST': utils.get_host_address(),
                 'DB_USER': Ref(db_user),
                 'DB_PASSWORD': Ref(db_pass),
-                'DB_NAME': Ref(db_name)
-            }),
+                'DB_NAME': Ref(db_name),
+                'QUEUE_URL': Ref(start_events)
+            }
+        ),
         "KmsKeyArn": GetAtt(kms_key, "Arn"),
         "MemorySize": 128,
         "Timeout": 300

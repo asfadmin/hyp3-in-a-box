@@ -1,5 +1,5 @@
 
-from hyp3_db.hyp3_models import Subscription, User
+from hyp3_db.hyp3_models import Subscription, User, Process
 from geoalchemy2 import WKTElement
 
 
@@ -34,8 +34,14 @@ def get_enabled_intersecting_subs(db, polygon):
     intersecting = Subscription.location.intersects(poly)
 
     intersecting_subs = db.session.query(Subscription) \
-        .filter_by(enabled=True) \
+        .filter(Subscription.enabled == True) \
+        .filter(Subscription.process.has(enabled=True)) \
         .filter(intersecting) \
         .all()
 
     return intersecting_subs
+
+
+def get_processes(db):
+    return db.session.query(Process) \
+        .all()
