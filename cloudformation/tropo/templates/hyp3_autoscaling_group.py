@@ -24,7 +24,7 @@ Resources
 
 from template import t
 from tropo_env import environment
-from troposphere import Base64, FindInMap, Ref, Sub
+from troposphere import Base64, FindInMap, GetAtt, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
     LaunchConfiguration,
@@ -123,7 +123,7 @@ def add_alarm(name, description, threshold, period_seconds):
         Dimensions=[
             MetricDimension(
                 Name="QueueName",
-                Value=Ref(start_events)
+                Value=GetAtt(start_events, "QueueName")
             )
         ],
         MetricName="ApproximateNumberOfMessagesVisible",
