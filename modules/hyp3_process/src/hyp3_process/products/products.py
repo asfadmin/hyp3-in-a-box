@@ -11,6 +11,7 @@ s3_client = boto3.client('s3')
 
 
 def upload(*, outputs: ProcessOutputs, bucket_name: str) -> List[str]:
+    print(f'uploading products to {bucket_name}')
     products_bucket = get_bucket(bucket_name)
 
     object_keys = [

@@ -7,10 +7,12 @@ name = "pypi"
 ordered-set = "*"
 "boto3" = "*"
 "0c4b69c" = {path = "./../hyp3_events"}
+asf-granule-util = "*"
 
 [dev-packages]
 hypothesis = "*"
 mypy = "*"
+pytest-timeout = "*"
 
 [requires]
 python_version = "3.6"

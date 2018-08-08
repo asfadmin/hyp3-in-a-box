@@ -1,32 +1,15 @@
-# hyp3_worker.py
-# Rohan Weeden
-# Created: June 22, 2018
+from hyp3_process import Process
 
-# The worker process which runs science scripts
-
-from enum import Enum
-from multiprocessing import Process
+import hyp3_handler
 
 
-class WorkerStatus(Enum):
-    NO_STATUS = 0
-    READY = 1
-    BUSY = 2
-    DONE = 3
+def run():
+    process = Process(
+        handler_function=hyp3_handler.handler
+    )
+
+    start_worker(process)
 
 
-class HyP3Worker(Process):
-    def __init__(self, conn, job):
-        super().__init__()
-        self.conn = conn
-        self.job = job
-
-    def run(self):
-        self._set_status(WorkerStatus.BUSY)
-        print("WORKER: Processed job {}".format(self.job))
-        self._set_status(WorkerStatus.DONE)
-
-        self.conn.close()
-
-    def _set_status(self, status):
-        self.conn.send(status)
+def start_worker(process):
+    process.run()

@@ -6,11 +6,12 @@
 
 import json
 from hashlib import md5
+from typing import Union
 
 import boto3
 from hyp3_events import EmailEvent, StartEvent
 
-from hyp3_logging import getLogger
+from ..hyp3_logging import getLogger
 
 log = getLogger(__name__)
 
@@ -44,24 +45,32 @@ class SQSService(object):
         )
 
     def get_next_message(self):
+        log.info('checking queue for message')
         messages = self.sqs_queue.receive_messages(
             MaxNumberOfMessages=1,
         )
-        if len(messages) > 1:
-            log.warning(("API call returned more messages that it was supposed to. ",
-                         "Some jobs might not be processed"))
 
         if not messages:
-            return None
+            log.debug('no messages found')
+            return
 
+        assert len(messages) == 1
         message = messages[0]
-        job_info = None
+
+        return self.get_job_info_from(message)
+
+    def get_job_info_from(self, message) -> Union[SQSJob, None]:
         try:
             SQSService.validate_message(message)
-            job_info = SQSJob(message)
+
+            return SQSJob(message)
         except BadMessageException as e:
-            log.debug("DEBUG: Failed to recieve message due to the following error:\n\t%s", str(e))
-        return job_info
+            log.debug(
+                "Failed to recieve message due to the following error:\n\t%s",
+                str(e)
+            )
+
+            return None
 
     @staticmethod
     def validate_message(message):

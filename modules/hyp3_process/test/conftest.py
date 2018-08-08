@@ -3,6 +3,29 @@ import pathlib as pl
 import boto3
 import pytest
 
+import hyp3_events
+
+
+@pytest.fixture
+def event_in_queue(rtc_snap_job):
+    pass
+
+
+@pytest.fixture
+def rtc_snap_job():
+    return hyp3_events.StartEvent(
+        granule=('S1A_WV_OCN__2SSV_20180805T042601'
+                 '_20180805T043210_023106_028262_4799'),
+        user_id=80,
+        sub_id=80,
+        additional_info=[],
+        output_patterns={
+            'archive': ["*.txt"],
+            'browse': '*.png'
+        },
+        script_path='/users/script/path/here'
+    )
+
 
 @pytest.fixture()
 def make_working_dir(tmpdir):

@@ -6,21 +6,22 @@
 
 import logging
 
-import import_ec2_worker
 import mock
 import pytest
-from hyp3_daemon import HyP3Daemon, log
+
 from hyp3_events import EmailEvent
-from hyp3_worker import WorkerStatus
-from services import BadMessageException, SQSJob, SQSService
+
+import import_hyp3_process
+from hyp3_process.hyp3_daemon import HyP3Daemon, HyP3DaemonConfig, log
+from hyp3_process.hyp3_daemon.worker import WorkerStatus
+from hyp3_process.hyp3_daemon.services import BadMessageException, SQSJob, SQSService
 
 
-@mock.patch('hyp3_daemon.SQSService')
-@mock.patch('hyp3_daemon.HyP3Daemon._process_job')
-@mock.patch('hyp3_daemon.HyP3DaemonConfig')
-def test_daemon_main(_, process_job_mock, SQSServiceMock):
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SQSService')
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3Daemon._process_job')
+def test_daemon_main(process_job_mock, SQSServiceMock, config, handler):
     log.setLevel(logging.DEBUG)
-    daemon = HyP3Daemon()
+    daemon = HyP3Daemon(config, handler)
     daemon.main()
 
     sqsservice_mock = SQSServiceMock.return_value
@@ -34,12 +35,11 @@ def test_daemon_main(_, process_job_mock, SQSServiceMock):
     )
 
 
-@mock.patch('hyp3_daemon.SNSService')
-@mock.patch('hyp3_daemon.SQSService')
-@mock.patch('hyp3_daemon.HyP3DaemonConfig')
-def test_daemon_main_job_finished(_1, _2, sns_mock):
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SNSService')
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SQSService')
+def test_daemon_main_job_finished(_1, sns_mock, config, handler):
     log.setLevel(logging.DEBUG)
-    daemon = HyP3Daemon()
+    daemon = HyP3Daemon(config, handler)
 
     worker_mock = mock.Mock()
     daemon.worker = worker_mock
@@ -63,14 +63,14 @@ def test_daemon_main_job_finished(_1, _2, sns_mock):
 
 
 @pytest.mark.timeout(5)
-@mock.patch('hyp3_daemon.sys')
-@mock.patch('hyp3_daemon.subprocess')
-@mock.patch('hyp3_daemon.SNSService')
-@mock.patch('hyp3_daemon.SQSService')
-@mock.patch('hyp3_daemon.HyP3DaemonConfig')
-def test_shutdown_if_idle(_1, _2, _3, subprocess_mock, sys_mock):
-    daemon = HyP3Daemon()
-    daemon.config.max_idle_time_seconds = 1
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.EmailEvent')
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.sys')
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.subprocess')
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SNSService')
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SQSService')
+def test_shutdown_if_idle(_1, _2, subprocess_mock, sys_mock, event_mock, config, handler):
+    daemon = HyP3Daemon(config, handler)
+    daemon.config.MAX_IDLE_TIME_SECONDS = 1
     daemon.run()
 
     subprocess_mock.call.assert_called_once_with(['shutdown', '-h', 'now'])
@@ -95,8 +95,8 @@ class MockMessage(object):
 
 
 @mock.patch('boto3.resource')
-@mock.patch('services.SQSService.validate_message')
-@mock.patch('services.SQSJob')
+@mock.patch('hyp3_process.hyp3_daemon.services.SQSService.validate_message')
+@mock.patch('hyp3_process.hyp3_daemon.services.SQSJob')
 def test_sqsservice_get_next_message(_, validate_mock, sqs_mock):
     sqs_service = SQSService('')
 
@@ -111,7 +111,7 @@ def test_sqsservice_get_next_message(_, validate_mock, sqs_mock):
 
 
 @mock.patch('boto3.resource')
-@mock.patch('services.SQSJob')
+@mock.patch('hyp3_process.hyp3_daemon.services.SQSJob')
 def test_sqsservice_get_next_message_bad_checksum(_, sqs_mock):
     sqs_service = SQSService('')
 
@@ -165,6 +165,7 @@ def test_sqsjob_bad_input_raises():
 def test_event_creation():
     with pytest.raises(NotImplementedError):
         EmailEvent.from_type("A string!")
+
     EmailEvent.from_type(
         SQSJob(MockMessage('''{
             "user_id": 0,
@@ -174,4 +175,20 @@ def test_event_creation():
             "output_patterns": [],
             "script_path": ""
         }''', ''))
+    )
+
+
+@pytest.fixture
+def handler():
+    return lambda *args, **kwargs: print('processing')
+
+
+@pytest.fixture
+def config():
+    return HyP3DaemonConfig(
+        queue_name='queue-name',
+        sns_arn='sns-arn',
+        earthdata_creds='{"username": "hello", "password": "world"}',
+        products_bucket='prodcuts',
+        are_ssm_param_names=False
     )

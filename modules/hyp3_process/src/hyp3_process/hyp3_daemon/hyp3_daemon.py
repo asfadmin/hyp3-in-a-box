@@ -1,5 +1,5 @@
 # hyp3_daemon.py
-# Rohan Weeden
+# Rohan Weeden, William Horn
 # Created: June 22 2018
 
 """
@@ -10,21 +10,22 @@ system has the appropriate dependencies and available resources.
 This script has an ifmain so it can be called from the command line.
 """
 
-import logging
-import os
+import json
 import subprocess
 import sys
 import time
 from datetime import datetime
 from multiprocessing import Pipe
+from typing import Union
 
 import boto3
-
 from hyp3_events import EmailEvent
-from hyp3_logging import getLogger
-from hyp3_worker import HyP3Worker, WorkerStatus
-from services import SNSService, SQSJob, SQSService
 
+from .hyp3_logging import getLogger
+from .worker import HyP3Worker, WorkerStatus
+from .services import SNSService, SQSJob, SQSService
+
+ssm = boto3.client('ssm')
 log = getLogger(__name__)
 
 # Add implementation for conversion from SQSJob type
@@ -47,31 +48,47 @@ EmailEvent.impl_from(
 class HyP3DaemonConfig(object):
     """ Class HyP3DaemonConfig"""
 
-    def __init__(self):
+    MAX_IDLE_TIME_SECONDS = 120
+
+    def __init__(
+            self,
+            queue_name,
+            sns_arn,
+            earthdata_creds,
+            products_bucket,
+            are_ssm_param_names=True
+    ):
         """ Querys SSM Parameter Store for configuration variables and maps them
             to class members.
 
             Paramaters:
               * self.queue_name: /stack/StartEventQueueName
         """
-        ssm = boto3.client('ssm')
+        self.are_ssm_param_names = are_ssm_param_names
 
-        self.stack_name = os.environ.get('STACK_NAME', 'hyp3-in-a-box-test')
-        self.queue_name = ssm.get_parameter(
-            Name="/{}/StartEventQueueName".format(self.stack_name)
+        self.queue_name = self._load_param(queue_name)
+        self.sns_arn = self._load_param(sns_arn)
+        self.earthdata_creds = json.loads(
+            self._load_param(earthdata_creds)
+        )
+
+        self.products_bucket_name = self._load_param(products_bucket)
+
+    def _load_param(self, param):
+        if not self.are_ssm_param_names:
+            return param
+
+        return ssm.get_parameter(
+            Name=param
         )['Parameter']['Value']
-        self.sns_arn = ssm.get_parameter(
-            Name="/{}/FinishEventSNSArn".format(self.stack_name)
-        )['Parameter']['Value']
-        self.max_idle_time_seconds = 120
 
 
 class HyP3Daemon(object):
     """ Class HyP3Daemon"""
 
-    def __init__(self):
+    def __init__(self, config: HyP3DaemonConfig, handler) -> None:
         """ Initialize state. This creates a new HyP3DaemonConfig object."""
-        self.config = HyP3DaemonConfig()
+        self.config = config
 
         self.job_queue = SQSService(
             queue_name=self.config.queue_name
@@ -80,7 +97,9 @@ class HyP3Daemon(object):
             arn=self.config.sns_arn
         )
         self.last_active_time = time.time()
-        self.worker = None
+
+        self.handler = handler
+        self.worker: Union[HyP3Worker, None] = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
 
@@ -110,16 +129,16 @@ class HyP3Daemon(object):
             job if one is found. If the instance is currently processing a job
             already, SQS will not be polled. After the worker process has
             succesfully handled a job, the job will be deleted from SQS and an
-            email notification will be queued via SNS. The notification includes
-            the date on which processing occurred.
+            email notification will be queued via SNS. The notification
+            includes the date on which processing occurred.
         """
-
         status = self._poll_worker_status()
+
         if status == WorkerStatus.DONE:
             self._join_worker()
             status = WorkerStatus.NO_STATUS
             return
-        if not (status == WorkerStatus.READY or status == WorkerStatus.NO_STATUS):
+        if status not in [WorkerStatus.READY, WorkerStatus.NO_STATUS]:
             return
 
         new_job = self.job_queue.get_next_message()
@@ -141,7 +160,13 @@ class HyP3Daemon(object):
         self.last_active_time = time.time()
 
         self.worker_conn, child_conn = Pipe()
-        self.worker = HyP3Worker(child_conn, job)
+        self.worker = HyP3Worker(
+            child_conn,
+            job,
+            self.handler,
+            self.config.earthdata_creds,
+            self.config.products_bucket_name
+        )
         self.worker.start()
 
     def _join_worker(self):
@@ -160,20 +185,14 @@ class HyP3Daemon(object):
         job.delete()
 
         log.debug("Sending SNS notification")
-        self.sns_topic.push(EmailEvent.from_type(job))
+        email_event = EmailEvent.from_type(job)
+        self.sns_topic.push(email_event)
 
     def _reached_max_idle_time(self):
         if self.previous_worker_status == WorkerStatus.BUSY:
             return False
-        return (time.time() - self.last_active_time) >= self.config.max_idle_time_seconds
 
+        time_since_last_job = time.time() - self.last_active_time
+        timeout = self.config.MAX_IDLE_TIME_SECONDS
 
-def main():
-    """ Create a new HyP3Daemon instance and run forever."""
-    daemon = HyP3Daemon()
-    daemon.run()
-
-
-if __name__ == '__main__':
-    log.setLevel(logging.DEBUG)
-    main()
+        return time_since_last_job >= timeout

@@ -1,88 +1,100 @@
-from typing import Dict, NamedTuple, Callable, Union
-import functools
+from typing import Dict
+import json
+import os
+import argparse
 
-import asf_granule_util as gu
 from hyp3_events import StartEvent
 
-from . import working_directory
-from .outputs import OutputPatterns
-from . import package
-from . import products
+from .hyp3_handler import (
+    make_hyp3_processing_function_from,
+    HandlerFunction,
+    ProcessingFunction
+)
 
-
-class EarthdataCredentials(NamedTuple):
-    username: str
-    password: str
-
-
-HandlerFunction = Callable[[
-    StartEvent,
-    EarthdataCredentials,
-    str
-], Dict[str, str]
-]
+from .hyp3_daemon import HyP3DaemonConfig, HyP3Daemon, log
 
 
 class Process:
-    def __init__(
-        self,
-        earthdata_creds: EarthdataCredentials,
-        products_bucket: str
-    ) -> None:
-        self.earthdata_creds = earthdata_creds
-        self.products_bucket = products_bucket
+    def __init__(self, *, handler_function) -> None:
+        self.add_handler(handler_function)
 
-        self.process_handler: Union[HandlerFunction, None] = None
+    def run(self) -> None:
+        args = get_arguments()
+        log.debug('Hyp3 Daemon Args: \n%s', json.dumps(args))
 
-    def handler(self, process_func: HandlerFunction):
-        if self.process_handler is not None:
-            raise HandlerRedefinitionError(
-                'Process is only allowed one handler function'
+        config = HyP3DaemonConfig(**args)
+
+        assert self.process_handler is not None
+
+        process_daemon = HyP3Daemon(
+            config,
+            self.process_handler
+        )
+
+        process_daemon.run()
+
+    def add_handler(self, handler_function: HandlerFunction) -> None:
+        self.process_handler: ProcessingFunction = \
+            make_hyp3_processing_function_from(
+                handler_function
             )
 
-        self.process_handler = hyp3_handler(process_func)
+    def start(
+        self,
+            job: StartEvent,
+            earthdata_creds: Dict[str, str],
+            product_bucket: str
+    ) -> Dict[str, str]:
+        assert self.process_handler is not None
 
-    def start(self, job):
         return self.process_handler(
-            job,
-            self.earthdata_creds,
-            self.products_bucket
+            job, earthdata_creds, product_bucket
         )
 
 
-def hyp3_handler(handler_function) -> HandlerFunction:
-    def hyp3_wrapper(
-            job: StartEvent,
-            earthdata_creds: EarthdataCredentials,
-            products_bucket: str
-    ) -> Dict[str, str]:
-        granule = gu.SentinelGranule(job.granule)
+def get_arguments():
+    if 'STACK_NAME' in os.environ:
+        args = get_arguments_from_environment()
+    else:
+        args = get_arguments_with_cli()
 
-        with working_directory.create(granule) as working_dir:
-            gu.download(granule, earthdata_creds, directory=str(working_dir))
-
-            handler_function(granule, working_dir, job.script_path)
-
-            patterns = OutputPatterns(**job.output_patterns)
-
-            process_outputs = package.outputs(
-                archive_name=f'{granule}-rtc-snap',
-                working_dir=working_dir,
-                output_patterns=patterns
-            )
-
-            product_zip_url, browse_url = products.upload(
-                outputs=process_outputs,
-                bucket_name=products_bucket
-            )
-
-        return {
-            'product_url': product_zip_url,
-            'browse_url': browse_url
-        }
-
-    return hyp3_wrapper
+    return args
 
 
-class HandlerRedefinitionError(Exception):
-    pass
+def get_arguments_from_environment():
+    stack = os.environ['STACK_NAME']
+
+    params = [
+        ('queue_name', 'StartEventQueueName'),
+        ('sns_arn', 'FinishEventSNSArn'),
+        ('earthdata_creds', 'EarthdataCredentials'),
+        ('products_bucket', 'ProductsS3Bucket')
+    ]
+
+    return {
+        param: f"{stack}/{param_name}" for (param, param_name) in params
+    }
+
+
+def get_arguments_with_cli():
+    cli = parser()
+    return vars(cli.parse_args())
+
+
+def parser():
+    cli = argparse.ArgumentParser(description='Cli for hyp3 process')
+
+    ssm_args = [
+        'queue_name',
+        'sns_arn',
+        'earthdata_creds',
+        'products_bucket',
+    ]
+
+    for ssm_arg in ssm_args:
+        cli.add_argument(
+            f'--{ssm_arg}', type=str, required=True,
+            dest=ssm_arg, help=f'SSM Param name for {ssm_arg}'
+        )
+
+    return cli
