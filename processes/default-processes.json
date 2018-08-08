@@ -8,4 +8,14 @@
     "ec2_size":"N/A",
     "supports_pair_processing": false,
     "text_id":"notify_only"
+}, {
+    "name":"RTC Snap",
+    "description":"RTC Snap processing using sentinel-1 tool box",
+    "script":"hyp3-rtc-snap/src/procSentinelRTC-3.py",
+    "suffix":"N/A",
+    "database_info_required": false,
+    "ami_id":"TODO",
+    "ec2_size":"m4x.large",
+    "supports_pair_processing": false,
+    "text_id":"rtc_snap"
 }]
