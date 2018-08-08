@@ -1,4 +1,4 @@
-from typing import Dict, NamedTuple, Callable
+from typing import Dict, Callable
 
 from asf_granule_util import SentinelGranule
 from hyp3_events import StartEvent
