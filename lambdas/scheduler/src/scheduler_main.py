@@ -11,7 +11,7 @@ def scheduler(aws_event: Dict) -> None:
     print(json.dumps(aws_event))
 
     new_granule_events = events.make_new_granule_events_with(
-        aws_event['new_granuless']
+        aws_event['new_granules']
     )
 
     jobs = schedule.hyp3_jobs(new_granule_events)
