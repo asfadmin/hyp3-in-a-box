@@ -140,7 +140,7 @@ add_instance_alarm_1 = add_alarm(
     "Hyp3ScaleUpAlarmFirst",
     "Start processing when the first job comes in",
     threshold=1,
-    period_seconds=10
+    period_seconds=60
 )
 
 add_instance_alarm = add_alarm(
