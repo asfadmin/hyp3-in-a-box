@@ -17,8 +17,6 @@ import scheduler_main
 def test_scheduler_main(sns_mock, sqs_mock, testing_granules):
     scheduler_main.scheduler(testing_granules)
 
-    sns_mock.assert_called()
-
 
 @skip_if_creds_not_available
 def test_scheduler(granule_events):

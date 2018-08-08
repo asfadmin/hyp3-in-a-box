@@ -1,6 +1,5 @@
 import json
-
-from conftest import data_path
+import pathlib as pl
 
 
 def cache_results(email_packages):
@@ -9,7 +8,7 @@ def cache_results(email_packages):
         sub, user, gran in email_packages
     ]
 
-    with (data_path / 'email-packages.json').open('w') as f:
+    with (pl.Path(__file__).parent / 'data' / 'email-packages.json').open('w') as f:
         json.dump(packages, f, indent=2)
 
 
