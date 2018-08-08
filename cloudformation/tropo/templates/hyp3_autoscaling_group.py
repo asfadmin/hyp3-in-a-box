@@ -23,7 +23,7 @@ Resources
 """
 
 from template import t
-from troposphere import FindInMap, Ref, Sub
+from troposphere import FindInMap, Ref, Sub, Base64
 from troposphere.autoscaling import (
     AutoScalingGroup,
     LaunchConfiguration,
@@ -80,9 +80,11 @@ launch_config = t.add_resource(LaunchConfiguration(
     KeyName=Ref(keyname),
     SecurityGroups=[Ref(security_group)],
     InstanceType="m1.small",
-    UserData=Sub(
-        user_data,
-        StackName=Ref('AWS::StackName')
+    UserData=Base64(
+        Sub(
+            user_data,
+            StackName=Ref('AWS::StackName')
+        )
     )
 ))
 
