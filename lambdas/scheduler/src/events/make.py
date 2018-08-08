@@ -60,8 +60,7 @@ def make_from(jobs: List[Job]) -> List[Hyp3Event]:
 
 
 def _make_event(job: Job) -> Hyp3Event:
-    # NOTE: Scheduler relies on Notify Only being process 1
-    if 'notify' in job.process.name.lower():
+    if job.is_notify_only():
         return EmailEvent.from_type(job)
 
     return StartEvent.from_type(job)

@@ -14,6 +14,9 @@ class Job(NamedTuple):
     user: User
     granule: NewGranuleEvent
 
+    def is_notify_only(self):
+        return 'notify' in self.process.name.lower()
+
 
 def hyp3_jobs(new_granules):
     """ Get all the hyp3 jobs from the new granules
