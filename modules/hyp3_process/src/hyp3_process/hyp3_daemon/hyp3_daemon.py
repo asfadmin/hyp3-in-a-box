@@ -22,7 +22,7 @@ import boto3
 from hyp3_events import EmailEvent
 
 from .hyp3_logging import getLogger
-from .hyp3_worker import HyP3Worker, WorkerStatus as WS
+from .hyp3_worker import HyP3Worker, WorkerStatus
 from .services import SNSService, SQSJob, SQSService
 
 ssm = boto3.client('ssm')
@@ -101,7 +101,7 @@ class HyP3Daemon(object):
         self.handler = handler
         self.worker: Union[HyP3Worker, None] = None
         self.worker_conn = None
-        self.previous_worker_status = WS.NO_STATUS
+        self.previous_worker_status = WorkerStatus.NO_STATUS
 
     def run(self):
         """ Calls ``self.main()`` every second until an exception is raised.
@@ -134,11 +134,11 @@ class HyP3Daemon(object):
         """
         status = self._poll_worker_status()
 
-        if status == WS.DONE:
+        if status == WorkerStatus.DONE:
             self._join_worker()
-            status = WS.NO_STATUS
+            status = WorkerStatus.NO_STATUS
             return
-        if status not in [WS.READY, WS.NO_STATUS]:
+        if status not in [WorkerStatus.READY, WorkerStatus.NO_STATUS]:
             return
 
         new_job = self.job_queue.get_next_message()
@@ -178,7 +178,7 @@ class HyP3Daemon(object):
 
         self.worker = None
         self.worker_conn = None
-        self.previous_worker_status = WS.NO_STATUS
+        self.previous_worker_status = WorkerStatus.NO_STATUS
 
     def _finish_job(self, job: SQSJob):
         log.debug("Worker finished, deleting job %s from SQS", job)
@@ -189,7 +189,7 @@ class HyP3Daemon(object):
         self.sns_topic.push(email_event)
 
     def _reached_max_idle_time(self):
-        if self.previous_worker_status == WS.BUSY:
+        if self.previous_worker_status == WorkerStatus.BUSY:
             return False
 
         time_since_last_job = time.time() - self.last_active_time
