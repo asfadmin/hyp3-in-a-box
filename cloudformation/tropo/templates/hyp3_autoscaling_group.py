@@ -106,7 +106,7 @@ processing_group = t.add_resource(AutoScalingGroup(
 ))
 
 add_instance_scaling_policy = t.add_resource(ScalingPolicy(
-    "Hyp3ScaleInPolicy",
+    "Hyp3ScaleOutPolicy",
     AutoScalingGroupName=Ref(processing_group),
     PolicyType="SimpleScaling",
     ScalingAdjustment=1,
