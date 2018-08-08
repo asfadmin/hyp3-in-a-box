@@ -18,14 +18,16 @@ from scheduler_env import environment as env
 class FakeEvent(NamedTuple):
     event_type: str
 
+EMAIL_EVENTS_COUNT, START_EVENTS_COUNT = 10, 5
+
 
 @mock.patch('dispatch.scheduler_sqs.add_event')
 @mock.patch('dispatch.scheduler_sns.push_event')
 def test_dispatch(sns_mock, sqs_mock, events):
     dispatch.all_events(events)
 
-    assert sns_mock.call_count == 10
-    assert sqs_mock.call_count == 5
+    assert sns_mock.call_count == EMAIL_EVENTS_COUNT
+    assert sqs_mock.call_count == START_EVENTS_COUNT
 
 
 def test_sqs_add(start_event):
@@ -44,8 +46,8 @@ def test_sqs_add(start_event):
 @pytest.fixture
 def events():
     return  \
-        [FakeEvent('EmailEvent') for _ in range(10)] + \
-        [FakeEvent('StartEvent') for _ in range(5)]
+        [FakeEvent('EmailEvent') for _ in range(EMAIL_EVENTS_COUNT)] + \
+        [FakeEvent('StartEvent') for _ in range(START_EVENTS_COUNT)]
 
 
 @pytest.fixture
@@ -82,5 +84,5 @@ def queue():
         sqs_client.delete_queue(QueueUrl=queue.url)
 
 
-def randomness(N):
+def unique_id(N):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=N))
