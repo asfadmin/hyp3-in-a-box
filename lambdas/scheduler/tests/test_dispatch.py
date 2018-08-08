@@ -15,9 +15,6 @@ from dispatch import scheduler_sqs as sqs
 from scheduler_env import environment as env
 
 
-class FakeEvent(NamedTuple):
-    event_type: str
-
 EMAIL_EVENTS_COUNT, START_EVENTS_COUNT = 10, 5
 
 
@@ -41,6 +38,10 @@ def test_sqs_add(start_event):
         event_from_queue = hyp3_events.StartEvent.from_json(messages[0].body)
 
         assert event_from_queue == start_event
+
+
+class FakeEvent(NamedTuple):
+    event_type: str
 
 
 @pytest.fixture
@@ -69,7 +70,7 @@ def queue():
     sqs_client = boto3.client('sqs')
 
     queue = sqs_resource.create_queue(
-        QueueName='test' + randomness(4) + '.fifo',
+        QueueName=f'test{unique_id(4)}.fifo',
         Attributes={
             'FifoQueue': 'true',
             'ContentBasedDeduplication': 'true'
