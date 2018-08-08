@@ -4,6 +4,7 @@
     "script":"N/A",
     "suffix":"N/A",
     "database_info_required": false,
+    "output_patterns": {},
     "ami_id":"N/A",
     "ec2_size":"N/A",
     "supports_pair_processing": false,
@@ -12,6 +13,10 @@
     "name":"RTC Snap",
     "description":"RTC Snap processing using sentinel-1 tool box",
     "script":"hyp3-rtc-snap/src/procSentinelRTC-3.py",
+    "output_patterns": {
+        "archive": ["*/*_TC_G??.tif", "*/*.png", "*/*.txt"],
+        "browse": "*/*.png"
+    },
     "suffix":"N/A",
     "database_info_required": false,
     "ami_id":"TODO",
