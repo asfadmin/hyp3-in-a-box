@@ -11,7 +11,6 @@ This script has an ifmain so it can be called from the command line.
 """
 
 import json
-import subprocess
 import sys
 import time
 from datetime import datetime
@@ -19,11 +18,13 @@ from multiprocessing import Pipe
 from typing import Union
 
 import boto3
+import requests
+
 from hyp3_events import EmailEvent
 
 from .hyp3_logging import getLogger
-from .worker import HyP3Worker, WorkerStatus
 from .services import SNSService, SQSJob, SQSService
+from .worker import HyP3Worker, WorkerStatus
 
 ssm = boto3.client('ssm')
 log = getLogger(__name__)
@@ -105,15 +106,15 @@ class HyP3Daemon(object):
 
     def run(self):
         """ Calls ``self.main()`` every second until an exception is raised.
-            Initiates a system shutdown if main does not find any jobs to
+            Terminates this EC2 instance if main does not find any jobs to
             process for a period of time longer than 2 minutes.
         """
         log.info("HyP3 Daemon starting...")
         while True:
             try:
                 if self._reached_max_idle_time():
-                    log.info("Max idle time reached, shutting down...")
-                    subprocess.call(["shutdown", "-h", "now"])
+                    log.info("Max idle time reached, terminating instance...")
+                    self._terminate()
                     sys.exit(0)
                     return
                 self.main()
@@ -196,3 +197,12 @@ class HyP3Daemon(object):
         timeout = self.config.MAX_IDLE_TIME_SECONDS
 
         return time_since_last_job >= timeout
+
+    def _terminate(self):
+        resp = requests.get("http://169.254.169.254/latest/meta-data/instance-id")
+        instance_id = resp.text
+        boto_response = boto3.client('autoscaling').terminate_instance_in_auto_scaling_group(
+            InstanceId=instance_id,
+            ShouldDecrementDesiredCapacity=True
+        )
+        log.debug("Terminating instance: \n%s", boto_response)
