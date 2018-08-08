@@ -12,8 +12,9 @@ import scheduler_main
 
 
 @skip_if_creds_not_available
+@mock.patch('dispatch.scheduler_sqs.add_event')
 @mock.patch('dispatch.scheduler_sns.push')
-def test_scheduler_main(sns_mock, testing_granules):
+def test_scheduler_main(sns_mock, sqs_mock, testing_granules):
     scheduler_main.scheduler(testing_granules)
 
     sns_mock.assert_called()
