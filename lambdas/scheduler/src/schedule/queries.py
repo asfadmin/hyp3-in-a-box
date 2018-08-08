@@ -34,7 +34,8 @@ def get_enabled_intersecting_subs(db, polygon):
     intersecting = Subscription.location.intersects(poly)
 
     intersecting_subs = db.session.query(Subscription) \
-        .filter_by(enabled=True) \
+        .filter(Subscription.enabled == True) \
+        .filter(Subscription.process.has(enabled=True)) \
         .filter(intersecting) \
         .all()
 
