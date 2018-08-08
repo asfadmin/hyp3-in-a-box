@@ -1,9 +1,9 @@
-from typing import Union, Dict
+from typing import Dict
+import json
 import os
 import argparse
 
 from hyp3_events import StartEvent
-
 
 from .hyp3_handler import (
     make_hyp3_processing_function_from,
@@ -11,7 +11,7 @@ from .hyp3_handler import (
     ProcessingFunction
 )
 
-from .hyp3_daemon import HyP3DaemonConfig, HyP3Daemon
+from .hyp3_daemon import HyP3DaemonConfig, HyP3Daemon, log
 
 
 class Process:
@@ -19,12 +19,8 @@ class Process:
         self.add_handler(handler_function)
 
     def run(self) -> None:
-        if 'STACK_NAME' in os.environ:
-            args = get_arguments_from_environment()
-        else:
-            args = get_arguments_with_cli()
-
-        print(args)
+        args = get_arguments()
+        log.debug('Hyp3 Daemon Args: \n%s', json.dumps(args))
 
         config = HyP3DaemonConfig(**args)
 
@@ -53,6 +49,15 @@ class Process:
         return self.process_handler(
             job, earthdata_creds, product_bucket
         )
+
+
+def get_arguments():
+    if 'STACK_NAME' in os.environ:
+        args = get_arguments_from_environment()
+    else:
+        args = get_arguments_with_cli()
+
+    return args
 
 
 def get_arguments_from_environment():

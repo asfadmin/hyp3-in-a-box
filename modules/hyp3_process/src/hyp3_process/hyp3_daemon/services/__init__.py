@@ -51,13 +51,14 @@ class SQSService(object):
         messages = self.sqs_queue.receive_messages(
             MaxNumberOfMessages=self.MAX_MESSAGES,
         )
+
         if len(messages) > self.MAX_MESSAGES:
             log.warning(("API call returned more messages that it was supposed to. ",
                          "Some jobs might not be processed"))
 
         if not messages:
-            log.info('no messages found')
-            return None
+            log.debug('no messages found')
+            return
 
         message = messages[0]
 
@@ -70,7 +71,9 @@ class SQSService(object):
             return SQSJob(message)
         except BadMessageException as e:
             log.debug(
-                "DEBUG: Failed to recieve message due to the following error:\n\t%s", str(e))
+                "Failed to recieve message due to the following error:\n\t%s",
+                str(e)
+            )
 
             return None
 
