@@ -23,11 +23,13 @@ Resources
 """
 
 from template import t
-from troposphere import FindInMap, Ref, Sub, Base64
+from tropo_env import environment
+from troposphere import Base64, FindInMap, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
     LaunchConfiguration,
-    ScalingPolicy
+    ScalingPolicy,
+    Tags
 )
 from troposphere.cloudwatch import Alarm, MetricDimension
 from troposphere.ec2 import SecurityGroup, SecurityGroupRule
@@ -94,7 +96,13 @@ processing_group = t.add_resource(AutoScalingGroup(
     MinSize=0,  # Hardcoded for now
     MaxSize=4,  # Hardcoded for now
     VPCZoneIdentifier=[Ref(subnet) for subnet in get_public_subnets()],
-    HealthCheckType="EC2"
+    HealthCheckType="EC2",
+    Tags=Tags(
+        Maturity=environment.maturity,
+        Project="hyp3-in-a-box",
+        StackName=Ref('AWS::StackName'),
+        Name="HIB-Worker"
+    )
 ))
 
 add_instance_scaling_policy = t.add_resource(ScalingPolicy(
