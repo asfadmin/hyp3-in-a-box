@@ -114,7 +114,7 @@ class HyP3Daemon(object):
             try:
                 if self._reached_max_idle_time():
                     log.info("Max idle time reached, terminating instance...")
-                    self._terminate()
+                    HyP3Daemon._terminate()
                     sys.exit(0)
                     return
                 self.main()
@@ -198,7 +198,8 @@ class HyP3Daemon(object):
 
         return time_since_last_job >= timeout
 
-    def _terminate(self):
+    @staticmethod
+    def _terminate():
         resp = requests.get("http://169.254.169.254/latest/meta-data/instance-id")
         instance_id = resp.text
         boto_response = boto3.client('autoscaling').terminate_instance_in_auto_scaling_group(
