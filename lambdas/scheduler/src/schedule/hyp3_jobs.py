@@ -25,14 +25,14 @@ def hyp3_jobs(new_granules):
     host, name, password, db = environment.db_creds
 
     with hyp3_db.connect(host, name, password, db) as db:
+        print('finding jobs for each granule')
         jobs_for_each_granule = [
             get_jobs_for(granule, db) for granule in new_granules
         ]
 
         jobs = flatten_list(jobs_for_each_granule)
 
-        print('Found {} jobs to start'.format(len(jobs)))
-        print('Making notify only events')
+        print('Found {} total jobs to start'.format(len(jobs)))
 
         return jobs
 
