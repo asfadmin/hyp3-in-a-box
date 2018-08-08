@@ -1,17 +1,18 @@
-
 import json
 from typing import Dict
 
-import dispatch
 import events
 import schedule
+import dispatch
 
 
-def scheduler(event: Dict) -> None:
+def scheduler(aws_event: Dict) -> None:
     """ Wrapper around scheduler lambda that can be imported by pytest."""
+    print(json.dumps(aws_event))
 
-    granules = event['new_granules']
-    new_granule_events = events.make_new_granule_events_with(granules)
+    new_granule_events = events.make_new_granule_events_with(
+        aws_event['new_granuless']
+    )
 
     jobs = schedule.hyp3_jobs(new_granule_events)
 
