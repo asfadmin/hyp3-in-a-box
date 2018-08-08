@@ -105,22 +105,39 @@ add_instance_scaling_policy = t.add_resource(ScalingPolicy(
     AdjustmentType="ChangeInCapacity"
 ))
 
-add_instance_alarm = t.add_resource(Alarm(
+
+def add_alarm(name, description, threshold, period_seconds):
+    return t.add_resource(Alarm(
+        name,
+        AlarmActions=[Ref(add_instance_scaling_policy)],
+        ActionsEnabled=True,
+        AlarmDescription=description,
+        Dimensions=[
+            MetricDimension(
+                Name="QueueName",
+                Value=Ref(start_events)
+            )
+        ],
+        MetricName="ApproximateNumberOfMessagesVisible",
+        Statistic="Maximum",
+        ComparisonOperator="GreaterThanOrEqualToThreshold",
+        Threshold="{}".format(threshold),
+        EvaluationPeriods=1,
+        Namespace="AWS/SQS",
+        Period=period_seconds
+    ))
+
+
+add_instance_alarm_1 = add_alarm(
+    "Hyp3ScaleUpAlarmFirst",
+    "Start processing when the first job comes in",
+    threshold=1,
+    period_seconds=10
+)
+
+add_instance_alarm = add_alarm(
     "Hyp3ScaleUpAlarm",
-    AlarmActions=[Ref(add_instance_scaling_policy)],
-    ActionsEnabled=True,
-    AlarmDescription="When more hyp3 processing instances are required",
-    Dimensions=[
-        MetricDimension(
-            Name="QueueName",
-            Value=Ref(start_events)
-        )
-    ],
-    MetricName="ApproximateNumberOfMessagesVisible",
-    Statistic="Maximum",
-    ComparisonOperator="GreaterThanOrEqualToThreshold",
-    Threshold="4",
-    EvaluationPeriods=1,
-    Namespace="AWS/SQS",
-    Period=60 * 5,  # 5 minutes
-))
+    "When more hyp3 processing instances are required",
+    threshold=4,
+    period_seconds=60
+)
