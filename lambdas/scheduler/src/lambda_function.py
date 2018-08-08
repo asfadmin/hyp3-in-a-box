@@ -23,3 +23,4 @@ def set_environment_variables():
     ]
 
     environment.sns_arn = os.environ['SNS_ARN']
+    environment.queue_url = os.environ['QUEUE_URL']

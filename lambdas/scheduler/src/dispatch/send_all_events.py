@@ -14,3 +14,5 @@ def all_events(new_hyp3_events: List[Hyp3Event]) -> None:
             sns.push_event(event)
         else:
             sqs.add_event(event)
+
+    print('Done!')
