@@ -13,7 +13,7 @@ from hyp3_events import EmailEvent
 
 import import_hyp3_process
 from hyp3_process.hyp3_daemon import HyP3Daemon, HyP3DaemonConfig, log
-from hyp3_process.hyp3_daemon.hyp3_worker import WorkerStatus
+from hyp3_process.hyp3_daemon.worker import WorkerStatus
 from hyp3_process.hyp3_daemon.services import BadMessageException, SQSJob, SQSService
 
 

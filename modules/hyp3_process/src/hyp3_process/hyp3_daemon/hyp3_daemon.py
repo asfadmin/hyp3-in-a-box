@@ -22,7 +22,7 @@ import boto3
 from hyp3_events import EmailEvent
 
 from .hyp3_logging import getLogger
-from .hyp3_worker import HyP3Worker, WorkerStatus
+from .worker import HyP3Worker, WorkerStatus
 from .services import SNSService, SQSJob, SQSService
 
 ssm = boto3.client('ssm')
