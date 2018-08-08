@@ -63,7 +63,7 @@ def test_daemon_main_job_finished(_1, sns_mock, config, handler):
 
 
 @pytest.mark.timeout(5)
-@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.make_email_event_from')
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.EmailEvent')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.sys')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.subprocess')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SNSService')

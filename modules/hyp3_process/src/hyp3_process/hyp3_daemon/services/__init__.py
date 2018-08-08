@@ -38,8 +38,6 @@ class SQSJob(object):
 
 
 class SQSService(object):
-    MAX_MESSAGES = 1
-
     def __init__(self, queue_name):
         sqs = boto3.resource('sqs')
         self.sqs_queue = sqs.get_queue_by_name(
@@ -49,17 +47,14 @@ class SQSService(object):
     def get_next_message(self):
         log.info('checking queue for message')
         messages = self.sqs_queue.receive_messages(
-            MaxNumberOfMessages=self.MAX_MESSAGES,
+            MaxNumberOfMessages=1,
         )
-
-        if len(messages) > self.MAX_MESSAGES:
-            log.warning(("API call returned more messages that it was supposed to. ",
-                         "Some jobs might not be processed"))
 
         if not messages:
             log.debug('no messages found')
             return
 
+        assert len(messages) == 1
         message = messages[0]
 
         return self.get_job_info_from(message)

@@ -185,7 +185,7 @@ class HyP3Daemon(object):
         job.delete()
 
         log.debug("Sending SNS notification")
-        email_event = make_email_event_from(job)
+        email_event = EmailEvent.from_type(job)
         self.sns_topic.push(email_event)
 
     def _reached_max_idle_time(self):
@@ -196,7 +196,3 @@ class HyP3Daemon(object):
         timeout = self.config.MAX_IDLE_TIME_SECONDS
 
         return time_since_last_job >= timeout
-
-
-def make_email_event_from(job):
-    return EmailEvent.from_type(job)
