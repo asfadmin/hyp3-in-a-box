@@ -74,9 +74,12 @@ def queue():
         }
     )
 
-    yield queue
-
-    sqs_client.delete_queue(QueueUrl=queue.url)
+    try:
+        yield queue
+    except Exception:
+        pass
+    finally:
+        sqs_client.delete_queue(QueueUrl=queue.url)
 
 
 def randomness(N):
