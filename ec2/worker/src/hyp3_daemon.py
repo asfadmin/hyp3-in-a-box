@@ -1,15 +1,11 @@
+#!/usr/bin/env python3
 from hyp3_process import Process
 
 import hyp3_handler
 
 
-def run():
+if __name__ == '__main__':
     process = Process(
         handler_function=hyp3_handler.handler
     )
-
-    start_worker(process)
-
-
-def start_worker(process):
     process.run()
