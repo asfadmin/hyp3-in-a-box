@@ -69,7 +69,7 @@ security_group = t.add_resource(SecurityGroup(
 user_data = """#! /bin/bash
 echo STACK_NAME=${StackName} > ~/env
 
-sudo systemctl restart hyp3
+systemctl restart hyp3
 """
 launch_config = t.add_resource(LaunchConfiguration(
     "Hyp3LaunchConfiguration",
