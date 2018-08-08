@@ -34,9 +34,10 @@ class Process:
         process_daemon.run()
 
     def add_handler(self, handler_function: HandlerFunction) -> None:
-        self.process_handler = make_hyp3_processing_function_from(
-            handler_function
-        )
+        self.process_handler: ProcessingFunction = \
+            make_hyp3_processing_function_from(
+                handler_function
+            )
 
     def start(
         self,

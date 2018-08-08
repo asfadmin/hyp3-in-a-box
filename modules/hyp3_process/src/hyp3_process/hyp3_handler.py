@@ -1,6 +1,6 @@
 from typing import Dict, NamedTuple, Callable
 
-import asf_granule_util as gu
+from asf_granule_util import SentinelGranule
 from hyp3_events import StartEvent
 
 from . import working_directory
@@ -10,7 +10,7 @@ from . import products
 
 
 HandlerFunction = Callable[[
-    gu.SentinelGranule,
+    SentinelGranule,
     str,
     Dict[str, str]
 ], Dict[str, str]
@@ -32,7 +32,7 @@ def make_hyp3_processing_function_from(
             earthdata_creds: Dict[str, str],
             products_bucket: str
     ) -> Dict[str, str]:
-        granule = gu.SentinelGranule(job.granule)
+        granule = SentinelGranule(job.granule)
 
         with working_directory.create(granule) as working_dir:
             handler_function(
