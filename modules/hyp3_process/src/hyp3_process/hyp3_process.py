@@ -72,7 +72,7 @@ def get_arguments_from_environment():
     ]
 
     return {
-        param: f"{stack}/{param_name}" for (param, param_name) in params
+        param: f"/{stack}/{param_name}" for (param, param_name) in params
     }
 
 

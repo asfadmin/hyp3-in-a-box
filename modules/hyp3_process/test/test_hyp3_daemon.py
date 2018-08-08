@@ -64,17 +64,16 @@ def test_daemon_main_job_finished(_1, sns_mock, config, handler):
 
 @pytest.mark.timeout(5)
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.EmailEvent')
-@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.sys')
-@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.subprocess')
+@mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.HyP3Daemon._terminate')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SNSService')
 @mock.patch('hyp3_process.hyp3_daemon.hyp3_daemon.SQSService')
-def test_shutdown_if_idle(_1, _2, subprocess_mock, sys_mock, event_mock, config, handler):
-    daemon = HyP3Daemon(config, handler)
-    daemon.config.MAX_IDLE_TIME_SECONDS = 1
-    daemon.run()
+def test_shutdown_if_idle(_1, _2, terminate_mock, event_mock, config, handler):
+    with pytest.raises(SystemExit):
+        daemon = HyP3Daemon(config, handler)
+        daemon.config.MAX_IDLE_TIME_SECONDS = 1
+        daemon.run()
 
-    subprocess_mock.call.assert_called_once_with(['shutdown', '-h', 'now'])
-    sys_mock.exit.assert_called_once()
+        terminate_mock.assert_called_once()
 
 
 def test_status_enum():
