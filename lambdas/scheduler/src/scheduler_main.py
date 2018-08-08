@@ -16,6 +16,9 @@ def scheduler(aws_event: Dict) -> None:
 
     jobs = schedule.hyp3_jobs(new_granule_events)
 
+    if not jobs:
+        return
+
     new_hyp3_events = events.make_from(jobs)
 
     dispatch.all_events(new_hyp3_events)

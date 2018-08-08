@@ -32,7 +32,6 @@ def hyp3_jobs(new_granules):
         jobs = flatten_list(jobs_for_each_granule)
 
         print('Found {} jobs to start'.format(len(jobs)))
-        print('Making notify only events')
 
         return jobs
 
