@@ -5,14 +5,13 @@ sqs_client = boto3.client("sqs")
 asg_client = boto3.client("autoscaling")
 cw_client = boto3.client('cloudwatch')
 
-STACK_NAME = os.environ['Hyp3StackName']
-
 
 def lambda_handler(event, context):
     print("Got event: {}".format(event))
 
     queue_url = event['QueueUrl']
     ag_name = event['AutoScalingGroupName']
+    stack_name = os.environ['Hyp3StackName']
 
     num_messages = get_num_messages(queue_url)
     num_instances = get_num_instances(ag_name)
@@ -25,7 +24,7 @@ def lambda_handler(event, context):
     print("Current number of messages per instance: ", messages_per_instance)
 
     cw_client.put_metric_data(
-        Namespace=STACK_NAME,
+        Namespace=stack_name,
         MetricData=[
             {
                 'MetricName': 'MessagesPerInstance',
