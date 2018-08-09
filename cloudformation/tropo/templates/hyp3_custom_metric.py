@@ -97,7 +97,7 @@ custom_metric_target = Target(
     Arn=GetAtt(custom_metric, 'Arn'),
     Id="CustomMetricFunction1",
     Input=Sub(
-        '{"QueueUrl":${QueueUrl},"AutoScalingGroupName":${AGName}}',
+        '{"QueueUrl":"${QueueUrl}","AutoScalingGroupName":"${AGName}"}',
         QueueUrl=Ref(start_events),
         AGName=Ref(processing_group)
     )
