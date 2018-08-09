@@ -5,15 +5,14 @@ from tropo_env import environment
 
 def make_userdata_from_environment():
     return """#! /bin/bash
-echo STACK_NAME=${StackName} > ~/env
+echo STACK_NAME=${{StackName}} > ~/env
 
 {PullCode}
 
 systemctl restart hyp3
     """.format(
         PullCode=get_hyp3_daemon_install_script() if environment.clone_in_userdata
-        else "",
-        StackName="{StackName}"
+        else ""
     )
 
 
