@@ -17,7 +17,7 @@ from template import t
 from . import utils
 from .hyp3_kms_key import kms_key
 from .hyp3_sqs import start_events
-from .hyp3_autoscaling_group import processing_group
+from .hyp3_autoscaling_group import processing_group, custom_metric_name
 
 source_zip = "custom_metric.zip"
 
@@ -97,9 +97,10 @@ custom_metric_target = Target(
     Arn=GetAtt(custom_metric, 'Arn'),
     Id="CustomMetricFunction1",
     Input=Sub(
-        '{"QueueUrl":"${QueueUrl}","AutoScalingGroupName":"${AGName}"}',
+        '{"QueueUrl":"${QueueUrl}","AutoScalingGroupName":"${AGName}","MetricName":"${MetricName}"}',
         QueueUrl=Ref(start_events),
-        AGName=Ref(processing_group)
+        AGName=Ref(processing_group),
+        MetricName=custom_metric_name
     )
 )
 

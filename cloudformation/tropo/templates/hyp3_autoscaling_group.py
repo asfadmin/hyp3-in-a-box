@@ -42,6 +42,7 @@ from .utils import get_map
 
 print('  adding auto scaling group')
 
+custom_metric_name = "RTCJobsPerInstance"
 
 max_instances = t.add_parameter(Parameter(
     "MaxRTCProcessingInstances",
@@ -119,7 +120,7 @@ target_tracking_scaling_policy = t.add_resource(ScalingPolicy(
     PolicyType="TargetTrackingScaling",
     TargetTrackingConfiguration=TargetTrackingConfiguration(
         CustomizedMetricSpecification=CustomizedMetricSpecification(
-            MetricName="MessagesPerInstance",
+            MetricName=custom_metric_name,
             Namespace=Ref('AWS::StackName'),
             Statistic="Average"
         ),

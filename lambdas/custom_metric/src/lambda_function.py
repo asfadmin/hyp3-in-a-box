@@ -21,6 +21,7 @@ def lambda_handler(event, context):
 
     queue_url = event['QueueUrl']
     ag_name = event['AutoScalingGroupName']
+    metric_name = event['MetricName']
     stack_name = os.environ['Hyp3StackName']
 
     num_messages = get_num_messages(queue_url)
@@ -37,7 +38,7 @@ def lambda_handler(event, context):
         Namespace=stack_name,
         MetricData=[
             {
-                'MetricName': 'MessagesPerInstance',
+                'MetricName': metric_name,
                 'Value': messages_per_instance
             },
         ]
