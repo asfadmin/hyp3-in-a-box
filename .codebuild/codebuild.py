@@ -27,7 +27,7 @@ TEMPLATE_CONFIG_BUCKET = "hyp3-in-a-box"
 TEMPLATE_NAME = 'hyp3-in-a-box_US-WEST-2.json'
 
 MATURITY = os.environ["MATURITY"]
-GITHUB_HYP3_API_CLONE_TOKEN = os.environ["GITHUB_HYP3_API_CLONE_TOKEN"]
+GITHUB_ASFADMIN_CLONE_TOKEN = os.environ["GITHUB_HYP3_API_CLONE_TOKEN"]
 BUCKET_BASE_DIR = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
 BUILD_STEP_MESSAGES = {}
 
@@ -152,7 +152,8 @@ def build():
     template_path = 'build/template.json'
     subprocess.check_call([
         "python3", "cloudformation/tropo/create_stack.py",
-        template_path, "--maturity", MATURITY
+        template_path, "--maturity", MATURITY,
+        "--clone_in_userdata", "true"
     ] + version_options
     )
     subprocess.check_call(["make", "clean", "html"], cwd="docs")
@@ -219,7 +220,7 @@ def get_latest_lambda_versions():
 def build_hyp3_api():
     print('building hyp3 api')
     hyp3_api_url = "https://{}@github.com/asfadmin/hyp3-api".format(
-        GITHUB_HYP3_API_CLONE_TOKEN
+        GITHUB_ASFADMIN_CLONE_TOKEN
     )
 
     print('cloning hyp3 api')
