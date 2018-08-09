@@ -11,7 +11,6 @@ def push_event(event: Hyp3Event) -> None:
 
         :param Hyp3Event event: Hyp3 event to dispatch
     """
-    print(f'sending {event.event_type}')
     subject, json_payload = event.event_type, event.to_json()
 
     resp = push(

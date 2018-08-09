@@ -42,7 +42,7 @@ source_zip = "scheduler.zip"
 print('  adding scheduler lambda')
 
 sns_policy = Policy(
-    PolicyName='FinishEventSNSPublish',
+    PolicyName='EmailEventSNSPublish',
     PolicyDocument={
         "Version": "2012-10-17",
         "Statement": [{
@@ -53,6 +53,19 @@ sns_policy = Policy(
     }
 )
 
+sqs_policy = Policy(
+    PolicyName='StartEventSQSSend',
+    PolicyDocument={
+        "Version": "2012-10-17",
+        "Statement": [{
+            "Effect": "Allow",
+            "Action": "sqs:SendMessage",
+            "Resource": GetAtt(start_events, 'Arn')
+        }]
+    }
+)
+
+
 lambda_role = t.add_resource(Role(
     "SchedulerExecutionRole",
     Path="/service-role/",
@@ -60,7 +73,7 @@ lambda_role = t.add_resource(Role(
         "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
         "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
     ],
-    Policies=[sns_policy],
+    Policies=[sns_policy, sqs_policy],
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
