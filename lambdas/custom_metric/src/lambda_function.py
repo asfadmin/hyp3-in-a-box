@@ -12,7 +12,7 @@ def lambda_handler(event, context):
     print("Got event: {}".format(event))
 
     queue_url = event['QueueUrl']
-    ag_name = event['AutoscalingGroupName']
+    ag_name = event['AutoScalingGroupName']
 
     resp = sqs_client.get_queue_attributes(
         QueueUrl=queue_url,
