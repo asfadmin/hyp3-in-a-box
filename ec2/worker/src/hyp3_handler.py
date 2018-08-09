@@ -1,3 +1,4 @@
+import pathlib as pl
 import subprocess
 import json
 
@@ -11,21 +12,11 @@ def handler(
     script_path: str
 ) -> None:
     print('processing rtc product')
+    files = ['hello.txt', 'browse.png']
 
-    gu.download(
-        granule_name,
-        earthdata_creds,
-        directory=working_dir
-    )
-
-    subprocess.check_call([
-        'python2', script_path,
-        '--ls',
-        '-r', '30',
-        f'{granule_name}.zip'
-    ],
-        cwd=working_dir
-    )
+    for f in files:
+        with (pl.Path(working_dir) / f).open('w') as f:
+            f.write('test file')
 
 
 if __name__ == "__main__":
