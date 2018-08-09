@@ -22,8 +22,6 @@ Resources
 
 """
 
-from template import t
-from tropo_env import environment
 from troposphere import Base64, FindInMap, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
@@ -35,6 +33,10 @@ from troposphere.autoscaling import (
 )
 from troposphere.ec2 import SecurityGroup, SecurityGroupRule
 
+from template import t
+from tropo_env import environment
+
+from .ec2_userdata import user_data
 from .hyp3_keypairname_param import keyname
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
@@ -67,11 +69,6 @@ security_group = t.add_resource(SecurityGroup(
     ]
 ))
 
-user_data = """#! /bin/bash
-echo STACK_NAME=${StackName} > ~/env
-
-systemctl restart hyp3
-"""
 launch_config = t.add_resource(LaunchConfiguration(
     "Hyp3LaunchConfiguration",
     ImageId=FindInMap(
@@ -81,12 +78,7 @@ launch_config = t.add_resource(LaunchConfiguration(
     KeyName=Ref(keyname),
     SecurityGroups=[Ref(security_group)],
     InstanceType="m1.small",
-    UserData=Base64(
-        Sub(
-            user_data,
-            StackName=Ref('AWS::StackName')
-        )
-    )
+    UserData=user_data
 ))
 
 processing_group = t.add_resource(AutoScalingGroup(
