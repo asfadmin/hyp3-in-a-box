@@ -7,6 +7,16 @@ cw_client = boto3.client('cloudwatch')
 
 
 def lambda_handler(event, context):
+    """ Entry point for the lambda to run. Polls an SQS queue for unread messages
+        and an AutoScalingGroup for number of active instances. It then updates
+        a custom metric with the proportion of unread messages to active instances.
+
+        :param event: lambda event data
+            * QueueUrl - Which queue to describe
+            * AutoScalingGroupName - Which ASG to describe
+            * MetricName - Which metric to update
+        :param context: lambda runtime info
+    """
     print("Got event: {}".format(event))
 
     queue_url = event['QueueUrl']
