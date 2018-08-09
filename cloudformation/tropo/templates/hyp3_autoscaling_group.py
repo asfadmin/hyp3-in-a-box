@@ -24,25 +24,24 @@ Resources
 
 from template import t
 from tropo_env import environment
-from troposphere import Base64, FindInMap, GetAtt, Ref, Sub
+from troposphere import Base64, FindInMap, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
+    CustomizedMetricSpecification,
     LaunchConfiguration,
     ScalingPolicy,
-    Tags
+    Tags,
+    TargetTrackingConfiguration
 )
-from troposphere.cloudwatch import Alarm, MetricDimension
 from troposphere.ec2 import SecurityGroup, SecurityGroupRule
 
 from .hyp3_keypairname_param import keyname
-from .hyp3_sqs import start_events
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
 
 print('  adding auto scaling group')
 
 t.add_mapping("Region2AMI", get_map('region2ami'))
-
 
 security_group = t.add_resource(SecurityGroup(
     "Hyp3ProcessingInstancesSecurityGroup",
@@ -101,51 +100,21 @@ processing_group = t.add_resource(AutoScalingGroup(
         Maturity=environment.maturity,
         Project="hyp3-in-a-box",
         StackName=Ref('AWS::StackName'),
-        Name="HIB-Worker"
+        Name="HyP3-Worker"
     )
 ))
 
-add_instance_scaling_policy = t.add_resource(ScalingPolicy(
-    "Hyp3ScaleOutPolicy",
+target_tracking_scaling_policy = t.add_resource(ScalingPolicy(
+    "HyP3ScaleByBackloggedMessages",
     AutoScalingGroupName=Ref(processing_group),
-    PolicyType="SimpleScaling",
-    ScalingAdjustment=1,
-    AdjustmentType="ChangeInCapacity"
+    PolicyType="TargetTrackingScaling",
+    TargetTrackingConfiguration=TargetTrackingConfiguration(
+        CustomizedMetricSpecification=CustomizedMetricSpecification(
+            MetricName="MessagesPerInstance",
+            Namespace=Ref('AWS::StackName'),
+            Statistic="Average"
+        ),
+        DisableScaleIn=True,
+        TargetValue=100.0
+    )
 ))
-
-
-def add_alarm(name, description, threshold, period_seconds):
-    return t.add_resource(Alarm(
-        name,
-        AlarmActions=[Ref(add_instance_scaling_policy)],
-        ActionsEnabled=True,
-        AlarmDescription=description,
-        Dimensions=[
-            MetricDimension(
-                Name="QueueName",
-                Value=GetAtt(start_events, "QueueName")
-            )
-        ],
-        MetricName="ApproximateNumberOfMessagesVisible",
-        Statistic="Maximum",
-        ComparisonOperator="GreaterThanOrEqualToThreshold",
-        Threshold="{}".format(threshold),
-        EvaluationPeriods=1,
-        Namespace="AWS/SQS",
-        Period=period_seconds
-    ))
-
-
-add_instance_alarm_1 = add_alarm(
-    "Hyp3ScaleUpAlarmFirst",
-    "Start processing when the first job comes in",
-    threshold=1,
-    period_seconds=60
-)
-
-add_instance_alarm = add_alarm(
-    "Hyp3ScaleUpAlarm",
-    "When more hyp3 processing instances are required",
-    threshold=4,
-    period_seconds=60
-)
