@@ -7,6 +7,14 @@ Troposphere template responsible for creating the worker auto scaling group.
 This group adds instances as more requests are added to the processing SQS
 Queue.
 
+Processing instances are configured through the userdata. The CloudFormation
+adds the stack name to the userdata string, which sets the value as an
+environment variable before restarting the hyp3 daemon service. All other
+general configuration variables (e.g. queue name, sns arn, products bucket) are
+stored in SSM Parameter Store and read by the instance on startup. The names of
+these parameters are known ahead of time except for the stack name prefix, which
+is supplied by the user data.
+
 Requires
 ~~~~~~~~
 * :ref:`sqs_template`
