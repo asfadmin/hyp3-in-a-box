@@ -12,9 +12,11 @@ def lambda_handler(event, context):
         a custom metric with the proportion of unread messages to active instances.
 
         :param event: lambda event data
+
             * QueueUrl - Which queue to describe
             * AutoScalingGroupName - Which ASG to describe
             * MetricName - Which metric to update
+
         :param context: lambda runtime info
     """
     print("Got event: {}".format(event))
