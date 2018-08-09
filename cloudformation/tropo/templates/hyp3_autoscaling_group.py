@@ -115,6 +115,6 @@ target_tracking_scaling_policy = t.add_resource(ScalingPolicy(
             Statistic="Average"
         ),
         DisableScaleIn=True,
-        TargetValue=100.0
+        TargetValue=1.0  # Keep a ratio of 1 message per instance
     )
 ))
