@@ -18,7 +18,7 @@ Resources
 * **Auto Scaling Group:** The cluster of hyp3 processing instances.
 * **Launch Configuration:** Instance definitions for the auto scaling group.
 * **Security Group:** Firewall rules for processing instances.
-* **Cloudwatch Alarm:** Triggers the auto scaling group to increase instance count.
+* **Cloudwatch Alarm:** Created by the TargetTrackingScaling Policy.
 
 """
 
@@ -92,7 +92,7 @@ launch_config = t.add_resource(LaunchConfiguration(
 processing_group = t.add_resource(AutoScalingGroup(
     "Hyp3AutoscalingGroup",
     LaunchConfigurationName=Ref(launch_config),
-    MinSize=0,  # Hardcoded for now
+    MinSize=0,
     MaxSize=4,  # Hardcoded for now
     VPCZoneIdentifier=[Ref(subnet) for subnet in get_public_subnets()],
     HealthCheckType="EC2",
