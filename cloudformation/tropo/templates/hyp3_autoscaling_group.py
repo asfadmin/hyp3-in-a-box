@@ -22,9 +22,7 @@ Resources
 
 """
 
-from template import t
-from tropo_env import environment
-from troposphere import Base64, FindInMap, Ref, Sub
+from troposphere import Base64, FindInMap, Parameter, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
     CustomizedMetricSpecification,
@@ -35,11 +33,22 @@ from troposphere.autoscaling import (
 )
 from troposphere.ec2 import SecurityGroup, SecurityGroupRule
 
+from template import t
+from tropo_env import environment
+
 from .hyp3_keypairname_param import keyname
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
 
 print('  adding auto scaling group')
+
+
+max_instances = t.add_parameter(Parameter(
+    "MaxRTCProcessingInstances",
+    Description="The maximum RTC processing instances that can run concurrently.",
+    Type="Number",
+    Default=4
+))
 
 t.add_mapping("Region2AMI", get_map('region2ami'))
 
@@ -93,7 +102,7 @@ processing_group = t.add_resource(AutoScalingGroup(
     "Hyp3AutoscalingGroup",
     LaunchConfigurationName=Ref(launch_config),
     MinSize=0,
-    MaxSize=4,  # Hardcoded for now
+    MaxSize=Ref(max_instances),
     VPCZoneIdentifier=[Ref(subnet) for subnet in get_public_subnets()],
     HealthCheckType="EC2",
     Tags=Tags(
