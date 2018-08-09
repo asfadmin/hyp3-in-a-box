@@ -2,6 +2,24 @@
 # Rohan Weeden
 # Created: August 9, 2018
 
+"""
+Troposphere template responsible for generating :ref:`custom_metric_lambda`.
+
+Resources
+~~~~~~~~~
+
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
+* **Cloudwatch Event:** Triggers the lambda after a scheduled amount of time
+* **IAM Policies:**
+
+  * Lambda basic execution
+  * Allow read access to StartEvents number of unread messages
+  * Allow read access to AutoScalingGroups in order to get number of active processing instances
+  * Allow write access to CloudWatch custom metrics
+  * Allow cloudwatch event to trigger the lambda
+
+"""
+
 from awacs.aws import Allow, Policy, Statement
 from awacs.autoscaling import DescribeAutoScalingGroups
 from awacs.sqs import GetQueueAttributes
