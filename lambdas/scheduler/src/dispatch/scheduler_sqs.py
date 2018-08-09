@@ -8,8 +8,6 @@ sqs = boto3.client('sqs')
 
 
 def add_event(event: StartEvent) -> None:
-    print('adding start event to queue')
-
     send(
         event_type=event.event_type,
         body=event.to_json()
