@@ -3,6 +3,7 @@ import json
 import pathlib as pl
 
 from . import s3
+from . import ssm
 from .find_new_env import environment
 
 
@@ -12,11 +13,7 @@ def get_time():
         :returns: previous lambda runtime
         :rtype: datetime.datetime
     """
-    download_path = get_time_file_path()
-    s3.download(download_path)
-
-    with open(download_path, 'r') as f:
-        prev_state = json.load(f)
+    prev_state = json.loads(ssm.download(param_name()))
 
     prev_timestamp = prev_state['previous']
 
@@ -32,11 +29,10 @@ def set_time(new_time):
         "previous": new_time.timestamp()
     }
 
-    time_file_path = get_time_file_path()
-    with open(time_file_path, 'w') as f:
-        json.dump(update_runtime, f)
-
-    s3.upload(time_file_path)
+    ssm.upload(
+        param_name(),
+        json.dumps(update_runtime)
+    )
 
 
 def get_time_file_path():
@@ -50,3 +46,7 @@ def get_time_file_path():
 
 def get_s3_key_name():
     return 'previous-time.{}.json'.format(environment.maturity)
+
+
+def param_name():
+    return '/stack_name/previous-time.json'
