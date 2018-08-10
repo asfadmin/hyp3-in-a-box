@@ -29,6 +29,7 @@ from troposphere import GetAtt, Join, Output, Parameter, Ref, Sub
 from troposphere.awslambda import Environment
 from troposphere.cloudformation import CustomResource
 from troposphere.iam import Policy, Role
+from troposphere.ssm import Parameter as SSMParameter
 
 from . import utils
 from .hyp3_db_params import (
@@ -113,7 +114,7 @@ admin_username = t.add_parameter(Parameter(
 ))
 
 ssm_hyp3_api_username_param_name = "HyP3ApiUsername"
-ssm_hyp3_api_username = t.add_resource(Parameter(
+ssm_hyp3_api_username = t.add_resource(SSMParameter(
     "Hyp3SSMParameterHyP3ApiUsername",
     Name=Sub(
         "/${{StackName}}/{}".format(ssm_hyp3_api_username_param_name),
@@ -124,7 +125,7 @@ ssm_hyp3_api_username = t.add_resource(Parameter(
 ))
 
 ssm_hyp3_api_key_param_name = "HyP3ApiKey"
-ssm_hyp3_api_key = t.add_resource(Parameter(
+ssm_hyp3_api_key = t.add_resource(SSMParameter(
     "Hyp3SSMParameterHyP3ApiKey",
     Name=Sub(
         "/${{StackName}}/{}".format(ssm_hyp3_api_key_param_name),
