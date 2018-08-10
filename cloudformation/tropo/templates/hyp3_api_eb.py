@@ -10,6 +10,8 @@ http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
 Requires
 ~~~~~~~~
+* :ref:`db_params_template`
+* :ref:`keypair_name_param_template`
 * :ref:`rds_template`
 * :ref:`vpc_template`
 
@@ -20,14 +22,13 @@ Resources
 * **IAM Policies:**
 
   * ElasticBeanstalk Web Tier
-  * S3 read/write on ``previous time`` bucket
-  * Allow cloudwatch event to trigger the lambda
 
 """
 
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.sts import AssumeRole
-
+from template import t
+from tropo_env import environment
 from troposphere import FindInMap, GetAtt, Join, Output, Ref, Sub
 from troposphere.elasticbeanstalk import (
     Application,
@@ -39,14 +40,11 @@ from troposphere.elasticbeanstalk import (
 )
 from troposphere.iam import InstanceProfile, Role
 
-from tropo_env import environment
-from template import t
-
+from .hyp3_db_params import db_name, db_pass, db_user
+from .hyp3_keypairname_param import keyname
 from .hyp3_rds import hyp3_db
-from .hyp3_db_params import db_name, db_user, db_pass
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
-from .hyp3_keypairname_param import keyname
 
 source_zip = "hyp3_api.zip"
 

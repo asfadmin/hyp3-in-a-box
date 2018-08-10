@@ -29,9 +29,8 @@ Resources
 """
 
 import troposphere as ts
-from troposphere import ec2
-
 from template import t
+from troposphere import ec2
 
 print('  adding vpc')
 

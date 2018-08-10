@@ -5,6 +5,12 @@
 """
 Troposphere template responsible for generating :ref:`custom_metric_lambda`.
 
+Requires
+~~~~~~~~
+* :ref:`autoscaling_group_template`
+* :ref:`kms_key_template`
+* :ref:`sqs_template`
+
 Resources
 ~~~~~~~~~
 
@@ -20,22 +26,21 @@ Resources
 
 """
 
-from awacs.aws import Allow, Policy, Statement
 from awacs.autoscaling import DescribeAutoScalingGroups
-from awacs.sqs import GetQueueAttributes
+from awacs.aws import Allow, Policy, Statement
 from awacs.cloudwatch import PutMetricData
+from awacs.sqs import GetQueueAttributes
+from template import t
 from troposphere import GetAtt, Ref, Sub
 from troposphere.awslambda import Environment, Permission
 from troposphere.events import Rule, Target
-from troposphere.iam import Role
 from troposphere.iam import Policy as IAMPolicy
-
-from template import t
+from troposphere.iam import Role
 
 from . import utils
+from .hyp3_autoscaling_group import custom_metric_name, processing_group
 from .hyp3_kms_key import kms_key
 from .hyp3_sqs import start_events
-from .hyp3_autoscaling_group import processing_group, custom_metric_name
 
 source_zip = "custom_metric.zip"
 

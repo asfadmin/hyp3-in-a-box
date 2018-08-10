@@ -7,14 +7,14 @@ Troposphere template responsible for generating :ref:`setup_db_lambda`.
 
 Requires
 ~~~~~~~~
-* :ref:`rds_template`
+* :ref:`db_params_template`
 * :ref:`kms_key_template`
 
 Resources
 ~~~~~~~~~
 
-* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
-* **SSM Parameters:** Values are empty as they will be populated by setup_db
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
+* **SSM Parameters:** Values start empty and are populated by setup_db
 
   * HyP3ApiUsername - Username of the HyP3 API admin user
   * HyP3ApiKey - API Key of the HyP3 API admin user
@@ -23,7 +23,7 @@ Resources
 
   * Lambda basic execution
 
-* **Custom Resource:** This is to trigger a lambda function that sets up the db
+* **Custom Resource:** Triggers the setup_db lambda during stack creation
 """
 
 import uuid

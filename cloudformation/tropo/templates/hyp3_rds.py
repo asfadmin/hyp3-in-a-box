@@ -21,13 +21,11 @@ Resources
 
 """
 
-from troposphere import GetAtt, Output, Ref, ec2, rds, Sub
-
 from template import t
+from troposphere import GetAtt, Output, Ref, Sub, ec2, rds
 
+from .hyp3_db_params import db_name, db_super_user, db_super_user_pass
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
-from .hyp3_db_params import db_super_user_pass, db_super_user, db_name
-
 
 print('  adding rds')
 

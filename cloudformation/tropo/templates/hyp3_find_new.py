@@ -16,9 +16,8 @@ Resources
 """
 
 import troposphere as ts
-from troposphere import awslambda, events, iam, s3
-
 from template import t
+from troposphere import awslambda, events, iam, s3
 
 from . import hyp3_scheduler, utils
 
