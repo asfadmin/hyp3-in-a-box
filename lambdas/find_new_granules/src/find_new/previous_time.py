@@ -3,7 +3,7 @@ import json
 import pathlib as pl
 
 from . import s3
-from . import ssm
+from . import find_new_ssm as ssm
 from .find_new_env import environment
 
 
@@ -13,7 +13,10 @@ def get_time():
         :returns: previous lambda runtime
         :rtype: datetime.datetime
     """
-    prev_state = json.loads(ssm.download(param_name()))
+    try:
+        prev_state = json.loads(ssm.download(param_name()))
+    except ssm.ParamDoesntExist:
+        raise NotSet('need to set previous time before downloading')
 
     prev_timestamp = prev_state['previous']
 
@@ -35,18 +38,9 @@ def set_time(new_time):
     )
 
 
-def get_time_file_path():
-    key_name = get_s3_key_name()
-
-    path = pl.Path('/tmp/') if environment.maturity == 'prod' \
-        else pl.Path(__file__).parent
-
-    return str(path / key_name)
-
-
-def get_s3_key_name():
-    return 'previous-time.{}.json'.format(environment.maturity)
-
-
 def param_name():
-    return '/stack_name/previous-time.json'
+    return environment.ssm_previous_time_name
+
+
+class NotSet(Exception):
+    pass

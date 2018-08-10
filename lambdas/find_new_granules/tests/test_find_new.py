@@ -10,6 +10,7 @@ import find_new
 
 
 find_new.environment.maturity = 'test'
+find_new.environment.ssm_previous_time_name = 'test'
 
 
 @mock.patch(

@@ -4,7 +4,7 @@ import json
 import pytest
 import boto3
 
-from find_new.previous_time import ssm
+from find_new import find_new_ssm as ssm
 
 ssm_client = boto3.client('ssm')
 
