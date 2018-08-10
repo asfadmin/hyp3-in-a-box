@@ -8,6 +8,7 @@ from . import working_directory
 from .outputs import OutputPatterns
 from . import package
 from . import products
+from .hyp3_daemon import log
 
 
 HandlerFunction = Callable[[
@@ -58,7 +59,7 @@ def make_hyp3_processing_function_from(
                 bucket_name=products_bucket
             )
 
-        print(f'total processing time: {time.time() - start}')
+        log.info(f'total processing time: {time.time() - start}')
 
         return {
             'product_url': product_zip_url,

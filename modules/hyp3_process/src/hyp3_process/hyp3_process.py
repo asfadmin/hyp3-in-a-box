@@ -54,13 +54,13 @@ class Process:
 
 def get_arguments():
     if 'STACK_NAME' in os.environ:
-        print('args from environment')
+        log.info('args from environment')
         args = get_arguments_from_environment()
     else:
-        print('args from cli')
+        log.info('args from cli')
         args = get_arguments_with_cli()
         args['are_ssm_param_names'] = False
-        print(args)
+        log.info(args)
 
     return args
 
