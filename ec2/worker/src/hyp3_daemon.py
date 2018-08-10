@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.6
+#!/usr/bin/env python3.6
 
 from hyp3_process import Process
 
