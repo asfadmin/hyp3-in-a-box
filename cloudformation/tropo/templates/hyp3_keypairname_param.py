@@ -6,8 +6,8 @@
 Troposphere template parameter for the KeyPair to use on all EC2 instances.
 """
 
-from troposphere import Parameter
 from template import t
+from troposphere import Parameter
 
 keyname = t.add_parameter(Parameter(
     "KeyPairName",

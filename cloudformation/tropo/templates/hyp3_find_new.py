@@ -15,10 +15,8 @@ Resources
 
 """
 
-import troposphere as ts
-from troposphere import awslambda, events, iam, s3
-
 from template import t
+from troposphere import GetAtt, Join, Ref, awslambda, events, iam, s3
 
 from . import hyp3_scheduler, utils
 
@@ -45,8 +43,8 @@ prev_time_s3_policy = iam.Policy(
                 "s3:PutObject",
                 "s3:GetObject",
                 "s3:HeadObject"
-            ], "Resource": ts.Join("/", [
-                ts.GetAtt(previous_time_bucket, "Arn"), '*'
+            ], "Resource": Join("/", [
+                GetAtt(previous_time_bucket, "Arn"), '*'
             ])
         }]}
 )
@@ -81,8 +79,8 @@ find_new_granules = t.add_resource(utils.make_lambda_function(
     lambda_params={
         "Environment": awslambda.Environment(
             Variables={
-                'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket),
-                'SCHEDULER_LAMBDA_NAME': ts.Ref(hyp3_scheduler.scheduler)}
+                'PREVIOUS_TIME_BUCKET': Ref(previous_time_bucket),
+                'SCHEDULER_LAMBDA_NAME': Ref(hyp3_scheduler.scheduler)}
         ),
         "MemorySize": 128,
         "Timeout": 300
@@ -92,7 +90,7 @@ find_new_granules = t.add_resource(utils.make_lambda_function(
 
 find_new_target = events.Target(
     "FindNewTarget",
-    Arn=ts.GetAtt(find_new_granules, 'Arn'),
+    Arn=GetAtt(find_new_granules, 'Arn'),
     Id="FindNewFunction1"
 )
 
@@ -105,8 +103,8 @@ find_new_event_rule = t.add_resource(events.Rule(
 
 PermissionForEventsToInvokeLambda = t.add_resource(awslambda.Permission(
     "EventSchedulePermissions",
-    FunctionName=ts.Ref(find_new_granules),
+    FunctionName=Ref(find_new_granules),
     Action="lambda:InvokeFunction",
     Principal="events.amazonaws.com",
-    SourceArn=ts.GetAtt("FindNewGranulesSchedule", "Arn")
+    SourceArn=GetAtt("FindNewGranulesSchedule", "Arn")
 ))

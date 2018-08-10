@@ -17,7 +17,7 @@ is supplied by the user data.
 
 Requires
 ~~~~~~~~
-* :ref:`sqs_template`
+* :ref:`keypair_name_param_template`
 * :ref:`vpc_template`
 
 Resources
@@ -30,6 +30,8 @@ Resources
 
 """
 
+from template import t
+from tropo_env import environment
 from troposphere import Base64, FindInMap, Parameter, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
@@ -40,9 +42,6 @@ from troposphere.autoscaling import (
     TargetTrackingConfiguration
 )
 from troposphere.ec2 import SecurityGroup, SecurityGroupRule
-
-from template import t
-from tropo_env import environment
 
 from .hyp3_keypairname_param import keyname
 from .hyp3_vpc import get_public_subnets, hyp3_vpc

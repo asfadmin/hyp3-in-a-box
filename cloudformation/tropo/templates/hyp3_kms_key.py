@@ -16,9 +16,8 @@ Resources
 """
 
 from awacs.aws import Action, Allow, PolicyDocument, Principal, Statement
-from troposphere import AWS_ACCOUNT_ID, Join, Ref, kms
-
 from template import t
+from troposphere import AWS_ACCOUNT_ID, Join, Ref, kms
 
 print('  adding KMS key')
 
