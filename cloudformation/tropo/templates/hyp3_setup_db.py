@@ -7,28 +7,34 @@ Troposphere template responsible for generating :ref:`setup_db_lambda`.
 
 Requires
 ~~~~~~~~
-* :ref:`rds_template`
+* :ref:`db_params_template`
 * :ref:`kms_key_template`
 
 Resources
 ~~~~~~~~~
 
-* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
+* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
+* **SSM Parameters:** Values start empty and are populated by setup_db
+
+  * HyP3ApiUsername - Username of the HyP3 API admin user
+  * HyP3ApiKey - API Key of the HyP3 API admin user
+
 * **IAM Policies:**
 
   * Lambda basic execution
 
-* **Custom Resource:** This is to trigger a lambda function that sets up the db
+* **Custom Resource:** Triggers the setup_db lambda during stack creation
 """
-import uuid
 
-from troposphere import GetAtt, Ref, Parameter, Output, Join
-from troposphere.awslambda import Environment
-from troposphere.cloudformation import CustomResource
-from troposphere.iam import Role, Policy
+import uuid
 
 from template import t
 from tropo_env import environment
+from troposphere import GetAtt, Join, Output, Parameter, Ref, Sub
+from troposphere.awslambda import Environment
+from troposphere.cloudformation import CustomResource
+from troposphere.iam import Policy, Role
+from troposphere.ssm import Parameter as SSMParameter
 
 from . import utils
 from .hyp3_db_params import (
@@ -39,7 +45,6 @@ from .hyp3_db_params import (
     db_user
 )
 from .hyp3_kms_key import kms_key
-
 
 source_zip = "setup_db.zip"
 
@@ -73,11 +78,7 @@ ssm_param_read_write = Policy(
                 "Sid": "VisualEditor0",
                 "Effect": "Allow",
                 "Action": [
-                    "ssm:PutParameter",
-                    "ssm:DeleteParameter",
-                    "ssm:GetParameters",
-                    "ssm:GetParameter",
-                    "ssm:DeleteParameters"
+                    "ssm:PutParameter"
                 ],
                 "Resource": Join(":", [
                     "arn:aws:ssm",
@@ -117,6 +118,28 @@ admin_username = t.add_parameter(Parameter(
     AllowedPattern="[a-zA-Z][a-zA-Z0-9]*"
 ))
 
+ssm_hyp3_api_username_param_name = "HyP3ApiUsername"
+ssm_hyp3_api_username = t.add_resource(SSMParameter(
+    "Hyp3SSMParameterHyP3ApiUsername",
+    Name=Sub(
+        "/${{StackName}}/{}".format(ssm_hyp3_api_username_param_name),
+        StackName=Ref("AWS::StackName")
+    ),
+    Type="SecureString",
+    Value=""
+))
+
+ssm_hyp3_api_key_param_name = "HyP3ApiKey"
+ssm_hyp3_api_key = t.add_resource(SSMParameter(
+    "Hyp3SSMParameterHyP3ApiKey",
+    Name=Sub(
+        "/${{StackName}}/{}".format(ssm_hyp3_api_key_param_name),
+        StackName=Ref("AWS::StackName")
+    ),
+    Type="SecureString",
+    Value=""
+))
+
 setup_db = t.add_resource(utils.make_lambda_function(
     name='setup_db',
     role=role,
@@ -139,7 +162,10 @@ setup_db = t.add_resource(utils.make_lambda_function(
                 "DefaultProcessesBucket": environment.hyp3_data_bucket,
                 "DefaultProcessesKey": environment.default_processes_key,
 
-                "Hyp3StackName": Ref("AWS::StackName")
+                "Hyp3StackName": Ref("AWS::StackName"),
+
+                "ParamNameHyp3Username": ssm_hyp3_api_username_param_name,
+                "ParamNameHyp3ApiKey": ssm_hyp3_api_key_param_name
             }
         ),
         "Timeout": 60

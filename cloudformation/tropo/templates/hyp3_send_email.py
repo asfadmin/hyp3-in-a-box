@@ -5,6 +5,11 @@
 """
 Troposphere template responsible for generating :ref:`send_email_lambda`.
 
+Requires
+~~~~~~~~
+* :ref:`db_params_template`
+* :ref:`api_eb_template`
+
 Resources
 ~~~~~~~~~
 
