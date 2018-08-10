@@ -94,7 +94,9 @@ def environment():
 
         'Maturity': 'test',
 
-        'Hyp3StackName': 'unittesting-hyp3-in-a-box-stack'
+        'Hyp3StackName': 'unittesting-hyp3-in-a-box-stack',
+        'ParamNameHyp3Username': "HyP3ApiUsername",
+        'ParamNameHyp3ApiKey': "HyP3ApiKey"
     }
 
 
