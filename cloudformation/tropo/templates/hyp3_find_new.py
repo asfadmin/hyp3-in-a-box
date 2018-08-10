@@ -80,7 +80,8 @@ find_new_granules = t.add_resource(utils.make_lambda_function(
         "Environment": awslambda.Environment(
             Variables={
                 'PREVIOUS_TIME_BUCKET': Ref(previous_time_bucket),
-                'SCHEDULER_LAMBDA_NAME': Ref(hyp3_scheduler.scheduler)}
+                'SCHEDULER_LAMBDA_NAME': Ref(hyp3_scheduler.scheduler)
+            }
         ),
         "MemorySize": 128,
         "Timeout": 300
