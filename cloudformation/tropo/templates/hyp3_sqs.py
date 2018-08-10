@@ -11,7 +11,7 @@ Resources
 * **SQS Fifo:**
 
   * Start Events queue for incoming jobs
-  * Failed Events queue is where failed messages from the start events queue go
+  * Failed Events queue for failed start events
 
 """
 
