@@ -24,19 +24,17 @@ class HyP3Worker(Process):
         self.earthdata_creds = creds
         self.products_bucket = bucket
 
-        self.output = {
-            "browse_url": "",
-            "product_url": ""
-        }
-
     def run(self):
         self._set_status(WorkerStatus.BUSY)
         print("WORKER: Processed job {}".format(self.job))
-        self.output = self.handler(
+        output = self.handler(
             self.job.data,
             self.earthdata_creds,
             self.products_bucket
         )
+
+        self.job.set_output(output)
+
         self._set_status(WorkerStatus.DONE)
 
         self.conn.close()
