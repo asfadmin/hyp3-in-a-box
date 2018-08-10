@@ -38,7 +38,8 @@ def make_hyp3_processing_function_from(
             handler_function(
                 str(granule),
                 working_dir,
-                earthdata_creds
+                earthdata_creds,
+                job.script_path
             )
 
             patterns = OutputPatterns(**job.output_patterns)

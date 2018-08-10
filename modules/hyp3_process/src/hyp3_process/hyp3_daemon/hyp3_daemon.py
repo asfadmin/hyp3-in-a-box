@@ -79,9 +79,14 @@ class HyP3DaemonConfig(object):
         if not self.are_ssm_param_names:
             return param
 
-        return ssm.get_parameter(
-            Name=param
+        val = ssm.get_parameter(
+            Name=param,
+            WithDecryption=True
         )['Parameter']['Value']
+
+        print(param, val)
+
+        return val
 
 
 class HyP3Daemon(object):
