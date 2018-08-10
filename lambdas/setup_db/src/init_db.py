@@ -182,7 +182,7 @@ def get_param_store_paths():
 
     return {
         'username': '/{}/{}'.format(stack_name, username_param_name),
-        'api_key': '/{}/{}'.format(stack_name, api_key_param_name)
+        'api-key': '/{}/{}'.format(stack_name, api_key_param_name)
     }
 
 
