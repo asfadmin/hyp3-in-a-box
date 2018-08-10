@@ -7,10 +7,10 @@ Troposphere template responsible for generating :ref:`scheduler_lambda`.
 
 Requires
 ~~~~~~~~
-* :ref:`sns_template`
-* :ref:`kms_key_template`
-* :ref:`rds_template`
 * :ref:`db_params_template`
+* :ref:`kms_key_template`
+* :ref:`sns_template`
+* :ref:`sqs_template`
 
 Resources
 ~~~~~~~~~
@@ -24,8 +24,8 @@ Resources
 
 """
 
-from tropo_env import environment
 from template import t
+from tropo_env import environment
 from troposphere import GetAtt, Ref
 from troposphere.awslambda import Environment, VPCConfig
 from troposphere.iam import Policy, Role

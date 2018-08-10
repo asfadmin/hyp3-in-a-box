@@ -11,17 +11,21 @@ Resources
 * **SQS Fifo:**
 
   * Start Events queue for incoming jobs
-  * Failed Events queue for jobs which are not correctly recieved from the Start Events queue
+  * Failed Events queue for failed start events
 
 """
 
+from template import t
 from troposphere import GetAtt, Ref, Sub
 from troposphere.sqs import Queue, RedrivePolicy
 from troposphere.ssm import Parameter
 
-from template import t
-
 print('  adding sqs')
+
+
+def hours_in_seconds(n):
+    return n * 60 * 60
+
 
 failed_start_evets = t.add_resource(Queue(
     "FailedStartEvents",
@@ -36,7 +40,8 @@ start_events = t.add_resource(Queue(
     RedrivePolicy=RedrivePolicy(
         deadLetterTargetArn=GetAtt(failed_start_evets, "Arn"),
         maxReceiveCount=1,
-    )
+    ),
+    VisibilityTimeout=hours_in_seconds(3)
 ))
 
 ssm_queue_name = t.add_resource(Parameter(

@@ -1,4 +1,5 @@
 from typing import Dict, Callable
+import time
 
 from asf_granule_util import SentinelGranule
 from hyp3_events import StartEvent
@@ -7,6 +8,7 @@ from . import working_directory
 from .outputs import OutputPatterns
 from . import package
 from . import products
+from .hyp3_daemon import log
 
 
 HandlerFunction = Callable[[
@@ -32,13 +34,16 @@ def make_hyp3_processing_function_from(
             earthdata_creds: Dict[str, str],
             products_bucket: str
     ) -> Dict[str, str]:
+        start = time.time()
+
         granule = SentinelGranule(job.granule)
 
         with working_directory.create(granule) as working_dir:
             handler_function(
                 str(granule),
                 working_dir,
-                earthdata_creds
+                earthdata_creds,
+                job.script_path
             )
 
             patterns = OutputPatterns(**job.output_patterns)
@@ -53,6 +58,8 @@ def make_hyp3_processing_function_from(
                 outputs=process_outputs,
                 bucket_name=products_bucket
             )
+
+        log.info(f'total processing time: {time.time() - start}')
 
         return {
             'product_url': product_zip_url,

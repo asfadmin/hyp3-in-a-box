@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.6
+
 from hyp3_process import Process
 
 import hyp3_handler

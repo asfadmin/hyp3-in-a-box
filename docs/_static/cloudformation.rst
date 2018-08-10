@@ -15,6 +15,7 @@ AWS CloudFormation
    cloudformation/send_email.rst
    cloudformation/scheduler.rst
    cloudformation/setup_db.rst
+   cloudformation/custom_metric.rst
 
    cloudformation/rds.rst
    cloudformation/api_eb.rst

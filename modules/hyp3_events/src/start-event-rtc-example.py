@@ -1,3 +1,9 @@
+"""
+Print out and example hyp3_event.StartEvent as json.
+This is used for manually putting testing events into
+the StartEvent queue.
+"""
+
 import random
 import string
 
@@ -9,14 +15,16 @@ def rand(N):
 
 
 se = hyp3_events.StartEvent(
-    granule='S1A_WV_OCN__2SSV_20180805T042601_20180805T043210_023106_028262_4799',
+    granule=('S1A_IW_GRDH_1SDV_20150329T013228'
+             '_20150329T013253_005240_0069E3_95F9'),
     user_id=1,
     sub_id=1,
     output_patterns={
         "archive": ["*/*_TC_G??.tif", "*/*.png", "*/*.txt"],
         "browse": "*/*.png"
     },
-    script_path='/home/ubuntu/hyp3-in-a-box/processes/rtc_snap/build/hyp3-rtc-snap/src/procSentinelRTC-3.py',
+    script_path=('/home/ubuntu/hyp3-in-a-box/processes/rtc_snap/build/'
+                 'hyp3-rtc-snap/src/procSentinelRTC-3.py'),
     additional_info=[{
         'name': 'test',
         'value': rand(5)

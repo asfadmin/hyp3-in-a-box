@@ -30,8 +30,18 @@ class SQSJob(object):
         except TypeError as e:
             raise BadMessageException(str(e))
 
+        self.output = {
+            "browse_url": "",
+            "product_url": ""
+        }
+
     def delete(self):
         self.message.delete()
+
+    def set_output(self, output):
+        assert set(output.keys()) == set(self.output.keys())
+
+        self.output = output
 
     def __str__(self):
         return str(self.data)
