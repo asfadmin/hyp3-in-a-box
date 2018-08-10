@@ -25,9 +25,6 @@ def send_email_main(aws_event):
     with hyp3_db.connect_using_environment_variables(commit_on_close=True) as db:
         user = queries.get_user_by_id(db, email_event.user_id)
 
-        if not user:
-            print('Invalid user id, aborting...')
-            return
         if not user.wants_email:
             print('user does not want emails, aborting...')
             return

@@ -27,15 +27,14 @@ def get_hyp3_daemon_install_script():
         CLONE_TOKEN=$(aws ssm get-parameters --names /CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN --output text --with-decryption | awk {'print $4'})
         cd /tmp
         git clone --single-branch -b dev https://$CLONE_TOKEN@github.com/asfadmin/hyp3-in-a-box --depth=1
-        cd hyp3-in-a-box/ec2/worker
 
-        cp src/hyp3_daemon.py /opt/hyp3/
-        cp hyp3.service /etc/systemd/system/
-        pip install -r requirements.txt
+        pushd hyp3-in-a-box/processes/rtc_snap/.
+            python3.6 install.py
+        popd
 
-        cd /tmp/hyp3-in-a-box/processes/rtc_snap
-        cp src/hyp3_handler.py /opt/hyp3/
-        pip install -r requirements.txt
+        pushd hyp3-in-a-box/ec2/worker/.
+            ./install.sh
+        popd
         """)
 
 

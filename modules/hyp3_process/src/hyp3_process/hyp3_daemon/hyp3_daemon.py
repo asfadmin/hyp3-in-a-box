@@ -15,7 +15,7 @@ import sys
 import time
 from datetime import datetime
 from multiprocessing import Pipe
-from typing import Union
+from typing import Union, Dict
 
 import boto3
 import requests
@@ -40,8 +40,8 @@ EmailEvent.impl_from(
             "value": str(datetime.now().date())
         }],
         granule_name=job.data.granule,
-        browse_url="",
-        download_url="",
+        browse_url=job.output['browse_url'],
+        download_url=job.output['product_url'],
     )
 )
 
@@ -79,9 +79,14 @@ class HyP3DaemonConfig(object):
         if not self.are_ssm_param_names:
             return param
 
-        return ssm.get_parameter(
-            Name=param
+        val = ssm.get_parameter(
+            Name=param,
+            WithDecryption=True
         )['Parameter']['Value']
+
+        log.info(param, val)
+
+        return val
 
 
 class HyP3Daemon(object):
@@ -187,6 +192,7 @@ class HyP3Daemon(object):
 
         log.debug("Sending SNS notification")
         email_event = EmailEvent.from_type(job)
+
         self.sns_topic.push(email_event)
 
     def _reached_max_idle_time(self):
