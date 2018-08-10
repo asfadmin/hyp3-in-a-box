@@ -40,8 +40,8 @@ EmailEvent.impl_from(
             "value": str(datetime.now().date())
         }],
         granule_name=job.data.granule,
-        browse_url="",
-        download_url="",
+        browse_url=job.output['browse_url'],
+        download_url=job.output['download_url'],
     )
 )
 
