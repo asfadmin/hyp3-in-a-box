@@ -3,7 +3,6 @@
 # Created: June, 2018
 
 """
-
 Requires
 ~~~~~~~~
 * :ref:`send_email_template`
@@ -11,9 +10,13 @@ Requires
 Resources
 ~~~~~~~~~
 
-* **SNS:**
+* **SNS Topic:**
+* **SSM Parameter FinishEventSNSArn:** Contains the ARN of the Topic
+* **Iam:**
 
+    * Permission for Topic to trigger send_email
 """
+
 from template import t
 from troposphere import GetAtt, Ref, Sub
 from troposphere.awslambda import Permission
