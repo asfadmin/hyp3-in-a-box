@@ -14,7 +14,7 @@ Resources
 * **SSM Parameter FinishEventSNSArn:** Contains the ARN of the Topic
 * **Iam:**
 
-    * Permission for Topic to trigger send_email
+  * Permission for Topic to trigger send_email
 """
 
 from template import t
