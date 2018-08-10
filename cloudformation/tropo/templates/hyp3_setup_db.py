@@ -126,7 +126,7 @@ ssm_hyp3_api_username = t.add_resource(SSMParameter(
         StackName=Ref("AWS::StackName")
     ),
     Type="SecureString",
-    Value=""
+    Value="♥"
 ))
 
 ssm_hyp3_api_key_param_name = "HyP3ApiKey"
@@ -137,7 +137,7 @@ ssm_hyp3_api_key = t.add_resource(SSMParameter(
         StackName=Ref("AWS::StackName")
     ),
     Type="SecureString",
-    Value=""
+    Value="♥"
 ))
 
 setup_db = t.add_resource(utils.make_lambda_function(
