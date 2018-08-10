@@ -7,9 +7,17 @@ Troposphere template responsible for creating the worker auto scaling group.
 This group adds instances as more requests are added to the processing SQS
 Queue.
 
+Processing instances are configured through the userdata. The CloudFormation
+adds the stack name to the userdata string, which sets the value as an
+environment variable before restarting the hyp3 daemon service. All other
+general configuration variables (e.g. queue name, sns arn, products bucket) are
+stored in SSM Parameter Store and read by the instance on startup. The names of
+these parameters are known ahead of time except for the stack name prefix, which
+is supplied by the user data.
+
 Requires
 ~~~~~~~~
-* :ref:`sqs_template`
+* :ref:`keypair_name_param_template`
 * :ref:`vpc_template`
 
 Resources
@@ -18,11 +26,12 @@ Resources
 * **Auto Scaling Group:** The cluster of hyp3 processing instances.
 * **Launch Configuration:** Instance definitions for the auto scaling group.
 * **Security Group:** Firewall rules for processing instances.
-* **Cloudwatch Alarm:** Triggers the auto scaling group to increase instance count.
+* **Cloudwatch Alarm:** Created by the TargetTrackingScaling Policy.
 
 """
 
-from troposphere import Base64, FindInMap, Ref, Sub
+
+from troposphere import Base64, FindInMap, Parameter, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
     CustomizedMetricSpecification,
@@ -42,6 +51,15 @@ from .hyp3_vpc import get_public_subnets, hyp3_vpc
 from .utils import get_map
 
 print('  adding auto scaling group')
+
+custom_metric_name = "RTCJobsPerInstance"
+
+max_instances = t.add_parameter(Parameter(
+    "MaxRTCProcessingInstances",
+    Description="The maximum RTC processing instances that can run concurrently.",
+    Type="Number",
+    Default=4
+))
 
 t.add_mapping("Region2AMI", get_map('region2ami'))
 
@@ -84,8 +102,8 @@ launch_config = t.add_resource(LaunchConfiguration(
 processing_group = t.add_resource(AutoScalingGroup(
     "Hyp3AutoscalingGroup",
     LaunchConfigurationName=Ref(launch_config),
-    MinSize=0,  # Hardcoded for now
-    MaxSize=4,  # Hardcoded for now
+    MinSize=0,
+    MaxSize=Ref(max_instances),
     VPCZoneIdentifier=[Ref(subnet) for subnet in get_public_subnets()],
     HealthCheckType="EC2",
     Tags=Tags(
@@ -102,11 +120,11 @@ target_tracking_scaling_policy = t.add_resource(ScalingPolicy(
     PolicyType="TargetTrackingScaling",
     TargetTrackingConfiguration=TargetTrackingConfiguration(
         CustomizedMetricSpecification=CustomizedMetricSpecification(
-            MetricName="MessagesPerInstance",
+            MetricName=custom_metric_name,
             Namespace=Ref('AWS::StackName'),
             Statistic="Average"
         ),
         DisableScaleIn=True,
-        TargetValue=100.0
+        TargetValue=1.0  # Keep a ratio of 1 message per instance
     )
 ))

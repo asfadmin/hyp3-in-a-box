@@ -21,12 +21,15 @@ def test_db(db='hyp3db', commit_on_close=False):
     creds = testing_creds(db)
 
     db = Hyp3DB(**creds)
-    yield db
-
-    if commit_on_close:
-        db.commit_and_close()
-    else:
-        db.close()
+    try:
+        yield db
+    except Exception as e:
+        raise e
+    finally:
+        if commit_on_close:
+            db.commit_and_close()
+        else:
+            db.close()
 
 
 def testing_creds(db):

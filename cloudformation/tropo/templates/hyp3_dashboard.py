@@ -1,7 +1,7 @@
 import pathlib as pl
 import json
 
-from troposphere import Parameter, Sub, Ref, Output
+from troposphere import Sub, Ref, Output
 from troposphere.cloudwatch import Dashboard
 
 from template import t

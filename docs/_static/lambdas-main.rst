@@ -14,3 +14,4 @@ AWS Lambda Functions
    lambdas/send_email
    lambdas/scheduler
    lambdas/setup_db
+   lambdas/custom_metric
