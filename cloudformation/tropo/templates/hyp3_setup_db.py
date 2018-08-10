@@ -14,6 +14,11 @@ Resources
 ~~~~~~~~~
 
 * **Lambda Function:** Python 3.6 lambda function, code is pulled from s3.
+* **SSM Parameters:** Values are empty as they will be populated by setup_db
+
+  * HyP3ApiUsername - Username of the HyP3 API admin user
+  * HyP3ApiKey - API Key of the HyP3 API admin user
+
 * **IAM Policies:**
 
   * Lambda basic execution
