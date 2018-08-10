@@ -42,7 +42,8 @@ def test_rtc_snap_mocked(
     def handler(
         granule_name: str,
         working_dir: str,
-        earthdata_creds: Dict[str, str]
+        earthdata_creds: Dict[str, str],
+        script_path: str
     ) -> None:
         output_files = ['test.txt', 'browse.png']
         wrk_dir = pl.Path(working_dir)
