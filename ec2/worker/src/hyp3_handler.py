@@ -1,6 +1,6 @@
-import pathlib as pl
-import subprocess
+from typing import Dict
 import json
+import subprocess
 
 import asf_granule_util as gu
 
@@ -8,21 +8,33 @@ import asf_granule_util as gu
 def handler(
     granule_name: str,
     working_dir: str,
-    earthdata_creds: str,
+    earthdata_creds: Dict[str, str],
     script_path: str
 ) -> None:
     print('processing rtc product')
-    files = ['hello.txt', 'browse.png']
 
-    for f in files:
-        with (pl.Path(working_dir) / f).open('w') as f:
-            f.write('test file')
+    gu.download(
+        granule_name,
+        earthdata_creds,
+        directory=working_dir,
+        progress_bar=True
+
+    )
+
+    subprocess.check_call([
+        'python2', script_path,
+        '--ls',
+        '-r', '30',
+        f'{granule_name}.zip'
+    ],
+        cwd=working_dir
+    )
 
 
 if __name__ == "__main__":
     handler(
-        'S1A_IW_SLC__1SDV_20150325T020716_20150325T020746_005182_00689D_9D9B',
-        '/home/ubuntu/jobs/test-wrk-dir',
-        json.load(open('earthdata_creds.json', 'r')),
+        "S1A_IW_GRDH_1SDV_20150329T013253_20150329T013318_005240_0069E3_0AE5",
+        "/home/ubuntu/jobs/test",
+        json.load(open('creds.json', 'r')),
         '/home/ubuntu/hyp3-in-a-box/processes/rtc_snap/build/hyp3-rtc-snap/src/procSentinelRTC-3.py'
     )
