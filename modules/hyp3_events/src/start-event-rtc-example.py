@@ -1,3 +1,9 @@
+"""
+Print out and example hyp3_event.StartEvent as json.
+This is used for manually putting testing events into
+the StartEvent queue.
+"""
+
 import random
 import string
 
