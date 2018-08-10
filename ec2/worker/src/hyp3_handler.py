@@ -9,7 +9,7 @@ def handler(
     script_path: str
 ) -> None:
     files = ['hello.txt', 'browse.png']
-    
-    for f in files:
-        with (pl.Path(working_dir) / f).open('w') as f:
+
+    for ofile in files:
+        with (pl.Path(working_dir) / ofile).open('w') as f:
             f.write('test file')
