@@ -15,11 +15,10 @@ Resources
 
 """
 
+from template import t
 from troposphere import GetAtt, Ref, Sub
 from troposphere.sqs import Queue, RedrivePolicy
 from troposphere.ssm import Parameter
-
-from template import t
 
 print('  adding sqs')
 

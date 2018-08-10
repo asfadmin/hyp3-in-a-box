@@ -27,9 +27,7 @@ def connect(host, user, password, db='hyp3db', commit_on_close=False):
     try:
         yield db
     except Exception as e:
-        db.close()
-
-        raise e from None
+        raise e
     finally:
         if commit_on_close:
             db.commit_and_close()

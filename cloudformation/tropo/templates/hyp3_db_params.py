@@ -3,9 +3,9 @@ Troposphere template responsible for adding parameters for entering database
 credentials.
 """
 
+from template import t
 from troposphere import Parameter
 
-from template import t
 from . import utils
 
 hyp3_db = Parameter(
