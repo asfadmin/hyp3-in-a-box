@@ -15,10 +15,17 @@ Resources
 
 """
 
+<<<<<<< HEAD
 from troposphere import GetAtt, Join, Ref, awslambda, events, iam, s3
 
 from template import t
 
+=======
+from troposphere import GetAtt, Join, Ref, awslambda, events, iam, Sub
+from troposphere.ssm import Parameter as SSMParameter
+
+from template import t
+>>>>>>> 4e6141801a0d036d0d3be6c2aec97b9b907c60a7
 from . import hyp3_scheduler, utils
 
 source_zip = "find_new_granules.zip"
@@ -27,7 +34,15 @@ source_zip = "find_new_granules.zip"
 print('  adding find_new lambda')
 
 
-previous_time_bucket = t.add_resource(s3.Bucket("S3Bucket"))
+ssm_previous_time = t.add_resource(SSMParameter(
+    "Hyp3SSMParameterPerviousTime",
+    Name=Sub(
+        "/${StackName}/previous_time.json",
+        StackName=Ref("AWS::StackName")
+    ),
+    Type="String",
+    Value="_"
+))
 
 logs_policy = iam.Policy(
     PolicyName="LogAccess",
@@ -35,19 +50,22 @@ logs_policy = iam.Policy(
 )
 
 prev_time_s3_policy = iam.Policy(
-    PolicyName='PreviousTimeS3ReadWriteAccess',
+    PolicyName='PreviousTimeSSMReadWriteAccess',
     PolicyDocument={
         "Version": "2012-10-17",
         "Statement": [{
             "Effect": "Allow",
             "Action": [
-                "s3:PutObject",
-                "s3:GetObject",
-                "s3:HeadObject"
-            ], "Resource": Join("/", [
-                GetAtt(previous_time_bucket, "Arn"), '*'
+                "ssm:PutParameter",
+                "ssm:GetParameter"
+            ], "Resource": Join(":", [
+                "arn:aws:ssm",
+                Ref("AWS::Region"),
+                Ref("AWS::AccountId"),
+                Ref(ssm_previous_time)
             ])
-        }]}
+        }]
+    }
 )
 
 lambda_invoke = iam.Policy(
@@ -80,10 +98,16 @@ find_new_granules = t.add_resource(utils.make_lambda_function(
     lambda_params={
         "Environment": awslambda.Environment(
             Variables={
+<<<<<<< HEAD
                 'PREVIOUS_TIME_BUCKET': Ref(previous_time_bucket),
                 'SCHEDULER_LAMBDA_NAME': Ref(hyp3_scheduler.scheduler)
             }
         ),
+=======
+                'PREVIOUS_TIME_SSM_PARAM_NAME': Ref(ssm_previous_time),
+                'SCHEDULER_LAMBDA_NAME': Ref(hyp3_scheduler.scheduler)
+            }),
+>>>>>>> 4e6141801a0d036d0d3be6c2aec97b9b907c60a7
         "MemorySize": 128,
         "Timeout": 300
     }

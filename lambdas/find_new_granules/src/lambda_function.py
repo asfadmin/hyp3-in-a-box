@@ -48,5 +48,6 @@ def start_scheduler_with(new_granules_json):
 def setup_env():
     find_new.environment.maturity = 'prod'
 
-    find_new.environment.bucket = os.environ['PREVIOUS_TIME_BUCKET']
     find_new.environment.scheduler_lambda = os.environ['SCHEDULER_LAMBDA_NAME']
+    find_new.environment.ssm_previous_time_name = \
+        os.environ['SSM_PERVIOUS_TIME_NAME']
