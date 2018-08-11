@@ -1,8 +1,6 @@
 import datetime as dt
 import json
-import pathlib as pl
 
-from . import s3
 from . import find_new_ssm as ssm
 from .find_new_env import environment
 
@@ -15,7 +13,7 @@ def get_time():
     """
     try:
         prev_state = json.loads(ssm.download(param_name()))
-    except ssm.ParamDoesntExist:
+    except (ssm.ParamDoesntExist, json.decoder.JSONDecodeError):
         raise NotSet('need to set previous time before downloading')
 
     prev_timestamp = prev_state['previous']
