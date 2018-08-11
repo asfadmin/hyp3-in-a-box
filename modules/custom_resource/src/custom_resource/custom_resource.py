@@ -22,10 +22,14 @@ class Base(abc.ABC):
         """
         return NotImplemented
 
+    def _on_delete(self):
+        return
+
     def get_response(self):
         response = self._get_response_defaults()
 
         if self.event['RequestType'] == 'Delete':
+            self._on_delete()
             return response
 
         try:
