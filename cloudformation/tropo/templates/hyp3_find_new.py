@@ -15,8 +15,9 @@ Resources
 
 """
 
-from template import t
 from troposphere import GetAtt, Join, Ref, awslambda, events, iam, s3
+
+from template import t
 
 from . import hyp3_scheduler, utils
 
