@@ -119,4 +119,5 @@ def make_granule_from(result):
 
 
 def is_relevant_type(granule_type):
+    # TODO: Parameterize based on process
     return granule_type in ('SLC', 'GRD')
