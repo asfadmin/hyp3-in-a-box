@@ -1,5 +1,6 @@
-import boto3
 import os
+
+import boto3
 
 sqs_client = boto3.client("sqs")
 asg_client = boto3.client("autoscaling")
