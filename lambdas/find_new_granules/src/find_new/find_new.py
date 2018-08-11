@@ -6,7 +6,7 @@ import time
 
 import granule_search
 
-from . import previous_time, s3
+from . import previous_time
 from .find_new_env import environment
 
 
@@ -32,7 +32,7 @@ def granule_events():
 def get_previous_time():
     try:
         prev_time = previous_time.get_time()
-    except s3.ObjectDoesntExist:
+    except previous_time.NotSet:
         prev_time = get_init_prev_time()
 
     return prev_time

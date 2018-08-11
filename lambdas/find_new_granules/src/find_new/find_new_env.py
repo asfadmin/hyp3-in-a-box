@@ -4,6 +4,7 @@ class Environment:
         self.maturity = 'test'
         self.bucket = 'hyp3-in-a-box'
         self.scheduler_lambda = 'hyp3-scheduler-lambda'
+        self.ssm_previous_time_name = None
 
 
 environment = Environment()
