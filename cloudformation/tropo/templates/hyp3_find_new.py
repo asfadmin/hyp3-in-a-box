@@ -15,17 +15,11 @@ Resources
 
 """
 
-<<<<<<< HEAD
-from troposphere import GetAtt, Join, Ref, awslambda, events, iam, s3
-
-from template import t
-
-=======
 from troposphere import GetAtt, Join, Ref, awslambda, events, iam, Sub
 from troposphere.ssm import Parameter as SSMParameter
 
 from template import t
->>>>>>> 4e6141801a0d036d0d3be6c2aec97b9b907c60a7
+
 from . import hyp3_scheduler, utils
 
 source_zip = "find_new_granules.zip"
@@ -98,16 +92,9 @@ find_new_granules = t.add_resource(utils.make_lambda_function(
     lambda_params={
         "Environment": awslambda.Environment(
             Variables={
-<<<<<<< HEAD
-                'PREVIOUS_TIME_BUCKET': Ref(previous_time_bucket),
-                'SCHEDULER_LAMBDA_NAME': Ref(hyp3_scheduler.scheduler)
-            }
-        ),
-=======
                 'PREVIOUS_TIME_SSM_PARAM_NAME': Ref(ssm_previous_time),
                 'SCHEDULER_LAMBDA_NAME': Ref(hyp3_scheduler.scheduler)
             }),
->>>>>>> 4e6141801a0d036d0d3be6c2aec97b9b907c60a7
         "MemorySize": 128,
         "Timeout": 300
     }
