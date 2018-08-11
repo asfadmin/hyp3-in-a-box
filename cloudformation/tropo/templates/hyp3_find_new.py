@@ -42,6 +42,7 @@ logs_policy = iam.Policy(
     PolicyDocument=utils.get_static_policy('logs-policy')
 )
 
+ssm_arn = "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ParamName}"
 prev_time_s3_policy = iam.Policy(
     PolicyName='PreviousTimeSSMReadWriteAccess',
     PolicyDocument={
@@ -51,15 +52,14 @@ prev_time_s3_policy = iam.Policy(
             "Action": [
                 "ssm:PutParameter",
                 "ssm:GetParameter"
-            ], "Resource": Join(":", [
-                "arn:aws:ssm",
-                Ref("AWS::Region"),
-                Ref("AWS::AccountId"),
-                Ref(ssm_previous_time)
-            ])
+            ], "Resource": Sub(
+                ssm_arn,
+                ParamName=Ref(ssm_previous_time)
+            )
         }]
     }
 )
+
 
 lambda_invoke = iam.Policy(
     PolicyName='FindNewLambdaInvoke',
