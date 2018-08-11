@@ -5,32 +5,6 @@ from hyp3_events import EmailEvent, Hyp3Event, NewGranuleEvent, StartEvent
 
 from schedule import Job
 
-# Add implementation for conversion from Job type
-EmailEvent.impl_from(
-    Job,
-    lambda job: EmailEvent(
-        user_id=job.user.id,
-        sub_id=job.sub.id,
-        additional_info=[],
-        browse_url=job.granule.browse_url,
-        download_url=job.granule.download_url,
-        granule_name=job.granule.name
-    )
-)
-
-StartEvent.impl_from(
-    Job,
-    lambda job: StartEvent(
-        granule=job.granule.name,
-        user_id=job.user.id,
-        sub_id=job.sub.id,
-        # TODO: Add output patterns from process here.
-        output_patterns=[],
-        script_path=job.process.script,
-        additional_info=[]
-    )
-)
-
 
 def make_new_granule_events_with(
         new_granule_dicts: List[Dict[str, Any]]
@@ -61,6 +35,6 @@ def make_from(jobs: List[Job]) -> List[Hyp3Event]:
 
 def _make_event(job: Job) -> Hyp3Event:
     if job.is_notify_only():
-        return EmailEvent.from_type(job)
+        return job.to_email_event()
 
-    return StartEvent.from_type(job)
+    return job.to_start_event()
