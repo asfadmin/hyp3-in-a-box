@@ -28,13 +28,6 @@ def make_from(jobs: List[Job]) -> List[Hyp3Event]:
         :returns: hyp3 events corresponding to each package
         :rtype: list[hyp3_events.EmailEvent]
     """
-    events = [_make_event(job) for job in jobs]
+    events = [job.to_event() for job in jobs]
 
     return events
-
-
-def _make_event(job: Job) -> Hyp3Event:
-    if job.is_notify_only():
-        return job.to_email_event()
-
-    return job.to_start_event()
