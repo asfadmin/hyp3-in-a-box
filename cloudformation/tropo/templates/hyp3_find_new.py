@@ -42,7 +42,7 @@ logs_policy = iam.Policy(
     PolicyDocument=utils.get_static_policy('logs-policy')
 )
 
-ssm_arn = "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ParamName}"
+ssm_arn = "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${ParamName}"
 prev_time_s3_policy = iam.Policy(
     PolicyName='PreviousTimeSSMReadWriteAccess',
     PolicyDocument={
