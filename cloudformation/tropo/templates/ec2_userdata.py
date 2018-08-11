@@ -12,10 +12,10 @@ def make_userdata_from_environment():
         {PullCode}
 
         systemctl restart hyp3
-        """.format(
+        """.strip()).format(
             PullCode=get_hyp3_daemon_install_script() if environment.clone_in_userdata
             else ""
-        ))
+        )
 
 
 def get_hyp3_daemon_install_script():
@@ -35,7 +35,7 @@ def get_hyp3_daemon_install_script():
         pushd hyp3-in-a-box/ec2/worker/.
             ./install.sh
         popd
-        """)
+        """.strip())
 
 
 user_data = Base64(
