@@ -98,8 +98,7 @@ def make_sub(api, sub):
         "process_id": process_id,
         "crop_to_selection": False,
         "process_id": process_id,
-        "platform": 'Sentinel-1',
-        "process_id": process_id
+        "platform": 'Sentinel-1'
     }
 
     resp = api.create_subscription(**params)

@@ -62,14 +62,15 @@ class SQSService(object):
 
         if not messages:
             log.debug('no messages found')
-            return
+            return None
 
         assert len(messages) == 1
         message = messages[0]
 
         return self.get_job_info_from(message)
 
-    def get_job_info_from(self, message) -> Union[SQSJob, None]:
+    @staticmethod
+    def get_job_info_from(message) -> Union[SQSJob, None]:
         try:
             SQSService.validate_message(message)
 
