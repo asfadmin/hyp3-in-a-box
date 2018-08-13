@@ -28,13 +28,14 @@ Resources
 
 import uuid
 
-from template import t
 from tropo_env import environment
 from troposphere import GetAtt, Join, Output, Parameter, Ref, Sub
 from troposphere.awslambda import Environment
 from troposphere.cloudformation import CustomResource
 from troposphere.iam import Policy, Role
 from troposphere.ssm import Parameter as SSMParameter
+
+from template import t
 
 from . import utils
 from .hyp3_db_params import (

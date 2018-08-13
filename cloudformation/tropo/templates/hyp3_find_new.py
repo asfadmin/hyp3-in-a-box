@@ -19,6 +19,7 @@ from troposphere import GetAtt, Join, Ref, awslambda, events, iam, Sub
 from troposphere.ssm import Parameter as SSMParameter
 
 from template import t
+
 from . import hyp3_scheduler, utils
 
 source_zip = "find_new_granules.zip"
