@@ -1,21 +1,8 @@
-from typing import NamedTuple
-
 import hyp3_db
-from hyp3_db.hyp3_models import Subscription, User, Process
-from hyp3_events import NewGranuleEvent
 from scheduler_env import environment
 
 from . import queries
-
-
-class Job(NamedTuple):
-    sub: Subscription
-    process: Process
-    user: User
-    granule: NewGranuleEvent
-
-    def is_notify_only(self):
-        return 'notify' in self.process.name.lower()
+from .job import Job
 
 
 def hyp3_jobs(new_granules):

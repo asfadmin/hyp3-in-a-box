@@ -8,8 +8,6 @@ import dispatch
 
 def scheduler(aws_event: Dict) -> None:
     """ Wrapper around scheduler lambda that can be imported by pytest."""
-    print(json.dumps(aws_event))
-
     new_granule_events = events.make_new_granule_events_with(
         aws_event['new_granules']
     )

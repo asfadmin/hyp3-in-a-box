@@ -1,6 +1,7 @@
 import os
-from scheduler_env import environment
+import json
 
+from scheduler_env import environment
 from scheduler_main import scheduler
 
 
@@ -14,6 +15,7 @@ def lambda_handler(event, context):
         :param context: lambda runtime info
     """
     print('Setting environment variables')
+    print(json.dumps(event))
     set_environment_variables()
 
     scheduler(event)
