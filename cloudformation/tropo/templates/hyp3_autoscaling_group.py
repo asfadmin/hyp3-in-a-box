@@ -38,7 +38,7 @@ Resources
 """
 
 
-from troposphere import Base64, FindInMap, Parameter, Ref, Sub
+from troposphere import FindInMap, Parameter, Ref
 from troposphere.autoscaling import (
     AutoScalingGroup,
     CustomizedMetricSpecification,
