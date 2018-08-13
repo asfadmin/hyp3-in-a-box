@@ -24,9 +24,6 @@ def get_hyp3_daemon_install_script():
     the new version of the code on startup."""
 
     return dedent("""
-        sudo apt-get update
-        sudo apt-get install -y awscli
-
         CLONE_TOKEN=$(aws ssm get-parameters --names /CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN --output text --with-decryption | awk {'print $4'})
         cd /tmp
         git clone --single-branch -b dev https://$CLONE_TOKEN@github.com/asfadmin/hyp3-in-a-box --depth=1
