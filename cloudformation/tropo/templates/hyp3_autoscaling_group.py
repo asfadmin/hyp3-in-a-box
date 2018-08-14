@@ -39,7 +39,6 @@ Resources
 
 """
 
-
 from awacs.autoscaling import TerminateInstanceInAutoScalingGroup
 from awacs.aws import Allow, Policy, Statement
 from awacs.s3 import PutObject

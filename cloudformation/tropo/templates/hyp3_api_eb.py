@@ -42,7 +42,7 @@ from .hyp3_db_params import db_name, db_pass, db_user
 from .hyp3_keypairname_param import keyname
 from .hyp3_rds import hyp3_db
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
-from .utils import get_map, get_ec2_assume_role_policy
+from .utils import get_ec2_assume_role_policy, get_map
 
 source_zip = "hyp3_api.zip"
 
