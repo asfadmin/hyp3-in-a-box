@@ -41,11 +41,10 @@ Resources
 
 
 from awacs.autoscaling import TerminateInstanceInAutoScalingGroup
-from awacs.aws import Allow, Policy, Principal, Statement
+from awacs.aws import Allow, Policy, Statement
 from awacs.s3 import PutObject
 from awacs.sns import Publish
 from awacs.sqs import DeleteMessage, ReceiveMessage
-from awacs.sts import AssumeRole
 from template import t
 from tropo_env import environment
 from troposphere import FindInMap, GetAtt, Parameter, Ref
@@ -68,7 +67,7 @@ from .hyp3_s3 import products_bucket
 from .hyp3_sns import finish_sns
 from .hyp3_sqs import start_events
 from .hyp3_vpc import get_public_subnets, hyp3_vpc, net_gw_vpc_attachment
-from .utils import get_map
+from .utils import get_map, get_ec2_assume_role_policy
 
 print('  adding auto scaling group')
 
@@ -153,19 +152,8 @@ publish_notifications = IAMPolicy(
 
 role = t.add_resource(Role(
     "HyP3WorkerRole",
-    AssumeRolePolicyDocument=Policy(
-        Statement=[
-            Statement(
-                Effect=Allow, Action=[AssumeRole],
-                Principal=Principal(
-                    "Service", [
-                        FindInMap(
-                            "Region2Principal",
-                            Ref("AWS::Region"), "EC2Principal")
-                    ]
-                )
-            )
-        ]
+    AssumeRolePolicyDocument=get_ec2_assume_role_policy(
+        FindInMap("Region2Principal", Ref("AWS::Region"), "EC2Principal")
     ),
     Path="/",
     Policies=[
