@@ -122,7 +122,7 @@ products_put_object = IAMPolicy(
             Statement(
                 Effect=Allow,
                 Action=[PutObject],
-                Resource=[Ref(products_bucket)]
+                Resource=[GetAtt(products_bucket, "Arn")]
             )
         ]
     )
