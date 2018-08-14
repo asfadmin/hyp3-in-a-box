@@ -36,7 +36,7 @@ ssm_earthdata_creds = t.add_resource(SSMParameter(
     ),
     Type="String",
     Value=Sub(
-        '{"username": ${Username}, "password": "${Password}"}',
+        '{"username": "${Username}", "password": "${Password}"}',
         Username=Ref(earthdata_username),
         Password=Ref(earthdata_password)
     )
