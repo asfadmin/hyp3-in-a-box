@@ -32,6 +32,8 @@ Resources
 * **IAM Policies:**
 
   * Instance write permission on products bucket
+  * Instance recieve and delete permissions on start events queue
+  * Instance terminate permission on autoscaling group
 
 """
 
@@ -40,6 +42,7 @@ from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.s3 import PutObject
 from awacs.sqs import ReceiveMessage, DeleteMessage
 from awacs.sts import AssumeRole
+from awacs.autoscaling import TerminateInstanceInAutoScalingGroup
 from template import t
 from tropo_env import environment
 from troposphere import FindInMap, GetAtt, Parameter, Ref
@@ -131,6 +134,19 @@ poll_messages = IAMPolicy(
     )
 )
 
+terminate_instance = IAMPolicy(
+    PolicyName="TerminateSelf",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[TerminateInstanceInAutoScalingGroup],
+                Resource=[Ref('HyP3AutoscalingGroup')]  # Python object is not defined yet
+            )
+        ]
+    )
+)
+
 role = t.add_resource(Role(
     "HyP3WorkerRole",
     AssumeRolePolicyDocument=Policy(
@@ -148,7 +164,7 @@ role = t.add_resource(Role(
         ]
     ),
     Path="/",
-    Policies=[products_put_object, poll_messages]
+    Policies=[products_put_object, poll_messages, terminate_instance]
 ))
 
 instance_profile = t.add_resource(InstanceProfile(
