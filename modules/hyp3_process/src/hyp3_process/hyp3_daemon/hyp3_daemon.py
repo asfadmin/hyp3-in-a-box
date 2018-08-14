@@ -84,7 +84,7 @@ class HyP3DaemonConfig(object):
             WithDecryption=True
         )['Parameter']['Value']
 
-        log.info(param, val)
+        log.info(f"{param} -> {val}")
 
         return val
 
