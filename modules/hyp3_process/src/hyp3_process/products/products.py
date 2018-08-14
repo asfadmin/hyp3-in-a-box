@@ -40,4 +40,12 @@ def get_bucket(bucket_name: str):
 
 
 def get_object_url(bucket, key: str) -> str:
-    return f'{s3_client.meta.endpoint_url}/{bucket}/{key}'
+    url = s3_client.generate_presigned_url(
+        ClientMethod='get_object',
+        Params={
+            'Bucket': bucket,
+            'Key': key
+        },
+        ExpiresIn=2**32 - 1
+    )
+    return url

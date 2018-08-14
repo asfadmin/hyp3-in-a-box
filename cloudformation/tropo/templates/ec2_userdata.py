@@ -11,8 +11,8 @@ def make_userdata_from_environment():
 
         {PullCode}
 
-        systemctl restart hyp3
-        """.strip()).format(
+        sudo systemctl restart hyp3
+        """).strip().format(
             PullCode=get_hyp3_daemon_install_script() if environment.clone_in_userdata
             else ""
         )
@@ -29,13 +29,13 @@ def get_hyp3_daemon_install_script():
         git clone --single-branch -b dev https://$CLONE_TOKEN@github.com/asfadmin/hyp3-in-a-box --depth=1
 
         pushd hyp3-in-a-box/processes/rtc_snap/.
-            python3.6 install.py
+            sudo python3.6 install.py
         popd
 
         pushd hyp3-in-a-box/ec2/worker/.
-            ./install.sh
+            sudo ./install.sh
         popd
-        """.strip())
+        """).strip()
 
 
 user_data = Base64(
