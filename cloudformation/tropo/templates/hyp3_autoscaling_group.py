@@ -67,7 +67,7 @@ from .hyp3_s3 import products_bucket
 from .hyp3_sns import finish_sns
 from .hyp3_sqs import start_events
 from .hyp3_vpc import get_public_subnets, hyp3_vpc, net_gw_vpc_attachment
-from .utils import get_map, get_ec2_assume_role_policy
+from .utils import get_ec2_assume_role_policy, get_map
 
 print('  adding auto scaling group')
 
