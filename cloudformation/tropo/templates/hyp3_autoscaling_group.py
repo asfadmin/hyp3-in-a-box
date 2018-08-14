@@ -43,10 +43,11 @@ from awacs.autoscaling import TerminateInstanceInAutoScalingGroup
 from awacs.aws import Allow, Policy, Statement
 from awacs.s3 import PutObject
 from awacs.sns import Publish
-from awacs.sqs import DeleteMessage, ReceiveMessage
+from awacs.sqs import DeleteMessage, GetQueueUrl, ReceiveMessage
+from awacs.ssm import GetParameter
 from template import t
 from tropo_env import environment
-from troposphere import FindInMap, GetAtt, Parameter, Ref
+from troposphere import FindInMap, GetAtt, Parameter, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
     CustomizedMetricSpecification,
@@ -128,7 +129,8 @@ poll_messages = IAMPolicy(
                 Effect=Allow,
                 Action=[
                     ReceiveMessage,
-                    DeleteMessage
+                    DeleteMessage,
+                    GetQueueUrl
                 ],
                 Resource=[GetAtt(start_events, "Arn")]
             )
@@ -149,6 +151,21 @@ publish_notifications = IAMPolicy(
     )
 )
 
+get_parameters = IAMPolicy(
+    PolicyName="GetParameters",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[GetParameter],
+                Resource=[
+                    Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/*")
+                ]
+            )
+        ]
+    )
+)
+
 role = t.add_resource(Role(
     "HyP3WorkerRole",
     AssumeRolePolicyDocument=get_ec2_assume_role_policy(
@@ -158,7 +175,8 @@ role = t.add_resource(Role(
     Policies=[
         products_put_object,
         poll_messages,
-        publish_notifications
+        publish_notifications,
+        get_parameters
     ]
 ))
 
