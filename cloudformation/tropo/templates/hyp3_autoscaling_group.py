@@ -26,6 +26,9 @@ Requires
 ~~~~~~~~
 * :ref:`keypair_name_param_template`
 * :ref:`vpc_template`
+* :ref:`s3_template`
+* :ref:`sns_template`
+* :ref:`sqs_template`
 
 Resources
 ~~~~~~~~~
@@ -34,11 +37,24 @@ Resources
 * **Launch Configuration:** Instance definitions for the auto scaling group.
 * **Security Group:** Firewall rules for processing instances.
 * **Cloudwatch Alarm:** Created by the TargetTrackingScaling Policy.
+* **IAM Policies:**
+
+  * Instance write permission on products bucket
+  * Instance recieve and delete permissions on start events queue
+  * Instance publish permission on finished events topic
+  * Instance terminate permission on autoscaling group
 
 """
 
-
-from troposphere import FindInMap, Parameter, Ref
+from awacs.autoscaling import TerminateInstanceInAutoScalingGroup
+from awacs.aws import Allow, Policy, Statement
+from awacs.s3 import PutObject
+from awacs.sns import Publish
+from awacs.sqs import DeleteMessage, GetQueueUrl, ReceiveMessage
+from awacs.ssm import GetParameter
+from template import t
+from tropo_env import environment
+from troposphere import FindInMap, GetAtt, Parameter, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
     CustomizedMetricSpecification,
@@ -48,18 +64,23 @@ from troposphere.autoscaling import (
     TargetTrackingConfiguration
 )
 from troposphere.ec2 import SecurityGroup, SecurityGroupRule
-
-from template import t
-from tropo_env import environment
+from troposphere.iam import InstanceProfile
+from troposphere.iam import Policy as IAMPolicy
+from troposphere.iam import PolicyType, Role
 
 from .ec2_userdata import user_data
 from .hyp3_keypairname_param import keyname
-from .hyp3_vpc import get_public_subnets, hyp3_vpc
-from .utils import get_map
+from .hyp3_s3 import products_bucket
+from .hyp3_sns import finish_sns
+from .hyp3_sqs import start_events
+from .hyp3_vpc import get_public_subnets, hyp3_vpc, net_gw_vpc_attachment
+from .utils import get_ec2_assume_role_policy, get_map
 
 print('  adding auto scaling group')
 
 custom_metric_name = "RTCJobsPerInstance"
+
+t.add_mapping("Region2Principal", get_map('region2principal'))
 
 max_instances = t.add_parameter(Parameter(
     "MaxRTCProcessingInstances",
@@ -76,7 +97,7 @@ security_group = t.add_resource(SecurityGroup(
     VpcId=Ref(hyp3_vpc),
     SecurityGroupIngress=[
         SecurityGroupRule(
-            "Hyp3ProcessingInstancesSecurityGroupSSHIn",
+            "HyP3ProcessingInstancesSecurityGroupSSHIn",
             IpProtocol="tcp",
             FromPort="22",
             ToPort="22",
@@ -85,7 +106,7 @@ security_group = t.add_resource(SecurityGroup(
     ],
     SecurityGroupEgress=[
         SecurityGroupRule(
-            "Hyp3ProcessingInstancesSecurityGroupWebOut",
+            "HyP3ProcessingInstancesSecurityGroupWebOut",
             IpProtocol="tcp",
             FromPort="80",
             ToPort="80",
@@ -94,8 +115,86 @@ security_group = t.add_resource(SecurityGroup(
     ]
 ))
 
+products_put_object = IAMPolicy(
+    PolicyName="ProductsPutObject",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[PutObject],
+                Resource=[Ref(products_bucket)]
+            )
+        ]
+    )
+)
+
+poll_messages = IAMPolicy(
+    PolicyName="QueueGetMessages",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[
+                    ReceiveMessage,
+                    DeleteMessage,
+                    GetQueueUrl
+                ],
+                Resource=[GetAtt(start_events, "Arn")]
+            )
+        ]
+    )
+)
+
+publish_notifications = IAMPolicy(
+    PolicyName="PublishNotifications",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[Publish],
+                Resource=[Ref(finish_sns)]
+            )
+        ]
+    )
+)
+
+get_parameters = IAMPolicy(
+    PolicyName="GetParameters",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[GetParameter],
+                Resource=[
+                    Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/*")
+                ]
+            )
+        ]
+    )
+)
+
+role = t.add_resource(Role(
+    "HyP3WorkerRole",
+    AssumeRolePolicyDocument=get_ec2_assume_role_policy(
+        FindInMap("Region2Principal", Ref("AWS::Region"), "EC2Principal")
+    ),
+    Path="/",
+    Policies=[
+        products_put_object,
+        poll_messages,
+        publish_notifications,
+        get_parameters
+    ]
+))
+
+instance_profile = t.add_resource(InstanceProfile(
+    "HyP3WorkerInstanceProfile",
+    Path="/",
+    Roles=[Ref(role)]
+))
+
 launch_config = t.add_resource(LaunchConfiguration(
-    "Hyp3LaunchConfiguration",
+    "HyP3LaunchConfiguration",
     ImageId=FindInMap(
         "Region2AMI",
         Ref("AWS::Region"), "AMIId"
@@ -103,11 +202,13 @@ launch_config = t.add_resource(LaunchConfiguration(
     KeyName=Ref(keyname),
     SecurityGroups=[Ref(security_group)],
     InstanceType="m1.small",
-    UserData=user_data
+    UserData=user_data,
+    IamInstanceProfile=Ref(instance_profile),
+    DependsOn=net_gw_vpc_attachment
 ))
 
 processing_group = t.add_resource(AutoScalingGroup(
-    "Hyp3AutoscalingGroup",
+    "HyP3AutoscalingGroup",
     LaunchConfigurationName=Ref(launch_config),
     MinSize=0,
     MaxSize=Ref(max_instances),
@@ -135,3 +236,18 @@ target_tracking_scaling_policy = t.add_resource(ScalingPolicy(
         TargetValue=1.0  # Keep a ratio of 1 message per instance
     )
 ))
+
+terminate_instance = PolicyType(
+    "HyP3InstanceTerminateSelf",
+    PolicyName="TerminateSelf",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[TerminateInstanceInAutoScalingGroup],
+                Resource=[Ref(processing_group)]
+            )
+        ]
+    ),
+    Roles=[Ref(role)]
+)

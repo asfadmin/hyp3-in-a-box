@@ -1,13 +1,12 @@
 import json
 import pathlib as pl
 
-from troposphere.awslambda import Code
-
-from troposphere import GetAtt, Ref, Sub
-from troposphere.awslambda import Function
-
-from tropo_env import environment
+from awacs.aws import Allow, Policy, Principal, Statement
+from awacs.sts import AssumeRole
 from template import t
+from tropo_env import environment
+from troposphere import GetAtt, Ref, Sub
+from troposphere.awslambda import Code, Function
 
 
 def get_email_pattern():
@@ -38,6 +37,19 @@ def get_static_policy(name):
     static_policy = load_json_from('policies', name)
 
     return static_policy
+
+
+def get_ec2_assume_role_policy(ec2_principal):
+    return Policy(
+        Statement=[
+            Statement(
+                Effect=Allow, Action=[AssumeRole],
+                Principal=Principal(
+                    "Service", [ec2_principal]
+                )
+            )
+        ]
+    )
 
 
 def load_json_from(directory, name):

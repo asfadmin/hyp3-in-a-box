@@ -25,8 +25,6 @@ Resources
 
 """
 
-from awacs.aws import Allow, Policy, Principal, Statement
-from awacs.sts import AssumeRole
 from template import t
 from tropo_env import environment
 from troposphere import FindInMap, GetAtt, Join, Output, Ref, Sub
@@ -44,7 +42,7 @@ from .hyp3_db_params import db_name, db_pass, db_user
 from .hyp3_keypairname_param import keyname
 from .hyp3_rds import hyp3_db
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
-from .utils import get_map
+from .utils import get_ec2_assume_role_policy, get_map
 
 source_zip = "hyp3_api.zip"
 
@@ -55,19 +53,8 @@ t.add_mapping("Region2Principal", get_map('region2principal'))
 
 role = t.add_resource(Role(
     "HyP3ApiWebServerRole",
-    AssumeRolePolicyDocument=Policy(
-        Statement=[
-            Statement(
-                Effect=Allow, Action=[AssumeRole],
-                Principal=Principal(
-                    "Service", [
-                        FindInMap(
-                            "Region2Principal",
-                            Ref("AWS::Region"), "EC2Principal")
-                    ]
-                )
-            )
-        ]
+    AssumeRolePolicyDocument=get_ec2_assume_role_policy(
+        FindInMap("Region2Principal", Ref("AWS::Region"), "EC2Principal")
     ),
     Path="/",
     ManagedPolicyArns=[
@@ -106,7 +93,7 @@ app_version = t.add_resource(ApplicationVersion(
 
 config_template = t.add_resource(ConfigurationTemplate(
     "Hyp3ApiConfigurationTemplate",
-    DependsOn=["Hyp3VPC", "Hyp3DB"],
+    DependsOn=[hyp3_vpc, hyp3_db],
     ApplicationName=Ref(app),
     Description="",
     SolutionStackName=environment.eb_solution_stack_name,
