@@ -15,7 +15,7 @@ import sys
 import time
 from datetime import datetime
 from multiprocessing import Pipe
-from typing import Union, Dict
+from typing import Union
 
 import boto3
 import requests
