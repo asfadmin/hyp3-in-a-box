@@ -15,6 +15,13 @@ stored in SSM Parameter Store and read by the instance on startup. The names of
 these parameters are known ahead of time except for the stack name prefix, which
 is supplied by the user data.
 
+For the purposes of development, the userdata will checkout the latest
+orchestration code from the hyp3-in-a-box dev branch before starting the hyp3
+daemon. This makes testing changes a lot easier because it means no new AMI is
+required, and no manual copying of files is needed. This "development mode" can
+be enabled by setting the ``clone_in_userdata`` environment variable to ``True``
+when generating the CloudFormation template.
+
 Requires
 ~~~~~~~~
 * :ref:`keypair_name_param_template`
@@ -31,7 +38,7 @@ Resources
 """
 
 
-from troposphere import Base64, FindInMap, Parameter, Ref, Sub
+from troposphere import FindInMap, Parameter, Ref
 from troposphere.autoscaling import (
     AutoScalingGroup,
     CustomizedMetricSpecification,
