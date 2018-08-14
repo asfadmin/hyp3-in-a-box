@@ -4,7 +4,7 @@ Description=HyP3 Daemon
 [Service]
 User=ubuntu
 Group=ubuntu
-ExecStart=/home/ubuntu/hyp3_daemon.py
+ExecStart=/opt/hyp3/hyp3_daemon.py
 EnvironmentFile=-/home/ubuntu/env
 
 [Install]
