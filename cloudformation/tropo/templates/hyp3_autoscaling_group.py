@@ -20,6 +20,7 @@ Requires
 * :ref:`keypair_name_param_template`
 * :ref:`vpc_template`
 * :ref:`s3_template`
+* :ref:`sns_template`
 * :ref:`sqs_template`
 
 Resources
@@ -33,16 +34,18 @@ Resources
 
   * Instance write permission on products bucket
   * Instance recieve and delete permissions on start events queue
+  * Instance publish permission on finished events topic
   * Instance terminate permission on autoscaling group
 
 """
 
 
+from awacs.autoscaling import TerminateInstanceInAutoScalingGroup
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.s3 import PutObject
-from awacs.sqs import ReceiveMessage, DeleteMessage
+from awacs.sns import Publish
+from awacs.sqs import DeleteMessage, ReceiveMessage
 from awacs.sts import AssumeRole
-from awacs.autoscaling import TerminateInstanceInAutoScalingGroup
 from template import t
 from tropo_env import environment
 from troposphere import FindInMap, GetAtt, Parameter, Ref
@@ -57,11 +60,12 @@ from troposphere.autoscaling import (
 from troposphere.ec2 import SecurityGroup, SecurityGroupRule
 from troposphere.iam import InstanceProfile
 from troposphere.iam import Policy as IAMPolicy
-from troposphere.iam import Role
+from troposphere.iam import PolicyType, Role
 
 from .ec2_userdata import user_data
 from .hyp3_keypairname_param import keyname
 from .hyp3_s3 import products_bucket
+from .hyp3_sns import finish_sns
 from .hyp3_sqs import start_events
 from .hyp3_vpc import get_public_subnets, hyp3_vpc, net_gw_vpc_attachment
 from .utils import get_map
@@ -134,14 +138,14 @@ poll_messages = IAMPolicy(
     )
 )
 
-terminate_instance = IAMPolicy(
-    PolicyName="TerminateSelf",
+publish_notifications = IAMPolicy(
+    PolicyName="PublishNotifications",
     PolicyDocument=Policy(
         Statement=[
             Statement(
                 Effect=Allow,
-                Action=[TerminateInstanceInAutoScalingGroup],
-                Resource=[Ref('HyP3AutoscalingGroup')]  # Python object is not defined yet
+                Action=[Publish],
+                Resource=[Ref(finish_sns)]
             )
         ]
     )
@@ -164,7 +168,11 @@ role = t.add_resource(Role(
         ]
     ),
     Path="/",
-    Policies=[products_put_object, poll_messages, terminate_instance]
+    Policies=[
+        products_put_object,
+        poll_messages,
+        publish_notifications
+    ]
 ))
 
 instance_profile = t.add_resource(InstanceProfile(
@@ -216,3 +224,18 @@ target_tracking_scaling_policy = t.add_resource(ScalingPolicy(
         TargetValue=1.0  # Keep a ratio of 1 message per instance
     )
 ))
+
+terminate_instance = PolicyType(
+    "HyP3InstanceTerminateSelf",
+    PolicyName="TerminateSelf",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[TerminateInstanceInAutoScalingGroup],
+                Resource=[Ref(processing_group)]
+            )
+        ]
+    ),
+    Roles=[Ref(role)]
+)
