@@ -20,18 +20,11 @@ def test_products(bucket_mock, process_outputs):
     assert put_object_method.call_count == 2
 
     assert all(
-        s3_key_has_no_folder(url, testing_bucket)
-        for url in (product_url, browse_url)
+        url for url in (product_url, browse_url)
     )
 
     assert product_url
     assert browse_url
-
-
-def s3_key_has_no_folder(url, bucket_name):
-    path_start = url.find(bucket_name) + len(bucket_name)
-
-    return pl.Path(url[path_start:]).parent == pl.Path('/')
 
 
 @pytest.fixture()

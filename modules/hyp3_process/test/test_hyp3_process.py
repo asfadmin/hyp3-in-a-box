@@ -1,12 +1,9 @@
 import contextlib
 import pathlib as pl
-import json
 from typing import Dict
 
-import pytest
 import mock
 
-import asf_granule_util as gu
 
 import import_hyp3_process
 import rtc_snap_strategies as strats
@@ -29,7 +26,9 @@ def mock_download(*args, **kwargs):
 
 @mock.patch('hyp3_process.products.products.get_bucket')
 @mock.patch('hyp3_process.working_directory.create')
+@mock.patch('hyp3_process.products.products.get_object_url')
 def test_rtc_snap_mocked(
+        s3_client_mock,
         wrk_dir_mock,
         bucket_mock,
         rtc_snap_job,
@@ -37,7 +36,6 @@ def test_rtc_snap_mocked(
 ):
     working_dir = make_working_dir(strats.rtc_example_files())
     wrk_dir_mock.side_effect = mock_working_dir_with(working_dir)
-
 
     def handler(
         granule_name: str,
