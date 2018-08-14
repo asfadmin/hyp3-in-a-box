@@ -106,7 +106,7 @@ app_version = t.add_resource(ApplicationVersion(
 
 config_template = t.add_resource(ConfigurationTemplate(
     "Hyp3ApiConfigurationTemplate",
-    DependsOn=["Hyp3VPC", "Hyp3DB"],
+    DependsOn=[hyp3_vpc, hyp3_db],
     ApplicationName=Ref(app),
     Description="",
     SolutionStackName=environment.eb_solution_stack_name,

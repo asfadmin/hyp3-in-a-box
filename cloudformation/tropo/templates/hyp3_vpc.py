@@ -64,7 +64,7 @@ default_public_route = t.add_resource(ec2.Route(
     RouteTableId=Ref(public_route_table),
     DestinationCidrBlock='0.0.0.0/0',
     GatewayId=Ref(igw),
-    DependsOn='Hyp3GatewayAttachment'
+    DependsOn=net_gw_vpc_attachment
 ))
 
 

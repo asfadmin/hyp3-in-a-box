@@ -76,7 +76,7 @@ db = rds.DBInstance(
     DBSubnetGroupName=Ref(mydbsubnetgroup),
     MasterUsername=Ref(db_super_user),
     MasterUserPassword=Ref(db_super_user_pass),
-    DependsOn=('Hyp3VPC'),
+    DependsOn=hyp3_vpc,
 )
 
 hyp3_db = t.add_resource(db)
