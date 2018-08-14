@@ -20,6 +20,7 @@ Requires
 * :ref:`keypair_name_param_template`
 * :ref:`vpc_template`
 * :ref:`s3_template`
+* :ref:`sqs_template`
 
 Resources
 ~~~~~~~~~
@@ -37,10 +38,11 @@ Resources
 
 from awacs.aws import Allow, Policy, Principal, Statement
 from awacs.s3 import PutObject
+from awacs.sqs import ReceiveMessage, DeleteMessage
 from awacs.sts import AssumeRole
 from template import t
 from tropo_env import environment
-from troposphere import FindInMap, Parameter, Ref
+from troposphere import FindInMap, GetAtt, Parameter, Ref
 from troposphere.autoscaling import (
     AutoScalingGroup,
     CustomizedMetricSpecification,
@@ -57,6 +59,7 @@ from troposphere.iam import Role
 from .ec2_userdata import user_data
 from .hyp3_keypairname_param import keyname
 from .hyp3_s3 import products_bucket
+from .hyp3_sqs import start_events
 from .hyp3_vpc import get_public_subnets, hyp3_vpc, net_gw_vpc_attachment
 from .utils import get_map
 
@@ -112,6 +115,22 @@ products_put_object = IAMPolicy(
     )
 )
 
+poll_messages = IAMPolicy(
+    PolicyName="QueueGetMessages",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[
+                    ReceiveMessage,
+                    DeleteMessage
+                ],
+                Resource=[GetAtt(start_events, "Arn")]
+            )
+        ]
+    )
+)
+
 role = t.add_resource(Role(
     "HyP3WorkerRole",
     AssumeRolePolicyDocument=Policy(
@@ -129,7 +148,7 @@ role = t.add_resource(Role(
         ]
     ),
     Path="/",
-    Policies=[products_put_object]
+    Policies=[products_put_object, poll_messages]
 ))
 
 instance_profile = t.add_resource(InstanceProfile(
