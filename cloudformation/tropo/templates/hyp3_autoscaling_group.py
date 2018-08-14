@@ -19,6 +19,7 @@ Requires
 ~~~~~~~~
 * :ref:`keypair_name_param_template`
 * :ref:`vpc_template`
+* :ref:`s3_template`
 
 Resources
 ~~~~~~~~~
@@ -27,11 +28,19 @@ Resources
 * **Launch Configuration:** Instance definitions for the auto scaling group.
 * **Security Group:** Firewall rules for processing instances.
 * **Cloudwatch Alarm:** Created by the TargetTrackingScaling Policy.
+* **IAM Policies:**
+
+  * Instance write permission on products bucket
 
 """
 
 
-from troposphere import Base64, FindInMap, Parameter, Ref, Sub
+from awacs.aws import Allow, Policy, Principal, Statement
+from awacs.s3 import PutObject
+from awacs.sts import AssumeRole
+from template import t
+from tropo_env import environment
+from troposphere import FindInMap, Parameter, Ref
 from troposphere.autoscaling import (
     AutoScalingGroup,
     CustomizedMetricSpecification,
@@ -41,18 +50,21 @@ from troposphere.autoscaling import (
     TargetTrackingConfiguration
 )
 from troposphere.ec2 import SecurityGroup, SecurityGroupRule
-
-from template import t
-from tropo_env import environment
+from troposphere.iam import InstanceProfile
+from troposphere.iam import Policy as IAMPolicy
+from troposphere.iam import Role
 
 from .ec2_userdata import user_data
 from .hyp3_keypairname_param import keyname
-from .hyp3_vpc import get_public_subnets, hyp3_vpc
+from .hyp3_s3 import products_bucket
+from .hyp3_vpc import get_public_subnets, hyp3_vpc, net_gw_vpc_attachment
 from .utils import get_map
 
 print('  adding auto scaling group')
 
 custom_metric_name = "RTCJobsPerInstance"
+
+t.add_mapping("Region2Principal", get_map('region2principal'))
 
 max_instances = t.add_parameter(Parameter(
     "MaxRTCProcessingInstances",
@@ -69,7 +81,7 @@ security_group = t.add_resource(SecurityGroup(
     VpcId=Ref(hyp3_vpc),
     SecurityGroupIngress=[
         SecurityGroupRule(
-            "Hyp3ProcessingInstancesSecurityGroupSSHIn",
+            "HyP3ProcessingInstancesSecurityGroupSSHIn",
             IpProtocol="tcp",
             FromPort="22",
             ToPort="22",
@@ -78,7 +90,7 @@ security_group = t.add_resource(SecurityGroup(
     ],
     SecurityGroupEgress=[
         SecurityGroupRule(
-            "Hyp3ProcessingInstancesSecurityGroupWebOut",
+            "HyP3ProcessingInstancesSecurityGroupWebOut",
             IpProtocol="tcp",
             FromPort="80",
             ToPort="80",
@@ -87,8 +99,47 @@ security_group = t.add_resource(SecurityGroup(
     ]
 ))
 
+products_put_object = IAMPolicy(
+    PolicyName="ProductsPutObject",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[PutObject],
+                Resource=[Ref(products_bucket)]
+            )
+        ]
+    )
+)
+
+role = t.add_resource(Role(
+    "HyP3WorkerRole",
+    AssumeRolePolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow, Action=[AssumeRole],
+                Principal=Principal(
+                    "Service", [
+                        FindInMap(
+                            "Region2Principal",
+                            Ref("AWS::Region"), "EC2Principal")
+                    ]
+                )
+            )
+        ]
+    ),
+    Path="/",
+    Policies=[products_put_object]
+))
+
+instance_profile = t.add_resource(InstanceProfile(
+    "HyP3WorkerInstanceProfile",
+    Path="/",
+    Roles=[Ref(role)]
+))
+
 launch_config = t.add_resource(LaunchConfiguration(
-    "Hyp3LaunchConfiguration",
+    "HyP3LaunchConfiguration",
     ImageId=FindInMap(
         "Region2AMI",
         Ref("AWS::Region"), "AMIId"
@@ -96,11 +147,13 @@ launch_config = t.add_resource(LaunchConfiguration(
     KeyName=Ref(keyname),
     SecurityGroups=[Ref(security_group)],
     InstanceType="m1.small",
-    UserData=user_data
+    UserData=user_data,
+    IamInstanceProfile=Ref(instance_profile),
+    DependsOn=net_gw_vpc_attachment
 ))
 
 processing_group = t.add_resource(AutoScalingGroup(
-    "Hyp3AutoscalingGroup",
+    "HyP3AutoscalingGroup",
     LaunchConfigurationName=Ref(launch_config),
     MinSize=0,
     MaxSize=Ref(max_instances),

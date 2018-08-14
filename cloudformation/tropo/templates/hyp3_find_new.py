@@ -15,7 +15,7 @@ Resources
 
 """
 
-from troposphere import GetAtt, Join, Ref, awslambda, events, iam, Sub
+from troposphere import GetAtt, Ref, awslambda, events, iam, Sub
 from troposphere.ssm import Parameter as SSMParameter
 
 from template import t
