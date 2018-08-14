@@ -242,7 +242,7 @@ target_tracking_scaling_policy = t.add_resource(ScalingPolicy(
     )
 ))
 
-terminate_instance = PolicyType(
+terminate_instance = t.add_resource(PolicyType(
     "HyP3InstanceTerminateSelf",
     PolicyName="TerminateSelf",
     PolicyDocument=Policy(
@@ -255,4 +255,4 @@ terminate_instance = PolicyType(
         ]
     ),
     Roles=[Ref(role)]
-)
+))
