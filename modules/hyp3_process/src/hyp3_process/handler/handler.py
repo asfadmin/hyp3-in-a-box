@@ -8,7 +8,7 @@ from . import working_directory
 from .outputs import OutputPatterns
 from . import package
 from . import products
-from ..hyp3_daemon import log
+from ..daemon import log
 
 
 HandlerFunction = Callable[[
