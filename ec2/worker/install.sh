@@ -11,11 +11,12 @@ python3.6 -m pip install -e \
 if [ "$1" = "dummy" ]
 then
     echo "Using dummy handler function"
-    HANDLER_PATH=./ec2/worker/hyp3_dummy_handler.py
+    HANDLER_PATH=./ec2/worker/src/hyp3_dummy_handler.py
 elif [ "$1" = "copy" ]
 then
     echo "Using copy handler function"
-    HANDLER_PATH=./ec2/worker/hyp3_copy_handler.py
+    echo $(pwd)
+    HANDLER_PATH=./ec2/worker/src/hyp3_copy_handler.py
 else
     echo "Using rtc_snap handler function"
     HANDLER_PATH=./processes/rtc_snap/src/hyp3_handler.py
