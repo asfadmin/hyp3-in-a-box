@@ -24,7 +24,7 @@ def hyp3_rtc_snap(clone_token):
     snap_dir = build_dir / snap_repo / 'src'
 
     for path, repo in requirements:
-        clone('asfadmin', repo, directory=build_dir)
+        clone('asfadmin', repo, directory=build_dir, access_token=clone_token)
 
         src = build_dir / repo / path
         dest = snap_dir / pl.Path(path).name
