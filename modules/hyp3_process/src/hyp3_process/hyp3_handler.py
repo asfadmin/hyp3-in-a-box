@@ -60,8 +60,6 @@ def make_hyp3_processing_function_from(
                 bucket_name=products_bucket
             )
 
-            log.info(f'In handler func: {product_zip_url}, {browse_url}')
-
         log.info(f'total processing time: {time.time() - start}')
 
         return {

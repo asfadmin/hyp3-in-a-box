@@ -84,7 +84,7 @@ class HyP3DaemonConfig(object):
             WithDecryption=True
         )['Parameter']['Value']
 
-        log.info(f"{param} -> {val}")
+        log.debug(f"{param} -> {val}")
 
         return val
 
@@ -191,7 +191,7 @@ class HyP3Daemon(object):
         job.delete()
 
         log.debug("Sending SNS notification")
-        log.info(job.output)
+        log.debug(job.output)
         email_event = EmailEvent.from_type(job)
 
         self.sns_topic.push(email_event)
