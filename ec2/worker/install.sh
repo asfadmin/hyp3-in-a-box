@@ -22,7 +22,7 @@ else
 fi
 
 cp \
-    $HANDLER_PATH
+    $HANDLER_PATH \
     ./ec2/worker/src/hyp3_handler.py
 
 cp ./ec2/worker/hyp3.service /etc/systemd/system/

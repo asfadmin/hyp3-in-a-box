@@ -33,6 +33,8 @@ class HyP3Worker(Process):
             self.products_bucket
         )
 
+        print(f'in worker -> {output}')
+
         self.job.set_output(output)
 
         self._set_status(WorkerStatus.DONE)

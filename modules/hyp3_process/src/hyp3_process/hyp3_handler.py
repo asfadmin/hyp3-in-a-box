@@ -14,7 +14,8 @@ from .hyp3_daemon import log
 HandlerFunction = Callable[[
     SentinelGranule,
     str,
-    Dict[str, str]
+    Dict[str, str],
+    str
 ], Dict[str, str]
 ]
 
@@ -58,6 +59,8 @@ def make_hyp3_processing_function_from(
                 outputs=process_outputs,
                 bucket_name=products_bucket
             )
+
+            log.info(f'In handler func: {product_zip_url}, {browse_url}')
 
         log.info(f'total processing time: {time.time() - start}')
 
