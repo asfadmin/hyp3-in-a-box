@@ -39,7 +39,7 @@ def clone(account, repo, directory='.', access_token=None):
         print(f'repo {repo} exisits at {repo_dir}')
         return
 
-    repo_url = 'https://{}www.github.com/{}/{}.git'.format(
+    repo_url = 'https://{}github.com/{}/{}.git'.format(
         access_token + "@" if access_token else '',
         account,
         repo
