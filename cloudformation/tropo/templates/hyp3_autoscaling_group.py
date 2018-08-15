@@ -163,6 +163,13 @@ publish_notifications = IAMPolicy(
     )
 )
 
+get_parameter_resources = [
+    Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/*")
+]
+if environment.clone_in_userdata:
+    get_parameter_resources.append(
+        Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN")
+    )
 get_parameters = IAMPolicy(
     PolicyName="GetParameters",
     PolicyDocument=Policy(
@@ -170,9 +177,7 @@ get_parameters = IAMPolicy(
             Statement(
                 Effect=Allow,
                 Action=[GetParameter],
-                Resource=[
-                    Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/*")
-                ]
+                Resource=get_parameter_resources
             )
         ]
     )
