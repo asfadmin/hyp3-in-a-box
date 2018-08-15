@@ -54,7 +54,7 @@ from awacs.sqs import DeleteMessage, GetQueueUrl, ReceiveMessage
 from awacs.ssm import GetParameter
 from template import t
 from tropo_env import environment
-from troposphere import FindInMap, GetAtt, Parameter, Ref, Sub
+from troposphere import FindInMap, GetAtt, Join, Parameter, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
     CustomizedMetricSpecification,
@@ -255,7 +255,21 @@ terminate_instance = t.add_resource(PolicyType(
             Statement(
                 Effect=Allow,
                 Action=[TerminateInstanceInAutoScalingGroup],
-                Resource=[Ref(processing_group)]
+                Resource=[
+                    Join(":", [
+                        "arn",
+                        "aws",
+                        "autoscaling",
+                        Ref("AWS::Region"),
+                        Ref("AWS::AccountId"),
+                        "autoScalingGroup",
+                        "*",
+                        Sub(
+                            "autoScalingGroupName/${GroupName}",
+                            GroupName=Ref(processing_group)
+                        )
+                    ])
+                ]
             )
         ]
     ),
