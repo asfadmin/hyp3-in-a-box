@@ -111,6 +111,13 @@ security_group = t.add_resource(SecurityGroup(
             FromPort="80",
             ToPort="80",
             CidrIp="0.0.0.0/0"
+        ),
+        SecurityGroupRule(
+            "HyP3ProcessingInstancesSecurityGroupWebSOut",
+            IpProtocol="tcp",
+            FromPort="443",
+            ToPort="443",
+            CidrIp="0.0.0.0/0"
         )
     ]
 ))
