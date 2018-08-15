@@ -11,7 +11,7 @@ from .handler import (
     ProcessingFunction
 )
 
-from .daemon import HyP3DaemonConfig, HyP3Daemon, log
+from .daemon import HyP3Daemon, HyP3DaemonConfig, log
 
 
 class Process:
