@@ -24,7 +24,7 @@ def get_hyp3_daemon_install_script():
     the new version of the code on startup."""
 
     return dedent("""
-        CLONE_TOKEN=$(/home/ubuntu/.local/bin/aws ssm get-parameters --names /CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN --output text --with-decryption | awk {'print $4'})
+        CLONE_TOKEN=$(/home/ubuntu/.local/bin/aws ssm get-parameter --name /CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN --output text --with-decryption | awk {'print $4'})
 
         cd ~
         rm -rf ./hyp3-in-a-box
