@@ -24,6 +24,17 @@ Authorize an email address in SES
 
     This email will also be used as a parameter in the template
 
+Earthdata Credentials
+^^^^^^^^^^^^^^^^^^^^^
+
+    To download data within hyp3, an earthdata account is needed.
+    To create an earthdata account go to:
+
+        - `Register for Earthdata`_
+
+    The username and password for this account will be used later when
+    createing the CloudFormation stack.
+
 Launching the CloudFormation stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -42,7 +53,8 @@ Launching the CloudFormation stack
 Stack Parameters
 ~~~~~~~~~~~~~~~~
 
-    The ``authorized email`` and ``ec2-key-pair`` from the previous steps will be used here.
+    The ``authorized email``, ``ec2-key-pair`` and ``earhtdata credentials`` from the
+    previous steps will be used here.
 
     All the parameters that can have default values can be left unchanged.
 
@@ -78,3 +90,4 @@ Basic Usage
 .. _Verify Your Email: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses-procedure.html?shortFooter=true
 .. _random.org: https://www.random.org/passwords/
 .. _Systems Manager: https://aws.amazon.com/systems-manager/
+.. _Register for Earthdata: https://urs.earthdata.nasa.gov/profile/
