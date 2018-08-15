@@ -24,10 +24,10 @@ def mock_download(*args, **kwargs):
         (dl_dir / fname).mkdir(parents=True)
 
 
-@mock.patch('hyp3_process.products.products.get_bucket')
-@mock.patch('hyp3_process.working_directory.create')
-@mock.patch('hyp3_process.products.products.get_object_url')
-def test_rtc_snap_mocked(
+@mock.patch('hyp3_process.handler.products.products.get_bucket')
+@mock.patch('hyp3_process.handler.working_directory.create')
+@mock.patch('hyp3_process.handler.products.products.get_object_url')
+def test_hyp3_process(
         s3_client_mock,
         wrk_dir_mock,
         bucket_mock,

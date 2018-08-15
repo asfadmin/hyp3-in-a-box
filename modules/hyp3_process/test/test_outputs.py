@@ -1,7 +1,7 @@
 import pathlib as pl
 
 import import_hyp3_process
-from hyp3_process.outputs import OutputPatterns, ProcessOutputs
+from hyp3_process.handler.outputs import OutputPatterns, ProcessOutputs
 
 
 def test_output_pattern_class():
