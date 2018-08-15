@@ -1,3 +1,5 @@
+#! /bin/bash
+
 pushd ../..
 
 python3.6 -m pip install -e \
