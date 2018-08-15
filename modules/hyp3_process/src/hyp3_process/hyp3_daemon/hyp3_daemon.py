@@ -84,7 +84,7 @@ class HyP3DaemonConfig(object):
             WithDecryption=True
         )['Parameter']['Value']
 
-        log.info(f"{param} -> {val}")
+        log.debug(f"{param} -> {val}")
 
         return val
 
@@ -191,6 +191,7 @@ class HyP3Daemon(object):
         job.delete()
 
         log.debug("Sending SNS notification")
+        log.debug(job.output)
         email_event = EmailEvent.from_type(job)
 
         self.sns_topic.push(email_event)
@@ -206,7 +207,8 @@ class HyP3Daemon(object):
 
     @staticmethod
     def _terminate():
-        resp = requests.get("http://169.254.169.254/latest/meta-data/instance-id")
+        resp = requests.get(
+            "http://169.254.169.254/latest/meta-data/instance-id")
         instance_id = resp.text
         boto_response = boto3.client('autoscaling').terminate_instance_in_auto_scaling_group(
             InstanceId=instance_id,
