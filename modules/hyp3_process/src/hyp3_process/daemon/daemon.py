@@ -22,7 +22,7 @@ import requests
 
 from hyp3_events import EmailEvent
 
-from .hyp3_logging import getLogger
+from .logging import getLogger
 from .services import SNSService, SQSJob, SQSService
 from .worker import HyP3Worker, WorkerStatus
 

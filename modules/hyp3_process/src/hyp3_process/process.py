@@ -5,20 +5,35 @@ import argparse
 
 from hyp3_events import StartEvent
 
-from .hyp3_handler import (
+from .handler import (
     make_hyp3_processing_function_from,
     HandlerFunction,
     ProcessingFunction
 )
 
-from .hyp3_daemon import HyP3DaemonConfig, HyP3Daemon, log
+from .daemon import HyP3Daemon, HyP3DaemonConfig, log
 
 
 class Process:
-    def __init__(self, *, handler_function) -> None:
-        self.add_handler(handler_function)
+    """
+    Wraps process hyp3 processing functionality around a lambda function
+    """
+
+    def __init__(self, *, handler_function: HandlerFunction) -> None:
+        """ Turn handler function into processing function"""
+        self.process_handler: ProcessingFunction = \
+            self._make_processing_function(handler_function)
+
+    def _make_processing_function(
+        self,
+        handler_function: HandlerFunction
+    ) -> ProcessingFunction:
+        return make_hyp3_processing_function_from(
+            handler_function
+        )
 
     def run(self) -> None:
+        """ Run process in background as daemon process """
         args = get_arguments()
         log.debug('Hyp3 Daemon Args: \n%s', json.dumps(args))
 
@@ -33,18 +48,13 @@ class Process:
 
         process_daemon.run()
 
-    def add_handler(self, handler_function: HandlerFunction) -> None:
-        self.process_handler: ProcessingFunction = \
-            make_hyp3_processing_function_from(
-                handler_function
-            )
-
     def start(
         self,
-            job: StartEvent,
-            earthdata_creds: Dict[str, str],
-            product_bucket: str
+        job: StartEvent,
+        earthdata_creds: Dict[str, str],
+        product_bucket: str
     ) -> Dict[str, str]:
+        """ Start a single job for processing"""
         assert self.process_handler is not None
 
         return self.process_handler(
@@ -53,6 +63,8 @@ class Process:
 
 
 def get_arguments():
+    """ Get arguments for HyP3DaemonConfig"""
+
     if 'STACK_NAME' in os.environ:
         log.info('args from environment')
         args = get_arguments_from_environment()

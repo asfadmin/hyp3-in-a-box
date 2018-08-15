@@ -1,4 +1,4 @@
-from typing import Dict, Callable
+from typing import Dict, Callable, NewType
 import time
 
 from asf_granule_util import SentinelGranule
@@ -8,7 +8,7 @@ from . import working_directory
 from .outputs import OutputPatterns
 from . import package
 from . import products
-from .hyp3_daemon import log
+from ..daemon import log
 
 
 HandlerFunction = Callable[[
@@ -30,6 +30,42 @@ ProcessingFunction = Callable[[
 def make_hyp3_processing_function_from(
     handler_function: HandlerFunction
 ) -> ProcessingFunction:
+    """ Convertes a **handler function -> process function**
+
+        A handler function is a function to run arbitrary processing
+        code and is not connected to HyP3. Handler functions are responsible
+        for download any data they require for processing. This includes
+        granules and DEM files.
+
+        .. code-block:: python
+
+           def handler_function(
+               granule_name: str,
+               work_dir: str,
+               earthdata_creds: Dict[str, str],
+               script_path: str
+           ):
+               ...
+
+        Processing functions wrap functionality around a handler function.
+
+        .. code-block:: python
+
+           def process_function(
+               job: StartEvent,
+               earthdata_creds: Dict[str, str],
+               products_bucket: str
+           ) -> Dict[str, str]:
+               ...
+
+        **A processing function:**
+
+            1. Sets up a working directory
+            2. Runs handler function
+            3. Packages any outputs
+            4. Uploads outputs to s3
+            5. Return urls for outputs
+    """
     def hyp3_wrapper(
             job: StartEvent,
             earthdata_creds: Dict[str, str],
