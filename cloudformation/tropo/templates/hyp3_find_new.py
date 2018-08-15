@@ -5,13 +5,13 @@ Resources
 ~~~~~~~~~
 
 * **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
-* **S3 Bucket:** Used to store the previous runtimes of the lambda
+* **SSM Parameter:** Used to store the previous runtimes of the lambda
 * **Cloudwatch Event:** Triggers the lambda after a scheduled amount of time
-* **IAM Policies:**
+* **IAM Role:**
 
-  * Lambda basic execution
-  * S3 read/write on ``previous time`` bucket
-  * Allow cloudwatch event to trigger the lambda
+  * Policy for Lambda basic execution
+  * Policy to get/set on ``previous time`` ssm parameter
+  * Policy to Allow cloudwatch event to trigger the lambda
 
 """
 

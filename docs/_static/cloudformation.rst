@@ -21,6 +21,7 @@ AWS CloudFormation
    cloudformation/api_eb.rst
    cloudformation/vpc.rst
 
+   cloudformation/s3.rst
    cloudformation/sns.rst
    cloudformation/sqs.rst
    cloudformation/autoscaling_group.rst

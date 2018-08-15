@@ -1,4 +1,4 @@
-
+.. _hyp3_events:
 
 Module: Hyp3 Events
 ===================

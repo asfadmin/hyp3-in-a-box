@@ -16,12 +16,11 @@ Resources
 ~~~~~~~~~
 
 * **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
-* **SNS Topic:** This is where notify only/finish events get put
-* **IAM Policies:**
+* **IAM Role:**
 
-  * Lambda basic execution
-  * SNS publish access
-
+  * Lambda basic execution policy
+  * SNS publish policy
+  * SQS send message policy
 """
 
 from template import t

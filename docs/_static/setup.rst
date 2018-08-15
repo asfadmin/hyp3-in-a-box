@@ -32,18 +32,22 @@ Earthdata Credentials
 
         - `Register for Earthdata`_
 
+    **WARNING:** Make sure that all the required EULA's are excepted on your
+    Earthdata account or else hyp3 will not be able to successfully download
+    data.
+
     The username and password for this account will be used later when
-    createing the CloudFormation stack.
+    creating the CloudFormation stack.
 
 Launching the CloudFormation stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    Once you have a key pair, and have verified an email with SES, your ready to
-   create the cloudformation stack. This automatically generates and configures all
-   of the aws resources HyP3 needs.
+   create the CloudFormation stack. This automatically generates and configures all
+   of the AWS resources HyP3 needs.
 
    The template is bound to a specific region referenced in the name.
-   The naming convension for the template is as follows:
+   The naming convention for the template is as follows:
 
       ``hyp3-in-a-box_<aws region here>.json``
 
@@ -64,6 +68,10 @@ Stack Parameters
     The hyp3 email and username must be added. This will where the notifications get sent and the
     username will be used for accessing with the hyp3. The hyp3 email can be different from the verified
     email but both must be entered.
+
+    The maximum number of running instances determines how many servers can run processing
+    at one time. Increaseing this number will affect how much aws charges, but allows you
+    to process more data.
 
 Launching
 ~~~~~~~~~

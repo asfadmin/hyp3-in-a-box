@@ -1,4 +1,4 @@
-
+.. _hyp3_process:
 
 Module: Hyp3 Process
 ====================
