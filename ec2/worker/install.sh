@@ -1,22 +1,35 @@
-REPO_PATH=/home/ubuntu/hyp3-in-a-box
+#! /bin/bash
+
+pushd ../..
 
 python3.6 -m pip install -e \
-    $REPO_PATH/modules/hyp3_events 
+    ./modules/hyp3_events
 python3.6 -m pip install -e \
-    $REPO_PATH/modules/hyp3_process
+    ./modules/hyp3_process
 
-if [ -n "$RTC_SNAP_HANDLER" ]
+
+if [ "$1" = "dummy" ]
 then
-    echo "Using rtc handler function"
-    cp \
-        $REPO_PATH/processes/rtc_snap/src/hyp3_handler.py \
-        $REPO_PATH/ec2/worker/src/
-else
     echo "Using dummy handler function"
+    HANDLER_PATH=./ec2/worker/src/hyp3_dummy_handler.py
+elif [ "$1" = "copy" ]
+then
+    echo "Using copy handler function"
+    echo $(pwd)
+    HANDLER_PATH=./ec2/worker/src/hyp3_copy_handler.py
+else
+    echo "Using rtc_snap handler function"
+    HANDLER_PATH=./processes/rtc_snap/src/hyp3_handler.py
 fi
 
-cp $REPO_PATH/ec2/worker/hyp3.service /etc/systemd/system/ 
+cp \
+    $HANDLER_PATH \
+    ./ec2/worker/src/hyp3_handler.py
 
-cp $REPO_PATH/ec2/worker/src/hyp3_handler.py /opt/hyp3/
-cp $REPO_PATH/ec2/worker/src/hyp3_daemon.py /opt/hyp3/
+cp ./ec2/worker/hyp3.service /etc/systemd/system/
+
+cp ./ec2/worker/src/hyp3_handler.py /opt/hyp3/
+cp ./ec2/worker/src/hyp3_daemon.py /opt/hyp3/
 chmod +x /opt/hyp3/hyp3_daemon.py
+
+popd
