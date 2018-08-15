@@ -1,4 +1,4 @@
-from .hyp3_process import (
+from .process import (
     Process,
     HandlerFunction
 )

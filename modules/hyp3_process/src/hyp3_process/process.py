@@ -5,7 +5,7 @@ import argparse
 
 from hyp3_events import StartEvent
 
-from .hyp3_handler import (
+from .handler import (
     make_hyp3_processing_function_from,
     HandlerFunction,
     ProcessingFunction
