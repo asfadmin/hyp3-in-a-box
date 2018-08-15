@@ -14,4 +14,4 @@ def handler(
         (pl.Path.home() / 'data').glob('*rtc-s1tbx')
     ).pop()
 
-    os.system(f'cp -r ${preprocessed_products} {base}')
+    os.system(f'cp -r {preprocessed_products} {base}')

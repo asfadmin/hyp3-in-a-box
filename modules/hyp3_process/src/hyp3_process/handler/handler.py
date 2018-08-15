@@ -14,7 +14,8 @@ from ..hyp3_daemon import log
 HandlerFunction = Callable[[
     SentinelGranule,
     str,
-    Dict[str, str]
+    Dict[str, str],
+    str
 ], Dict[str, str]
 ]
 
