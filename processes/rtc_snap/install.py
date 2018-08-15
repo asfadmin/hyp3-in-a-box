@@ -1,6 +1,6 @@
-import contextlib
-import pathlib as pl
 import os
+import pathlib as pl
+import sys
 from shutil import copyfile
 
 requirements = [
@@ -15,12 +15,12 @@ requirements = [
 ]
 
 
-def hyp3_rtc_snap():
+def hyp3_rtc_snap(clone_token):
     build_dir = pl.Path('build')
     build_dir.mkdir(exist_ok=True)
 
     snap_repo = 'hyp3-rtc-snap'
-    clone('asfadmin', snap_repo, directory=build_dir)
+    clone('asfadmin', snap_repo, directory=build_dir, access_token=clone_token)
     snap_dir = build_dir / snap_repo / 'src'
 
     for path, repo in requirements:
@@ -32,18 +32,26 @@ def hyp3_rtc_snap():
         copyfile(src, dest)
 
 
-def clone(account, repo, directory='.'):
+def clone(account, repo, directory='.', access_token=None):
     repo_dir = pl.Path(directory) / repo
 
     if repo_dir.exists():
         print(f'repo {repo} exisits at {repo_dir}')
         return
 
-    repo_url = f'https://www.github.com/{account}/{repo}.git'
+    repo_url = 'https://{}www.github.com/{}/{}.git'.format(
+        access_token + "@" if access_token else '',
+        account,
+        repo
+    )
     clone_cmd = f'git clone --depth 1 {repo_url} {directory}/{repo}'
 
     os.system(clone_cmd)
 
 
 if __name__ == "__main__":
-    hyp3_rtc_snap()
+    clone_token = None
+    if len(sys.argv) > 1:
+        clone_token = sys.argv[1]
+
+    hyp3_rtc_snap(clone_token)
