@@ -54,7 +54,7 @@ from awacs.sqs import DeleteMessage, GetQueueUrl, ReceiveMessage
 from awacs.ssm import GetParameter
 from template import t
 from tropo_env import environment
-from troposphere import FindInMap, GetAtt, Parameter, Ref, Sub
+from troposphere import FindInMap, GetAtt, Join, Parameter, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
     CustomizedMetricSpecification,
@@ -111,6 +111,13 @@ security_group = t.add_resource(SecurityGroup(
             FromPort="80",
             ToPort="80",
             CidrIp="0.0.0.0/0"
+        ),
+        SecurityGroupRule(
+            "HyP3ProcessingInstancesSecurityGroupWebSOut",
+            IpProtocol="tcp",
+            FromPort="443",
+            ToPort="443",
+            CidrIp="0.0.0.0/0"
         )
     ]
 ))
@@ -163,6 +170,13 @@ publish_notifications = IAMPolicy(
     )
 )
 
+get_parameter_resources = [
+    Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/*")
+]
+if environment.clone_in_userdata:
+    get_parameter_resources.append(
+        Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN")
+    )
 get_parameters = IAMPolicy(
     PolicyName="GetParameters",
     PolicyDocument=Policy(
@@ -170,9 +184,7 @@ get_parameters = IAMPolicy(
             Statement(
                 Effect=Allow,
                 Action=[GetParameter],
-                Resource=[
-                    Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/*")
-                ]
+                Resource=get_parameter_resources
             )
         ]
     )
@@ -250,7 +262,21 @@ terminate_instance = t.add_resource(PolicyType(
             Statement(
                 Effect=Allow,
                 Action=[TerminateInstanceInAutoScalingGroup],
-                Resource=[Ref(processing_group)]
+                Resource=[
+                    Join(":", [
+                        "arn",
+                        "aws",
+                        "autoscaling",
+                        Ref("AWS::Region"),
+                        Ref("AWS::AccountId"),
+                        "autoScalingGroup",
+                        "*",
+                        Sub(
+                            "autoScalingGroupName/${GroupName}",
+                            GroupName=Ref(processing_group)
+                        )
+                    ])
+                ]
             )
         ]
     ),
