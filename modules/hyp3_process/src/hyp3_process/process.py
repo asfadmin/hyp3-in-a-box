@@ -48,6 +48,7 @@ class Process:
 
         process_daemon.run()
 
+
     def start(
         self,
         job: StartEvent,
@@ -55,6 +56,7 @@ class Process:
         product_bucket: str
     ) -> Dict[str, str]:
         """ Start a single job for processing"""
+
         assert self.process_handler is not None
 
         return self.process_handler(

@@ -1,4 +1,4 @@
-from typing import Dict, Callable, NewType
+from typing import Dict, Callable
 import time
 
 from asf_granule_util import SentinelGranule

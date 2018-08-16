@@ -7,7 +7,7 @@ from troposphere import Base64, Ref, Sub
 def make_userdata_from_environment():
     return dedent("""
         #! /bin/bash
-        echo STACK_NAME=${{StackName}} > ~/env
+        echo STACK_NAME=${{StackName}} > /home/ubuntu/env
 
         {PullCode}
 
@@ -24,9 +24,9 @@ def get_hyp3_daemon_install_script():
     the new version of the code on startup."""
 
     return dedent("""
-        CLONE_TOKEN=$(/home/ubuntu/.local/bin/aws ssm get-parameter --name /CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN --output text --with-decryption | awk {'print $4'})
+        CLONE_TOKEN=$(aws ssm get-parameter --name /CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN --output text --with-decryption | awk {'print $6'})
 
-        cd ~
+        cd /home/ubuntu
         rm -rf ./hyp3-in-a-box
 
         git clone --single-branch -b dev https://$CLONE_TOKEN@github.com/asfadmin/hyp3-in-a-box --depth=1
