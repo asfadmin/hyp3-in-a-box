@@ -7,7 +7,7 @@ AWS EC2 Processing Code
    :maxdepth: 1
    :caption: Contents:
 
-   processing/hyp3_daemon.rst
+   processing/hyp3_daemon
 
 Overview
 --------
@@ -19,21 +19,22 @@ will call the science code to do the actual processing needed to generate an
 image. The orchestration code is always the same, regardless of the process
 which is being run.
 
+Science Code
+------------
+
+This can be pretty anything as long as it provides a compatible interface.
+A python file called ``hyp3_handler.py`` containing a function called ``handler``.
+The requirements of a valid HyP3 handler function can be found in :ref:`hyp3_process`.
+
 Orchestration Code
 ------------------
 
 The part of the code which connects the science processing code to the rest of
-the HyP3 infrastructure. It is responsible for the following tasks:
+the HyP3 infrastructure.
 
-  * Checking SQS for new jobs
-  * Parsing job info
-  * Downloading Granule and DEM data
-  * Running the science code
-  * Uploading generated products
-  * Notifying HyP3 of new the new products
+The ``hyp3_handler.py`` script is imported by the ``ec2/worker/hyp3_daemon.py`` script,
+which is part of the orchestration code and is process agnostic. This script uses
+the :ref:`hyp3_process` module to wrap processing functionality around the handler
+function and then starts a daemon to pull new jobs from an SQS Queue, run processing and
+push outputs to a SNS Topic.
 
-Science Code
-------------
-
-This can be pretty anything as long as it provides a compatible interface. The
-interface has yet to be determined, and will be outlined here.

@@ -12,4 +12,5 @@ Python Modules
 
    modules/hyp3_db
    modules/hyp3_events
+   modules/hyp3_process
    modules/granule_search

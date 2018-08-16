@@ -1,0 +1,6 @@
+.. _s3_template:
+
+Template: S3
+============
+
+.. automodule:: cloudformation.tropo.templates.hyp3_sqs

@@ -18,6 +18,9 @@ Module: Schedule
 .. automodule:: schedule
    :members:
 
+.. autoclass:: schedule.job
+   :members:
+
 
 Module: Events
 ~~~~~~~~~~~~~~~~

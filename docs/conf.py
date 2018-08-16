@@ -32,6 +32,7 @@ paths = [
     '../modules/hyp3_db/src',
     '../modules/hyp3_events/src',
     '../modules/granule_search/src',
+    '../modules/hyp3_process/src',
     '..'
 ]
 

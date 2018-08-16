@@ -46,7 +46,7 @@ The Hybrid Plugable Processing Pipeline (HyP3)
 
 .. figure:: _static/images/diagram.png
    :scale: 80 %
-   :alt: flowchart of the hyp3 system
+   :alt: flowchart of the HyP3 system
 
    Diagram of the hyp3 system. All these resources get automatically created
    using `AWS CloudFormation`_.
