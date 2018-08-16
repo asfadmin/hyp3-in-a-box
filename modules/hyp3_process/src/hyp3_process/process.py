@@ -5,13 +5,13 @@ import argparse
 
 from hyp3_events import StartEvent
 
-from .hyp3_handler import (
+from .handler import (
     make_hyp3_processing_function_from,
     HandlerFunction,
     ProcessingFunction
 )
 
-from .hyp3_daemon import HyP3DaemonConfig, HyP3Daemon, log
+from .daemon import HyP3Daemon, HyP3DaemonConfig, log
 
 
 class Process:

@@ -11,7 +11,7 @@ from typing import Union
 import boto3
 from hyp3_events import EmailEvent, StartEvent
 
-from ..hyp3_logging import getLogger
+from ..logging import getLogger
 
 log = getLogger(__name__)
 
