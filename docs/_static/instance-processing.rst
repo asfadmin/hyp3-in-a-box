@@ -23,7 +23,8 @@ Science Code
 ------------
 
 This can be pretty anything as long as it provides a compatible interface.
-A python file called ``hyp3_handler.py`` containing a function called ``handler``
+A python file called ``hyp3_handler.py`` containing a function called ``handler``.
+The requirements of a valid HyP3 handler function can be found in :ref:`hyp3_process`.
 
 Orchestration Code
 ------------------
