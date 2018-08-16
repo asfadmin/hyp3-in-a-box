@@ -1,4 +1,5 @@
 import subprocess
+from typing import Dict
 
 import asf_granule_util as gu
 
@@ -6,7 +7,7 @@ import asf_granule_util as gu
 def handler(
     granule_name: str,
     working_dir: str,
-    earthdata_creds: str,
+    earthdata_creds: Dict[str, str],
     script_path: str
 ) -> None:
     print('processing rtc product')
