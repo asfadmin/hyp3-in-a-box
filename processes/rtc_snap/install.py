@@ -1,17 +1,10 @@
-import os
 import pathlib as pl
+import subprocess
 import sys
 from shutil import copyfile
 
 requirements = [
-    ('src/execute.py', 'hyp3-lib'),
-    ('src/getDemFor.py', 'hyp3-lib'),
-    ('src/get_dem.py', 'hyp3-lib'),
-    ('src/dem2isce.py', 'hyp3-lib'),
-    ('src/saa_func_lib.py', 'hyp3-lib'),
-    ('src/getSubSwath.py', 'hyp3-lib'),
-    ('src/resample_geotiff.py', 'hyp3-lib'),
-    ('src/rtc2color.py', 'hyp3-lib'),
+    ('src/', 'hyp3-lib', 'test'),
 ]
 
 
@@ -20,19 +13,47 @@ def hyp3_rtc_snap(clone_token):
     build_dir.mkdir(exist_ok=True)
 
     snap_repo = 'hyp3-rtc-snap'
-    clone('asfadmin', snap_repo, directory=build_dir, access_token=clone_token)
+    clone(
+        'asfadmin',
+        snap_repo,
+        'test',
+        directory=build_dir,
+        access_token=clone_token
+    )
     snap_dir = build_dir / snap_repo / 'src'
 
-    for path, repo in requirements:
-        clone('asfadmin', repo, directory=build_dir, access_token=clone_token)
-
+    for path, repo, branch in requirements:
+        clone(
+            'asfadmin',
+            repo,
+            branch,
+            directory=build_dir,
+            access_token=clone_token
+        )
         src = build_dir / repo / path
-        dest = snap_dir / pl.Path(path).name
+        dst = snap_dir
 
-        copyfile(src, dest)
+        if dst.is_dir():
+            print(f'copying dir {src} -> {dst}')
+            copy_dir(src, dst)
+        if dst.is_file():
+            print(f'copying file {src} -> {dst}')
+            dest = snap_dir / pl.Path(path).name
+            copyfile(src, dest)
 
 
-def clone(account, repo, directory='.', access_token=None):
+def copy_dir(src_dir, dst, file_types=('.py')):
+    files = [
+        f for f in src_dir.iterdir() if
+        f.is_file() and f.suffix in file_types
+    ]
+
+    for f in files:
+        print(f'  {f.name} -> {dst}')
+        copyfile(f, dst / f.name)
+
+
+def clone(account, repo, branch, directory='.', access_token=None):
     repo_dir = pl.Path(directory) / repo
 
     if repo_dir.exists():
@@ -44,9 +65,13 @@ def clone(account, repo, directory='.', access_token=None):
         account,
         repo
     )
-    clone_cmd = f'git clone --depth 1 {repo_url} {directory}/{repo}'
 
-    os.system(clone_cmd)
+    subprocess.check_call([
+        'git', 'clone',
+        '--depth', '1',
+        '--single-branch', '-b', branch,
+        repo_url, f'{directory}/{repo}'
+    ])
 
 
 if __name__ == "__main__":
