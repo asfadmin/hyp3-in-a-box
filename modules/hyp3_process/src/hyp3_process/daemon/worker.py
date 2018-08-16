@@ -5,6 +5,7 @@
 # The worker process which runs science scripts
 from enum import Enum
 from multiprocessing import Process
+import traceback
 
 
 class WorkerStatus(Enum):
@@ -12,6 +13,7 @@ class WorkerStatus(Enum):
     READY = 1
     BUSY = 2
     DONE = 3
+    FAILED = 4
 
 
 class HyP3Worker(Process):
@@ -27,17 +29,22 @@ class HyP3Worker(Process):
     def run(self):
         self._set_status(WorkerStatus.BUSY)
         print("WORKER: Processed job {}".format(self.job))
-        output = self.handler(
-            self.job.data,
-            self.earthdata_creds,
-            self.products_bucket
-        )
+        try:
+            output = self.handler(
+                self.job.data,
+                self.earthdata_creds,
+                self.products_bucket
+            )
 
-        self.job.set_output(output)
+            self.job.set_output(output)
 
-        self._set_status(WorkerStatus.DONE)
-
-        self.conn.close()
+            self._set_status(WorkerStatus.DONE)
+        except Exception as e:
+            print("Excepion caught in Worker")
+            traceback.print_exc()
+            self._set_status(WorkerStatus.FAILED)
+        finally:
+            self.conn.close()
 
     def _set_status(self, status):
         self.conn.send(status)

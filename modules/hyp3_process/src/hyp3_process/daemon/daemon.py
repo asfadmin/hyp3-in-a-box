@@ -128,33 +128,7 @@ class HyP3Daemon(object):
                 return
             except Exception as e:
                 log.error("Fatal error thrown in main:\n%s", e)
-
-                self._join_worker()
-
-                job = self.worker.job
-                job.delete()
-
-                log.debug("Sending SNS failure notification")
-                log.debug(job.output)
-
-                email_event = EmailEvent(
-                    user_id=job.data.user_id,
-                    sub_id=job.data.sub_id,
-                    additional_info=[{
-                        "name": "Processing Date",
-                        "value": str(datetime.now().date())
-                    }, {
-                        "name": "Status",
-                        "value": "Failed"
-                    }],
-                    granule_name=job.data.granule,
-                    browse_url='',
-                    download_url='',
-                )
-
-                self.sns_topic.push(email_event)
-
-                self._reset_worker()
+                self._worker_failed()
 
     def main(self):
         """ Polls SQS if the EC2 Instances is idle, and starts a new processing
@@ -168,7 +142,9 @@ class HyP3Daemon(object):
 
         if status == WorkerStatus.DONE:
             self._worker_done()
-            status = WorkerStatus.NO_STATUS
+            return
+        elif status == WorkerStatus.FAILED:
+            self._worker_failed()
             return
         if status not in [WorkerStatus.READY, WorkerStatus.NO_STATUS]:
             return
@@ -234,6 +210,33 @@ class HyP3Daemon(object):
         timeout = self.config.MAX_IDLE_TIME_SECONDS
 
         return time_since_last_job >= timeout
+
+    def _worker_failed(self):
+        self._join_worker()
+
+        job = self.worker.job
+        job.delete()
+
+        log.debug("Sending SNS failure notification")
+
+        email_event = EmailEvent(
+            user_id=job.data.user_id,
+            sub_id=job.data.sub_id,
+            additional_info=[{
+                "name": "Processing Date",
+                "value": str(datetime.now().date())
+            }, {
+                "name": "Status",
+                "value": "Failed"
+            }],
+            granule_name=job.data.granule,
+            browse_url='',
+            download_url='',
+        )
+
+        self.sns_topic.push(email_event)
+
+        self._reset_worker()
 
     @staticmethod
     def _terminate():
