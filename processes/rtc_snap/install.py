@@ -42,10 +42,10 @@ def hyp3_rtc_snap(clone_token):
             copyfile(src, dest)
 
 
-def copy_dir(src_dir, dst, types='.py'):
+def copy_dir(src_dir, dst, file_types=('.py')):
     files = [
         f for f in src_dir.iterdir() if
-        f.is_file() and f.suffix == types
+        f.is_file() and f.suffix in file_types
     ]
 
     for f in files:
