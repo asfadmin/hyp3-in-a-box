@@ -25,5 +25,5 @@ def send(event_type: str, body: str) -> None:
                 'DataType': 'String'
             }
         },
-        MessageGroupId=uuid.uuid4()
+        MessageGroupId=str(uuid.uuid4())
     )
