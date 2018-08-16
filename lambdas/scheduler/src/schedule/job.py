@@ -1,20 +1,20 @@
 from typing import NamedTuple, Union
 
-from hyp3_events import NewGranuleEvent, StartEvent, EmailEvent, Hyp3Event
+from hyp3_events import NewGranuleEvent, StartEvent, EmailEvent
 from hyp3_db.hyp3_models import Subscription, User, Process
 
 
 class Job(NamedTuple):
     """ All the required information for scheduling and creating a HyP3 job """
 
-    granule: NewGranuleEvent
-    """ A new granule to schedule a job for"""
     sub: Subscription
     """ A subscription overlapping the granule"""
     process: Process
     """ The process for the subscription"""
     user: User
     """ The user who the subscritpion belongs to"""
+    granule: NewGranuleEvent
+    """ A new granule to schedule a job for"""
 
     def to_event(self) -> Union[EmailEvent, StartEvent]:
         """ Convert the job into a hyp3_event object"""

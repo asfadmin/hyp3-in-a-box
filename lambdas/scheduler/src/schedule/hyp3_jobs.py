@@ -1,16 +1,20 @@
+from typing import Dict, List
+
 import hyp3_db
+from hyp3_db.hyp3_models import Process, User
+from hyp3_events import NewGranuleEvent
 from scheduler_env import environment
 
 from . import queries
 from .job import Job
 
 
-def hyp3_jobs(new_granules):
+def hyp3_jobs(new_granules: List[NewGranuleEvent]):
     """ Get all the hyp3 jobs from the new granules
 
         :param list[dict] new_granules: New granules from cmr
 
-        :return: A named tuple of the form Job(sub, user, granule)
+        :return: A named tuple of the form Job(sub, process, user, granule)
         :rtype: list[Job]
     """
     host, name, password, db = environment.db_creds
@@ -28,7 +32,7 @@ def hyp3_jobs(new_granules):
         return jobs
 
 
-def get_jobs_for(granule, db):
+def get_jobs_for(granule: NewGranuleEvent, db) -> List[Job]:
     polygon = format_polygon(granule.polygon)
     print(polygon)
 
@@ -57,7 +61,7 @@ def pair_up_lat_lons(point_vals):
     return zip(point_vals[0::2], point_vals[1::2])
 
 
-def get_users_for(subs, db):
+def get_users_for(subs, db) -> Dict[int, User]:
     user_ids = [sub.user_id for sub in subs]
 
     users = queries.get_users_by_ids(db, user_ids)
@@ -65,13 +69,13 @@ def get_users_for(subs, db):
     return dict_indexed_by_id(users)
 
 
-def get_processes(db):
+def get_processes(db) -> Dict[int, Process]:
     processes = queries.get_processes(db)
 
     return dict_indexed_by_id(processes)
 
 
-def dict_indexed_by_id(objs):
+def dict_indexed_by_id(objs: List):
     return {
         obj.id: obj for obj in objs
     }
