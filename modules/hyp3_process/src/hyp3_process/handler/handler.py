@@ -32,7 +32,7 @@ def make_hyp3_processing_function_from(
 ) -> ProcessingFunction:
     """ Convertes a **handler function -> process function**
 
-        A handler function is a function to run arbitrary processing
+        A handler function is a function which runs arbitrary processing
         code and is not connected to HyP3. Handler functions are responsible
         downloading their own data. This includes granules and DEM files.
         Granules can be easily downloaded using the `asf_granule_util`_ module.
