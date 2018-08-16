@@ -22,15 +22,7 @@ class Process:
     def __init__(self, *, handler_function: HandlerFunction) -> None:
         """ Turn handler function into processing function"""
         self.process_handler: ProcessingFunction = \
-            self._make_processing_function(handler_function)
-
-    def _make_processing_function(
-        self,
-        handler_function: HandlerFunction
-    ) -> ProcessingFunction:
-        return make_hyp3_processing_function_from(
-            handler_function
-        )
+            make_hyp3_processing_function_from(handler_function)
 
     def run(self) -> None:
         """ Run process in background as daemon process """
@@ -47,7 +39,6 @@ class Process:
         )
 
         process_daemon.run()
-
 
     def start(
         self,
