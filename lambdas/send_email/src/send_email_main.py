@@ -13,7 +13,7 @@ import send_email_sns as sns
 from send_email_env import environment
 
 
-def send_email_main(aws_event):
+def send_email_main(aws_event: Dict) -> None:
     print('send email start')
     print(json.dumps(aws_event))
 
@@ -32,6 +32,7 @@ def send_email_main(aws_event):
         unsub_action = get_unsub_action(db, user.id)
 
         context = make_email_context(db, user, unsub_action, email_event)
+
         send_email_notification(user, context)
 
 
@@ -47,29 +48,14 @@ def get_unsub_action(db, user_id) -> OneTimeAction:
     return unsub_action
 
 
-def send_email_notification(user: User, context):
-    print("rendering email")
-
-    subject = "New data available"
-    address = user.email
-
-    message = Email().render(**context)
-
-    print('sending email')
-    ses.send(
-        address,
-        subject,
-        message
-    )
-
-
 def make_email_context(
-    db,
+    db: hyp3_db.Hyp3DB,
     user: User,
     unsub_action: OneTimeAction,
     email_event: EmailEvent
 ) -> Dict:
     sub = queries.get_sub_by_id(db, email_event.sub_id)
+
     context = {
         'unsubscribe_url': unsub_action.url(
             api_url=environment.api_url
@@ -90,3 +76,19 @@ def make_email_context(
     }
 
     return context
+
+
+def send_email_notification(user: User, context) -> None:
+    print("rendering email")
+
+    subject = "New data available"
+    address = user.email
+
+    message = Email().render(**context)
+
+    print('sending email')
+    ses.send(
+        address,
+        subject,
+        message
+    )
