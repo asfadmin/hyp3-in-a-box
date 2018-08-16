@@ -43,7 +43,12 @@ def get_jobs_for(granule: NewGranuleEvent, db) -> List[Job]:
     processes = get_processes(db)
 
     return [
-        Job(sub, processes[sub.process_id], users[sub.user_id], granule)
+        Job(
+            sub=sub,
+            process=processes[sub.process_id],
+            user=users[sub.user_id],
+            granule=granule
+        )
         for sub in subs
     ]
 
