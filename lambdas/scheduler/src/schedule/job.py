@@ -5,7 +5,7 @@ from hyp3_db.hyp3_models import Subscription, User, Process
 
 
 class Job(NamedTuple):
-    """ All the required information for scheduling and creating a hyp3 job """
+    """ All the required information for scheduling and creating a HyP3 job """
 
     granule: NewGranuleEvent
     """ A new granule to schedule a job for"""

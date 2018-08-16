@@ -27,7 +27,7 @@ Authorize an email address in SES
 Earthdata Credentials
 ^^^^^^^^^^^^^^^^^^^^^
 
-    To download data within hyp3, an earthdata account is needed.
+    To download data within HyP3, an earthdata account is needed.
     To create an earthdata account go to:
 
         - `Register for Earthdata`_
@@ -65,8 +65,8 @@ Stack Parameters
     Passwords for the database must also be passed in as parameters. These should be secure
     and only contain alphanumeric characters.  `random.org`_ is a good website for doing just that.
 
-    The hyp3 email and username must be added. This will where the notifications get sent and the
-    username will be used for accessing with the hyp3. The hyp3 email can be different from the verified
+    The HyP3 email and username must be added. This will where the notifications get sent and the
+    username will be used for accessing with the HyP3. The HyP3 email can be different from the verified
     email but both must be entered.
 
     The maximum number of running instances determines how many servers can run processing
@@ -78,11 +78,11 @@ Launching
 
     To launch the cloudformation stack
 
-    * Download a version of the hyp3 cloudformation template: :ref:`releases`.
+    * Download a version of the HyP3 cloudformation template: :ref:`releases`.
     * Login to the **AWS conosle**.
     * Go to the **Cloudformation** section and click **Create Stack**.
     * Under **Choose a template**, select the option to **upload a file**.
-    * **Upload** the hyp3 CloudFormation template then hit **next**.
+    * **Upload** the HyP3 CloudFormation template then hit **next**.
     * Give the stack a name and **fill in the missing parameters**.
     * Hit next again, then click the checkbox to **allow IAM** and hit create!
 
