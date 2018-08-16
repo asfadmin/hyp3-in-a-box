@@ -49,7 +49,8 @@ def make_hyp3_processing_function_from(
            ):
                ...
 
-        Processing functions wrap functionality around a handler function.
+        Processing functions wrap functionality around a handler function and
+        are for interfacing with HyP3.
 
         .. code-block:: python
 
