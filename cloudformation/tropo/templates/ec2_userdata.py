@@ -1,3 +1,9 @@
+"""
+Generates the UserData script for setting up the EC2 instances. In production
+mode the userdata only needs to set the stack name environment variable and
+start the HyP3 daemon service.
+"""
+
 from textwrap import dedent
 
 from tropo_env import environment
@@ -5,6 +11,9 @@ from troposphere import Base64, Ref, Sub
 
 
 def make_userdata_from_environment():
+    """ Generate userdata, and optionally insert the development mode install
+    commands if ``--clone_in_userdata`` was set.
+    """
     return dedent("""
         #! /bin/bash
         echo STACK_NAME=${{StackName}} > /home/ubuntu/env
