@@ -30,6 +30,8 @@ AWS CloudFormation
    cloudformation/db_params.rst
    cloudformation/keypair_name_param.rst
 
+   cloudformation/ec2_userdata.rst
+
 Troposphere
 -----------
 
