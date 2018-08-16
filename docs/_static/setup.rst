@@ -42,7 +42,7 @@ Earthdata Credentials
 Launching the CloudFormation stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   Once you have a key pair, and have verified an email with SES, your ready to
+   Once you have a key pair, and have verified an email with SES, you're ready to
    create the CloudFormation stack. This automatically generates and configures all
    of the AWS resources HyP3 needs.
 
