@@ -46,6 +46,6 @@ def get_object_url(bucket, key: str) -> str:
             'Bucket': bucket,
             'Key': key
         },
-        ExpiresIn=2**32 - 1
+        ExpiresIn=2**29
     )
     return url
