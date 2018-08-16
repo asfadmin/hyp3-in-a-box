@@ -1,8 +1,9 @@
+import uuid
+
 import boto3
+
 from hyp3_events import StartEvent
-
 from scheduler_env import environment
-
 
 sqs = boto3.client('sqs')
 
@@ -24,5 +25,5 @@ def send(event_type: str, body: str) -> None:
                 'DataType': 'String'
             }
         },
-        MessageGroupId='1'
+        MessageGroupId=uuid.uuid4()
     )
