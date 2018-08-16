@@ -236,8 +236,7 @@ launch_config = t.add_resource(LaunchConfiguration(
     InstanceType=Ref(instance_type),
     UserData=user_data,
     IamInstanceProfile=Ref(instance_profile),
-    DependsOn=net_gw_vpc_attachment,
-    SpotPrice=Ref(spot_price)
+    DependsOn=net_gw_vpc_attachment
 ))
 
 processing_group = t.add_resource(AutoScalingGroup(
