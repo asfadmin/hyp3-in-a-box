@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 import json
 
-from hyp3_events import EmailEvent, Hyp3Event, NewGranuleEvent, StartEvent
+from hyp3_events import Hyp3Event, NewGranuleEvent
 
 from schedule import Job
 
