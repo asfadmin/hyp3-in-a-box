@@ -89,6 +89,13 @@ max_instances = t.add_parameter(Parameter(
     Default=4
 ))
 
+instance_type = t.add_parameter(Parameter(
+    "RTCProcessingInstanceType",
+    Description="The type of EC2 instance to process with. Default is m4.xlarge",
+    Type="String",
+    Default="m4.xlarge"
+))
+
 t.add_mapping("Region2AMI", get_map('region2ami'))
 
 security_group = t.add_resource(SecurityGroup(
@@ -218,7 +225,7 @@ launch_config = t.add_resource(LaunchConfiguration(
     ),
     KeyName=Ref(keyname),
     SecurityGroups=[Ref(security_group)],
-    InstanceType="m1.small",
+    InstanceType=Ref(instance_type),
     UserData=user_data,
     IamInstanceProfile=Ref(instance_profile),
     DependsOn=net_gw_vpc_attachment
