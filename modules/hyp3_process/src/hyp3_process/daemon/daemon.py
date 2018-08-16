@@ -6,8 +6,6 @@
 Entry point for the hyp3 processing glue code. The hyp3 daemon polls the
 'Start Events' sqs queue for new processing jobs, and starts processes if the
 system has the appropriate dependencies and available resources.
-
-This script has an ifmain so it can be called from the command line.
 """
 
 import json
@@ -128,7 +126,35 @@ class HyP3Daemon(object):
                 log.debug("Stopping hyp3 daemon...")
                 sys.exit(0)
                 return
-            # For now, just crash on errors
+            except Exception as e:
+                log.error("Fatal error thrown in main:\n%s", e)
+
+                self._join_worker()
+
+                job = self.worker.job
+                job.delete()
+
+                log.debug("Sending SNS failure notification")
+                log.debug(job.output)
+
+                email_event = EmailEvent(
+                    user_id=job.data.user_id,
+                    sub_id=job.data.sub_id,
+                    additional_info=[{
+                        "name": "Processing Date",
+                        "value": str(datetime.now().date())
+                    }, {
+                        "name": "Status",
+                        "value": "Failed"
+                    }],
+                    granule_name=job.data.granule,
+                    browse_url='',
+                    download_url='',
+                )
+
+                self.sns_topic.push(email_event)
+
+                self._reset_worker()
 
     def main(self):
         """ Polls SQS if the EC2 Instances is idle, and starts a new processing
@@ -141,7 +167,7 @@ class HyP3Daemon(object):
         status = self._poll_worker_status()
 
         if status == WorkerStatus.DONE:
-            self._join_worker()
+            self._worker_done()
             status = WorkerStatus.NO_STATUS
             return
         if status not in [WorkerStatus.READY, WorkerStatus.NO_STATUS]:
@@ -175,16 +201,15 @@ class HyP3Daemon(object):
         )
         self.worker.start()
 
+    def _worker_done(self):
+        self._join_worker()
+        self._finish_job(self.worker.job)
+        self._reset_worker()
+
     def _join_worker(self):
         self.last_active_time = time.time()
         self.worker_conn.close()
         self.worker.join()
-
-        self._finish_job(self.worker.job)
-
-        self.worker = None
-        self.worker_conn = None
-        self.previous_worker_status = WorkerStatus.NO_STATUS
 
     def _finish_job(self, job: SQSJob):
         log.debug("Worker finished, deleting job %s from SQS", job)
@@ -195,6 +220,11 @@ class HyP3Daemon(object):
         email_event = EmailEvent.from_type(job)
 
         self.sns_topic.push(email_event)
+
+    def _reset_worker(self):
+        self.worker = None
+        self.worker_conn = None
+        self.previous_worker_status = WorkerStatus.NO_STATUS
 
     def _reached_max_idle_time(self):
         if self.previous_worker_status == WorkerStatus.BUSY:
