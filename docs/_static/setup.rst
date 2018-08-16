@@ -32,8 +32,8 @@ Earthdata Credentials
 
         - `Register for Earthdata`_
 
-    **WARNING:** Make sure that all the required EULA's are excepted on your
-    Earthdata account or else hyp3 will not be able to successfully download
+    **NOTE:** Make sure that all the required EULA's are excepted on your
+    Earthdata account or else HyP3 will not be able to successfully download
     data.
 
     The username and password for this account will be used later when
@@ -60,7 +60,7 @@ Stack Parameters
     The ``authorized email``, ``ec2-key-pair`` and ``earhtdata credentials`` from the
     previous steps will be used here.
 
-    All the parameters that can have default values can be left unchanged.
+    All the parameters that have default values can be left unchanged.
 
     Passwords for the database must also be passed in as parameters. These should be secure
     and only contain alphanumeric characters.  `random.org`_ is a good website for doing just that.
@@ -86,7 +86,7 @@ Launching
     * Give the stack a name and **fill in the missing parameters**.
     * Hit next again, then click the checkbox to **allow IAM** and hit create!
 
-    When stack is finished creating your ready to start using HyP3! Using the api,
+    When stack is finished creating you're ready to start using HyP3! Using the api,
     which is linked in stack ouptuts, create a subscription over your area of intreset
     and start recieving data. The username and api-key for the newly created HyP3 API is stored
     in AWS `Systems Manager`_ parameter store.

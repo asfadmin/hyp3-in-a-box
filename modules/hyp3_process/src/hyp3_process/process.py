@@ -16,7 +16,7 @@ from .daemon import HyP3Daemon, HyP3DaemonConfig, log
 
 class Process:
     """
-    Wraps process hyp3 processing functionality around a lambda function
+    Wraps process HyP3 processing functionality around a lambda function
     """
 
     def __init__(self, *, handler_function: HandlerFunction) -> None:

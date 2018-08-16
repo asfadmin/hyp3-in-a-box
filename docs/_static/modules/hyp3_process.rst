@@ -1,6 +1,6 @@
 .. _hyp3_process:
 
-Module: Hyp3 Process
+Module: HyP3 Process
 ====================
 
 .. image:: ../images/python.png
