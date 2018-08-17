@@ -250,10 +250,13 @@ class HyP3Daemon(object):
         )
         if self.worker_conn.poll():
             error = self._poll_until(Exception)
-            email_event.additional_info += [{
-                "name": "Reason",
-                "value": str(error)
-            }]
+            email_event = email_event._replace(
+                additional_info=email_event.additional_info + [{
+                    "name": "Reason",
+                    "value": str(error)
+                }]
+            )
+
 
         self.sns_topic.push(email_event)
 
