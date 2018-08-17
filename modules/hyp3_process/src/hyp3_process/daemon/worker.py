@@ -25,6 +25,7 @@ class HyP3Worker(Process):
 
         self.earthdata_creds = creds
         self.products_bucket = bucket
+        self.error = None
 
     def run(self):
         self._set_status(WorkerStatus.BUSY)
@@ -40,6 +41,7 @@ class HyP3Worker(Process):
 
             self._set_status(WorkerStatus.DONE)
         except Exception as e:
+            self.error = e
             print("Excepion caught in Worker")
             traceback.print_exc()
             self._set_status(WorkerStatus.FAILED)
