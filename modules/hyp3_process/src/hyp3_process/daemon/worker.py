@@ -33,7 +33,7 @@ class HyP3Worker(Process):
 
     def run(self):
         self._set_status(WorkerStatus.BUSY)
-        log.info("WORKER: Processed job {}".format(self.job))
+        log.info("WORKER: Processed job %s", self.job)
         try:
             output = self.handler(
                 self.job.data,
