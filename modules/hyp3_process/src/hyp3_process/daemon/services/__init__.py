@@ -55,7 +55,7 @@ class SQSService(object):
         )
 
     def get_next_message(self):
-        log.info('checking queue for message')
+        log.debug('checking queue for message')
         messages = self.sqs_queue.receive_messages(
             MaxNumberOfMessages=1,
         )
@@ -76,7 +76,7 @@ class SQSService(object):
 
             return SQSJob(message)
         except BadMessageException as e:
-            log.debug(
+            log.error(
                 "Failed to recieve message due to the following error:\n\t%s",
                 str(e)
             )

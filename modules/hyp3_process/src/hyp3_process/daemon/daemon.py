@@ -153,7 +153,7 @@ class HyP3Daemon(object):
         if not new_job:
             return
 
-        log.debug("Staring new job %s", new_job)
+        log.info("Staring new job %s", new_job)
         self._process_job(new_job)
 
     def _poll_worker_status(self):
@@ -188,7 +188,8 @@ class HyP3Daemon(object):
         self.worker.join()
 
     def _finish_job(self, job: SQSJob):
-        log.debug("Worker finished, deleting job %s from SQS", job)
+        log.info("Worker finished")
+        log.debug("Deleting job %s from SQS", job)
         job.delete()
 
         log.debug("Sending SNS notification")
@@ -212,6 +213,7 @@ class HyP3Daemon(object):
         return time_since_last_job >= timeout
 
     def _worker_failed(self):
+        log.info("Worker failed")
         self._join_worker()
 
         job = self.worker.job
@@ -233,6 +235,11 @@ class HyP3Daemon(object):
             browse_url='',
             download_url='',
         )
+        if self.worker.error:
+            email_event.additional_info += [{
+                "name": "Reason",
+                "value": str(self.worker.error)
+            }]
 
         self.sns_topic.push(email_event)
 

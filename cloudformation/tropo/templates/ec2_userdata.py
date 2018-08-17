@@ -49,6 +49,7 @@ def get_hyp3_daemon_install_script():
         popd
 
         sudo systemctl daemon-reload
+        echo "-Xmx32G" > /usr/local/snap/bin/gpt.vmoptions
         """).strip()
 
 

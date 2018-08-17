@@ -3,9 +3,14 @@
 # Created: June 22, 2018
 
 # The worker process which runs science scripts
+
+import traceback
 from enum import Enum
 from multiprocessing import Process
-import traceback
+
+from .logging import getLogger
+
+log = getLogger(__name__)
 
 
 class WorkerStatus(Enum):
@@ -25,10 +30,11 @@ class HyP3Worker(Process):
 
         self.earthdata_creds = creds
         self.products_bucket = bucket
+        self.error = None
 
     def run(self):
         self._set_status(WorkerStatus.BUSY)
-        print("WORKER: Processed job {}".format(self.job))
+        log.info("WORKER: Processed job {}".format(self.job))
         try:
             output = self.handler(
                 self.job.data,
@@ -40,7 +46,8 @@ class HyP3Worker(Process):
 
             self._set_status(WorkerStatus.DONE)
         except Exception as e:
-            print("Excepion caught in Worker")
+            log.error("Excepion caught in Worker")
+            self.error = e
             traceback.print_exc()
             self._set_status(WorkerStatus.FAILED)
         finally:
