@@ -204,10 +204,10 @@ class HyP3Daemon(object):
         self.sns_topic.push(email_event)
 
     def _reset_worker(self):
+        self.worker_conn.close()
         self.worker = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
-        self.worker_conn.close()
 
     def _reached_max_idle_time(self):
         if self.previous_worker_status == WorkerStatus.BUSY:
