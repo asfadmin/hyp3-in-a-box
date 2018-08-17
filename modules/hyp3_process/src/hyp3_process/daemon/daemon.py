@@ -161,6 +161,13 @@ class HyP3Daemon(object):
             self.previous_worker_status = self.worker_conn.recv()
         return self.previous_worker_status
 
+    def _poll_until(self, some_type):
+        val = None
+        while not isinstance(val, some_type):
+            val = self.worker_conn.recv()
+
+        return val
+
     def _process_job(self, job: SQSJob):
         if self.worker:
             raise Exception("Worker already processing")
@@ -191,7 +198,7 @@ class HyP3Daemon(object):
 
         # Get the updated job object which has outputs set
         if self.worker_conn.poll():
-            job = self.worker_conn.recv()
+            job = self._poll_until(SQSJob)
 
         log.info("Worker finished")
         log.debug("Deleting job %s from SQS", job)
@@ -242,7 +249,7 @@ class HyP3Daemon(object):
             download_url='',
         )
         if self.worker_conn.poll():
-            error = self.worker_conn.recv()
+            error = self._poll_until(Exception)
             email_event.additional_info += [{
                 "name": "Reason",
                 "value": str(error)
