@@ -46,7 +46,7 @@ class HyP3Worker(Process):
             self._set_status(WorkerStatus.DONE)
             self.conn.send(self.job)
         except Exception as e:
-            log.error("Excepion caught in Worker")
+            log.error("Exception caught in Worker")
             traceback.print_exc()
             self._set_status(WorkerStatus.FAILED)
             self.conn.send(e)
