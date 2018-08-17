@@ -14,7 +14,7 @@ def getLogger(name):
 
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.DEBUG)
-    file_handler = logging.FileHandler("debug.log")
+    file_handler = logging.FileHandler("/var/log/hyp3.log")
     file_handler.setLevel(logging.DEBUG)
 
     logger.addHandler(console_handler)
