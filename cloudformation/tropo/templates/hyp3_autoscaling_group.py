@@ -48,12 +48,10 @@ Resources
 
 from awacs.autoscaling import TerminateInstanceInAutoScalingGroup
 from awacs.aws import Allow, Policy, Statement
-from awacs.s3 import PutObject
+from awacs.s3 import GetObject, PutObject
 from awacs.sns import Publish
 from awacs.sqs import DeleteMessage, GetQueueUrl, ReceiveMessage
 from awacs.ssm import GetParameter
-from template import t
-from tropo_env import environment
 from troposphere import FindInMap, GetAtt, Join, Parameter, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
@@ -67,6 +65,9 @@ from troposphere.ec2 import SecurityGroup, SecurityGroupRule
 from troposphere.iam import InstanceProfile
 from troposphere.iam import Policy as IAMPolicy
 from troposphere.iam import PolicyType, Role
+
+from template import t
+from tropo_env import environment
 
 from .ec2_userdata import user_data
 from .hyp3_keypairname_param import keyname
@@ -136,13 +137,16 @@ security_group = t.add_resource(SecurityGroup(
     ]
 ))
 
-products_put_object = IAMPolicy(
+products_bucket_access = IAMPolicy(
     PolicyName="ProductsPutObject",
     PolicyDocument=Policy(
         Statement=[
             Statement(
                 Effect=Allow,
-                Action=[PutObject],
+                Action=[
+                    GetObject,
+                    PutObject
+                ],
                 Resource=[
                     Sub(
                         "${Arn}/*",
@@ -211,7 +215,7 @@ role = t.add_resource(Role(
     ),
     Path="/",
     Policies=[
-        products_put_object,
+        products_bucket_access,
         poll_messages,
         publish_notifications,
         get_parameters
