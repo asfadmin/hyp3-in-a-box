@@ -81,7 +81,11 @@ def make_email_context(
 def send_email_notification(user: User, context) -> None:
     print("rendering email")
 
-    subject = "New data available"
+    status = get_additional_info_field(context, "Status")
+    subject = "{}{} new data available".format(
+        "({})".format(status) if status is not None else "",
+        get_additional_info_field(context, "Subscripton")
+    )
     address = user.email
 
     message = Email().render(**context)
@@ -92,3 +96,10 @@ def send_email_notification(user: User, context) -> None:
         subject,
         message
     )
+
+
+def get_additional_info_field(context, key):
+    for entry in context['additional_info']:
+        if entry['name'] == key:
+            return entry['value']
+    return None

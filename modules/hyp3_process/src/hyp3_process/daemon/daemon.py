@@ -235,10 +235,11 @@ class HyP3Daemon(object):
             browse_url='',
             download_url='',
         )
-        if self.worker.error:
+        if self.worker_conn.poll():
+            error = self.worker_conn.recv()
             email_event.additional_info += [{
                 "name": "Reason",
-                "value": str(self.worker.error)
+                "value": str(error)
             }]
 
         self.sns_topic.push(email_event)

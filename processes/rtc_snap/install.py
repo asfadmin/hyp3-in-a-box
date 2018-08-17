@@ -4,7 +4,7 @@ import sys
 from shutil import copyfile
 
 requirements = [
-    ('src/', 'hyp3-lib', 'test'),
+    ('src/', 'hyp3-lib', 'prod'),
 ]
 
 
