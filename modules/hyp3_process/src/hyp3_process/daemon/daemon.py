@@ -198,7 +198,7 @@ class HyP3Daemon(object):
 
         # Get the updated job object which has outputs set
         if self.worker_conn.poll():
-            job = self._poll_until(SQSJob)
+            job.output = self._poll_until(dict)
 
         log.info("Worker finished")
         log.debug("Deleting job %s from SQS", job)
@@ -256,7 +256,6 @@ class HyP3Daemon(object):
                     "value": str(error)
                 }]
             )
-
 
         self.sns_topic.push(email_event)
 
