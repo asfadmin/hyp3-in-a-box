@@ -16,7 +16,7 @@ def hyp3_rtc_snap(clone_token):
     clone(
         'asfadmin',
         snap_repo,
-        'master',
+        'test',
         directory=build_dir,
         access_token=clone_token
     )
