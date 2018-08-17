@@ -54,7 +54,13 @@ def test_daemon_main_job_finished(_1, sns_mock, config, handler):
     worker_conn_mock = mock.Mock()
     daemon.worker_conn = worker_conn_mock
     worker_conn_mock.poll.return_value = True
-    worker_conn_mock.recv.side_effect = [WorkerStatus.DONE, worker_mock.job]
+    worker_conn_mock.recv.side_effect = [
+        WorkerStatus.DONE,
+        {
+            "browse_url": "browse_url",
+            "product_url": "product_url"
+        }
+    ]
 
     daemon.main()
 
