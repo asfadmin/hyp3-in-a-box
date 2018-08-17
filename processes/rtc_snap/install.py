@@ -4,7 +4,7 @@ import sys
 from shutil import copyfile
 
 requirements = [
-    ('src/', 'hyp3-lib', 'test'),
+    ('src/', 'hyp3-lib', 'prod'),
 ]
 
 
@@ -16,7 +16,7 @@ def hyp3_rtc_snap(clone_token):
     clone(
         'asfadmin',
         snap_repo,
-        'test',
+        'master',
         directory=build_dir,
         access_token=clone_token
     )
