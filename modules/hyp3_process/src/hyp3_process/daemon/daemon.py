@@ -179,15 +179,20 @@ class HyP3Daemon(object):
 
     def _worker_done(self):
         self._join_worker()
-        self._finish_job(self.worker.job)
+        self._finish_job()
         self._reset_worker()
 
     def _join_worker(self):
         self.last_active_time = time.time()
-        self.worker_conn.close()
         self.worker.join()
 
-    def _finish_job(self, job: SQSJob):
+    def _finish_job(self):
+        job = self.worker.job
+
+        # Get the updated job object which has outputs set
+        if self.worker_conn.poll():
+            job = self.worker_conn.recv()
+
         log.info("Worker finished")
         log.debug("Deleting job %s from SQS", job)
         job.delete()
@@ -202,6 +207,7 @@ class HyP3Daemon(object):
         self.worker = None
         self.worker_conn = None
         self.previous_worker_status = WorkerStatus.NO_STATUS
+        self.worker_conn.close()
 
     def _reached_max_idle_time(self):
         if self.previous_worker_status == WorkerStatus.BUSY:
