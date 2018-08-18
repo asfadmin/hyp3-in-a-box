@@ -15,11 +15,11 @@ stored in SSM Parameter Store and read by the instance on startup. The names of
 these parameters are known ahead of time except for the stack name prefix,
 which is supplied by the user data.
 
-For the purposes of development, the :ref:`userdata_helper` will checkout the latest
-orchestration code from the hyp3-in-a-box dev branch before starting the hyp3
-daemon. This makes testing changes a lot easier because it means no new AMI is
-required, and no manual copying of files is needed. This "development mode" can
-be enabled by setting the ``clone_in_userdata`` environment variable to
+For the purposes of development, the :ref:`userdata_helper` will checkout the
+latest orchestration code from the hyp3-in-a-box dev branch before starting the
+hyp3 daemon. This makes testing changes a lot easier because it means no new AMI
+is required, and no manual copying of files is needed. This "development mode"
+can be enabled by setting the ``clone_in_userdata`` environment variable to
 ``True`` when generating the CloudFormation template.
 
 Requires
@@ -40,6 +40,7 @@ Resources
 * **IAM Policies:**
 
   * Instance write permission on products bucket
+  * Instance read permission on products bucket for generating presigned urls
   * Instance recieve and delete permissions on start events queue
   * Instance publish permission on finished events topic
   * Instance terminate permission on autoscaling group
