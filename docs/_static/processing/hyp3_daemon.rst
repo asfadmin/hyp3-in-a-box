@@ -7,3 +7,4 @@ hyp3_daemon.py
    :show-inheritance:
    :members:
    :special-members:
+   :exclude-members: __weakref__

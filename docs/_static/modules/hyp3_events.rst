@@ -11,4 +11,4 @@ Module: Hyp3 Events
    :show-inheritance:
    :members:
    :special-members:
-
+   :exclude-members: __weakref__
