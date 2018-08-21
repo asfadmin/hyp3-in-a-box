@@ -25,9 +25,7 @@ Resources
 
 """
 
-from template import t
-from tropo_env import environment
-from troposphere import FindInMap, GetAtt, Join, Output, Ref, Sub
+from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref, Sub
 from troposphere.elasticbeanstalk import (
     Application,
     ApplicationVersion,
@@ -37,6 +35,9 @@ from troposphere.elasticbeanstalk import (
     SourceBundle
 )
 from troposphere.iam import InstanceProfile, Role
+
+from template import t
+from tropo_env import environment
 
 from .hyp3_db_params import db_name, db_pass, db_user
 from .hyp3_keypairname_param import keyname
@@ -50,6 +51,14 @@ source_zip = "hyp3_api.zip"
 print('  adding api_eb')
 
 t.add_mapping("Region2Principal", get_map('region2principal'))
+
+solution_stack_name = t.add_parameter(Parameter(
+    "SolutionStackName",
+    Description="ElasticBeanstalk configuration to run the API in. This should \
+    be set to the latest version of the Python 3.6 container.",
+    Type="String",
+    Default="64bit Amazon Linux 2018.03 v2.7.3 running Python 3.6"
+))
 
 role = t.add_resource(Role(
     "HyP3ApiWebServerRole",
@@ -93,7 +102,7 @@ config_template = t.add_resource(ConfigurationTemplate(
     DependsOn=[hyp3_vpc, hyp3_db],
     ApplicationName=Ref(app),
     Description="",
-    SolutionStackName=environment.eb_solution_stack_name,
+    SolutionStackName=Ref(solution_stack_name),
     OptionSettings=[
         OptionSettings(
             Namespace="aws:autoscaling:launchconfiguration",

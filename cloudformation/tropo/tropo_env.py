@@ -8,9 +8,6 @@ class Environment:
     def __init__(self):
         self.source_bucket = "asf-hyp3-in-a-box-source"
 
-        self.eb_solution_stack_name = \
-            "64bit Amazon Linux 2018.03 v2.7.1 running Python 3.6"
-
         process_cfg = load_process_cfg()
         self.default_processes_key = process_cfg['default_processes_key']
 
