@@ -65,7 +65,7 @@ default_processes_s3_read = Policy(
             ],
             "Resource": 'arn:aws:s3:::{bucket}/{obj}'.format(
                 bucket=environment.source_bucket,
-                obj=environment.default_processes_key
+                obj=environment.get_default_processes_key()
             ),
         }]}
 )
