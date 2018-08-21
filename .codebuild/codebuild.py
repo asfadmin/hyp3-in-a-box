@@ -60,9 +60,7 @@ def main(step=None):
         return step_fn()
 
     except subprocess.CalledProcessError as e:
-        desc = step
-        if "failure" in BUILD_STEP_MESSAGES is not None:
-            desc = BUILD_STEP_MESSAGES["failure"]
+        desc = BUILD_STEP_MESSAGES.get("failure", step)
 
         github.set_github_ci_status("failure", description=desc)
         save_config("BUILD_STATUS", e.returncode)
