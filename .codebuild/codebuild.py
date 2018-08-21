@@ -152,7 +152,7 @@ def build():
     template_path = 'build/template.json'
     subprocess.check_call([
         "python3", "cloudformation/tropo/create_stack.py",
-        template_path, "--maturity", MATURITY
+        template_path, "--maturity", MATURITY, "--source_bucket", S3_SOURCE_BUCKET
     ] + version_options
     )
     subprocess.check_call(["make", "clean", "html"], cwd="docs")
