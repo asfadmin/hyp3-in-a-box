@@ -54,10 +54,10 @@ def main(step=None):
 
         save_config("BUILD_STATUS", 0)
 
-        step = step_function_table.get(step, lambda: None)
-        print(f'Starting {step.__name__}:')
+        step_fn = step_function_table.get(step, lambda: None)
+        print(f'Starting {step_fn.__name__}:')
 
-        return step()
+        return step_fn()
 
     except subprocess.CalledProcessError as e:
         desc = step
