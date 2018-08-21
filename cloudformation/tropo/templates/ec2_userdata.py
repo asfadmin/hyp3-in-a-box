@@ -12,7 +12,7 @@ from troposphere import Base64, Ref, Sub
 
 def make_userdata_from_environment():
     """ Generate userdata, and optionally insert the development mode install
-    commands if ``--clone_in_userdata`` was set.
+    commands if ``--maturity`` is not ``prod`` or ``stage``.
     """
     return dedent("""
         #! /bin/bash
@@ -22,7 +22,7 @@ def make_userdata_from_environment():
 
         sudo systemctl restart hyp3
         """).strip().format(
-        PullCode=get_hyp3_daemon_install_script() if environment.clone_in_userdata
+        PullCode=get_hyp3_daemon_install_script() if environment.maturity not in ["prod", "stage"]
         else ""
     )
 

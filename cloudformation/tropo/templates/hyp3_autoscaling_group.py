@@ -19,8 +19,8 @@ For the purposes of development, the :ref:`userdata_helper` will checkout the la
 orchestration code from the hyp3-in-a-box dev branch before starting the hyp3
 daemon. This makes testing changes a lot easier because it means no new AMI is
 required, and no manual copying of files is needed. This "development mode" can
-be enabled by setting the ``clone_in_userdata`` environment variable to
-``True`` when generating the CloudFormation template.
+be enabled by setting the ``maturity`` environment variable to anything other
+than ``prod`` or ``stage`` when generating the CloudFormation template.
 
 Requires
 ~~~~~~~~
@@ -191,7 +191,7 @@ publish_notifications = IAMPolicy(
 get_parameter_resources = [
     Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/*")
 ]
-if environment.clone_in_userdata:
+if environment.maturity not in ["prod", "stage"]:
     get_parameter_resources.append(
         Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN")
     )

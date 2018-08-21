@@ -22,7 +22,6 @@ class Environment:
 
         self.use_name_parameters = True
         self.should_create_db = True
-        self.clone_in_userdata = False
 
     def get_variables(self):
         return [
