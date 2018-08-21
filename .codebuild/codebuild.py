@@ -21,6 +21,9 @@ import boto3
 
 import github_status as gs
 
+# Use SemVer!
+RELEASE_VERSION = "0.2.0"
+
 TEMPLATE_CONFIG_BUCKET = "hyp3-in-a-box"
 TEMPLATE_NAME = 'hyp3-in-a-box_US-WEST-2.json'
 
@@ -147,13 +150,17 @@ def build():
         print(f'adding object version {v}')
         version_options += ["--{}_version".format(v[0]), v[1]]
 
+    release_options = []
+    if MATURITY == "prod":
+        release_options += ["--release", RELEASE_VERSION]
+
     build_hyp3_api()
 
     template_path = 'build/template.json'
     subprocess.check_call([
         "python3", "cloudformation/tropo/create_stack.py",
         template_path, "--maturity", MATURITY, "--source_bucket", S3_SOURCE_BUCKET
-    ] + version_options
+    ] + version_options + release_options
     )
     subprocess.check_call(["make", "clean", "html"], cwd="docs")
 
