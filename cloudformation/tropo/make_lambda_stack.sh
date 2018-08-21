@@ -10,7 +10,7 @@ python create_stack.py \
     --should_create_db false \
     --use_name_parameters false \
     --maturity unittest \
-    --lambda_bucket hyp3-in-a-box-lambdas \
+    --source_bucket hyp3-in-a-box-lambdas \
     $TEMPLATE
 
 if [ "$2" = "create" ]

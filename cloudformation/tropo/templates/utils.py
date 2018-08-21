@@ -78,7 +78,7 @@ def make_lambda_function(*, name, lambda_params=None, role):
             FunctionName=name
         ),
         Code=make_lambda_code(
-            S3Bucket=environment.lambda_bucket,
+            S3Bucket=environment.source_bucket,
             S3Key=s3_key,
             S3ObjectVersion=getattr(environment, "{}_version".format(name))
         ),

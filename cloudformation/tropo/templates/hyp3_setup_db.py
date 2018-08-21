@@ -64,7 +64,7 @@ default_processes_s3_read = Policy(
                 "s3:HeadObject"
             ],
             "Resource": 'arn:aws:s3:::{bucket}/{obj}'.format(
-                bucket=environment.hyp3_data_bucket,
+                bucket=environment.source_bucket,
                 obj=environment.default_processes_key
             ),
         }]}
@@ -160,7 +160,7 @@ setup_db = t.add_resource(utils.make_lambda_function(
                 "Hyp3AdminUsername": Ref(admin_username),
                 "Hyp3AdminEmail": Ref(admin_email),
 
-                "DefaultProcessesBucket": environment.hyp3_data_bucket,
+                "DefaultProcessesBucket": environment.source_bucket,
                 "DefaultProcessesKey": environment.default_processes_key,
 
                 "Hyp3StackName": Ref("AWS::StackName"),
