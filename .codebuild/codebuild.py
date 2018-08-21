@@ -19,7 +19,7 @@ from defusedxml import ElementTree
 
 import boto3
 
-import github_status as gs
+import github
 
 # Use SemVer!
 RELEASE_VERSION = "0.2.0"
@@ -62,17 +62,17 @@ def main(step=None):
         if "failure" in BUILD_STEP_MESSAGES is not None:
             desc = BUILD_STEP_MESSAGES["failure"]
 
-        gs.set_github_ci_status("failure", description=desc)
+        github.set_github_ci_status("failure", description=desc)
         save_config("BUILD_STATUS", e.returncode)
         raise
     except Exception:
-        gs.set_github_ci_status("error")
+        github.set_github_ci_status("error")
         save_config("BUILD_STATUS", -1337)
         raise
 
 
 def install():
-    gs.update_github_status("pending", description="Build in progress")
+    github.update_github_status("pending", description="Build in progress")
     install_all_requirements_txts(".")
     os.chmod("upload.sh", stat.S_IEXEC)
 
@@ -127,7 +127,7 @@ def check_coverage(cov_xml_path):
         coverage_percent, url_percent_sign)
     color = get_badge_color(coverage)
 
-    gs.write_status_to_s3(subject, status, color)
+    github.write_status_to_s3(subject, status, color)
 
 
 def get_badge_color(coverage):
@@ -165,6 +165,8 @@ def build():
     subprocess.check_call(["make", "clean", "html"], cwd="docs")
 
     upload_template(template_path)
+    if MATURITY == "prod":
+        github.create_release(RELEASE_VERSION)
 
 
 def upload_template(file_path):
@@ -259,7 +261,7 @@ def post_build():
         "s3://asf-docs/hyp3-in-a-box",
         "--recursive", "--acl", "public-read"
     ])
-    gs.set_github_ci_status("success", description=get_config(
+    github.set_github_ci_status("success", description=get_config(
         "TEST_RESULT_SUMMARY", "Build completed"))
 
 
