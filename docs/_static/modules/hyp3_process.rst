@@ -11,6 +11,7 @@ Module: HyP3 Process
    :show-inheritance:
    :members:
    :special-members:
+   :exclude-members: __weakref__
 
 Sub-Module: Handler
 -------------------
@@ -19,6 +20,7 @@ Sub-Module: Handler
    :show-inheritance:
    :members:
    :special-members:
+   :exclude-members: __weakref__
 
 Sub-Module: Daemon
 ------------------
@@ -27,4 +29,4 @@ Sub-Module: Daemon
    :show-inheritance:
    :members:
    :special-members:
-
+   :exclude-members: __weakref__

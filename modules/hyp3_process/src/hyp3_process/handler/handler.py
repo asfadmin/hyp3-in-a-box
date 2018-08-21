@@ -67,7 +67,7 @@ def make_hyp3_processing_function_from(
             2. Runs handler function
             3. Packages any outputs
             4. Uploads outputs to s3
-            5. Return urls for outputs
+            5. Return presigned urls for outputs
     """
     def hyp3_wrapper(
             job: StartEvent,

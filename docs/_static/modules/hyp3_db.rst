@@ -9,4 +9,4 @@ Module: Hyp3 DB
 .. automodule:: hyp3_db
    :members:
    :special-members:
-
+   :exclude-members: __weakref__
