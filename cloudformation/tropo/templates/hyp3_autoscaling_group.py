@@ -9,14 +9,14 @@ Queue.
 
 Processing instances are configured through the userdata. The CloudFormation
 adds the stack name to the userdata string, which sets the value as an
-environment variable before restarting the hyp3 daemon service. All other
+environment variable before restarting the HyP3 daemon service. All other
 general configuration variables (e.g. queue name, sns arn, products bucket) are
 stored in SSM Parameter Store and read by the instance on startup. The names of
 these parameters are known ahead of time except for the stack name prefix,
 which is supplied by the user data.
 
 For the purposes of development, the :ref:`userdata_helper` will checkout the latest
-orchestration code from the hyp3-in-a-box dev branch before starting the hyp3
+orchestration code from the hyp3-in-a-box dev branch before starting the HyP3
 daemon. This makes testing changes a lot easier because it means no new AMI is
 required, and no manual copying of files is needed. This "development mode" can
 be enabled by setting the ``maturity`` environment variable to anything other
@@ -33,7 +33,7 @@ Requires
 Resources
 ~~~~~~~~~
 
-* **Auto Scaling Group:** The cluster of hyp3 processing instances.
+* **Auto Scaling Group:** The cluster of HyP3 processing instances.
 * **Launch Configuration:** Instance definitions for the auto scaling group.
 * **Security Group:** Firewall rules for processing instances.
 * **Cloudwatch Alarm:** Created by the TargetTrackingScaling Policy.
