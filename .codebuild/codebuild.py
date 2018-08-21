@@ -21,11 +21,11 @@ import boto3
 
 import github_status as gs
 
-S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
-
 TEMPLATE_CONFIG_BUCKET = "hyp3-in-a-box"
 TEMPLATE_NAME = 'hyp3-in-a-box_US-WEST-2.json'
 
+
+S3_SOURCE_BUCKET = os.environ["S3_SOURCE_BUCKET"]
 MATURITY = os.environ["MATURITY"]
 GITHUB_ASFADMIN_CLONE_TOKEN = os.environ["GITHUB_HYP3_API_CLONE_TOKEN"]
 BUCKET_BASE_DIR = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
