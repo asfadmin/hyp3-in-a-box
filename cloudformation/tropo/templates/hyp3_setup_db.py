@@ -161,7 +161,7 @@ setup_db = t.add_resource(utils.make_lambda_function(
                 "Hyp3AdminEmail": Ref(admin_email),
 
                 "DefaultProcessesBucket": environment.source_bucket,
-                "DefaultProcessesKey": environment.default_processes_key,
+                "DefaultProcessesKey": environment.get_default_processes_key(),
 
                 "Hyp3StackName": Ref("AWS::StackName"),
 

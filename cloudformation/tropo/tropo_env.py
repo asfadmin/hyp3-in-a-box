@@ -22,6 +22,12 @@ class Environment:
         self.use_name_parameters = True
         self.should_create_db = True
 
+    def get_default_processes_key(self):
+        if not self.release:
+            return self.default_processes_key
+
+        return "releases/{}".format(self.default_processes_key)
+
     def get_variables(self):
         return [
             (k, get_var_type(v))
