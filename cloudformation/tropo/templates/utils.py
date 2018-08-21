@@ -65,10 +65,7 @@ def load_json_from(directory, name):
 
 def make_lambda_function(*, name, lambda_params=None, role):
     camel_case_name = get_camel_case(name)
-    s3_key = "{maturity}/{source_zip}".format(
-        maturity=environment.maturity,
-        source_zip="{}.zip".format(name)
-    )
+    s3_key = make_s3_key("{}.zip".format(name))
 
     lambda_func = Function(
         "{}Function".format(camel_case_name),
@@ -99,6 +96,14 @@ def get_camel_case(name):
         .title() \
 
     return remove_spacers(camel_case_version)
+
+
+def make_s3_key(key):
+    return "{directory}/{obj_key}".format(
+        directory="releases/{}".format(environment.release)
+        if environment.release else environment.maturity,
+        obj_key=key
+    )
 
 
 def remove_spacers(s):

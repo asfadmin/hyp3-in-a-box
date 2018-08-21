@@ -15,6 +15,7 @@ class Environment:
         self.default_processes_key = process_cfg['default_processes_key']
 
         self.maturity = "test"
+        self.release = None
 
         self.set_lambda_version_variables()
 
