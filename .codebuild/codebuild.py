@@ -25,7 +25,7 @@ import github
 RELEASE_VERSION = "0.2.0"
 
 TEMPLATE_CONFIG_BUCKET = "hyp3-in-a-box"
-TEMPLATE_NAME = 'hyp3-in-a-box_US-EAST-1.json'
+TEMPLATE_NAME = 'hyp3-in-a-box_US-EAST-1v{}.json'.format(RELEASE_VERSION)
 
 
 S3_SOURCE_BUCKET = os.environ["S3_SOURCE_BUCKET"]
@@ -149,7 +149,7 @@ def build():
             subprocess.check_output([
                 "aws", "s3api", "head-object", "--bucket",
                 "asf-hyp3-in-a-box-source-east", "--key",
-                "releases/{}/template.json".format(RELEASE_VERSION)
+                "releases/{}/{}".format(RELEASE_VERSION, TEMPLATE_NAME)
             ])
             raise Exception(
                 "Version {} already exists!".format(RELEASE_VERSION)
@@ -222,13 +222,14 @@ def get_latest_lambda_versions():
     versions = []
     s3 = boto3.resource("s3")
     bucket = s3.Bucket(S3_SOURCE_BUCKET)
+    prefix = "releases/{}".format(RELEASE_VERSION) if MATURITY == "prod" else MATURITY
     for lambda_zip in os.listdir("build/lambdas"):
         if ".zip" not in lambda_zip:
             continue
 
         latest_versions = bucket.object_versions \
             .filter(
-                Prefix="{}/{}".format(MATURITY, lambda_zip),
+                Prefix="{}/{}".format(prefix, lambda_zip),
                 MaxKeys=1
             ).limit(count=1)
 
@@ -277,6 +278,13 @@ def post_build():
         "s3://asf-docs/hyp3-in-a-box",
         "--recursive", "--acl", "public-read"
     ])
+    if MATURITY == "prod":
+        subprocess.check_call([
+            "aws", "s3", "cp",
+            "s3://{}/data/default-processes.json".format(S3_SOURCE_BUCKET),
+            "s3://{}/releases/{}/data/default-processes.json".format(
+                S3_SOURCE_BUCKET, RELEASE_VERSION)
+        ])
     github.set_github_ci_status("success", description=get_config(
         "TEST_RESULT_SUMMARY", "Build completed"))
 

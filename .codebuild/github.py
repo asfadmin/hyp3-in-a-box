@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 import requests
 
 GITHUB_API_ENDPOINT = "https://api.github.com"
-GITHUB_STATUS_CONTEXT = "continuous-integration/codebuild"
+GITHUB_STATUS_CONTEXT = "CodeBuild Unit Tests"
 GITHUB_REPOSITORY_NAME = "asfadmin/hyp3-in-a-box"
 S3_STATUS_BUCKET = "asf-docs/hyp3-in-a-box"
 
