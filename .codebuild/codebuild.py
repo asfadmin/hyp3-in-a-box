@@ -19,16 +19,21 @@ from defusedxml import ElementTree
 
 import boto3
 
-import github_status as gs
+import github
 
-S3_SOURCE_BUCKET = "asf-hyp3-in-a-box-source"
+# Use SemVer!
+RELEASE_VERSION = "0.2.0"
 
 TEMPLATE_CONFIG_BUCKET = "hyp3-in-a-box"
 TEMPLATE_NAME = 'hyp3-in-a-box_US-WEST-2.json'
 
+
+S3_SOURCE_BUCKET = os.environ["S3_SOURCE_BUCKET"]
 MATURITY = os.environ["MATURITY"]
 GITHUB_ASFADMIN_CLONE_TOKEN = os.environ["GITHUB_HYP3_API_CLONE_TOKEN"]
-BUCKET_BASE_DIR = os.path.join(S3_SOURCE_BUCKET, MATURITY + "/")
+BUCKET_BASE_DIR = os.path.join(
+    S3_SOURCE_BUCKET,
+    "releases/{}/".format(RELEASE_VERSION) if MATURITY == "prod" else MATURITY + "/")
 BUILD_STEP_MESSAGES = {}
 
 
@@ -49,27 +54,25 @@ def main(step=None):
 
         save_config("BUILD_STATUS", 0)
 
-        step = step_function_table.get(step, lambda: None)
-        print(f'Starting {step.__name__}:')
+        step_fn = step_function_table.get(step, lambda: None)
+        print(f'Starting {step_fn.__name__}:')
 
-        return step()
+        return step_fn()
 
     except subprocess.CalledProcessError as e:
-        desc = step
-        if "failure" in BUILD_STEP_MESSAGES is not None:
-            desc = BUILD_STEP_MESSAGES["failure"]
+        desc = BUILD_STEP_MESSAGES.get("failure", step)
 
-        gs.set_github_ci_status("failure", description=desc)
+        github.set_github_ci_status("failure", description=desc)
         save_config("BUILD_STATUS", e.returncode)
         raise
     except Exception:
-        gs.set_github_ci_status("error")
+        github.set_github_ci_status("error")
         save_config("BUILD_STATUS", -1337)
         raise
 
 
 def install():
-    gs.update_github_status("pending", description="Build in progress")
+    github.update_github_status("pending", description="Build in progress")
     install_all_requirements_txts(".")
     os.chmod("upload.sh", stat.S_IEXEC)
 
@@ -124,7 +127,7 @@ def check_coverage(cov_xml_path):
         coverage_percent, url_percent_sign)
     color = get_badge_color(coverage)
 
-    gs.write_status_to_s3(subject, status, color)
+    github.write_status_to_s3(subject, status, color)
 
 
 def get_badge_color(coverage):
@@ -139,6 +142,19 @@ def get_badge_color(coverage):
 
 
 def build():
+    release_options = []
+    if MATURITY == "prod":
+        release_options += ["--release", RELEASE_VERSION]
+        try:
+            subprocess.check_call([
+                "aws s3api head-object", "--bucket", "asf-hyp3-in-a-box-source-east",
+                "--key", "releases/{}/template.json".format(RELEASE_VERSION)])
+            raise Exception("Version {} already exists!".format(RELEASE_VERSION))
+        except subprocess.CalledProcessError as e:
+            if "404" not in e.output:
+                raise e
+            print("Current release was not found... good")
+
     os.makedirs("build/lambdas")
     object_versions = build_lambdas()
 
@@ -152,19 +168,23 @@ def build():
     template_path = 'build/template.json'
     subprocess.check_call([
         "python3", "cloudformation/tropo/create_stack.py",
-        template_path, "--maturity", MATURITY,
-        "--clone_in_userdata", "true"
-    ] + version_options
+        template_path, "--maturity", MATURITY, "--source_bucket", S3_SOURCE_BUCKET
+    ] + version_options + release_options
     )
     subprocess.check_call(["make", "clean", "html"], cwd="docs")
 
     upload_template(template_path)
+    if MATURITY == "prod":
+        github.create_release(RELEASE_VERSION)
 
 
 def upload_template(file_path):
     s3 = boto3.resource('s3')
 
-    key = str(pl.Path('template') / TEMPLATE_NAME)
+    key = "{}/{}".format(
+        "releases/{}".format(RELEASE_VERSION) if MATURITY == "prod" else "template",
+        TEMPLATE_NAME
+    )
     bucket = s3.Bucket(S3_SOURCE_BUCKET)
 
     with open(file_path, 'rb') as f:
@@ -253,7 +273,7 @@ def post_build():
         "s3://asf-docs/hyp3-in-a-box",
         "--recursive", "--acl", "public-read"
     ])
-    gs.set_github_ci_status("success", description=get_config(
+    github.set_github_ci_status("success", description=get_config(
         "TEST_RESULT_SUMMARY", "Build completed"))
 
 

@@ -71,3 +71,15 @@ def get_svg_status(subject, status, color):
     r = requests.get(url)
 
     return r.text
+
+
+def create_release(version):
+    url = urljoin(
+        GITHUB_API_ENDPOINT,
+        "repos/{}/releases".format(GITHUB_REPOSITORY_NAME)
+    )
+    requests.post(url, data={
+        "tag_name": version,
+        "target_commitish": "master",
+        "name": version
+    })
