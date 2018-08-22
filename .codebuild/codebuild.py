@@ -25,7 +25,7 @@ import github
 RELEASE_VERSION = "0.2.0"
 
 TEMPLATE_CONFIG_BUCKET = "hyp3-in-a-box"
-TEMPLATE_NAME = 'hyp3-in-a-box_US-EAST-1.json'
+TEMPLATE_NAME = 'hyp3-in-a-box_US-EAST-1v{}.json'.format(RELEASE_VERSION)
 
 
 S3_SOURCE_BUCKET = os.environ["S3_SOURCE_BUCKET"]
@@ -149,7 +149,7 @@ def build():
             subprocess.check_call([
                 "aws", "s3api", "head-object", "--bucket",
                 "asf-hyp3-in-a-box-source-east", "--key",
-                "releases/{}/template.json".format(RELEASE_VERSION)
+                "releases/{}/{}".format(RELEASE_VERSION, TEMPLATE_NAME)
             ])
             raise Exception(
                 "Version {} already exists!".format(RELEASE_VERSION)
