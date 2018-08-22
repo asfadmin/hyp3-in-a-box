@@ -1,6 +1,6 @@
 import collections
 
-from .hyp3_event import Hyp3Event
+from .hyp3_event import HyP3Event
 
 StartEventData = collections.namedtuple('StartEventData', [
     'granule',
@@ -12,6 +12,6 @@ StartEventData = collections.namedtuple('StartEventData', [
 ])
 
 
-class StartEvent(StartEventData, Hyp3Event):
+class StartEvent(StartEventData, HyP3Event):
     def to_dict(self):
         return self._asdict()

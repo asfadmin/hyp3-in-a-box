@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Hyp3 In A Box documentation build configuration file, created by
+# HyP3 In A Box documentation build configuration file, created by
 # sphinx-quickstart on Tue Jun  5 11:11:18 2018.
 #
 # This file is execfile()d with the current directory set to its
@@ -71,7 +71,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Hyp3 In A Box'
+project = 'HyP3 In A Box'
 globals()['copyright'] = '2018, William Horn, Rohan Weeden'
 author = 'William Horn, Rohan Weeden'
 
@@ -154,7 +154,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Hyp3InABoxdoc'
+htmlhelp_basename = 'HyP3InABoxdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -181,7 +181,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Hyp3InABox.tex', 'Hyp3 In A Box Documentation',
+    (master_doc, 'HyP3InABox.tex', 'HyP3 In A Box Documentation',
      'William Horn, Rohan Weeden', 'manual'),
 ]
 
@@ -191,7 +191,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'hyp3inabox', 'Hyp3 In A Box Documentation',
+    (master_doc, 'hyp3inabox', 'HyP3 In A Box Documentation',
      [author], 1)
 ]
 
@@ -202,7 +202,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Hyp3InABox', 'Hyp3 In A Box Documentation',
-     author, 'Hyp3InABox', 'One line description of project.',
+    (master_doc, 'HyP3InABox', 'HyP3 In A Box Documentation',
+     author, 'HyP3InABox', 'One line description of project.',
      'Miscellaneous'),
 ]

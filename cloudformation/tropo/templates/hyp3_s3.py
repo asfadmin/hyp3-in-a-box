@@ -24,7 +24,7 @@ products_bucket = t.add_resource(
 )
 
 ssm_products_bucket_name = t.add_resource(SSMParameter(
-    "Hyp3SSMParameterProductsBucket",
+    "HyP3SSMParameterProductsBucket",
     Name=Sub(
         "/${StackName}/ProductsS3Bucket",
         StackName=Ref("AWS::StackName")

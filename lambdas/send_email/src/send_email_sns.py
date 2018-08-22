@@ -1,10 +1,10 @@
 import json
 
 import hyp3_events
-from hyp3_events import Hyp3Event
+from hyp3_events import HyP3Event
 
 
-def get_hyp3_event_from(aws_event) -> Hyp3Event:
+def get_hyp3_event_from(aws_event) -> HyP3Event:
     sns_record = aws_event['Records'][0]['Sns']
     event_json = sns_record['Message']
     event_type = sns_record['Subject']

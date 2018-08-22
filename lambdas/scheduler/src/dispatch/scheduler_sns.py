@@ -1,15 +1,15 @@
 import boto3
-from hyp3_events import Hyp3Event
+from hyp3_events import HyP3Event
 
 from scheduler_env import environment
 
 sns = boto3.client('sns')
 
 
-def push_event(event: Hyp3Event) -> None:
+def push_event(event: HyP3Event) -> None:
     """ Send sns messages for an event
 
-        :param Hyp3Event event: Hyp3 event to dispatch
+        :param HyP3Event event: HyP3 event to dispatch
     """
     subject, json_payload = event.event_type, event.to_json()
 

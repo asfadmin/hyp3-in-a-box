@@ -29,7 +29,7 @@ earthdata_password = t.add_parameter(Parameter(
 
 
 ssm_earthdata_creds = t.add_resource(SSMParameter(
-    "Hyp3SSMParameterEarthdataCreds",
+    "HyP3SSMParameterEarthdataCreds",
     Name=Sub(
         "/${StackName}/EarthdataCredentials",
         StackName=Ref("AWS::StackName")

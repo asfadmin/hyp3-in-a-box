@@ -7,7 +7,7 @@
 
 import collections
 
-from .hyp3_event import Hyp3Event
+from .hyp3_event import HyP3Event
 
 EmailData = collections.namedtuple('EmailData', [
     'user_id',
@@ -19,7 +19,7 @@ EmailData = collections.namedtuple('EmailData', [
 ])
 
 
-class EmailEvent(EmailData, Hyp3Event):
+class EmailEvent(EmailData, HyP3Event):
     """
         * **user_id** - User id to send email to
         * **sub_id** - Subscription which

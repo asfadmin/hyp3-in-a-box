@@ -22,7 +22,7 @@ def connect_using_environment_variables(db='hyp3db', commit_on_close=False):
 
 @contextlib.contextmanager
 def connect(host, user, password, db='hyp3db', commit_on_close=False):
-    db = Hyp3DB(host, user, password, db)
+    db = HyP3DB(host, user, password, db)
 
     try:
         yield db
@@ -35,7 +35,7 @@ def connect(host, user, password, db='hyp3db', commit_on_close=False):
             db.close()
 
 
-class Hyp3DB:
+class HyP3DB:
     """ Handles a connection to the hyp3 database."""
     valid_job_status = [
         'INVALID',

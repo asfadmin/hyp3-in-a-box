@@ -1,5 +1,5 @@
 
-Module: Hyp3 DB
+Module: HyP3 DB
 ===============
 
 .. image:: ../images/python.png

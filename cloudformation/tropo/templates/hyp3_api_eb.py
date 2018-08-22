@@ -78,7 +78,7 @@ instance_profile = t.add_resource(InstanceProfile(
 ))
 
 app = t.add_resource(Application(
-    "Hyp3Api",
+    "HyP3Api",
     ApplicationName=Sub(
         "${StackName}-hyp3-api",
         StackName=Ref('AWS::StackName')
@@ -88,7 +88,7 @@ app = t.add_resource(Application(
 ))
 
 app_version = t.add_resource(ApplicationVersion(
-    "Hyp3ApiTestVersion",
+    "HyP3ApiTestVersion",
     Description="Version 1.0",
     ApplicationName=Ref(app),
     SourceBundle=SourceBundle(
@@ -98,7 +98,7 @@ app_version = t.add_resource(ApplicationVersion(
 ))
 
 config_template = t.add_resource(ConfigurationTemplate(
-    "Hyp3ApiConfigurationTemplate",
+    "HyP3ApiConfigurationTemplate",
     DependsOn=[hyp3_vpc, hyp3_db],
     ApplicationName=Ref(app),
     Description="",
@@ -183,7 +183,7 @@ config_template = t.add_resource(ConfigurationTemplate(
 ))
 
 eb_environment = t.add_resource(Environment(
-    "Hyp3ApiEnvironment",
+    "HyP3ApiEnvironment",
     EnvironmentName=Sub(
         "${StackName}-${Maturity}",
         StackName=Ref('AWS::StackName'),

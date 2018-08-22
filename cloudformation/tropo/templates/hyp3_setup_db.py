@@ -103,7 +103,7 @@ role = t.add_resource(Role(
 ))
 
 admin_email = t.add_parameter(Parameter(
-    "Hyp3AdminEmail",
+    "HyP3AdminEmail",
     Description=(
         "Email for the admin hyp3 user. "
         "This is where emails will be sent to."
@@ -113,7 +113,7 @@ admin_email = t.add_parameter(Parameter(
 ))
 
 admin_username = t.add_parameter(Parameter(
-    "Hyp3AdminUsername",
+    "HyP3AdminUsername",
     Description="Username for the admin hyp3 user",
     Type="String",
     AllowedPattern="[a-zA-Z][a-zA-Z0-9]*"
@@ -121,7 +121,7 @@ admin_username = t.add_parameter(Parameter(
 
 ssm_hyp3_api_username_param_name = "HyP3ApiUsername"
 ssm_hyp3_api_username = t.add_resource(SSMParameter(
-    "Hyp3SSMParameterHyP3ApiUsername",
+    "HyP3SSMParameterHyP3ApiUsername",
     Name=Sub(
         "/${{StackName}}/{}".format(ssm_hyp3_api_username_param_name),
         StackName=Ref("AWS::StackName")
@@ -132,7 +132,7 @@ ssm_hyp3_api_username = t.add_resource(SSMParameter(
 
 ssm_hyp3_api_key_param_name = "HyP3ApiKey"
 ssm_hyp3_api_key = t.add_resource(SSMParameter(
-    "Hyp3SSMParameterHyP3ApiKey",
+    "HyP3SSMParameterHyP3ApiKey",
     Name=Sub(
         "/${{StackName}}/{}".format(ssm_hyp3_api_key_param_name),
         StackName=Ref("AWS::StackName")
@@ -148,25 +148,25 @@ setup_db = t.add_resource(utils.make_lambda_function(
         "KmsKeyArn": GetAtt(kms_key, "Arn"),
         "Environment": Environment(
             Variables={
-                "Hyp3DBHost": utils.get_host_address(),
-                "Hyp3DBName": Ref(db_name),
+                "HyP3DBHost": utils.get_host_address(),
+                "HyP3DBName": Ref(db_name),
 
-                "Hyp3DBRootUser": Ref(db_super_user),
-                "Hyp3DBRootPass": Ref(db_super_user_pass),
+                "HyP3DBRootUser": Ref(db_super_user),
+                "HyP3DBRootPass": Ref(db_super_user_pass),
 
-                "Hyp3DBUser": Ref(db_user),
-                "Hyp3DBPass": Ref(db_pass),
+                "HyP3DBUser": Ref(db_user),
+                "HyP3DBPass": Ref(db_pass),
 
-                "Hyp3AdminUsername": Ref(admin_username),
-                "Hyp3AdminEmail": Ref(admin_email),
+                "HyP3AdminUsername": Ref(admin_username),
+                "HyP3AdminEmail": Ref(admin_email),
 
                 "DefaultProcessesBucket": environment.source_bucket,
                 "DefaultProcessesKey": environment.get_default_processes_key(),
 
-                "Hyp3StackName": Ref("AWS::StackName"),
+                "HyP3StackName": Ref("AWS::StackName"),
 
-                "ParamNameHyp3Username": ssm_hyp3_api_username_param_name,
-                "ParamNameHyp3ApiKey": ssm_hyp3_api_key_param_name
+                "ParamNameHyP3Username": ssm_hyp3_api_username_param_name,
+                "ParamNameHyP3ApiKey": ssm_hyp3_api_key_param_name
             }
         ),
         "Timeout": 60
@@ -182,13 +182,13 @@ db_setup = t.add_resource(CustomResource(
 ))
 
 t.add_output(Output(
-    "Hyp3Username",
+    "HyP3Username",
     Description="HyP3 username",
-    Value=GetAtt(db_setup, 'Hyp3Username')
+    Value=GetAtt(db_setup, 'HyP3Username')
 ))
 
 t.add_output(Output(
-    "Hyp3ApiKey",
+    "HyP3ApiKey",
     Description="Api key for hyp3 access",
-    Value=GetAtt(db_setup, 'Hyp3ApiKey')
+    Value=GetAtt(db_setup, 'HyP3ApiKey')
 ))

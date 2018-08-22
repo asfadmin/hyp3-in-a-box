@@ -1,6 +1,6 @@
 import collections
 
-from .hyp3_event import Hyp3Event
+from .hyp3_event import HyP3Event
 
 
 NewGranuleData = collections.namedtuple('NewGranuleData', [
@@ -11,7 +11,7 @@ NewGranuleData = collections.namedtuple('NewGranuleData', [
 ])
 
 
-class NewGranuleEvent(NewGranuleData, Hyp3Event):
+class NewGranuleEvent(NewGranuleData, HyP3Event):
     """
         * **name** - Name of the granule
         * **polygon** - Polygon representing the area of the granule

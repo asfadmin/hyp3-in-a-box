@@ -7,9 +7,9 @@ from hyp3_process import Process
 
 def fake_arguments():
     return {
-        'queue_name': 'hyp3-in-a-box-test-Hyp3StartEvents-UH7H3GF3M057.fifo',
+        'queue_name': 'hyp3-in-a-box-test-HyP3StartEvents-UH7H3GF3M057.fifo',
         'sns_arn': 'arn:aws:sns:us-west-2:765666652335:'
-        'hyp3-in-a-box-test-Hyp3FinishEventSNSTopic-13WBNBJMEKOMK',
+        'hyp3-in-a-box-test-HyP3FinishEventSNSTopic-13WBNBJMEKOMK',
         'earthdata_creds': '{"username": "dummy", "password": "banana"}',
         'products_bucket': 'hyp3-in-a-box-products',
         'are_ssm_param_names': False

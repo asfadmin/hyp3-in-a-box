@@ -25,7 +25,7 @@ def minifed(json_str):
 
 
 hyp3_dashboard = t.add_resource(Dashboard(
-    'Hyp3Dashboard',
+    'HyP3Dashboard',
     DashboardName=Sub(
         '${StackName}-hyp3-monitoring',
         StackName=Ref('AWS::StackName')
@@ -36,7 +36,7 @@ hyp3_dashboard = t.add_resource(Dashboard(
         SchedulerName=Ref(scheduler),
         SendEmailName=Ref(send_email),
         SetupDBName=Ref(setup_db),
-        Hyp3DBInsatnceIdentifier=Ref(db)
+        HyP3DBInsatnceIdentifier=Ref(db)
     )
 ))
 

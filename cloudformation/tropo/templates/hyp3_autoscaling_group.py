@@ -116,7 +116,7 @@ spot_price = t.add_parameter(Parameter(
 t.add_mapping("Region2AMI", get_map('region2ami'))
 
 security_group = t.add_resource(SecurityGroup(
-    "Hyp3ProcessingInstancesSecurityGroup",
+    "HyP3ProcessingInstancesSecurityGroup",
     GroupDescription="Allow ssh to processing instances",
     VpcId=Ref(hyp3_vpc),
     SecurityGroupIngress=[

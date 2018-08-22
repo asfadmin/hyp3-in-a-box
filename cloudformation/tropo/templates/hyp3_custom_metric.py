@@ -108,7 +108,7 @@ custom_metric = t.add_resource(utils.make_lambda_function(
         "KmsKeyArn": GetAtt(kms_key, "Arn"),
         "Environment": Environment(
             Variables={
-                "Hyp3StackName": Ref("AWS::StackName")
+                "HyP3StackName": Ref("AWS::StackName")
             }
         ),
         "Timeout": 60
