@@ -146,7 +146,7 @@ def build():
     if MATURITY == "prod":
         release_options += ["--release", RELEASE_VERSION]
         try:
-            subprocess.check_call([
+            subprocess.check_output([
                 "aws", "s3api", "head-object", "--bucket",
                 "asf-hyp3-in-a-box-source-east", "--key",
                 "releases/{}/{}".format(RELEASE_VERSION, TEMPLATE_NAME)
@@ -155,7 +155,7 @@ def build():
                 "Version {} already exists!".format(RELEASE_VERSION)
             )
         except subprocess.CalledProcessError as e:
-            if "404" not in e.output:
+            if 255 != e.returncode:
                 raise e
             print("Current release was not found... good")
 
