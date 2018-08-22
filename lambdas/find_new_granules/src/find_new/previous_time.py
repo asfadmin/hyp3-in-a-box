@@ -12,7 +12,7 @@ def get_time():
         :rtype: datetime.datetime
     """
     try:
-        prev_state = json.loads(ssm.download(param_name()))
+        prev_state = json.loads(ssm.download(get_param_name()))
     except (ssm.ParamDoesntExist, json.decoder.JSONDecodeError):
         raise NotSet('need to set previous time before downloading')
 
@@ -31,12 +31,12 @@ def set_time(new_time):
     }
 
     ssm.upload(
-        param_name(),
+        get_param_name(),
         json.dumps(update_runtime)
     )
 
 
-def param_name():
+def get_param_name():
     return environment.ssm_previous_time_name
 
 
