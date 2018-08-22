@@ -26,4 +26,4 @@ artifacts:
 cache:
   paths:
     - '/root/.cache/pip/**/*'
-    - '/usr/local/lib/python3.6/site-packages**/*'
+    - '/usr/local/lib/python3.6/site-packages/**/*'
