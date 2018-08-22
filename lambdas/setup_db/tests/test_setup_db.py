@@ -89,7 +89,7 @@ def environment():
         'Hyp3AdminUsername': 'testuser',
         'Hyp3AdminEmail': 'test@alaska.edu',
 
-        'DefaultProcessesBucket': process_cfg["processes_bucket"],
+        'DefaultProcessesBucket': 'asf-hyp3-in-a-box-source',
         'DefaultProcessesKey': process_cfg["default_processes_key"],
 
         'Maturity': 'test',
