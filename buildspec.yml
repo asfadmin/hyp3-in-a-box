@@ -15,9 +15,14 @@ phases:
   post_build:
     commands:
       - python3 .codebuild/codebuild.py post_build
+
 artifacts:
   files:
     - template.json
     - configuration.json
   discard-paths: yes
   base-directory: build
+
+cache:
+  paths:
+    - '/root/.cache/pip'

@@ -34,7 +34,7 @@ def test_db(db='hyp3db', commit_on_close=False):
 
 def testing_creds(db):
     return {
-        "host": "unit-testing.cxpvv5ynyjaw.us-west-2.rds.amazonaws.com",
+        "host": "unit-test.cvlquwxeogjj.us-east-1.rds.amazonaws.com",
         "user": "unittest",
         "password": "unittestpass",
         "db": db

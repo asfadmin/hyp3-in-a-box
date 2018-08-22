@@ -21,7 +21,7 @@ def download(param_name):
     except botocore.exceptions.ClientError as e:
         raise ParamDoesntExist(
             "can't download because param not set"
-        ) from None
+        )
 
     return resp['Parameter']['Value']
 
