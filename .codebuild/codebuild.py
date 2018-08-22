@@ -282,7 +282,8 @@ def post_build():
         subprocess.check_call([
             "aws", "s3", "cp",
             "s3://{}/data/default-processes.json".format(S3_SOURCE_BUCKET),
-            "s3://{}/releases/{}/data/default-processes.json".format(S3_SOURCE_BUCKET, RELEASE_VERSION)
+            "s3://{}/releases/{}/data/default-processes.json".format(
+                S3_SOURCE_BUCKET, RELEASE_VERSION)
         ])
     github.set_github_ci_status("success", description=get_config(
         "TEST_RESULT_SUMMARY", "Build completed"))
