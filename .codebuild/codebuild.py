@@ -155,7 +155,7 @@ def build():
                 "Version {} already exists!".format(RELEASE_VERSION)
             )
         except subprocess.CalledProcessError as e:
-            if "404" not in e.output:
+            if 255 not in e.returncode:
                 raise e
             print("Current release was not found... good")
 
