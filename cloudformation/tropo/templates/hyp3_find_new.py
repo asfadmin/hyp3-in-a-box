@@ -5,18 +5,18 @@ Resources
 ~~~~~~~~~
 
 * **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
-* **S3 Bucket:** Used to store the previous runtimes of the lambda
+* **SSM Parameter:** Used to store the previous runtimes of the lambda
 * **Cloudwatch Event:** Triggers the lambda after a scheduled amount of time
-* **IAM Policies:**
+* **IAM Role:**
 
-  * Lambda basic execution
-  * S3 read/write on ``previous time`` bucket
-  * Allow cloudwatch event to trigger the lambda
+  * Policy for Lambda basic execution
+  * Policy to get/set on ``previous time`` ssm parameter
+  * Policy to Allow cloudwatch event to trigger the lambda
 
 """
 
-import troposphere as ts
-from troposphere import awslambda, events, iam, s3
+from troposphere import GetAtt, Ref, awslambda, events, iam, Sub
+from troposphere.ssm import Parameter as SSMParameter
 
 from template import t
 
@@ -28,28 +28,39 @@ source_zip = "find_new_granules.zip"
 print('  adding find_new lambda')
 
 
-previous_time_bucket = t.add_resource(s3.Bucket("S3Bucket"))
+ssm_previous_time = t.add_resource(SSMParameter(
+    "HyP3SSMParameterPerviousTime",
+    Name=Sub(
+        "/${StackName}/previous_time.json",
+        StackName=Ref("AWS::StackName")
+    ),
+    Type="String",
+    Value="_"
+))
 
 logs_policy = iam.Policy(
     PolicyName="LogAccess",
     PolicyDocument=utils.get_static_policy('logs-policy')
 )
 
+ssm_arn = "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${ParamName}"
 prev_time_s3_policy = iam.Policy(
-    PolicyName='PreviousTimeS3ReadWriteAccess',
+    PolicyName='PreviousTimeSSMReadWriteAccess',
     PolicyDocument={
         "Version": "2012-10-17",
         "Statement": [{
             "Effect": "Allow",
             "Action": [
-                "s3:PutObject",
-                "s3:GetObject",
-                "s3:HeadObject"
-            ], "Resource": ts.Join("/", [
-                ts.GetAtt(previous_time_bucket, "Arn"), '*'
-            ])
-        }]}
+                "ssm:PutParameter",
+                "ssm:GetParameter"
+            ], "Resource": Sub(
+                ssm_arn,
+                ParamName=Ref(ssm_previous_time)
+            )
+        }]
+    }
 )
+
 
 lambda_invoke = iam.Policy(
     PolicyName='FindNewLambdaInvoke',
@@ -81,9 +92,9 @@ find_new_granules = t.add_resource(utils.make_lambda_function(
     lambda_params={
         "Environment": awslambda.Environment(
             Variables={
-                'PREVIOUS_TIME_BUCKET': ts.Ref(previous_time_bucket),
-                'SCHEDULER_LAMBDA_NAME': ts.Ref(hyp3_scheduler.scheduler)}
-        ),
+                'PREVIOUS_TIME_SSM_PARAM_NAME': Ref(ssm_previous_time),
+                'SCHEDULER_LAMBDA_NAME': Ref(hyp3_scheduler.scheduler)
+            }),
         "MemorySize": 128,
         "Timeout": 300
     }
@@ -92,7 +103,7 @@ find_new_granules = t.add_resource(utils.make_lambda_function(
 
 find_new_target = events.Target(
     "FindNewTarget",
-    Arn=ts.GetAtt(find_new_granules, 'Arn'),
+    Arn=GetAtt(find_new_granules, 'Arn'),
     Id="FindNewFunction1"
 )
 
@@ -105,8 +116,8 @@ find_new_event_rule = t.add_resource(events.Rule(
 
 PermissionForEventsToInvokeLambda = t.add_resource(awslambda.Permission(
     "EventSchedulePermissions",
-    FunctionName=ts.Ref(find_new_granules),
+    FunctionName=Ref(find_new_granules),
     Action="lambda:InvokeFunction",
     Principal="events.amazonaws.com",
-    SourceArn=ts.GetAtt("FindNewGranulesSchedule", "Arn")
+    SourceArn=GetAtt("FindNewGranulesSchedule", "Arn")
 ))

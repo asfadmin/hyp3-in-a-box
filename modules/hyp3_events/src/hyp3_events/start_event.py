@@ -1,10 +1,17 @@
-from .hyp3_event import Hyp3Event
+import collections
+
+from .hyp3_event import HyP3Event
+
+StartEventData = collections.namedtuple('StartEventData', [
+    'granule',
+    'user_id',
+    'sub_id',
+    'output_patterns',
+    'script_path',
+    'additional_info'
+])
 
 
-class StartEvent(Hyp3Event):
-    @property
-    def event_type(self):
-        return 'Hyp3NewGranuleEvent'
-
+class StartEvent(StartEventData, HyP3Event):
     def to_dict(self):
-        return {}
+        return self._asdict()

@@ -12,6 +12,7 @@ def lambda_handler(event, context):
         :param event: lambda event data
         :param context: lambda runtime info
     """
+    print(json.dumps(event))
     setup_env()
 
     new_granule_events = find_new.granule_events()
@@ -48,5 +49,6 @@ def start_scheduler_with(new_granules_json):
 def setup_env():
     find_new.environment.maturity = 'prod'
 
-    find_new.environment.bucket = os.environ['PREVIOUS_TIME_BUCKET']
     find_new.environment.scheduler_lambda = os.environ['SCHEDULER_LAMBDA_NAME']
+    find_new.environment.ssm_previous_time_name = \
+        os.environ['PREVIOUS_TIME_SSM_PARAM_NAME']

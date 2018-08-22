@@ -4,34 +4,56 @@ import hyp3_events
 import asf_granule_util as gu
 
 
-def get_notify_only_strategy():
+def new_granule_events():
     return st.builds(
-        hyp3_events.NotifyOnlyEvent,
-        address=st.emails(),
-        subject=st.text(),
+        hyp3_events.NewGranuleEvent,
+        name=granules(),
+        polygon=cmr_polygon_lists(),  # pylint: disable=E1120
+        download_url=urls(),
+        browse_url=urls()
+    )
+
+
+def start_events():
+    return st.builds(
+        hyp3_events.StartEvent,
+        granule=granules(),
+        user_id=st.integers(),
+        sub_id=st.integers(),
+        output_patterns=st.lists(st.text()),
+        script_path=st.text(),
         additional_info=st.lists(
             st.fixed_dictionaries({
                 'name': st.text(),
                 'value': st.text()
             })
         ),
-        browse_url=get_url_strategy(),
-        download_url=get_url_strategy()
     )
 
 
-def get_url_strategy():
+def email_events():
+    return st.builds(
+        hyp3_events.EmailEvent,
+        user_id=st.integers(),
+        sub_id=st.integers(),
+        granule_name=granules(),
+        additional_info=st.lists(
+            st.fixed_dictionaries({
+                'name': st.text(),
+                'value': st.text()
+            })
+        ),
+        browse_url=urls(),
+        download_url=urls()
+    )
+
+
+def urls():
     return st.from_regex(r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+')
 
 
-def get_new_granule_strategy():
-    return st.builds(
-        hyp3_events.NewGranuleEvent,
-        name=st.from_regex(gu.SentinelGranule.pattern_exact),
-        polygon=cmr_polygon_list(),  # pylint: disable=E1120
-        download_url=get_url_strategy(),
-        browse_url=get_url_strategy()
-    )
+def granules():
+    return st.from_regex(gu.SentinelGranule.pattern_exact)
 
 
 def floats_with_range(min_val, max_val):
@@ -42,7 +64,7 @@ def floats_with_range(min_val, max_val):
 
 
 @st.composite
-def cmr_polygon_list(draw):
+def cmr_polygon_lists(draw):
     lons = floats_with_range(-180, 180)
     lats = floats_with_range(-90, 90)
 
@@ -59,9 +81,3 @@ def cmr_polygon_list(draw):
         polygon += [lon, lat]
 
     return polygon + polygon[:2]
-
-
-strategies = {
-    hyp3_events.NotifyOnlyEvent: get_notify_only_strategy(),
-    hyp3_events.NewGranuleEvent: get_new_granule_strategy()
-}

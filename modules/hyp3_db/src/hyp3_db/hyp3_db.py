@@ -3,18 +3,39 @@
 # Database wrappers
 
 import contextlib
+import os
 
 from .session import make_engine, make_session
 
 
 @contextlib.contextmanager
-def connect(host, user, password, db='hyp3db'):
-    db = Hyp3DB(host, user, password, db)
-    yield db
-    db.close()
+def connect_using_environment_variables(db='hyp3db', commit_on_close=False):
+    (host, user, password) = (
+        os.environ[k] for k in ['DB_HOST', 'DB_USER', 'DB_PASSWORD']
+    )
+    with connect(
+        host, user, password,
+        db=db, commit_on_close=commit_on_close
+    ) as db_obj:
+        yield db_obj
 
 
-class Hyp3DB:
+@contextlib.contextmanager
+def connect(host, user, password, db='hyp3db', commit_on_close=False):
+    db = HyP3DB(host, user, password, db)
+
+    try:
+        yield db
+    except Exception as e:
+        raise e
+    finally:
+        if commit_on_close:
+            db.commit_and_close()
+        else:
+            db.close()
+
+
+class HyP3DB:
     """ Handles a connection to the hyp3 database."""
     valid_job_status = [
         'INVALID',
@@ -48,3 +69,12 @@ class Hyp3DB:
     def close(self):
         """ Close the db session"""
         self.session.close()
+
+    def commit_and_close(self):
+        try:
+            self.session.commit()
+        except Exception:
+            self.session.rollback()
+            raise
+        finally:
+            self.session.close()

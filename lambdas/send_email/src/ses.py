@@ -4,8 +4,7 @@ from send_email_env import environment
 
 ses = boto3.client('ses')
 
-SOURCE_EMAIL = 'wbhorn@alaska.edu'
-SUBJECT_PREFIX = '[hyp3]'
+SUBJECT_PREFIX = '[HyP3]'
 
 
 def send(address, subject, message):

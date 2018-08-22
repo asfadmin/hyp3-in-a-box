@@ -1,5 +1,5 @@
 
-Module: Hyp3 DB
+Module: HyP3 DB
 ===============
 
 .. image:: ../images/python.png
@@ -9,4 +9,4 @@ Module: Hyp3 DB
 .. automodule:: hyp3_db
    :members:
    :special-members:
-
+   :exclude-members: __weakref__

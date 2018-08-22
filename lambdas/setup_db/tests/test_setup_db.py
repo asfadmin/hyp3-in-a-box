@@ -7,6 +7,7 @@
 import pathlib as pl
 import json
 
+import pytest
 import mock
 import hyp3_db
 from hyp3_db import hyp3_models
@@ -23,65 +24,79 @@ TESTING_DB = 'setup_db_testing_db'
     'init_db.hyp3_db.connect',
     side_effect=hyp3_db.test_db
 )
-def test_custom_resource_wrapper(dbmock, environ_mock):
+def test_setup_db(dbmock, environ_mock, event, environment):
     reset_hyp3_db()
 
-    env = get_mock_environment()
-    environ_mock.__getitem__.side_effect = env.__getitem__
-    environ_mock.get.side_effect = env.get
+    environ_mock.__getitem__.side_effect = environment.__getitem__
+    environ_mock.get.side_effect = environment.get
 
-    setup_db(load_json_from('data/sample_event.json'), [TESTING_DB])
+    # Creds only need db name because call to
+    # connect() is mocked with test_db()
+    setup_db(
+        event,
+        [TESTING_DB],
+        [TESTING_DB]
+    )
 
     with hyp3_db.test_db(db=TESTING_DB) as db:
-        check_new_user(db, env)
-        check_processes(db, env)
+        check_new_user(db, environment)
+        check_processes(db, environment)
 
-    check_setup_db_still_works()
+    check_setup_db_still_works(event)
 
 
 def check_new_user(db, mock_env):
     user = db.session.query(hyp3_models.User).one()
 
-    assert user.email == mock_env['Hyp3AdminEmail']
-    assert user.username == mock_env['Hyp3AdminUsername']
+    assert user.email == mock_env['HyP3AdminEmail']
+    assert user.username == mock_env['HyP3AdminUsername']
 
 
 def check_processes(db, mock_env):
-    notify_only = db.session.query(hyp3_models.Process).one()
+    processes = db.session.query(hyp3_models.Process).all()
 
-    assert notify_only.name == 'Notify Only'
+    assert set(p.name for p in processes) == {'Notify Only', 'RTC Snap'}
 
 
-def check_setup_db_still_works():
-    setup_db(load_json_from('data/sample_event.json'), [TESTING_DB])
+def check_setup_db_still_works(sample_event):
+    setup_db(sample_event,
+             [TESTING_DB], [TESTING_DB])
 
 
 def reset_hyp3_db():
     with hyp3_db.test_db(db='postgres') as admindb:
         admindb.session.connection().connection.set_isolation_level(0)
-        admindb.session.execute(f"DROP DATABASE {TESTING_DB};")
+        admindb.session.execute(f"DROP DATABASE IF EXISTS {TESTING_DB};")
         admindb.session.execute(f"CREATE DATABASE {TESTING_DB};")
         admindb.session.execute(f"DROP USER IF EXISTS {TESTING_USER};")
         admindb.session.connection().connection.set_isolation_level(1)
 
 
-def get_mock_environment():
+@pytest.fixture()
+def event():
+    return load_json_from('data/sample_event.json')
+
+
+@pytest.fixture()
+def environment():
     process_cfg = load_json_from('../../../processes/.config.json')
 
     return {
-        'Hyp3DBUser': TESTING_USER,
-        'Hyp3DBName': TESTING_DB,
+        'HyP3DBUser': TESTING_USER,
+        'HyP3DBName': TESTING_DB,
 
-        'Hyp3DBPass': 'testingpassword',
-        'Hyp3AdminUsername': 'testuser',
-        'Hyp3AdminEmail': 'test@alaska.edu',
+        'HyP3DBPass': 'testingpassword',
+        'HyP3AdminUsername': 'testuser',
+        'HyP3AdminEmail': 'test@alaska.edu',
 
-        'DefaultProcessesBucket': process_cfg["processes_bucket"],
+        'DefaultProcessesBucket': 'asf-hyp3-in-a-box-source',
         'DefaultProcessesKey': process_cfg["default_processes_key"],
 
         'Maturity': 'test',
 
-        'Hyp3StackName': 'unittesting-hyp3-in-a-box-stack'
+        'HyP3StackName': 'unittesting-hyp3-in-a-box-stack',
+        'ParamNameHyP3Username': "HyP3ApiUsername",
+        'ParamNameHyP3ApiKey': "HyP3ApiKey"
     }
 
 

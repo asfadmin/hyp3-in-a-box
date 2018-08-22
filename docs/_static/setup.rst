@@ -24,15 +24,30 @@ Authorize an email address in SES
 
     This email will also be used as a parameter in the template
 
+Earthdata Credentials
+^^^^^^^^^^^^^^^^^^^^^
+
+    To download data within HyP3, an earthdata account is needed.
+    To create an earthdata account go to:
+
+        - `Register for Earthdata`_
+
+    **NOTE:** Make sure that all the required EULA's are excepted on your
+    Earthdata account or else HyP3 will not be able to successfully download
+    data.
+
+    The username and password for this account will be used later when
+    creating the CloudFormation stack.
+
 Launching the CloudFormation stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   Once you have a key pair, and have verified an email with SES, your ready to
-   create the cloudformation stack. This automatically generates and configures all
-   of the aws resources HyP3 needs.
+   Once you have a key pair, and have verified an email with SES, you're ready to
+   create the CloudFormation stack. This automatically generates and configures all
+   of the AWS resources HyP3 needs.
 
    The template is bound to a specific region referenced in the name.
-   The naming convension for the template is as follows:
+   The naming convention for the template is as follows:
 
       ``hyp3-in-a-box_<aws region here>.json``
 
@@ -42,31 +57,36 @@ Launching the CloudFormation stack
 Stack Parameters
 ~~~~~~~~~~~~~~~~
 
-    The ``authorized email`` and ``ec2-key-pair`` from the previous steps will be used here.
+    The ``authorized email``, ``ec2-key-pair`` and ``earhtdata credentials`` from the
+    previous steps will be used here.
 
-    All the parameters that can have default values can be left unchanged.
+    All the parameters that have default values can be left unchanged.
 
     Passwords for the database must also be passed in as parameters. These should be secure
     and only contain alphanumeric characters.  `random.org`_ is a good website for doing just that.
 
-    The hyp3 email and username must be added. This will where the notifications get sent and the
-    username will be used for accessing with the hyp3. The hyp3 email can be different from the verified
+    The HyP3 email and username must be added. This will where the notifications get sent and the
+    username will be used for accessing with the HyP3. The HyP3 email can be different from the verified
     email but both must be entered.
+
+    The maximum number of running instances determines how many servers can run processing
+    at one time. Increaseing this number will affect how much aws charges, but allows you
+    to process more data.
 
 Launching
 ~~~~~~~~~
 
     To launch the cloudformation stack
 
-    * Download a version of the hyp3 cloudformation template: :ref:`releases`.
+    * Download a version of the HyP3 cloudformation template: :ref:`releases`.
     * Login to the **AWS conosle**.
     * Go to the **Cloudformation** section and click **Create Stack**.
     * Under **Choose a template**, select the option to **upload a file**.
-    * **Upload** the hyp3 CloudFormation template then hit **next**.
+    * **Upload** the HyP3 CloudFormation template then hit **next**.
     * Give the stack a name and **fill in the missing parameters**.
     * Hit next again, then click the checkbox to **allow IAM** and hit create!
 
-    When stack is finished creating your ready to start using HyP3! Using the api,
+    When stack is finished creating you're ready to start using HyP3! Using the api,
     which is linked in stack ouptuts, create a subscription over your area of intreset
     and start recieving data. The username and api-key for the newly created HyP3 API is stored
     in AWS `Systems Manager`_ parameter store.
@@ -78,3 +98,4 @@ Basic Usage
 .. _Verify Your Email: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses-procedure.html?shortFooter=true
 .. _random.org: https://www.random.org/passwords/
 .. _Systems Manager: https://aws.amazon.com/systems-manager/
+.. _Register for Earthdata: https://urs.earthdata.nasa.gov/profile/

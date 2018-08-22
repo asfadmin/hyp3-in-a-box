@@ -1,3 +1,1 @@
-from .new_events import new_events
-
-__all__ = ['new_events']
+from .send_all_events import all_events

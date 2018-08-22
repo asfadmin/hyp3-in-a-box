@@ -1,12 +1,12 @@
 
-from hyp3_db.hyp3_models import Subscription, User
+from hyp3_db.hyp3_models import Subscription, User, Process
 from geoalchemy2 import WKTElement
 
 
 def get_users_by_ids(db, user_ids):
     """ Get users from a list of user ids
 
-        :param Hyp3DB db: The db to make the query on
+        :param HyP3DB db: The db to make the query on
         :param list[int] user_ids: User ids to get user objects from
 
         :returns: hyp3 users with ids in user_ids list
@@ -24,7 +24,7 @@ def get_users_by_ids(db, user_ids):
 def get_enabled_intersecting_subs(db, polygon):
     """ Get enabled subs intersecting a polygon
 
-        :param Hyp3DB db: The db to make the query on
+        :param HyP3DB db: The db to make the query on
         :param str polygon: WKT polygon
 
         :returns: hyp3 subscriptions intersecting polygon
@@ -33,13 +33,15 @@ def get_enabled_intersecting_subs(db, polygon):
     poly = WKTElement(polygon, srid=4326)
     intersecting = Subscription.location.intersects(poly)
 
-    intersecting_subs = enabled_subs_query(db) \
+    intersecting_subs = db.session.query(Subscription) \
+        .filter_by(enabled=True) \
+        .filter(Subscription.process.has(enabled=True)) \
         .filter(intersecting) \
         .all()
 
     return intersecting_subs
 
 
-def enabled_subs_query(db):
-    return db.session.query(Subscription) \
-        .filter_by(enabled=True)
+def get_processes(db):
+    return db.session.query(Process) \
+        .all()

@@ -260,7 +260,7 @@
             "width": 3,
             "height": 6,
             "properties": {
-                "markdown": "\n# RDS: Hyp3 DB\n\nThis holds all the information on the hyp3 system\n"
+                "markdown": "\n# RDS: HyP3 DB\n\nThis holds all the information on the hyp3 system\n"
             }
         },
         {
@@ -272,7 +272,7 @@
             "properties": {
                 "view": "singleValue",
                 "metrics": [
-                    [ "AWS/RDS", "FreeStorageSpace", "DBInstanceIdentifier", "${Hyp3DBInsatnceIdentifier}" ],
+                    [ "AWS/RDS", "FreeStorageSpace", "DBInstanceIdentifier", "${HyP3DBInsatnceIdentifier}" ],
                     [ ".", "DatabaseConnections", ".", "." ]
                 ],
                 "region": "${AWS::Region}",
@@ -290,7 +290,7 @@
                 "view": "timeSeries",
                 "stacked": true,
                 "metrics": [
-                    [ "AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", "${Hyp3DBInsatnceIdentifier}", { "label": "Hyp3 DB CPU Utilization" } ]
+                    [ "AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", "${HyP3DBInsatnceIdentifier}", { "label": "HyP3 DB CPU Utilization" } ]
                 ],
                 "region": "${AWS::Region}",
                 "title": "DB CPUUtilization",
@@ -307,7 +307,7 @@
                 "view": "timeSeries",
                 "stacked": false,
                 "metrics": [
-                    [ "AWS/RDS", "WriteIOPS", "DBInstanceIdentifier", "${Hyp3DBInsatnceIdentifier}", { "color": "#2ca02c" } ],
+                    [ "AWS/RDS", "WriteIOPS", "DBInstanceIdentifier", "${HyP3DBInsatnceIdentifier}", { "color": "#2ca02c" } ],
                     [ ".", "ReadIOPS", ".", ".", { "color": "#1f77b4" } ]
                 ],
                 "region": "${AWS::Region}",

@@ -1,13 +1,12 @@
 import json
 import pathlib as pl
 
-from troposphere.awslambda import Code
-
-from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Function
-
-from tropo_env import environment
+from awacs.aws import Allow, Policy, Principal, Statement
+from awacs.sts import AssumeRole
 from template import t
+from tropo_env import environment
+from troposphere import GetAtt, Ref, Sub
+from troposphere.awslambda import Code, Function
 
 
 def get_email_pattern():
@@ -40,6 +39,19 @@ def get_static_policy(name):
     return static_policy
 
 
+def get_ec2_assume_role_policy(ec2_principal):
+    return Policy(
+        Statement=[
+            Statement(
+                Effect=Allow, Action=[AssumeRole],
+                Principal=Principal(
+                    "Service", [ec2_principal]
+                )
+            )
+        ]
+    )
+
+
 def load_json_from(directory, name):
     file_path, file_name = pl.Path(__file__).parent, name + '.json'
 
@@ -53,15 +65,17 @@ def load_json_from(directory, name):
 
 def make_lambda_function(*, name, lambda_params=None, role):
     camel_case_name = get_camel_case(name)
-    s3_key = "{maturity}/{source_zip}".format(
-        maturity=environment.maturity,
-        source_zip="{}.zip".format(name)
-    )
+    s3_key = make_s3_key("{}.zip".format(name))
 
     lambda_func = Function(
         "{}Function".format(camel_case_name),
+        FunctionName=Sub(
+            "${StackName}_hyp3_${FunctionName}",
+            StackName=Ref('AWS::StackName'),
+            FunctionName=name
+        ),
         Code=make_lambda_code(
-            S3Bucket=environment.lambda_bucket,
+            S3Bucket=environment.source_bucket,
             S3Key=s3_key,
             S3ObjectVersion=getattr(environment, "{}_version".format(name))
         ),
@@ -74,16 +88,6 @@ def make_lambda_function(*, name, lambda_params=None, role):
         for param_name, param_val in lambda_params.items():
             setattr(lambda_func, param_name, param_val)
 
-    if environment.use_name_parameters:
-        lambda_name = t.add_parameter(Parameter(
-            "Lambda{}Name".format(camel_case_name),
-            Description="Name of the {} lambda function".format(name),
-            Default="hyp3_{}".format(name),
-            Type="String"
-        ))
-
-        lambda_func.FunctionName = Ref(lambda_name)
-
     return lambda_func
 
 
@@ -92,6 +96,14 @@ def get_camel_case(name):
         .title() \
 
     return remove_spacers(camel_case_version)
+
+
+def make_s3_key(key):
+    return "{directory}/{obj_key}".format(
+        directory="releases/{}".format(environment.release)
+        if environment.release else environment.maturity,
+        obj_key=key
+    )
 
 
 def remove_spacers(s):

@@ -1,5 +1,3 @@
-.. hyp3_api_eb.py  hyp3_find_new.py  hyp3_rds.py  hyp3_send_email.py  hyp3_vpc.py
-
 .. _cloudformation:
 
 AWS CloudFormation
@@ -17,17 +15,22 @@ AWS CloudFormation
    cloudformation/send_email.rst
    cloudformation/scheduler.rst
    cloudformation/setup_db.rst
+   cloudformation/custom_metric.rst
 
    cloudformation/rds.rst
    cloudformation/api_eb.rst
    cloudformation/vpc.rst
 
+   cloudformation/s3.rst
    cloudformation/sns.rst
+   cloudformation/sqs.rst
    cloudformation/autoscaling_group.rst
 
    cloudformation/kms_key.rst
    cloudformation/db_params.rst
    cloudformation/keypair_name_param.rst
+
+   cloudformation/ec2_userdata.rst
 
 Troposphere
 -----------

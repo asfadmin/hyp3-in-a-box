@@ -31,11 +31,12 @@ HyP3 In A Box's Documentation
    :maxdepth: 1
    :caption: Contents:
 
-   _static/setup
    _static/releases
+   _static/setup
    _static/dev-setup
    _static/cloudformation
    _static/lambdas-main
+   _static/instance-processing
    _static/modules
    _static/ci_testing
 
@@ -45,7 +46,7 @@ The Hybrid Plugable Processing Pipeline (HyP3)
 
 .. figure:: _static/images/diagram.png
    :scale: 80 %
-   :alt: flowchart of the hyp3 system
+   :alt: flowchart of the HyP3 system
 
    Diagram of the hyp3 system. All these resources get automatically created
    using `AWS CloudFormation`_.

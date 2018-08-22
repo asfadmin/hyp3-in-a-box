@@ -21,14 +21,11 @@ Resources
 
 """
 
-from troposphere import GetAtt, Output, Ref, ec2, rds, Parameter
-
 from template import t
-from tropo_env import environment
+from troposphere import GetAtt, Output, Ref, Sub, ec2, rds
 
+from .hyp3_db_params import db_name, db_super_user, db_super_user_pass
 from .hyp3_vpc import get_public_subnets, hyp3_vpc
-from .hyp3_db_params import db_super_user_pass, db_super_user, db_name
-
 
 print('  adding rds')
 
@@ -48,7 +45,7 @@ inrule, outrule = [
 ]
 
 security_group = t.add_resource(ec2.SecurityGroup(
-    "Hyp3TCPAll",
+    "HyP3TCPAll",
     GroupDescription="Allow for all tcp traffic through port 5432",
     VpcId=Ref(hyp3_vpc),
     SecurityGroupIngress=[inrule],
@@ -64,7 +61,11 @@ mydbsubnetgroup = t.add_resource(rds.DBSubnetGroup(
 # Only certain versions of postgres are supported on the smaller instance types
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html
 db = rds.DBInstance(
-    "Hyp3DB",
+    "HyP3DB",
+    DBInstanceIdentifier=Sub(
+        '${StackName}-hyp3-rds-instance',
+        StackName=Ref('AWS::StackName')
+    ),
     AllocatedStorage="5",
     DBInstanceClass="db.t2.micro",
     DBName=Ref(db_name),
@@ -75,18 +76,8 @@ db = rds.DBInstance(
     DBSubnetGroupName=Ref(mydbsubnetgroup),
     MasterUsername=Ref(db_super_user),
     MasterUserPassword=Ref(db_super_user_pass),
-    DependsOn=('Hyp3VPC'),
+    DependsOn=hyp3_vpc,
 )
-
-if environment.use_name_parameters:
-    db_instance_name = t.add_parameter(Parameter(
-        "Hyp3DBInstanceId",
-        Description="The name of the rds instance within aws.",
-        Default="hyp3-rds-instance",
-        Type="String"
-    ))
-
-    db.DBInstanceIdentifier = Ref(db_instance_name)
 
 hyp3_db = t.add_resource(db)
 

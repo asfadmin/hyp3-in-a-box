@@ -3,19 +3,19 @@
       {
          "EventSource":"aws:sns",
          "EventVersion":"1.0",
-         "EventSubscriptionArn":"arn:aws:sns:us-west-2:765666652335:email-browse-test-hyp3-Hyp3FinishEventSNSTopic-4KC4EKR7LHJU:b37e0662-65b3-42b7-bf2d-b33d89f2d70e",
+         "EventSubscriptionArn":"arn:aws:sns:us-west-2:765666652335:email-browse-test-hyp3-HyP3FinishEventSNSTopic-4KC4EKR7LHJU:b37e0662-65b3-42b7-bf2d-b33d89f2d70e",
          "Sns":{
             "Type":"Notification",
             "MessageId":"7fb6e573-6b9c-56f8-9e40-b6d93829c690",
-            "TopicArn":"arn:aws:sns:us-west-2:765666652335:email-browse-test-hyp3-Hyp3FinishEventSNSTopic-4KC4EKR7LHJU",
-            "Subject":"Hyp3NotifyOnlyEvent",
-            "Message": "{\"address\": \"wbhorn@alaska.edu\", \"subject\": \"New Subscription Data\", \"additional_info\": [{\"name\": \"User\", \"value\": \"wbhorn\"}, {\"name\": \"Subscripton\", \"value\": \"Asia\"}, {\"name\": \"Granule\", \"value\": \"S1A_IW_SLC__1SDV_20180624T125838_20180624T125905_022499_026FD5_9CAD\"}], \"browse_url\": \"https://datapool.asf.alaska.edu/BROWSE/SB/S1B_IW_GRDH_1SDV_20171106T235904_20171106T235929_008168_00E6FD_9A71.jpg\", \"download_url\": \"https://datapool.asf.alaska.edu/SLC/SA/S1A_IW_SLC__1SDV_20180624T125838_20180624T125905_022499_026FD5_9CAD.zip\"}",
+            "TopicArn":"arn:aws:sns:us-west-2:765666652335:email-browse-test-hyp3-HyP3FinishEventSNSTopic-4KC4EKR7LHJU",
+            "Subject":"EmailEvent",
+            "Message": "{\"user_id\": 1, \"sub_id\": 1, \"additional_info\": [{\"name\": \"Subscripton\", \"value\": \"Asia\"}], \"granule_name\": \"S1A_IW_SLC__1SDV_20180624T125838_20180624T125905_022499_026FD5_9CAD\", \"browse_url\": \"https://datapool.asf.alaska.edu/BROWSE/SB/S1B_IW_GRDH_1SDV_20171106T235904_20171106T235929_008168_00E6FD_9A71.jpg\", \"download_url\": \"https://datapool.asf.alaska.edu/SLC/SA/S1A_IW_SLC__1SDV_20180624T125838_20180624T125905_022499_026FD5_9CAD.zip\"}",
             "Timestamp":"2018-06-25T02:20:37.823Z",
 
          "SignatureVersion":"1",
          "Signature":"IjmUhyG5IjYy3/fcNTBbbVBDytXSLr68CxuafZ0fO1dSuI6UeEPt+Rcps6cbeni7G4n/G1n2UyduJt5W3w8CIY3xfdpOVaDoXLoOIjfjkFypw9mdKZW9DF2wLv1ERDpivyrHrYZIzBkcfgCBQ/Uk7gb/2miAgGPsd90ZcjdnwaNd/lApOrnCFfQWkhdlTFFBXym1i0eF/dWb2+uIWIf7WBmEDE213D/OMsv5cbQELcHkU+oOHWeibA9Yyuop80xNY8ab7JtUgPRiWSKGO63gWGZYZbxQguP3P77junFq9oYQdrf41CdFMOO3sAnRY4pyOPOdBBoRn/soWARoigHQGg==",
          "SigningCertUrl":"https://sns.us-west-2.amazonaws.com/SimpleNotificationService-eaea6120e66ea12e88dcd8bcbddca752.pem",
-         "UnsubscribeUrl":"https://sns.us-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-west-2:765666652335:email-browse-test-hyp3-Hyp3FinishEventSNSTopic-4KC4EKR7LHJU:b37e0662-65b3-42b7-bf2d-b33d89f2d70e",
+         "UnsubscribeUrl":"https://sns.us-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-west-2:765666652335:email-browse-test-hyp3-HyP3FinishEventSNSTopic-4KC4EKR7LHJU:b37e0662-65b3-42b7-bf2d-b33d89f2d70e",
          "MessageAttributes":{
          }
       }

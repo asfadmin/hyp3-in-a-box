@@ -1,7 +1,7 @@
 import pathlib as pl
 import json
 
-from troposphere import Parameter, Sub, Ref, Output
+from troposphere import Sub, Ref, Output
 from troposphere.cloudwatch import Dashboard
 
 from template import t
@@ -24,23 +24,19 @@ def minifed(json_str):
     return json.dumps(json.loads(json_str))
 
 
-dashboad_name = t.add_parameter(Parameter(
-    'Hyp3DashBoardName',
-    Description="Name of the hyp3 monitoring dashboard",
-    Default='hyp3-monitoring',
-    Type="String"
-))
-
 hyp3_dashboard = t.add_resource(Dashboard(
-    'Hyp3Dashboard',
-    DashboardName=Ref(dashboad_name),
+    'HyP3Dashboard',
+    DashboardName=Sub(
+        '${StackName}-hyp3-monitoring',
+        StackName=Ref('AWS::StackName')
+    ),
     DashboardBody=Sub(
         get_dashboard_json(),
         FindNewGranulesName=Ref(find_new_granules),
         SchedulerName=Ref(scheduler),
         SendEmailName=Ref(send_email),
         SetupDBName=Ref(setup_db),
-        Hyp3DBInsatnceIdentifier=Ref(db)
+        HyP3DBInsatnceIdentifier=Ref(db)
     )
 ))
 

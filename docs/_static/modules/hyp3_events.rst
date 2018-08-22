@@ -1,6 +1,6 @@
+.. _hyp3_events:
 
-
-Module: Hyp3 Events
+Module: HyP3 Events
 ===================
 
 .. image:: ../images/python.png
@@ -11,4 +11,4 @@ Module: Hyp3 Events
    :show-inheritance:
    :members:
    :special-members:
-
+   :exclude-members: __weakref__

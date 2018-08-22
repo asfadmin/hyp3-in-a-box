@@ -22,28 +22,38 @@ import hyp3_processes
 import ssm
 
 
-def setup_db(event, db_admin_creds):
+def setup_db(event, db_admin_creds, db_user_creds):
     print(json.dumps(event))
 
-    resp = DBSetup(event, db_admin_creds) \
+    resp = DBSetup(event, db_admin_creds, db_user_creds) \
         .get_response()
 
     custom_resource.send(event, resp)
 
 
 class DBSetup(custom_resource.Base):
-    def __init__(self, event, db_admin_creds):
+    def __init__(self, event, db_admin_creds, db_user_creds):
         super().__init__(event)
         self.db_creds = db_admin_creds
+        self.db_user_creds = db_user_creds
 
     def _process(self):
         print('connecting to hyp3_db')
-        with hyp3_db.connect(*self.db_creds) as db:
-            print('connected')
-            setup_outputs = setup_db_main(db)
+        setup_outputs = {}
+        with hyp3_db.connect(*self.db_creds, commit_on_close=True) as db:
+            print('connected as root user')
+            setup_outputs.update(
+                setup_db_priviliged(db)
+            )
 
-        assert 'Hyp3ApiKey' in setup_outputs
-        assert 'Hyp3Username' in setup_outputs
+        with hyp3_db.connect(*self.db_user_creds, commit_on_close=True) as db:
+            print('connected as hyp3 user')
+            setup_outputs.update(
+                setup_db_low_privileged(db)
+            )
+
+        assert 'HyP3ApiKey' in setup_outputs
+        assert 'HyP3Username' in setup_outputs
 
         return {
             'Data': setup_outputs,
@@ -51,18 +61,32 @@ class DBSetup(custom_resource.Base):
         }
 
 
-def setup_db_main(db):
-    """ Creates hyp3 user as well as all database tables """
+def setup_db_priviliged(db):
+    """ Creates hyp3 user and postgis extension """
 
     print('Setting up database:')
     steps = [
         install_postgis,
-        add_db_user,
+        add_db_user
+    ]
+
+    return setup_db_steps(db, steps)
+
+
+def setup_db_low_privileged(db):
+    """ Creates all database tables """
+
+    print('Creating/populating tables:')
+    steps = [
         make_tables,
         make_hyp3_admin_user,
         add_default_processes
     ]
 
+    return setup_db_steps(db, steps)
+
+
+def setup_db_steps(db, steps):
     output = {}
     for i, step in enumerate(steps):
         count, num_steps = i + 1, len(steps)
@@ -96,9 +120,9 @@ def install_postgis(db):
 
 def add_db_user(db):
     user, password, db_name = utils.get_environ_params(
-        'Hyp3DBUser',
-        'Hyp3DBPass',
-        'Hyp3DBName'
+        'HyP3DBUser',
+        'HyP3DBPass',
+        'HyP3DBName'
     )
 
     if does_db_user_exists(db, user):
@@ -149,19 +173,23 @@ def make_hyp3_admin_user(db):
 
 
 def get_param_store_paths():
-    stack_name = utils.get_environ_params('Hyp3StackName').pop()
+    stack_name = utils.get_environ_params('HyP3StackName').pop()
+    [username_param_name, api_key_param_name] = utils.get_environ_params(
+        "ParamNameHyP3Username",
+        "ParamNameHyP3ApiKey"
+    )
     utils.step_print(stack_name)
 
     return {
-        k: str(pl.Path('/') / stack_name / f'hyp3-{k}')
-        for k in ('username', 'api-key')
+        'username': '/{}/{}'.format(stack_name, username_param_name),
+        'api-key': '/{}/{}'.format(stack_name, api_key_param_name)
     }
 
 
 def get_user():
     name, email = utils.get_environ_params(
-        'Hyp3AdminUsername',
-        'Hyp3AdminEmail'
+        'HyP3AdminUsername',
+        'HyP3AdminEmail'
     )
 
     return User(name, email)
@@ -176,8 +204,8 @@ def add_new_user(db, user, param_paths):
     })
 
     return {
-        'Hyp3ApiKey': api_key,
-        'Hyp3Username': user.name
+        'HyP3ApiKey': api_key,
+        'HyP3Username': user.name
     }
 
 
@@ -187,8 +215,8 @@ def reference_old_user_params(param_paths):
     prefix = 'SSM Parameter Store Path -> '
 
     return {
-        'Hyp3ApiKey': prefix + param_paths['api-key'],
-        'Hyp3Username': prefix + param_paths['username']
+        'HyP3ApiKey': prefix + param_paths['api-key'],
+        'HyP3Username': prefix + param_paths['username']
     }
 
 

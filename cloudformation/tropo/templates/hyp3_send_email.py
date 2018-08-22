@@ -5,6 +5,11 @@
 """
 Troposphere template responsible for generating :ref:`send_email_lambda`.
 
+Requires
+~~~~~~~~
+* :ref:`db_params_template`
+* :ref:`api_eb_template`
+
 Resources
 ~~~~~~~~~
 
@@ -16,14 +21,15 @@ Resources
 
 """
 
-from troposphere import GetAtt, Parameter, Ref
-from troposphere.awslambda import Function, Environment
+from troposphere import Parameter, Ref
+from troposphere.awslambda import Environment
 from troposphere.iam import Policy, Role
 
-from tropo_env import environment
 from template import t
 
 from . import utils
+from .hyp3_db_params import db_name, db_pass, db_user
+from .hyp3_api_eb import api_url
 
 source_zip = "send_email.zip"
 
@@ -32,7 +38,10 @@ print('  adding send_email lambda')
 
 source_email = t.add_parameter(Parameter(
     "VerifiedSourceEmail",
-    Description="Source email to send notifications",
+    Description=(
+        "Verified source email. "
+        "This is where emails will be sent from."
+    ),
     Type="String",
     AllowedPattern=utils.get_email_pattern()
 ))
@@ -59,7 +68,13 @@ send_email = t.add_resource(utils.make_lambda_function(
     lambda_params={
         "Environment": Environment(
             Variables={
-                'SOURCE_EMAIL': Ref(source_email)}
+                'SOURCE_EMAIL': Ref(source_email),
+                'DB_HOST': utils.get_host_address(),
+                'DB_USER': Ref(db_user),
+                'DB_PASSWORD': Ref(db_pass),
+                'DB_NAME': Ref(db_name),
+                'API_URL': api_url
+            }
         )
     }
 ))

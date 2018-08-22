@@ -1,10 +1,12 @@
 # models.py
-# Hal DiMarchi, Rohan Weeden
+# Hal DiMarchi, Rohan Weeden, William Horn
 # Created May 25, 2017
+
+import os
+from hashlib import sha1
 
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, Table,
                         Text, orm, sql)
-
 from .base import Base
 
 
@@ -62,3 +64,25 @@ class OneTimeAction(Base):
                      server_default=sql.expression.text('true'))
 
     user = orm.relationship('User')
+
+    @classmethod
+    def new_unsub_action(cls, user_id):
+        return cls(
+            user_id=user_id,
+            action='unsubscribe',
+            hash=_get_random_hash()
+        )
+
+    def url(self, api_url):
+        return "{}/onetime/{}?id={}&key={}".format(
+            api_url,
+            self.action,
+            self.id,
+            self.hash
+        )
+
+
+def _get_random_hash():
+    return sha1(
+        os.urandom(128)
+    ).hexdigest()

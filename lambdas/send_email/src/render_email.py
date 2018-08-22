@@ -10,7 +10,7 @@ import jinja2 as j2
 class Email(abc.ABC):
     ''' Email object for generating an HTML email from Jinja2 template'''
 
-    def __init__(self, template_name):
+    def __init__(self, template_name='email.html.j2'):
         self.template_name = template_name
 
     def render(self, **kwargs):

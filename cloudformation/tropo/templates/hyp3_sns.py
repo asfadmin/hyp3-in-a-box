@@ -3,7 +3,6 @@
 # Created: June, 2018
 
 """
-
 Requires
 ~~~~~~~~
 * :ref:`send_email_template`
@@ -11,21 +10,28 @@ Requires
 Resources
 ~~~~~~~~~
 
-* **SNS:**
+* **SNS Topic:** Topic for queuing email notifications. Emails can be generated \
+by any process including notify only.
+* **SSM Parameters:**
 
+  * FinishEventSNSArn - Contains the ARN of the Topic
+* **Iam:**
+
+  * Permission for Topic to trigger send_email
 """
-from troposphere import GetAtt, Ref
-from troposphere.awslambda import Permission
-from troposphere.sns import Subscription, Topic
 
 from template import t
+from troposphere import GetAtt, Ref, Sub
+from troposphere.awslambda import Permission
+from troposphere.sns import Subscription, Topic
+from troposphere.ssm import Parameter
 
 from .hyp3_send_email import send_email
 
 print('  adding sns')
 
 finish_sns = t.add_resource(Topic(
-    "Hyp3FinishEventSNSTopic",
+    "HyP3FinishEventSNSTopic",
     Subscription=[
         Subscription(
             Protocol="lambda",
@@ -40,4 +46,14 @@ sns_invoke_permissions = t.add_resource(Permission(
     Principal="sns.amazonaws.com",
     SourceArn=Ref(finish_sns),
     FunctionName=GetAtt(send_email, "Arn")
+))
+
+ssm_sns_arn = t.add_resource(Parameter(
+    "HyP3SSMParameterFinishEventSNSArn",
+    Name=Sub(
+        "/${StackName}/FinishEventSNSArn",
+        StackName=Ref("AWS::StackName")
+    ),
+    Type="String",
+    Value=Ref(finish_sns)
 ))

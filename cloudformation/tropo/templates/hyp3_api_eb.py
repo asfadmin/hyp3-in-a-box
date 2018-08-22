@@ -10,6 +10,8 @@ http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
 
 Requires
 ~~~~~~~~
+* :ref:`db_params_template`
+* :ref:`keypair_name_param_template`
 * :ref:`rds_template`
 * :ref:`vpc_template`
 
@@ -20,17 +22,10 @@ Resources
 * **IAM Policies:**
 
   * ElasticBeanstalk Web Tier
-  * S3 read/write on ``previous time`` bucket
-  * Allow cloudwatch event to trigger the lambda
 
 """
 
-from awacs.aws import Allow, Policy, Principal, Statement
-from awacs.sts import AssumeRole
-
-from tropo_env import environment
-from template import t
-from troposphere import FindInMap, GetAtt, Join, Output, Ref
+from troposphere import FindInMap, GetAtt, Join, Output, Parameter, Ref, Sub
 from troposphere.elasticbeanstalk import (
     Application,
     ApplicationVersion,
@@ -41,11 +36,14 @@ from troposphere.elasticbeanstalk import (
 )
 from troposphere.iam import InstanceProfile, Role
 
-from .hyp3_rds import hyp3_db
-from .hyp3_db_params import db_name, db_super_user, db_super_user_pass
-from .hyp3_vpc import get_public_subnets, hyp3_vpc
-from .utils import get_map
+from template import t
+from tropo_env import environment
+
+from .hyp3_db_params import db_name, db_pass, db_user
 from .hyp3_keypairname_param import keyname
+from .hyp3_rds import hyp3_db
+from .hyp3_vpc import get_public_subnets, hyp3_vpc
+from .utils import get_ec2_assume_role_policy, get_map, make_s3_key
 
 source_zip = "hyp3_api.zip"
 
@@ -54,21 +52,18 @@ print('  adding api_eb')
 
 t.add_mapping("Region2Principal", get_map('region2principal'))
 
+solution_stack_name = t.add_parameter(Parameter(
+    "SolutionStackName",
+    Description="ElasticBeanstalk configuration to run the API in. This should \
+    be set to the latest version of the Python 3.6 container.",
+    Type="String",
+    Default="64bit Amazon Linux 2018.03 v2.7.3 running Python 3.6"
+))
+
 role = t.add_resource(Role(
     "HyP3ApiWebServerRole",
-    AssumeRolePolicyDocument=Policy(
-        Statement=[
-            Statement(
-                Effect=Allow, Action=[AssumeRole],
-                Principal=Principal(
-                    "Service", [
-                        FindInMap(
-                            "Region2Principal",
-                            Ref("AWS::Region"), "EC2Principal")
-                    ]
-                )
-            )
-        ]
+    AssumeRolePolicyDocument=get_ec2_assume_role_policy(
+        FindInMap("Region2Principal", Ref("AWS::Region"), "EC2Principal")
     ),
     Path="/",
     ManagedPolicyArns=[
@@ -83,31 +78,31 @@ instance_profile = t.add_resource(InstanceProfile(
 ))
 
 app = t.add_resource(Application(
-    "Hyp3Api",
-    ApplicationName="hyp3-api",
+    "HyP3Api",
+    ApplicationName=Sub(
+        "${StackName}-hyp3-api",
+        StackName=Ref('AWS::StackName')
+    ),
     Description=("AWS Elastic Beanstalk API for "
                  "interacting with the HyP3 system")
 ))
 
 app_version = t.add_resource(ApplicationVersion(
-    "Hyp3ApiTestVersion",
+    "HyP3ApiTestVersion",
     Description="Version 1.0",
     ApplicationName=Ref(app),
     SourceBundle=SourceBundle(
-        S3Bucket=environment.eb_bucket,
-        S3Key="{maturity}/{zip}".format(
-            maturity=environment.maturity,
-            zip=source_zip
-        )
+        S3Bucket=environment.source_bucket,
+        S3Key=make_s3_key(source_zip)
     )
 ))
 
 config_template = t.add_resource(ConfigurationTemplate(
-    "Hyp3ApiConfigurationTemplate",
-    DependsOn=["Hyp3VPC", "Hyp3DB"],
+    "HyP3ApiConfigurationTemplate",
+    DependsOn=[hyp3_vpc, hyp3_db],
     ApplicationName=Ref(app),
     Description="",
-    SolutionStackName=environment.eb_solution_stack_name,
+    SolutionStackName=Ref(solution_stack_name),
     OptionSettings=[
         OptionSettings(
             Namespace="aws:autoscaling:launchconfiguration",
@@ -162,12 +157,12 @@ config_template = t.add_resource(ConfigurationTemplate(
         OptionSettings(
             Namespace="aws:elasticbeanstalk:application:environment",
             OptionName="DB_USER",
-            Value=Ref(db_super_user)
+            Value=Ref(db_user)
         ),
         OptionSettings(
             Namespace="aws:elasticbeanstalk:application:environment",
             OptionName="DB_PASS",
-            Value=Ref(db_super_user_pass)
+            Value=Ref(db_pass)
         ),
         OptionSettings(
             Namespace="aws:elasticbeanstalk:application:environment",
@@ -187,19 +182,26 @@ config_template = t.add_resource(ConfigurationTemplate(
     ]
 ))
 
-test_environment = t.add_resource(Environment(
-    "Hyp3ApiTestEnvironment",
-    EnvironmentName="test",
-    Description="HyP3 API maturity: 'test'",
+eb_environment = t.add_resource(Environment(
+    "HyP3ApiEnvironment",
+    EnvironmentName=Sub(
+        "${StackName}-${Maturity}",
+        StackName=Ref('AWS::StackName'),
+        Maturity=environment.maturity
+    ),
+    Description="HyP3 API maturity: '{}'".format(
+        environment.maturity
+    ),
     ApplicationName=Ref(app),
     TemplateName=Ref(config_template),
     VersionLabel=Ref(app_version)
 ))
 
+api_url = Join("", ["http://", GetAtt(eb_environment, "EndpointURL")])
 t.add_output(
     Output(
         "HyP3ApiUrl",
         Description="HyP3 API url",
-        Value=Join("", ["http://", GetAtt(test_environment, "EndpointURL")])
+        Value=api_url
     )
 )

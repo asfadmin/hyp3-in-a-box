@@ -12,29 +12,22 @@ import scheduler_main
 
 
 @skip_if_creds_not_available
-@mock.patch('dispatch.sns.push')
-def test_scheduler_main(sns_mock):
-    event = utils.load_testing_granules()
-
-    scheduler_main.scheduler(event)
-
-    sns_mock.assert_called()
+@mock.patch('dispatch.scheduler_sns.push')
+@mock.patch('dispatch.scheduler_sqs.add_event')
+def test_scheduler_main(sns_mock, sqs_mock, testing_granules):
+    scheduler_main.scheduler(testing_granules)
 
 
 @skip_if_creds_not_available
-def test_scheduler():
-    granules = utils.load_testing_granules()['new_granules']
-    granule_events = [
-        hyp3_events.NewGranuleEvent(**e) for e in granules
-    ]
-    email_packages = schedule.hyp3_jobs(granule_events)
+def test_scheduler(granule_events):
+    jobs = schedule.hyp3_jobs(granule_events)
+    assert isinstance(jobs, list)
 
-    assert isinstance(email_packages, list)
-
-    for sub, user, granule_event in email_packages:
-        assert hasattr(sub, 'id')
-        assert isinstance(granule_event, hyp3_events.NewGranuleEvent)
-        assert sub.user_id == user.id
+    for job in jobs:
+        assert hasattr(job.sub, 'id')
+        assert isinstance(job.granule, hyp3_events.NewGranuleEvent)
+        assert job.sub.user_id == job.user.id
+        assert job.process
 
     if 'local' in environment.maturity:
-        utils.cache_results(email_packages)
+        utils.cache_results(jobs)

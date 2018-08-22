@@ -1,56 +1,33 @@
-import hyp3_events
+from typing import Any, Dict, List
+import json
+
+from hyp3_events import HyP3Event, NewGranuleEvent
+
+from schedule import Job
 
 
-def make_new_granule_events_with(new_granule_dicts):
+def make_new_granule_events_with(
+        new_granule_dicts: List[Dict[str, Any]]
+) -> List[NewGranuleEvent]:
     events = [
-        hyp3_events.NewGranuleEvent(**event)
+        NewGranuleEvent(**event)
         for event in new_granule_dicts
     ]
+
+    print('Scheduling hyp3_jobs')
+    print(json.dumps([g.name for g in events]))
 
     return events
 
 
-def make_from(email_packages):
+def make_from(jobs: List[Job]) -> List[HyP3Event]:
     """ make email packages into notify only events
 
-        :param list(tuple): email packages of the form (sub, user, granule)
+        :param list(Job): jobs to make into events
 
         :returns: hyp3 events corresponding to each package
-        :rtype: list[hyp3_events.NotifyOnlyEvent]
+        :rtype: list[hyp3_events.EmailEvent]
     """
-    events = [
-        make_event(sub, user, granule) for
-        sub, user, granule in email_packages
-    ]
+    events = [job.to_event() for job in jobs]
 
-    return list(filter(lambda e: e is not None, events))
-
-
-def make_event(sub, user, granule):
-    if sub.process_id == 1:
-        return make_notify_only_event(sub, user, granule)
-
-    return make_start_event(sub, user, granule)
-
-
-def make_notify_only_event(sub, user, granule):
-    return hyp3_events.NotifyOnlyEvent(
-        address=user.email,
-        subject='New Subscription Data',
-        additional_info=[{
-            'name': 'User',
-            'value': user.username
-        }, {
-            'name': 'Subscripton',
-            'value': sub.name
-        }, {
-            'name': 'Granule',
-            'value': granule.name
-        }],
-        browse_url=granule.browse_url,
-        download_url=granule.download_url
-    )
-
-
-def make_start_event(sub, user, granule):
-    return hyp3_events.StartEvent()
+    return events

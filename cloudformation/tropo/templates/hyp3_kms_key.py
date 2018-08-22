@@ -16,9 +16,8 @@ Resources
 """
 
 from awacs.aws import Action, Allow, PolicyDocument, Principal, Statement
-from troposphere import AWS_ACCOUNT_ID, Join, Ref, kms
-
 from template import t
+from troposphere import AWS_ACCOUNT_ID, Join, Ref, kms
 
 print('  adding KMS key')
 
@@ -40,7 +39,7 @@ key_policy = PolicyDocument(
 
 kms_key = t.add_resource(
     kms.Key(
-        "Hyp3KMSKey",
+        "HyP3KMSKey",
         Description="KMS Key used by HyP3 to encrypt sensitive data",
         KeyPolicy=key_policy
     )
