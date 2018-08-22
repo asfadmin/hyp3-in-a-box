@@ -146,7 +146,7 @@ def build():
     if MATURITY == "prod":
         release_options += ["--release", RELEASE_VERSION]
         try:
-            subprocess.check_call([
+            subprocess.check_output([
                 "aws", "s3api", "head-object", "--bucket",
                 "asf-hyp3-in-a-box-source-east", "--key",
                 "releases/{}/template.json".format(RELEASE_VERSION)
