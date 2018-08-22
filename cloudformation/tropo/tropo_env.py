@@ -23,7 +23,7 @@ class Environment:
         if not self.release:
             return self.default_processes_key
 
-        return "releases/{}".format(self.default_processes_key)
+        return "releases/{}/{}".format(self.release, self.default_processes_key)
 
     def get_variables(self):
         return [
