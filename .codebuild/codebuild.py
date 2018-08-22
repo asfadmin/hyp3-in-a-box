@@ -25,7 +25,7 @@ import github
 RELEASE_VERSION = "0.2.0"
 
 TEMPLATE_CONFIG_BUCKET = "hyp3-in-a-box"
-TEMPLATE_NAME = 'hyp3-in-a-box_US-WEST-2.json'
+TEMPLATE_NAME = 'hyp3-in-a-box_US-EAST-1.json'
 
 
 S3_SOURCE_BUCKET = os.environ["S3_SOURCE_BUCKET"]
@@ -147,9 +147,13 @@ def build():
         release_options += ["--release", RELEASE_VERSION]
         try:
             subprocess.check_call([
-                "aws s3api head-object", "--bucket", "asf-hyp3-in-a-box-source-east",
-                "--key", "releases/{}/template.json".format(RELEASE_VERSION)])
-            raise Exception("Version {} already exists!".format(RELEASE_VERSION))
+                "aws", "s3api", "head-object", "--bucket",
+                "asf-hyp3-in-a-box-source-east", "--key",
+                "releases/{}/template.json".format(RELEASE_VERSION)
+            ])
+            raise Exception(
+                "Version {} already exists!".format(RELEASE_VERSION)
+            )
         except subprocess.CalledProcessError as e:
             if "404" not in e.output:
                 raise e
