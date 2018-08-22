@@ -278,6 +278,12 @@ def post_build():
         "s3://asf-docs/hyp3-in-a-box",
         "--recursive", "--acl", "public-read"
     ])
+    if MATURITY == "prod":
+        subprocess.check_call([
+            "aws", "s3", "cp",
+            "s3://{}/data/default-processes.json".format(S3_SOURCE_BUCKET),
+            "s3://{}/releases/{}/data/default-processes.json".format(S3_SOURCE_BUCKET, RELEASE_VERSION)
+        ])
     github.set_github_ci_status("success", description=get_config(
         "TEST_RESULT_SUMMARY", "Build completed"))
 
