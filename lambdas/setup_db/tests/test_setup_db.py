@@ -66,7 +66,7 @@ def check_setup_db_still_works(sample_event):
 def reset_hyp3_db():
     with hyp3_db.test_db(db='postgres') as admindb:
         admindb.session.connection().connection.set_isolation_level(0)
-        admindb.session.execute(f"DROP DATABASE {TESTING_DB};")
+        admindb.session.execute(f"DROP DATABASE IF EXISTS {TESTING_DB};")
         admindb.session.execute(f"CREATE DATABASE {TESTING_DB};")
         admindb.session.execute(f"DROP USER IF EXISTS {TESTING_USER};")
         admindb.session.connection().connection.set_isolation_level(1)
