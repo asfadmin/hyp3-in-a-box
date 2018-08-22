@@ -27,7 +27,7 @@ class Process:
     def run(self) -> None:
         """ Run process in background as daemon process """
         args = get_arguments()
-        log.debug('Hyp3 Daemon Args: \n%s', json.dumps(args))
+        log.debug('HyP3 Daemon Args: \n%s', json.dumps(args))
 
         config = HyP3DaemonConfig(**args)
 

@@ -49,7 +49,7 @@ def get_unsub_action(db, user_id) -> OneTimeAction:
 
 
 def make_email_context(
-    db: hyp3_db.Hyp3DB,
+    db: hyp3_db.HyP3DB,
     user: User,
     unsub_action: OneTimeAction,
     email_event: EmailEvent

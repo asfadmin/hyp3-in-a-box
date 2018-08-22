@@ -249,7 +249,7 @@ def build_hyp3_api():
     ])
     api_flask_path = pl.Path('hyp3-api/hyp3-flask')
 
-    print(f"Hyp3 api directories: {os.listdir(str(api_flask_path))}")
+    print(f"HyP3 api directories: {os.listdir(str(api_flask_path))}")
     subprocess.check_call([
         "zip", "-r", "../../build/hyp3_api.zip", "."],
         cwd=str(api_flask_path)

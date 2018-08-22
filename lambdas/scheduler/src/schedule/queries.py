@@ -6,7 +6,7 @@ from geoalchemy2 import WKTElement
 def get_users_by_ids(db, user_ids):
     """ Get users from a list of user ids
 
-        :param Hyp3DB db: The db to make the query on
+        :param HyP3DB db: The db to make the query on
         :param list[int] user_ids: User ids to get user objects from
 
         :returns: hyp3 users with ids in user_ids list
@@ -24,7 +24,7 @@ def get_users_by_ids(db, user_ids):
 def get_enabled_intersecting_subs(db, polygon):
     """ Get enabled subs intersecting a polygon
 
-        :param Hyp3DB db: The db to make the query on
+        :param HyP3DB db: The db to make the query on
         :param str polygon: WKT polygon
 
         :returns: hyp3 subscriptions intersecting polygon

@@ -31,7 +31,7 @@ from .hyp3_send_email import send_email
 print('  adding sns')
 
 finish_sns = t.add_resource(Topic(
-    "Hyp3FinishEventSNSTopic",
+    "HyP3FinishEventSNSTopic",
     Subscription=[
         Subscription(
             Protocol="lambda",
@@ -49,7 +49,7 @@ sns_invoke_permissions = t.add_resource(Permission(
 ))
 
 ssm_sns_arn = t.add_resource(Parameter(
-    "Hyp3SSMParameterFinishEventSNSArn",
+    "HyP3SSMParameterFinishEventSNSArn",
     Name=Sub(
         "/${StackName}/FinishEventSNSArn",
         StackName=Ref("AWS::StackName")

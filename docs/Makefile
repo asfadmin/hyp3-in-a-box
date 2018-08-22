@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = Hyp3InABox
+SPHINXPROJ    = HyP3InABox
 SOURCEDIR     = .
 BUILDDIR      = _build
 

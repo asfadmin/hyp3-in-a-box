@@ -27,7 +27,7 @@ def test_to_dict(EventType):
 
     @given(STRATEGIES[EventType])
     def to_dict_test(event):
-        assert event.event_type != 'Hyp3Event'
+        assert event.event_type != 'HyP3Event'
         e_dict = event.to_dict()
 
         assert isinstance(e_dict, dict)

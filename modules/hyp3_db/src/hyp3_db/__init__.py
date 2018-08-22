@@ -5,7 +5,7 @@ and mainly handles connecting to the database.
 """
 import contextlib
 
-from .hyp3_db import Hyp3DB, connect, connect_using_environment_variables
+from .hyp3_db import HyP3DB, connect, connect_using_environment_variables
 from . import hyp3_models
 
 
@@ -16,11 +16,11 @@ def test_db(db='hyp3db', commit_on_close=False):
         :param str db: name of the database to make
 
         :returns: connection to the hyp3_db database
-        :rtype: hyp3_db.Hyp3DB
+        :rtype: hyp3_db.HyP3DB
     """
     creds = testing_creds(db)
 
-    db = Hyp3DB(**creds)
+    db = HyP3DB(**creds)
     try:
         yield db
     except Exception as e:
@@ -42,7 +42,7 @@ def testing_creds(db):
 
 
 __all__ = [
-    'Hyp3DB', 'connect',
+    'HyP3DB', 'connect',
     'connect_using_environment_variables', 'hyp3_models',
     'test_db', 'testing_creds'
 ]

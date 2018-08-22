@@ -9,7 +9,7 @@ with codecs.open('requirements.txt', 'r') as f:
         requirements = requirements[1:]
 
 setup(
-    name='Hyp3 DB',
+    name='HyP3 DB',
     version='0.1dev',
     packages=find_packages('src'),
     package_dir={'': 'src'},

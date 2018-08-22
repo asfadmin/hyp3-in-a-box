@@ -48,8 +48,8 @@ def test_setup_db(dbmock, environ_mock, event, environment):
 def check_new_user(db, mock_env):
     user = db.session.query(hyp3_models.User).one()
 
-    assert user.email == mock_env['Hyp3AdminEmail']
-    assert user.username == mock_env['Hyp3AdminUsername']
+    assert user.email == mock_env['HyP3AdminEmail']
+    assert user.username == mock_env['HyP3AdminUsername']
 
 
 def check_processes(db, mock_env):
@@ -82,21 +82,21 @@ def environment():
     process_cfg = load_json_from('../../../processes/.config.json')
 
     return {
-        'Hyp3DBUser': TESTING_USER,
-        'Hyp3DBName': TESTING_DB,
+        'HyP3DBUser': TESTING_USER,
+        'HyP3DBName': TESTING_DB,
 
-        'Hyp3DBPass': 'testingpassword',
-        'Hyp3AdminUsername': 'testuser',
-        'Hyp3AdminEmail': 'test@alaska.edu',
+        'HyP3DBPass': 'testingpassword',
+        'HyP3AdminUsername': 'testuser',
+        'HyP3AdminEmail': 'test@alaska.edu',
 
         'DefaultProcessesBucket': 'asf-hyp3-in-a-box-source',
         'DefaultProcessesKey': process_cfg["default_processes_key"],
 
         'Maturity': 'test',
 
-        'Hyp3StackName': 'unittesting-hyp3-in-a-box-stack',
-        'ParamNameHyp3Username': "HyP3ApiUsername",
-        'ParamNameHyp3ApiKey': "HyP3ApiKey"
+        'HyP3StackName': 'unittesting-hyp3-in-a-box-stack',
+        'ParamNameHyP3Username': "HyP3ApiUsername",
+        'ParamNameHyP3ApiKey': "HyP3ApiKey"
     }
 
 

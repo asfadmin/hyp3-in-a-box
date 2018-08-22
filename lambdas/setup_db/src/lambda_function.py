@@ -2,7 +2,7 @@
 # Rohan Weeden, William Horn
 # Created: June 13, 2018
 
-# Lambda function for creating the Hyp3 Database
+# Lambda function for creating the HyP3 Database
 
 import os
 
@@ -28,10 +28,10 @@ def get_db_creds():
     """
 
     return utils.get_environ_params(
-        'Hyp3DBHost',
-        'Hyp3DBRootUser',
-        'Hyp3DBRootPass',
-        'Hyp3DBName'
+        'HyP3DBHost',
+        'HyP3DBRootUser',
+        'HyP3DBRootPass',
+        'HyP3DBName'
     )
 
 
@@ -43,8 +43,8 @@ def get_db_low_priv_creds():
     """
 
     return utils.get_environ_params(
-        'Hyp3DBHost',
-        'Hyp3DBUser',
-        'Hyp3DBPass',
-        'Hyp3DBName'
+        'HyP3DBHost',
+        'HyP3DBUser',
+        'HyP3DBPass',
+        'HyP3DBName'
     )

@@ -29,7 +29,7 @@ print('  adding find_new lambda')
 
 
 ssm_previous_time = t.add_resource(SSMParameter(
-    "Hyp3SSMParameterPerviousTime",
+    "HyP3SSMParameterPerviousTime",
     Name=Sub(
         "/${StackName}/previous_time.json",
         StackName=Ref("AWS::StackName")

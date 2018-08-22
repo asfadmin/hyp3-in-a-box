@@ -45,7 +45,7 @@ inrule, outrule = [
 ]
 
 security_group = t.add_resource(ec2.SecurityGroup(
-    "Hyp3TCPAll",
+    "HyP3TCPAll",
     GroupDescription="Allow for all tcp traffic through port 5432",
     VpcId=Ref(hyp3_vpc),
     SecurityGroupIngress=[inrule],
@@ -61,7 +61,7 @@ mydbsubnetgroup = t.add_resource(rds.DBSubnetGroup(
 # Only certain versions of postgres are supported on the smaller instance types
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html
 db = rds.DBInstance(
-    "Hyp3DB",
+    "HyP3DB",
     DBInstanceIdentifier=Sub(
         '${StackName}-hyp3-rds-instance',
         StackName=Ref('AWS::StackName')

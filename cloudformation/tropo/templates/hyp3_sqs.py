@@ -34,7 +34,7 @@ failed_start_evets = t.add_resource(Queue(
 ))
 
 start_events = t.add_resource(Queue(
-    "Hyp3StartEvents",
+    "HyP3StartEvents",
     FifoQueue=True,
     ContentBasedDeduplication=True,
     RedrivePolicy=RedrivePolicy(
@@ -45,7 +45,7 @@ start_events = t.add_resource(Queue(
 ))
 
 ssm_queue_name = t.add_resource(Parameter(
-    "Hyp3SSMParameterStartEventQueueName",
+    "HyP3SSMParameterStartEventQueueName",
     Name=Sub(
         "/${StackName}/StartEventQueueName",
         StackName=Ref("AWS::StackName")

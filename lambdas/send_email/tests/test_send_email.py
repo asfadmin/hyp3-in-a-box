@@ -4,7 +4,7 @@ import json
 
 import pytest
 import mock
-from hyp3_events import Hyp3Event
+from hyp3_events import HyP3Event
 
 import import_send_email
 import send_email_mocks
@@ -58,7 +58,7 @@ def test_main_email_doesnt_want_email(db_mock, user_mock, ses_mock, sns_event):
 def test_sns_event_from_notification(sns_event):
     hyp3_event = sns.get_hyp3_event_from(sns_event)
 
-    assert isinstance(hyp3_event, Hyp3Event)
+    assert isinstance(hyp3_event, HyP3Event)
 
 
 def test_render_email(sns_event):

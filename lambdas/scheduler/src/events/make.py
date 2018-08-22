@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 import json
 
-from hyp3_events import Hyp3Event, NewGranuleEvent
+from hyp3_events import HyP3Event, NewGranuleEvent
 
 from schedule import Job
 
@@ -20,7 +20,7 @@ def make_new_granule_events_with(
     return events
 
 
-def make_from(jobs: List[Job]) -> List[Hyp3Event]:
+def make_from(jobs: List[Job]) -> List[HyP3Event]:
     """ make email packages into notify only events
 
         :param list(Job): jobs to make into events

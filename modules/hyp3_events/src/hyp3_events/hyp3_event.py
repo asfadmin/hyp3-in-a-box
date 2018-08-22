@@ -3,7 +3,7 @@ import abc
 import json
 
 
-class Hyp3Event(abc.ABC):
+class HyP3Event(abc.ABC):
     """ Base class for all hyp3 events"""
 
     from_impls = {}

@@ -52,8 +52,8 @@ class DBSetup(custom_resource.Base):
                 setup_db_low_privileged(db)
             )
 
-        assert 'Hyp3ApiKey' in setup_outputs
-        assert 'Hyp3Username' in setup_outputs
+        assert 'HyP3ApiKey' in setup_outputs
+        assert 'HyP3Username' in setup_outputs
 
         return {
             'Data': setup_outputs,
@@ -120,9 +120,9 @@ def install_postgis(db):
 
 def add_db_user(db):
     user, password, db_name = utils.get_environ_params(
-        'Hyp3DBUser',
-        'Hyp3DBPass',
-        'Hyp3DBName'
+        'HyP3DBUser',
+        'HyP3DBPass',
+        'HyP3DBName'
     )
 
     if does_db_user_exists(db, user):
@@ -173,10 +173,10 @@ def make_hyp3_admin_user(db):
 
 
 def get_param_store_paths():
-    stack_name = utils.get_environ_params('Hyp3StackName').pop()
+    stack_name = utils.get_environ_params('HyP3StackName').pop()
     [username_param_name, api_key_param_name] = utils.get_environ_params(
-        "ParamNameHyp3Username",
-        "ParamNameHyp3ApiKey"
+        "ParamNameHyP3Username",
+        "ParamNameHyP3ApiKey"
     )
     utils.step_print(stack_name)
 
@@ -188,8 +188,8 @@ def get_param_store_paths():
 
 def get_user():
     name, email = utils.get_environ_params(
-        'Hyp3AdminUsername',
-        'Hyp3AdminEmail'
+        'HyP3AdminUsername',
+        'HyP3AdminEmail'
     )
 
     return User(name, email)
@@ -204,8 +204,8 @@ def add_new_user(db, user, param_paths):
     })
 
     return {
-        'Hyp3ApiKey': api_key,
-        'Hyp3Username': user.name
+        'HyP3ApiKey': api_key,
+        'HyP3Username': user.name
     }
 
 
@@ -215,8 +215,8 @@ def reference_old_user_params(param_paths):
     prefix = 'SSM Parameter Store Path -> '
 
     return {
-        'Hyp3ApiKey': prefix + param_paths['api-key'],
-        'Hyp3Username': prefix + param_paths['username']
+        'HyP3ApiKey': prefix + param_paths['api-key'],
+        'HyP3Username': prefix + param_paths['username']
     }
 
 
