@@ -155,7 +155,7 @@ def build():
                 "Version {} already exists!".format(RELEASE_VERSION)
             )
         except subprocess.CalledProcessError as e:
-            if 255 not in e.returncode:
+            if 255 != e.returncode:
                 raise e
             print("Current release was not found... good")
 
