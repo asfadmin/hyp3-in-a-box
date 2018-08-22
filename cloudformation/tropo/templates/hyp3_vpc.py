@@ -29,7 +29,7 @@ Resources
 """
 
 from template import t
-from troposphere import GetAZs, Output, Ref, Select, ec2
+from troposphere import GetAZs, Output, Ref, Select, Tags, ec2
 
 print('  adding vpc')
 
@@ -38,7 +38,10 @@ hyp3_vpc = t.add_resource(ec2.VPC(
     CidrBlock='10.0.0.0/16',
     InstanceTenancy='default',
     EnableDnsSupport=True,
-    EnableDnsHostnames=True
+    EnableDnsHostnames=True,
+    Tags=Tags(
+        Name="HyP3 VPC"
+    )
 ))
 
 igw = t.add_resource(ec2.InternetGateway('Hyp3InternetGateway',))
