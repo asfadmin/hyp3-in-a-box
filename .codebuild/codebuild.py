@@ -222,13 +222,14 @@ def get_latest_lambda_versions():
     versions = []
     s3 = boto3.resource("s3")
     bucket = s3.Bucket(S3_SOURCE_BUCKET)
+    prefix = "releases/{}".format(RELEASE_VERSION) if MATURITY == "prod" else MATURITY
     for lambda_zip in os.listdir("build/lambdas"):
         if ".zip" not in lambda_zip:
             continue
 
         latest_versions = bucket.object_versions \
             .filter(
-                Prefix="{}/{}".format(MATURITY, lambda_zip),
+                Prefix="{}/{}".format(prefix, lambda_zip),
                 MaxKeys=1
             ).limit(count=1)
 
