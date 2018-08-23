@@ -29,7 +29,10 @@ Resources
 """
 
 from template import t
-from troposphere import GetAZs, Output, Ref, Select, Tags, ec2, Parameter
+from troposphere import (
+    GetAZs, Output, Ref, Select,
+    Tags, ec2, Parameter, GetAtt
+)
 
 print('  adding vpc')
 
@@ -145,6 +148,17 @@ local_network_acl = t.add_resource(ec2.NetworkAcl(
     'LocalNetworkAcl',
     VpcId=Ref(hyp3_vpc)
 ))
+
+inter_vpc_entry = t.add_resource(ec2.NetworkAclEntry(
+    'InterVPCAclEntry',
+    NetworkAclId=Ref(local_network_acl),
+    CidrBlock=GetAtt(hyp3_vpc, "CidrBlock"),
+    Protocol=-1,
+    RuleAction="allow",
+    RuleNumber=200,
+    Egress=False
+))
+
 
 local_acl_entry = t.add_resource(ec2.NetworkAclEntry(
     'LocalAclEntry',
