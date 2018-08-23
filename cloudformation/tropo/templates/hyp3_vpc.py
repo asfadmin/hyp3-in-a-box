@@ -117,7 +117,7 @@ def get_public_subnets():
 restricted_subnet = t.add_resource(ec2.Subnet(
     'HyP3RestrictedSubnet',
     AvailabilityZone=get_az(2),
-    CidrBlock='10.0.3.0/24',
+    CidrBlock='10.0.4.0/24',
     MapPublicIpOnLaunch=True,
     VpcId=Ref(hyp3_vpc)
 ))
