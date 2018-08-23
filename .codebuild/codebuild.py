@@ -195,7 +195,7 @@ def upload_template(file_path):
         return bucket.put_object(
             Key=key,
             Body=f,
-            ACL="public-read" if MATURITY == "prod" else "private"
+            ACL="public-read" if MATURITY == "prod" else "bucket-owner-full-control"
         )
 
 
