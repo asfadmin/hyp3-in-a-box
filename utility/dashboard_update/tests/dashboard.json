@@ -389,7 +389,7 @@
                 "view": "singleValue",
                 "stacked": false,
                 "metrics": [
-                    [ "AWS/Lambda", "Invocations", "FunctionName", "hyp3-in-a-box-test_hyp3_setup_db1", { "period": 3600, "stat": "Sum", "color": "#2ca02c", "label": "Invocations" } ],
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "hyp3-in-a-box-test_hyp3_setup_db", { "period": 3600, "stat": "Sum", "color": "#2ca02c", "label": "Invocations" } ],
                     [ ".", "Errors", ".", "hyp3-in-a-box-test_hyp3_setup_db", { "period": 3600, "stat": "Sum", "color": "#d62728" } ]
                 ],
                 "region": "us-west-2",

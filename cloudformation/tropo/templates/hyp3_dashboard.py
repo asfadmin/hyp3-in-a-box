@@ -11,6 +11,8 @@ from .hyp3_find_new import find_new_granules
 from .hyp3_scheduler import scheduler
 from .hyp3_send_email import send_email
 from .hyp3_setup_db import setup_db
+from .hyp3_autoscaling_group import processing_group
+from .hyp3_sqs import start_events
 
 print('  adding hyp3 dashboard')
 
@@ -36,7 +38,9 @@ hyp3_dashboard = t.add_resource(Dashboard(
         SchedulerName=Ref(scheduler),
         SendEmailName=Ref(send_email),
         SetupDBName=Ref(setup_db),
-        HyP3DBInsatnceIdentifier=Ref(db)
+        HyP3DBInsatnceIdentifier=Ref(db),
+        StartEventQueue=Ref(start_events),
+        AutoscalingGroup=processing_group
     )
 ))
 
