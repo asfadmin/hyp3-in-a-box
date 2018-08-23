@@ -22,7 +22,7 @@ import boto3
 import github
 
 # Use SemVer!
-RELEASE_VERSION = "0.2.0"
+RELEASE_VERSION = "0.2.1"
 
 TEMPLATE_CONFIG_BUCKET = "hyp3-in-a-box"
 TEMPLATE_NAME = 'hyp3-in-a-box_US-EAST-1v{}.json'.format(RELEASE_VERSION)
