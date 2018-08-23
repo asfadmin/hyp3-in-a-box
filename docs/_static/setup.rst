@@ -27,8 +27,8 @@ Authorize an email address in SES
 Earthdata Credentials
 ^^^^^^^^^^^^^^^^^^^^^
 
-    To download data within HyP3, an earthdata account is needed.
-    To create an earthdata account go to:
+    To download data within HyP3, an Earthdata account is needed.
+    To create an Earthdata account go to:
 
         - `Register for Earthdata`_
 
@@ -52,7 +52,7 @@ Launching the CloudFormation stack
       ``hyp3-in-a-box_<aws region here>.json``
 
    Be sure to create the template in the correct region or the template will no work.
-   Currently the only supported region is ``us-west-2``.
+   Currently the only supported region is ``us-east-1``.
 
 Stack Parameters
 ~~~~~~~~~~~~~~~~
@@ -70,8 +70,16 @@ Stack Parameters
     email but both must be entered.
 
     The maximum number of running instances determines how many servers can run processing
-    at one time. Increaseing this number will affect how much aws charges, but allows you
+    at one time. Increasing this number will affect how much AWS charges, but allows you
     to process more data.
+
+    The Api cidr range is to limit access to the api. The default (0.0.0.0/0) allows all traffic through.
+
+    Solution stack name it the elastic beanstalk. To find then newest version go here:
+
+        - `Elastic Beanstalk Solution Stack`_.
+
+    Pick the latest python 3.6 solution stack name.
 
 Launching
 ~~~~~~~~~
@@ -99,3 +107,4 @@ Basic Usage
 .. _random.org: https://www.random.org/passwords/
 .. _Systems Manager: https://aws.amazon.com/systems-manager/
 .. _Register for Earthdata: https://urs.earthdata.nasa.gov/profile/
+.. _Elatic Beanstalk Solution Stack: https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html#concepts.platforms.python
