@@ -108,8 +108,7 @@ instance_type = t.add_parameter(Parameter(
 
 spot_price = t.add_parameter(Parameter(
     "RTCProcessingSpotPrice",
-    Description="The maximum price to pay for a spot instance. \
-    Setting this value enables spot processing.",
+    Description="The maximum price to pay for a spot instance (required).",
     Type="Number"
 ))
 
