@@ -141,6 +141,9 @@ def get_badge_color(coverage):
 
 
 class Build(object):
+    def __init__(self):
+        self.codefactor = "happy"
+
     def build(self):
         release_options = self.get_release_options()
 
@@ -206,6 +209,7 @@ class Build(object):
         return MATURITY
 
     def build_hyp3_api(self):
+        self.codefactor = "happy"
         print('building hyp3 api')
         hyp3_api_url = "https://{}@github.com/asfadmin/hyp3-api".format(
             GITHUB_ASFADMIN_CLONE_TOKEN
