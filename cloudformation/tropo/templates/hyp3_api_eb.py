@@ -115,6 +115,11 @@ config_template = t.add_resource(ConfigurationTemplate(
             Value=Ref(instance_profile)
         ),
         OptionSettings(
+            Namespace="aws:autoscaling:launchconfiguration",
+            OptionName="InstanceType",
+            Value="t3.micro"
+        ),
+        OptionSettings(
             Namespace="aws:ec2:vpc",
             OptionName="VPCId",
             Value=Ref(hyp3_vpc)
