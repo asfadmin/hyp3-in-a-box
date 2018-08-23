@@ -1,0 +1,520 @@
+{
+    "widgets": [
+        {
+            "type": "text",
+            "x": 0,
+            "y": 0,
+            "width": 24,
+            "height": 2,
+            "properties": {
+                "markdown": "\n# Hybrid Plugable Processing Pipeline (HyP3) Dashboard\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 24,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "markdown": "\n# Lambda: Find New Granules\nStart scheduling jobs with new granules from cmr. This lambda gets triggered by a cloudwatch event on a fixed schedule.\n\n[button:primary:Docs](http://asf-docs.s3-website-us-west-2.amazonaws.com/hyp3-in-a-box/_static/cloudformation/find_new.html)\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 38,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "markdown": "\n# Lambda: Send Email\nRender and send email notification for the hyp3 system \n\n[button:primary:Docs](http://asf-docs.s3-website-us-west-2.amazonaws.com/hyp3-in-a-box/_static/cloudformation/send_email.html)\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 24,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "hyp3-in-a-box-test_hyp3_find_new_granules", { "period": 300, "label": "Find New Duration" } ]
+                ],
+                "region": "us-west-2",
+                "period": 300,
+                "yAxis": {
+                    "left": {
+                        "min": 700,
+                        "max": 3000
+                    }
+                },
+                "title": "Duration Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 3,
+            "y": 24,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "view": "singleValue",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "hyp3-in-a-box-test_hyp3_find_new_granules", { "period": 3600, "stat": "Sum", "color": "#2ca02c" } ],
+                    [ ".", "Errors", ".", ".", { "period": 3600, "stat": "Sum", "color": "#d62728" } ]
+                ],
+                "region": "us-west-2",
+                "period": 300,
+                "title": "Past Hour"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 24,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "hyp3-in-a-box-test_hyp3_find_new_granules", "Resource", "hyp3-in-a-box-test_hyp3_find_new_granules", { "id": "errors", "stat": "Sum", "color": "#d62728" } ],
+                    [ ".", "Invocations", ".", ".", ".", ".", { "id": "invocations", "stat": "Sum", "visible": false } ],
+                    [ { "expression": "100 - 100 * errors / invocations", "label": "Availability (%)", "id": "availability", "yAxis": "right" } ]
+                ],
+                "region": "us-west-2",
+                "title": "Errors, Availability (%)",
+                "yAxis": {
+                    "right": {
+                        "max": 100
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": true,
+                "period": 300
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 30,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 31,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "hyp3-in-a-box-test_hyp3_scheduler", "Resource", "hyp3-in-a-box-test_hyp3_scheduler", { "id": "errors", "stat": "Sum", "color": "#d62728" } ],
+                    [ ".", "Invocations", ".", ".", ".", ".", { "id": "invocations", "stat": "Sum", "visible": false } ],
+                    [ { "expression": "100 - 100 * errors / invocations", "label": "Availability (%)", "id": "availability", "yAxis": "right" } ]
+                ],
+                "region": "us-west-2",
+                "title": "Errors, Availability (%)",
+                "yAxis": {
+                    "right": {
+                        "max": 100
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": true,
+                "period": 300
+            }
+        },
+        {
+            "type": "metric",
+            "x": 3,
+            "y": 31,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "view": "singleValue",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "hyp3-in-a-box-test_hyp3_scheduler", { "period": 3600, "stat": "Sum", "color": "#2ca02c", "yAxis": "left" } ],
+                    [ ".", "Errors", ".", ".", { "period": 3600, "stat": "Sum", "color": "#d62728" } ]
+                ],
+                "region": "us-west-2",
+                "period": 300,
+                "title": "Past Hour"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 31,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "hyp3-in-a-box-test_hyp3_scheduler", { "period": 300, "label": "Scheduler Duration" } ]
+                ],
+                "region": "us-west-2",
+                "period": 300,
+                "title": "Duration Average"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 37,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 31,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "markdown": "\n# Lambda: Job Scheduler\nSchedule new HyP3 jobs, this can either be a processing job or just a email notification. \n\n[button:primary:Docs](http://asf-docs.s3-website-us-west-2.amazonaws.com/hyp3-in-a-box/_static/cloudformation/scheduler.html)\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 3,
+            "y": 38,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "view": "singleValue",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "hyp3-in-a-box-test_hyp3_send_email", "Resource", "hyp3-in-a-box-test_hyp3_send_email", { "period": 3600, "stat": "Sum", "color": "#2ca02c" } ],
+                    [ ".", "Errors", ".", ".", ".", ".", { "period": 3600, "stat": "Sum", "color": "#d62728" } ]
+                ],
+                "region": "us-west-2",
+                "period": 300,
+                "title": "Past Hour"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 38,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "hyp3-in-a-box-test_hyp3_send_email", { "period": 300, "label": "Send Email Duration" } ]
+                ],
+                "region": "us-west-2",
+                "period": 300,
+                "title": "Duration Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 38,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "hyp3-in-a-box-test_hyp3_send_email", "Resource", "hyp3-in-a-box-test_hyp3_send_email", { "id": "errors", "stat": "Sum", "color": "#d62728" } ],
+                    [ ".", "Invocations", ".", ".", ".", ".", { "id": "invocations", "stat": "Sum", "visible": false } ],
+                    [ { "expression": "100 - 100 * errors / invocations", "label": "Availability (%)", "id": "availability", "yAxis": "right" } ]
+                ],
+                "region": "us-west-2",
+                "title": "Errors, Availability (%)",
+                "yAxis": {
+                    "right": {
+                        "max": 100
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": true,
+                "period": 300
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 44,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 17,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "markdown": "\n# RDS: Hyp3 DB\n\nThis holds all the information on the hyp3 system\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 3,
+            "y": 17,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "view": "singleValue",
+                "metrics": [
+                    [ "AWS/RDS", "FreeStorageSpace", "DBInstanceIdentifier", "hyp3-in-a-box-test-hyp3-rds-instance" ],
+                    [ ".", "DatabaseConnections", ".", "." ]
+                ],
+                "region": "us-west-2",
+                "period": 300,
+                "title": "Current DB State"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 17,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", "hyp3-in-a-box-test-hyp3-rds-instance", { "label": "Hyp3 DB CPU Utilization" } ]
+                ],
+                "region": "us-west-2",
+                "title": "DB CPUUtilization",
+                "period": 300
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 17,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/RDS", "WriteIOPS", "DBInstanceIdentifier", "hyp3-in-a-box-test-hyp3-rds-instance", { "color": "#2ca02c" } ],
+                    [ ".", "ReadIOPS", ".", ".", { "color": "#1f77b4" } ]
+                ],
+                "region": "us-west-2",
+                "title": "DB Read/Write IOPS",
+                "period": 300
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 16,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n# Database\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 23,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n# Lambdas\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 45,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "hyp3-in-a-box-test_hyp3_setup_db", "Resource", "hyp3-in-a-box-test_hyp3_setup_db", { "id": "errors", "stat": "Sum", "color": "#d62728" } ],
+                    [ ".", "Invocations", ".", ".", ".", ".", { "id": "invocations", "stat": "Sum", "visible": false } ],
+                    [ { "expression": "100 - 100 * errors / invocations", "label": "Availability (%)", "id": "availability", "yAxis": "right" } ]
+                ],
+                "region": "us-west-2",
+                "title": "Errors, Availability (%)",
+                "yAxis": {
+                    "right": {
+                        "max": 100
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": true,
+                "period": 300
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 45,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "markdown": "\n# Lambda: Setup DB\nThis lambda is run when the stack is created or on updates. It should be called very infrequently. \n\n[button:primary:Docs](http://asf-docs.s3-website-us-west-2.amazonaws.com/hyp3-in-a-box/_static/cloudformation/setup_db.html)\n"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 51,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 3,
+            "y": 45,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "view": "singleValue",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "hyp3-in-a-box-test_hyp3_setup_db1", { "period": 3600, "stat": "Sum", "color": "#2ca02c", "label": "Invocations" } ],
+                    [ ".", "Errors", ".", "hyp3-in-a-box-test_hyp3_setup_db", { "period": 3600, "stat": "Sum", "color": "#d62728" } ]
+                ],
+                "region": "us-west-2",
+                "period": 300,
+                "title": "Past Hour"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 45,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "hyp3-in-a-box-test_hyp3_setup_db" ]
+                ],
+                "region": "us-west-2",
+                "period": 300,
+                "title": "Duration Average"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 9,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n# Hyp3 Events\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 10,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/SQS", "ApproximateNumberOfMessagesVisible", "QueueName", "hyp3-in-a-box-test-Hyp3StartEvents-1C128S3RPSFB4.fifo", { "stat": "Average" } ],
+                    [ ".", "NumberOfMessagesReceived", ".", ".", { "stat": "Average" } ]
+                ],
+                "view": "singleValue",
+                "region": "us-west-2",
+                "period": 300
+            }
+        },
+        {
+            "type": "metric",
+            "x": 3,
+            "y": 10,
+            "width": 12,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/SQS", "ApproximateNumberOfMessagesVisible", "QueueName", "hyp3-in-a-box-test-Hyp3StartEvents-1C128S3RPSFB4.fifo" ]
+                ],
+                "region": "us-west-2",
+                "period": 300
+            }
+        },
+        {
+            "type": "metric",
+            "x": 12,
+            "y": 3,
+            "width": 3,
+            "height": 6,
+            "properties": {
+                "view": "singleValue",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/EC2", "NetworkIn", "AutoScalingGroupName", "hyp3-in-a-box-test-HyP3AutoscalingGroup-1QQ8WGQU4WQIG" ],
+                    [ ".", "NetworkOut", ".", "." ]
+                ],
+                "region": "us-west-2",
+                "period": 300,
+                "title": "Network Traffic"
+            }
+        },
+        {
+            "type": "text",
+            "x": 0,
+            "y": 2,
+            "width": 24,
+            "height": 1,
+            "properties": {
+                "markdown": "\n#  Worker Autoscaling Group\n"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 15,
+            "y": 10,
+            "width": 9,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "AWS/SQS", "NumberOfMessagesDeleted", "QueueName", "hyp3-in-a-box-test-Hyp3StartEvents-1C128S3RPSFB4.fifo" ],
+                    [ ".", "NumberOfMessagesSent", ".", "." ]
+                ],
+                "view": "timeSeries",
+                "stacked": true,
+                "region": "us-west-2",
+                "period": 300
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 3,
+            "width": 12,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/EC2", "CPUUtilization", "AutoScalingGroupName", "hyp3-in-a-box-test-HyP3AutoscalingGroup-1QQ8WGQU4WQIG" ]
+                ],
+                "region": "us-west-2"
+            }
+        }
+    ]
+}
