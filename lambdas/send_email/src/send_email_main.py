@@ -64,6 +64,9 @@ def make_email_context(
             'name': 'User',
             'value': user.username
         }, {
+            'name': 'Process',
+            'value': sub.process.name,
+        }, {
             'name': 'Subscripton',
             'value': sub.name
         }, {
@@ -81,25 +84,25 @@ def make_email_context(
 def send_email_notification(user: User, context) -> None:
     print("rendering email")
 
-    status = get_additional_info_field(context, "Status")
-    subject = "{}{} new data available".format(
-        "({})".format(status) if status is not None else "",
-        get_additional_info_field(context, "Subscripton")
-    )
-    address = user.email
+    status = get_additional_info_field(context, "Status", default="")
+    sub_name = get_additional_info_field(context, "Subscripton")
+    process_name = get_additional_info_field(context, "Process")
+
+    subject = f"{status} {sub_name} new {process_name} data"
 
     message = Email().render(**context)
 
     print('sending email')
     ses.send(
-        address,
+        user.email,
         subject,
         message
     )
 
 
-def get_additional_info_field(context, key):
+def get_additional_info_field(context, key, default=None):
     for entry in context['additional_info']:
         if entry['name'] == key:
             return entry['value']
-    return None
+
+    return default
