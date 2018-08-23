@@ -29,7 +29,7 @@ Resources
 """
 
 from template import t
-from troposphere import GetAZs, Output, Ref, Select, Tags, ec2
+from troposphere import GetAZs, Output, Ref, Select, Tags, ec2, Parameter
 
 print('  adding vpc')
 
@@ -51,6 +51,7 @@ net_gw_vpc_attachment = t.add_resource(ec2.VPCGatewayAttachment(
     VpcId=Ref(hyp3_vpc),
     InternetGatewayId=Ref(igw),
 ))
+
 
 public_route_table = t.add_resource(ec2.RouteTable(
     'HyP3PublicRouteTable',
@@ -113,18 +114,55 @@ def get_public_subnets():
     ]
 
 
-private_net = t.add_resource(ec2.Subnet(
-    'HyP3PrivateSubnet',
+restricted_subnet = t.add_resource(ec2.Subnet(
+    'HyP3RestrictedSubnet',
+    AvailabilityZone=get_az(2),
     CidrBlock='10.0.3.0/24',
-    MapPublicIpOnLaunch=False,
+    MapPublicIpOnLaunch=True,
     VpcId=Ref(hyp3_vpc)
 ))
 
-private_route_association = t.add_resource(ec2.SubnetRouteTableAssociation(
-    'HyP3PrivateRouteAssociation',
-    SubnetId=Ref(private_net),
-    RouteTableId=Ref(private_route_table)
+restricted_subnet_route_association = t.add_resource(
+    ec2.SubnetRouteTableAssociation(
+        'HyP3PrivateRouteAssociation',
+        SubnetId=Ref(restricted_subnet),
+        RouteTableId=Ref(public_route_table)
+    )
+)
+
+
+local_cidr_range = t.add_parameter(Parameter(
+    "ApiCidrRange",
+    Description=("The IP range the hyp3 stack will be accessible from. "
+                 "Default is to allow traffic from anywhere."),
+    Type="String",
+    Default="0.0.0.0/0",
+    AllowedPattern=r"((\d{1,3})\.){3}\d{1,3}/\d{1,2}",
+    ConstraintDescription="Valid CIDR IP range"
 ))
+
+local_network_acl = t.add_resource(ec2.NetworkAcl(
+    'LocalNetworkAcl',
+    VpcId=Ref(hyp3_vpc)
+))
+
+local_acl_entry = t.add_resource(ec2.NetworkAclEntry(
+    'LocalAclEntry',
+    NetworkAclId=Ref(local_network_acl),
+    CidrBlock=Ref(local_cidr_range),
+    Protocol=-1,
+    RuleAction="allow",
+    RuleNumber=100,
+    Egress=False
+))
+
+restricted_subnet_acl_association = t.add_resource(
+    ec2.SubnetNetworkAclAssociation(
+        "RestrictedSubnetAclAssociation",
+        SubnetId=Ref(restricted_subnet),
+        NetworkAclId=Ref(local_network_acl)
+    )
+)
 
 t.add_output(Output(
     'VPCId',
