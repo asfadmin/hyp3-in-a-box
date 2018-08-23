@@ -117,7 +117,7 @@ config_template = t.add_resource(ConfigurationTemplate(
         OptionSettings(
             Namespace="aws:autoscaling:launchconfiguration",
             OptionName="InstanceType",
-            Value="t2.micro"
+            Value="t3.micro"
         ),
         OptionSettings(
             Namespace="aws:ec2:vpc",
