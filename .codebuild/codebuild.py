@@ -194,7 +194,8 @@ def upload_template(file_path):
     with open(file_path, 'rb') as f:
         return bucket.put_object(
             Key=key,
-            Body=f
+            Body=f,
+            ACL="public-read" if MATURITY == "prod" else "bucket-owner-full-control"
         )
 
 
@@ -209,7 +210,7 @@ def build_lambdas():
         "s3://{}".format(BUCKET_BASE_DIR),
         "--recursive",
         "--include", '"*"'
-    ])
+    ] + get_s3_acl_cmd())
     versions = get_latest_lambda_versions()
 
     print("Latest Source Versions:")
@@ -261,10 +262,11 @@ def build_hyp3_api():
     )
 
     print(f'uploading to {BUCKET_BASE_DIR}')
+
     subprocess.check_call([
         "aws", "s3", "cp", "build/hyp3_api.zip",
         "s3://{}".format(BUCKET_BASE_DIR)
-    ])
+    ] + get_s3_acl_cmd())
 
 
 def post_build():
@@ -272,7 +274,7 @@ def post_build():
         TEMPLATE_CONFIG_BUCKET, MATURITY, "config/configuration.json"
     ))
 
-    subprocess.check_call(["aws", "s3", "cp", bucket_uri, "build/"])
+    subprocess.check_call(["aws", "s3", "cp", bucket_uri, "build/"] + get_s3_acl_cmd())
     subprocess.check_call([
         "aws", "s3", "cp", "docs/_build/html",
         "s3://asf-docs/hyp3-in-a-box",
@@ -283,7 +285,8 @@ def post_build():
             "aws", "s3", "cp",
             "s3://{}/data/default-processes.json".format(S3_SOURCE_BUCKET),
             "s3://{}/releases/{}/data/default-processes.json".format(
-                S3_SOURCE_BUCKET, RELEASE_VERSION)
+                S3_SOURCE_BUCKET, RELEASE_VERSION),
+            "--acl", "public-read"
         ])
     github.set_github_ci_status("success", description=get_config(
         "TEST_RESULT_SUMMARY", "Build completed"))
@@ -308,6 +311,13 @@ def get_config(key, default=None):
             return config.get(key, default)
     except FileNotFoundError:
         return default
+
+
+def get_s3_acl_cmd():
+    permissions = []
+    if MATURITY == "prod":
+        permissions = ["--acl", "public-read"]
+    return permissions
 
 
 if __name__ == "__main__":
