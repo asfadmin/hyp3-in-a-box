@@ -237,6 +237,7 @@ class Build(object):
 
 class ProdBuild(Build):
     def __init__(self):
+        super().__init__()
         ProdBuild.check_release_exists()
         self.release_options = ["--release", RELEASE_VERSION]
         self.lambda_key_prefix = "releases/{}".format(RELEASE_VERSION)
