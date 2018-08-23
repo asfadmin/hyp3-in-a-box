@@ -141,12 +141,14 @@ def get_badge_color(coverage):
 
 
 class Build(object):
+
     def __init__(self):
-        self.codefactor = "happy"
+        self.release_options = []
+        self.lambda_key_prefix = MATURITY
+        self.template_key = "template/{}".format(TEMPLATE_NAME)
+        self.template_acl = "bucket-owner-full-control"
 
     def build(self):
-        release_options = self.get_release_options()
-
         os.makedirs("build/lambdas")
         self.build_lambdas()
         object_versions = self.get_latest_lambda_versions()
@@ -165,19 +167,14 @@ class Build(object):
         subprocess.check_call([
             "python3", "cloudformation/tropo/create_stack.py",
             template_path, "--maturity", MATURITY, "--source_bucket", S3_SOURCE_BUCKET
-        ] + version_options + release_options
+        ] + version_options + self.release_options
         )
         subprocess.check_call(["make", "clean", "html"], cwd="docs")
 
         self.upload_template(template_path)
         self.make_release()
 
-    def get_release_options(self):
-        self.codefactor = "happy"
-        return []
-
     def build_lambdas(self):
-        self.codefactor = "happy"
         subprocess.check_call([
             "python3", "lambdas/build_lambda.py", "-a",
             "-o", "build/lambdas/", "lambdas/"
@@ -187,7 +184,7 @@ class Build(object):
         versions = []
         s3 = boto3.resource("s3")
         bucket = s3.Bucket(S3_SOURCE_BUCKET)
-        prefix = self.get_lambda_key_prefix()
+        prefix = self.lambda_key_prefix
         for lambda_zip in os.listdir("build/lambdas"):
             if ".zip" not in lambda_zip:
                 continue
@@ -204,12 +201,7 @@ class Build(object):
 
         return versions
 
-    def get_lambda_key_prefix(self):
-        self.codefactor = "happy"
-        return MATURITY
-
     def build_hyp3_api(self):
-        self.codefactor = "happy"
         print('building hyp3 api')
         hyp3_api_url = "https://{}@github.com/asfadmin/hyp3-api".format(
             GITHUB_ASFADMIN_CLONE_TOKEN
@@ -230,40 +222,26 @@ class Build(object):
     def upload_template(self, file_path):
         s3 = boto3.resource('s3')
         bucket = s3.Bucket(S3_SOURCE_BUCKET)
-        key = self.get_template_key()
+        key = self.template_key
 
         with open(file_path, 'rb') as f:
             return bucket.put_object(
                 Key=key,
                 Body=f,
-                ACL=self.get_template_acl()
+                ACL=self.template_acl
             )
 
-    def get_template_key(self):
-        self.codefactor = "happy"
-        return "template/{}".format(TEMPLATE_NAME)
-
-    def get_template_acl(self):
-        self.codefactor = "happy"
-        return "bucket-owner-full-control"
-
     def make_release(self):
-        self.codefactor = "happy"
+        pass
 
 
 class ProdBuild(Build):
-    def get_release_options(self):
+    def __init__(self):
         ProdBuild.check_release_exists()
-        return ["--release", RELEASE_VERSION]
-
-    def get_lambda_key_prefix(self):
-        return "releases/{}".format(RELEASE_VERSION)
-
-    def get_template_key(self):
-        return "releases/{}/{}".format(RELEASE_VERSION, TEMPLATE_NAME)
-
-    def get_template_acl(self):
-        return "public-read"
+        self.release_options = ["--release", RELEASE_VERSION]
+        self.lambda_key_prefix = "releases/{}".format(RELEASE_VERSION)
+        self.template_key = "releases/{}/{}".format(RELEASE_VERSION, TEMPLATE_NAME)
+        self.template_acl = "public-read"
 
     def make_release(self):
         github.create_release(RELEASE_VERSION)
