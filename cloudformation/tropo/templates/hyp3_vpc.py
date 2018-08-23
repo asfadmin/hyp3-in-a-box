@@ -156,7 +156,7 @@ local_acl_entry = t.add_resource(ec2.NetworkAclEntry(
     Egress=False
 ))
 
-local_acl_entry = t.add_resource(ec2.NetworkAclEntry(
+all_traffic_out_entry = t.add_resource(ec2.NetworkAclEntry(
     'OutputBoundTrafficEntry',
     NetworkAclId=Ref(local_network_acl),
     CidrBlock='0.0.0.0/0',
