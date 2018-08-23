@@ -23,8 +23,3 @@ artifacts:
     - configuration.json
   discard-paths: yes
   base-directory: build
-
-cache:
-  paths:
-    - '/root/.cache/pip/**/*'
-    - '/usr/local/lib/python3.6/site-packages/**/*'
