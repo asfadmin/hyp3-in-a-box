@@ -3,6 +3,20 @@
 Releases
 ========
 
+* :ref:`setup`
+
+
+RTC (0.2.1)
+-----------
+
+    Version 2 supports RTC processing using the SNAP package. Note that the
+    region has changed to us-east-1 (N. Virginia). This is to increase
+    performance and decrease cost of downloading data which is also located in
+    us-east-1.
+
+    * **Supported Regions:** us-east-1
+    * `Download 0.2.1 <https://s3.amazonaws.com/asf-hyp3-in-a-box-source-east/releases/0.2.1/hyp3-in-a-box_US-EAST-1v0.2.1.json>`_
+
 Notify Only (0.1.0)
 -------------------
 
@@ -11,9 +25,4 @@ Notify Only (0.1.0)
     be enabled/disabled by users.
 
     * **Supported Regions:** us-west-2
-    * `Download <https://s3-us-west-2.amazonaws.com/asf-hyp3-in-a-box-source/template/hyp3-in-a-box_US-WEST-2.json?versionId=qZ9O5bq5gB5foPF5gnJHk.UYN7RSUnWf>`_
-    * :ref:`setup`
-
-
-
-
+    * `Download 0.1.0 <https://s3-us-west-2.amazonaws.com/asf-hyp3-in-a-box-source/template/hyp3-in-a-box_US-WEST-2.json?versionId=qZ9O5bq5gB5foPF5gnJHk.UYN7RSUnWf>`_
