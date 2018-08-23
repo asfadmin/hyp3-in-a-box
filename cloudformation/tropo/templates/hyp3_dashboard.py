@@ -1,7 +1,7 @@
 import pathlib as pl
 import json
 
-from troposphere import Sub, Ref, Output
+from troposphere import Sub, Ref, Output, GetAtt
 from troposphere.cloudwatch import Dashboard
 
 from template import t
@@ -39,8 +39,8 @@ hyp3_dashboard = t.add_resource(Dashboard(
         SendEmailName=Ref(send_email),
         SetupDBName=Ref(setup_db),
         HyP3DBInsatnceIdentifier=Ref(db),
-        StartEventQueue=Ref(start_events),
-        AutoscalingGroup=processing_group
+        StartEventQueue=GetAtt(start_events, "QueueName"),
+        AutoscalingGroup=Ref(processing_group)
     )
 ))
 
