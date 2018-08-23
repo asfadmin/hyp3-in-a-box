@@ -11,24 +11,24 @@ from hyp3_process.handler.outputs import OutputPatterns
 
 valid_cases = [({
     'input_files': ['granule/hello.txt', 'test2.txt', 'test.png'],
-    'patterns': OutputPatterns(archive=['*/*.txt'], browse='*.png'),
+    'patterns': OutputPatterns(archive=['*/*.txt'], browse=['*.png']),
     'expected': [['granule/hello.txt'], 'test.png']
 }), ({
     'input_files': strats.rtc_example_files(),
     'patterns': OutputPatterns(
         archive=["*/*_TC_G??.tif", "*/*.txt", "*/*.png"],
-        browse='*/*GVV.png'
+        browse=['*/*GVV.png']
     ),
     'expected': strats.rtc_output()
 })]
 
 error_cases = [({
     'input_files': ['hello.txt', 'test.png'],
-    'patterns': OutputPatterns(archive=['*/*.txt'], browse='*.png'),
+    'patterns': OutputPatterns(archive=['*/*.txt'], browse=['*.png']),
     'expected': package.NoFilesFoundForOutputPattern
 }), ({
     'input_files': ['dir/hello.txt'],
-    'patterns': OutputPatterns(archive=['*/*.txt'], browse='*.png'),
+    'patterns': OutputPatterns(archive=['*/*.txt'], browse=['*.png']),
     'expected': package.NoBrowseFound
 })]
 
