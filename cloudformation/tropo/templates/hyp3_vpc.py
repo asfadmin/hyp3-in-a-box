@@ -156,6 +156,16 @@ local_acl_entry = t.add_resource(ec2.NetworkAclEntry(
     Egress=False
 ))
 
+local_acl_entry = t.add_resource(ec2.NetworkAclEntry(
+    'OutputBoundTrafficEntry',
+    NetworkAclId=Ref(local_network_acl),
+    CidrBlock='0.0.0.0/0',
+    Protocol=-1,
+    RuleAction="allow",
+    RuleNumber=100,
+    Egress=True
+))
+
 restricted_subnet_acl_association = t.add_resource(
     ec2.SubnetNetworkAclAssociation(
         "RestrictedSubnetAclAssociation",
