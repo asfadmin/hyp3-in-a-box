@@ -174,6 +174,7 @@ class Build(object):
         self.upload_template(template_path)
         self.make_release()
 
+    # pylint: disable=R0201
     def build_lambdas(self):
         subprocess.check_call([
             "python3", "lambdas/build_lambda.py", "-a",
@@ -201,6 +202,7 @@ class Build(object):
 
         return versions
 
+    # pylint: disable=R0201
     def build_hyp3_api(self):
         print('building hyp3 api')
         hyp3_api_url = "https://{}@github.com/asfadmin/hyp3-api".format(
