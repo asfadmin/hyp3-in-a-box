@@ -1,5 +1,5 @@
 import pathlib as pl
-import os
+import subprocess
 from typing import Dict
 
 
@@ -14,4 +14,4 @@ def handler(
         (pl.Path.home() / 'data').glob('*rtc-s1tbx')
     ).pop()
 
-    os.system(f'cp -r {preprocessed_products} {base}')
+    subprocess.check_call(['cp', '-r', str(preprocessed_products), str(base)])
