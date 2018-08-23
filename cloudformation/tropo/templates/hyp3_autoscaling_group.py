@@ -101,7 +101,8 @@ max_instances = t.add_parameter(Parameter(
 
 instance_type = t.add_parameter(Parameter(
     "RTCProcessingInstanceType",
-    Description="The type of EC2 instance to process with. Default is m5.xlarge",
+    Description="The type of EC2 instance to process with. For a more efficient \
+    instance try r5d.xlarge",
     Type="String",
     Default="m5.xlarge"
 ))
