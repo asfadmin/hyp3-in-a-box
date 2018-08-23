@@ -132,12 +132,12 @@ restricted_subnet_route_association = t.add_resource(
 
 
 local_cidr_range = t.add_parameter(Parameter(
-    "LocalCidrRange",
+    "ApiCidrRange",
     Description=("The IP range the hyp3 stack will be accessible from. "
                  "Default is to allow traffic from anywhere."),
     Type="String",
     Default="0.0.0.0/0",
-    AllowedPattern="(?:\d{1,3}\.){3}\d{1,3}(?:/\d\d?)?",
+    AllowedPattern=r"((\d{1,3})\.){3}\d{1,3}/\d{1,2}",
     ConstraintDescription="Valid CIDR IP range"
 ))
 
