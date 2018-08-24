@@ -51,8 +51,8 @@ Launching the CloudFormation stack
 
       ``hyp3-in-a-box_<aws region here>.json``
 
-   Be sure to create the template in the correct region or the template will no work.
-   The only supported region is ``us-east-1`` (N. Virgia).
+   Be sure to create the template in the correct region or the template will not work.
+   The only supported region is ``us-east-1`` (N. Virginia).
 
 Stack Parameters
 ~~~~~~~~~~~~~~~~
@@ -75,7 +75,7 @@ Stack Parameters
 
     The API CIDR range is to limit access to the API. The default (0.0.0.0/0) allows all traffic through.
 
-    Solution stack name it the Elastic Beanstalk. To find then newest version go here:
+    Solution stack name it the Elastic Beanstalk. To find the newest version go here:
 
         - `Elastic Beanstalk Solution Stack`_.
 
@@ -84,15 +84,15 @@ Stack Parameters
 Launching
 ~~~~~~~~~
 
-    To launch the cloudformation stack
+    To launch the Cloudformation stack
 
-    * Download a version of the HyP3 cloudformation template: :ref:`releases`.
+    * Download a version of the HyP3 Cloudformation template: :ref:`releases`.
     * Login to the **AWS conosle**.
     * Go to the **Cloudformation** section and click **Create Stack**.
     * Under **Choose a template**, select the option to **upload a file**.
     * **Upload** the HyP3 CloudFormation template then hit **next**.
     * Give the stack a name and **fill in the missing parameters**.
-    * Hit next again, then click the checkbox to **allow IAM** and hit create!
+    * Hit next again, then click the check box to **allow IAM** and hit create!
 
     When stack is finished creating you're ready to start using HyP3! Using the API,
     which is linked in stack outputs, create a subscription over your area of interest
@@ -109,7 +109,6 @@ Creating A Subscription
     .. image:: ../_static/images/example-subscription.png
        :alt: alternate text
        :align: right
-
 
     Change the ``location`` parameter to be a valid WKT Multipolygon over your area of intrest.
 
