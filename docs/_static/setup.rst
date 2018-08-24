@@ -103,7 +103,7 @@ Creating A Subscription
 ~~~~~~~~~~~~~~~~~~~~~~~
 
     To start processing data, a subscription needs to be created. Navigate to the HyP3 API website,
-    the URL for the API is in outputs of the stack. Click on ``create_subscription`` and fill out the
+    the URL for the API is in the stack outputs. Click on ``create_subscription`` and fill out the
     subscription form. An example subscription will look something like this:
 
     .. image:: ../_static/images/example-subscription.png
@@ -114,7 +114,7 @@ Creating A Subscription
 
     Possible process_id's can be found py running a get_processes API call. The ``Username`` and ``API Key``
     can also be found as stack outputs. If the stack has been updated, these parameters will be in **Systems
-    Manager: Parameter Store**. Parameter names will be in the outputs of the stack.
+    Manager: Parameter Store**. Parameter names will be in the stack outputs.
 
     **Note:** Currently ``platform`` and ``crop_to_selection`` are not implimented, so they have no effect.
     They must still be entered because of the API parameter validation.
