@@ -78,7 +78,7 @@ def create_release(version):
         GITHUB_API_ENDPOINT,
         "repos/{}/releases".format(GITHUB_REPOSITORY_NAME)
     )
-    requests.post(url, data={
+    requests.post(url, params={"access_token": GITHUB_STATUS_TOKEN}, data={
         "tag_name": version,
         "target_commitish": "master",
         "name": version

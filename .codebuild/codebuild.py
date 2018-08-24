@@ -293,7 +293,7 @@ def post_build():
     ] + get_s3_acl_cmd())
     subprocess.check_call([
         "aws", "s3", "cp", "docs/_build/html",
-        "s3://asf-docs/hyp3-in-a-box",
+        get_docs_folder(),
         "--recursive", "--acl", "public-read"
     ])
 
@@ -307,6 +307,15 @@ def post_build():
         ])
     github.set_github_ci_status("success", description=get_config(
         "TEST_RESULT_SUMMARY", "Build completed"))
+
+
+def get_docs_folder():
+    folder = "s3://asf-docs/hyp3-in-a-box"
+    if MATURITY == "prod":
+        folder += "/releases/{}".format(RELEASE_VERSION)
+    else:
+        folder += "/test"
+    return folder
 
 
 def save_config(key, value):
