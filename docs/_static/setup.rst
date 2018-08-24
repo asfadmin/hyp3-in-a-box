@@ -52,7 +52,7 @@ Launching the CloudFormation stack
       ``hyp3-in-a-box_<aws region here>.json``
 
    Be sure to create the template in the correct region or the template will no work.
-   Currently the only supported region is ``us-east-1``.
+   The only supported region is ``us-east-1`` (N. Virgia).
 
 Stack Parameters
 ~~~~~~~~~~~~~~~~
@@ -73,13 +73,13 @@ Stack Parameters
     at one time. Increasing this number will affect how much AWS charges, but allows you
     to process more data.
 
-    The Api cidr range is to limit access to the api. The default (0.0.0.0/0) allows all traffic through.
+    The API CIDR range is to limit access to the API. The default (0.0.0.0/0) allows all traffic through.
 
-    Solution stack name it the elastic beanstalk. To find then newest version go here:
+    Solution stack name it the Elastic Beanstalk. To find then newest version go here:
 
         - `Elastic Beanstalk Solution Stack`_.
 
-    Pick the latest python 3.6 solution stack name.
+    Pick the latest Python 3.6 solution stack name.
 
 Launching
 ~~~~~~~~~
@@ -94,9 +94,9 @@ Launching
     * Give the stack a name and **fill in the missing parameters**.
     * Hit next again, then click the checkbox to **allow IAM** and hit create!
 
-    When stack is finished creating you're ready to start using HyP3! Using the api,
+    When stack is finished creating you're ready to start using HyP3! Using the API,
     which is linked in stack outputs, create a subscription over your area of interest
-    and start receiving data. The username and api-key for the newly created HyP3 API is stored
+    and start receiving data. The username and API-key for the newly created HyP3 API is stored
     in AWS `Systems Manager`_ parameter store.
 
 Creating A Subscription
@@ -113,11 +113,12 @@ Creating A Subscription
 
     Change the ``location`` parameter to be a valid WKT Multipolygon over your area of intrest.
 
-    Possible process_id's can be found py running a get_processes api call. The ``Username`` and ``API Key``
-    can also be found as stack outputs.
+    Possible process_id's can be found py running a get_processes API call. The ``Username`` and ``API Key``
+    can also be found as stack outputs. If the stack has been updated, these parameters will be in **Systems
+    Manager: Parameter Store**. Parameter names will be in the outputs of the stack.
 
     **Note:** Currently ``platform`` and ``crop_to_selection`` are not implimented, so they have no effect.
-    They must still be entered because of the api, parameter validation.
+    They must still be entered because of the API parameter validation.
 
 
 .. _Generate Ec2 Key Pairs: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
