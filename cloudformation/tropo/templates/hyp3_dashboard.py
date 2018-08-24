@@ -1,3 +1,13 @@
+"""
+Troposphere template responsible for creating a cloudwatch dashboard
+
+Resources
+~~~~~~~~~
+
+* **CloudWatch Dashboard:** Dashboard to monitor HyP3 infrastructure
+"""
+
+
 import pathlib as pl
 import json
 

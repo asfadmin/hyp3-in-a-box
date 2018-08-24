@@ -17,14 +17,14 @@ Resources
 * **Route Tables:**
 
   * Public
-  * Private
 
 * **Subnets:**
 
   * Public net 1 in availability zone 'a'
   * Public net 2 in availability zone 'b'
-  * Private net
+  * Restricted Subnet
 
+* **NetworkACL:** Control traffic for the restricted subnet
 
 """
 
@@ -58,11 +58,6 @@ net_gw_vpc_attachment = t.add_resource(ec2.VPCGatewayAttachment(
 
 public_route_table = t.add_resource(ec2.RouteTable(
     'HyP3PublicRouteTable',
-    VpcId=Ref(hyp3_vpc),
-))
-
-private_route_table = t.add_resource(ec2.RouteTable(
-    'HyP3PrivateRouteTable',
     VpcId=Ref(hyp3_vpc),
 ))
 

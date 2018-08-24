@@ -3,4 +3,4 @@
 Template: S3
 ============
 
-.. automodule:: cloudformation.tropo.templates.hyp3_sqs
+.. automodule:: cloudformation.tropo.templates.hyp3_s3

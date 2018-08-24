@@ -27,8 +27,8 @@ Authorize an email address in SES
 Earthdata Credentials
 ^^^^^^^^^^^^^^^^^^^^^
 
-    To download data within HyP3, an earthdata account is needed.
-    To create an earthdata account go to:
+    To download data within HyP3, an Earthdata account is needed.
+    To create an Earthdata account go to:
 
         - `Register for Earthdata`_
 
@@ -51,8 +51,8 @@ Launching the CloudFormation stack
 
       ``hyp3-in-a-box_<aws region here>.json``
 
-   Be sure to create the template in the correct region or the template will no work.
-   Currently the only supported region is ``us-west-2``.
+   Be sure to create the template in the correct region or the template will not work.
+   The only supported region is ``us-east-1`` (N. Virginia).
 
 Stack Parameters
 ~~~~~~~~~~~~~~~~
@@ -70,32 +70,59 @@ Stack Parameters
     email but both must be entered.
 
     The maximum number of running instances determines how many servers can run processing
-    at one time. Increaseing this number will affect how much aws charges, but allows you
+    at one time. Increasing this number will affect how much AWS charges, but allows you
     to process more data.
+
+    The API CIDR range is to limit access to the API. The default (0.0.0.0/0) allows all traffic through.
+
+    Solution stack name it the Elastic Beanstalk. To find the newest version go here:
+
+        - `Elastic Beanstalk Solution Stack`_.
+
+    Pick the latest Python 3.6 solution stack name.
 
 Launching
 ~~~~~~~~~
 
-    To launch the cloudformation stack
+    To launch the Cloudformation stack
 
-    * Download a version of the HyP3 cloudformation template: :ref:`releases`.
+    * Download a version of the HyP3 Cloudformation template: :ref:`releases`.
     * Login to the **AWS conosle**.
     * Go to the **Cloudformation** section and click **Create Stack**.
     * Under **Choose a template**, select the option to **upload a file**.
     * **Upload** the HyP3 CloudFormation template then hit **next**.
     * Give the stack a name and **fill in the missing parameters**.
-    * Hit next again, then click the checkbox to **allow IAM** and hit create!
+    * Hit next again, then click the check box to **allow IAM** and hit create!
 
-    When stack is finished creating you're ready to start using HyP3! Using the api,
-    which is linked in stack ouptuts, create a subscription over your area of intreset
-    and start recieving data. The username and api-key for the newly created HyP3 API is stored
+    When stack is finished creating you're ready to start using HyP3! Using the API,
+    which is linked in stack outputs, create a subscription over your area of interest
+    and start receiving data. The username and API-key for the newly created HyP3 API is stored
     in AWS `Systems Manager`_ parameter store.
 
-Basic Usage
-~~~~~~~~~~~
+Creating A Subscription
+~~~~~~~~~~~~~~~~~~~~~~~
+
+    To start processing data, a subscription needs to be created. Navigate to the HyP3 API website,
+    the URL for the API is in the stack outputs. Click on ``create_subscription`` and fill out the
+    subscription form. An example subscription will look something like this:
+
+    .. image:: ../_static/images/example-subscription.png
+       :alt: alternate text
+       :align: right
+
+    Change the ``location`` parameter to be a valid WKT Multipolygon over your area of intrest.
+
+    Possible process_id's can be found py running a get_processes API call. The ``Username`` and ``API Key``
+    can also be found as stack outputs. If the stack has been updated, these parameters will be in **Systems
+    Manager: Parameter Store**. Parameter names will be in the stack outputs.
+
+    **Note:** Currently ``platform`` and ``crop_to_selection`` are not implimented, so they have no effect.
+    They must still be entered because of the API parameter validation.
+
 
 .. _Generate Ec2 Key Pairs: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 .. _Verify Your Email: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses-procedure.html?shortFooter=true
 .. _random.org: https://www.random.org/passwords/
 .. _Systems Manager: https://aws.amazon.com/systems-manager/
 .. _Register for Earthdata: https://urs.earthdata.nasa.gov/profile/
+.. _Elastic Beanstalk Solution Stack: https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html#concepts.platforms.python
