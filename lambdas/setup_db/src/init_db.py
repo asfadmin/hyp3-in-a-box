@@ -7,7 +7,6 @@
 
 import collections
 import json
-import pathlib as pl
 
 import sqlalchemy
 from sqlalchemy import sql

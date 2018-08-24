@@ -4,8 +4,6 @@
 
 # Lambda function for creating the HyP3 Database
 
-import os
-
 from init_db import setup_db
 import setup_db_utils as utils
 
