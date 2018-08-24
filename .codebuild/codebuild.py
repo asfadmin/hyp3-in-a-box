@@ -313,6 +313,8 @@ def get_docs_folder():
     folder = "s3://asf-docs/hyp3-in-a-box"
     if MATURITY == "prod":
         folder += "/releases/{}".format(RELEASE_VERSION)
+    else:
+        folder += "/test"
     return folder
 
 
