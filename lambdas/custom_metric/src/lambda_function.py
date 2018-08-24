@@ -82,6 +82,6 @@ def filter_active_only(instances):
 def calculate_metric(num_messages, num_instances):
     # Target tracking handles 0 instance case.
     if num_instances == 0:
-        return num_messages
+        return num_messages + 0.1
 
     return num_messages / num_instances
