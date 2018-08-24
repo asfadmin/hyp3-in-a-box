@@ -95,16 +95,34 @@ Launching
     * Hit next again, then click the checkbox to **allow IAM** and hit create!
 
     When stack is finished creating you're ready to start using HyP3! Using the api,
-    which is linked in stack ouptuts, create a subscription over your area of intreset
-    and start recieving data. The username and api-key for the newly created HyP3 API is stored
+    which is linked in stack outputs, create a subscription over your area of interest
+    and start receiving data. The username and api-key for the newly created HyP3 API is stored
     in AWS `Systems Manager`_ parameter store.
 
-Basic Usage
-~~~~~~~~~~~
+Creating A Subscription
+~~~~~~~~~~~~~~~~~~~~~~~
+
+    To start processing data, a subscription needs to be created. Navigate to the HyP3 API website,
+    the URL for the API is in outputs of the stack. Click on ``create_subscription`` and fill out the
+    subscription form. An example subscription will look something like this:
+
+    .. image:: ../_static/images/example-subscription.png
+       :alt: alternate text
+       :align: right
+
+
+    Change the ``location`` parameter to be a valid WKT Multipolygon over your area of intrest.
+
+    Possible process_id's can be found py running a get_processes api call. The ``Username`` and ``API Key``
+    can also be found as stack outputs.
+
+    **Note:** Currently ``platform`` and ``crop_to_selection`` are not implimented, so they have no effect.
+    They must still be entered because of the api, parameter validation.
+
 
 .. _Generate Ec2 Key Pairs: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 .. _Verify Your Email: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses-procedure.html?shortFooter=true
 .. _random.org: https://www.random.org/passwords/
 .. _Systems Manager: https://aws.amazon.com/systems-manager/
 .. _Register for Earthdata: https://urs.earthdata.nasa.gov/profile/
-.. _Elatic Beanstalk Solution Stack: https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html#concepts.platforms.python
+.. _Elastic Beanstalk Solution Stack: https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html#concepts.platforms.python
