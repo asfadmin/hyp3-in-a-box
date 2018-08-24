@@ -15,7 +15,7 @@ then
 elif [ "$1" = "copy" ]
 then
     echo "Using copy handler function"
-    echo $(pwd)
+    pwd
     HANDLER_PATH=./ec2/worker/src/hyp3_copy_handler.py
 else
     echo "Using rtc_snap handler function"
