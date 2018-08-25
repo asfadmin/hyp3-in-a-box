@@ -13,15 +13,22 @@ from troposphere.ssm import Parameter as SSMParameter
 
 from template import t
 
-products_bucket = t.add_resource(
-    s3.Bucket(
-        "S3Bucket",
-        BucketName=Sub(
-            "${StackName}-products-bucket",
-            StackName=Ref("AWS::StackName")
-        )
-    )
-)
+products_bucket = t.add_resource(s3.Bucket(
+    "ProductsBucket",
+    LifecycleConfiguration=s3.LifecycleConfiguration(Rules=[
+        s3.LifecycleRule(
+            Id="S3BucketRule001",
+            Status="Enabled",
+            Transitions=[
+                s3.LifecycleRuleTransition(
+                    StorageClass="STANDARD_IA",
+                    TransitionInDays=30,
+                ),
+            ],
+        ),
+    ]),
+
+))
 
 ssm_products_bucket_name = t.add_resource(SSMParameter(
     "HyP3SSMParameterProductsBucket",
