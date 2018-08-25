@@ -9,14 +9,17 @@ from ..outputs import ProcessOutputs
 s3_resource = boto3.resource('s3')
 s3_client = boto3.client('s3')
 
+PRODUCTS_DIR = "products"
+BROWSE_DIR = "browse"
+
 
 def upload(*, outputs: ProcessOutputs, bucket_name: str) -> List[str]:
     print(f'uploading products to {bucket_name}')
     products_bucket = get_bucket(bucket_name)
 
     archive_key, browse_key = [
-        upload_from(outputs.archive, products_bucket, prefix="products"),
-        upload_from(outputs.browse, products_bucket, prefix="browse")
+        upload_from(outputs.archive, products_bucket, prefix=PRODUCTS_DIR),
+        upload_from(outputs.browse, products_bucket, prefix=BROWSE_DIR)
     ]
 
     return [
