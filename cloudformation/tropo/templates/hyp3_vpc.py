@@ -97,7 +97,7 @@ public_route_association_2 = t.add_resource(ec2.SubnetRouteTableAssociation(
 
 public_net_3 = t.add_resource(ec2.Subnet(
     'HyP3PublicSubnet3',
-    CidrBlock='10.0.4.0/24',
+    CidrBlock='10.0.3.0/24',
     MapPublicIpOnLaunch=True,
     VpcId=Ref(hyp3_vpc)
 ))
