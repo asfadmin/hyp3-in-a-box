@@ -19,12 +19,11 @@ def test_products(bucket_mock, process_outputs):
     put_object_method = bucket_mock.return_value.put_object
     assert put_object_method.call_count == 2
 
-    assert all(
-        url for url in (product_url, browse_url)
-    )
+    assert all([
+        '/products/' in product_url,
+        '/browse/' in browse_url
+    ])
 
-    assert product_url
-    assert browse_url
 
 
 @pytest.fixture()
