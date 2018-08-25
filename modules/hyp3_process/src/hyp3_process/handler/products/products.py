@@ -14,17 +14,18 @@ def upload(*, outputs: ProcessOutputs, bucket_name: str) -> List[str]:
     print(f'uploading products to {bucket_name}')
     products_bucket = get_bucket(bucket_name)
 
-    object_keys = [
-        upload_from(path, products_bucket) for path in outputs
+    archive_key, browse_key = [
+        upload_from(outputs.archive, products_bucket, prefix="products"),
+        upload_from(outputs.browse, products_bucket, prefix="browse")
     ]
 
     return [
-        get_object_url(bucket_name, key) for key in object_keys
+        get_object_url(bucket_name, key) for key in (archive_key, browse_key)
     ]
 
 
-def upload_from(path: pl.Path, bucket) -> str:
-    key = path.name
+def upload_from(path: pl.Path, bucket, prefix: str) -> str:
+    key = str(pl.Path(prefix) / path.name)
 
     with path.open('rb') as f:
         bucket.put_object(

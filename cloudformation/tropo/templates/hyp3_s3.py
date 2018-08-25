@@ -15,15 +15,17 @@ from template import t
 
 products_bucket = t.add_resource(s3.Bucket(
     "ProductsBucket",
+
     LifecycleConfiguration=s3.LifecycleConfiguration(Rules=[
         s3.LifecycleRule(
             Id="S3BucketRule001",
+            Prefix="/products",
             Status="Enabled",
             Transitions=[
                 s3.LifecycleRuleTransition(
                     StorageClass="STANDARD_IA",
                     TransitionInDays=30,
-                ),
+                )
             ],
         ),
     ]),
