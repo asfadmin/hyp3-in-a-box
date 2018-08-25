@@ -69,17 +69,8 @@ default_public_route = t.add_resource(ec2.Route(
     DependsOn=net_gw_vpc_attachment
 ))
 
-
-def get_az(index):
-    return Select(
-        str(index),
-        GetAZs(Ref('AWS::Region'))
-    )
-
-
 public_net_1 = t.add_resource(ec2.Subnet(
     'HyP3PublicSubnet1',
-    AvailabilityZone=get_az(0),
     CidrBlock='10.0.1.0/24',
     MapPublicIpOnLaunch=True,
     VpcId=Ref(hyp3_vpc)
@@ -93,7 +84,6 @@ public_route_association_1 = t.add_resource(ec2.SubnetRouteTableAssociation(
 
 public_net_2 = t.add_resource(ec2.Subnet(
     'HyP3PublicSubnet2',
-    AvailabilityZone=get_az(1),
     CidrBlock='10.0.2.0/24',
     MapPublicIpOnLaunch=True,
     VpcId=Ref(hyp3_vpc)
@@ -105,6 +95,21 @@ public_route_association_2 = t.add_resource(ec2.SubnetRouteTableAssociation(
     RouteTableId=Ref(public_route_table)
 ))
 
+public_net_3 = t.add_resource(ec2.Subnet(
+    'HyP3PublicSubnet3',
+    CidrBlock='10.0.4.0/24',
+    MapPublicIpOnLaunch=True,
+    VpcId=Ref(hyp3_vpc)
+))
+
+public_route_association_3 = t.add_resource(
+    ec2.SubnetRouteTableAssociation(
+        'HyP3PrivateRouteAssociation',
+        SubnetId=Ref(public_net_3),
+        RouteTableId=Ref(public_route_table)
+    )
+)
+
 
 def get_public_subnets():
     return [
@@ -112,24 +117,7 @@ def get_public_subnets():
     ]
 
 
-restricted_subnet = t.add_resource(ec2.Subnet(
-    'HyP3RestrictedSubnet',
-    AvailabilityZone=get_az(2),
-    CidrBlock='10.0.4.0/24',
-    MapPublicIpOnLaunch=True,
-    VpcId=Ref(hyp3_vpc)
-))
-
-restricted_subnet_route_association = t.add_resource(
-    ec2.SubnetRouteTableAssociation(
-        'HyP3PrivateRouteAssociation',
-        SubnetId=Ref(restricted_subnet),
-        RouteTableId=Ref(public_route_table)
-    )
-)
-
-
-local_cidr_range = t.add_parameter(Parameter(
+user_cidr_range = t.add_parameter(Parameter(
     "ApiCidrRange",
     Description=("The IP range the hyp3 stack will be accessible from. "
                  "Default is to allow traffic from anywhere."),
@@ -139,49 +127,38 @@ local_cidr_range = t.add_parameter(Parameter(
     ConstraintDescription="Valid CIDR IP range"
 ))
 
-local_network_acl = t.add_resource(ec2.NetworkAcl(
-    'LocalNetworkAcl',
-    VpcId=Ref(hyp3_vpc)
+
+restricted_sg = t.add_resource(ec2.SecurityGroup(
+    "UserRestrictedSecurityGroup",
+    GroupDescription="UserRestrictedAccess",
+    VpcId=Ref(hyp3_vpc),
+    SecurityGroupIngress=[
+        ec2.SecurityGroupRule(
+            "LocalVPCConnections",
+            IpProtocol="tcp",
+            FromPort=-1,
+            ToPort=-1,
+            CidrIp=GetAtt(hyp3_vpc, "CidrBlock")
+        ),
+
+        ec2.SecurityGroupRule(
+            "UserSpecifiedIps",
+            IpProtocol="tcp",
+            FromPort=-1,
+            ToPort=-1,
+            CidrIp=Ref(user_cidr_range)
+        )
+    ],
+    SecurityGroupEgress=[
+        ec2.SecurityGroupRule(
+            "TCPOut",
+            IpProtocol="tcp",
+            FromPort=-1,
+            ToPort=-1,
+            CidrIp="0.0.0.0/0"
+        )
+    ]
 ))
-
-inter_vpc_entry = t.add_resource(ec2.NetworkAclEntry(
-    'InterVPCAclEntry',
-    NetworkAclId=Ref(local_network_acl),
-    CidrBlock=GetAtt(hyp3_vpc, "CidrBlock"),
-    Protocol=-1,
-    RuleAction="allow",
-    RuleNumber=200,
-    Egress=False
-))
-
-
-local_acl_entry = t.add_resource(ec2.NetworkAclEntry(
-    'LocalAclEntry',
-    NetworkAclId=Ref(local_network_acl),
-    CidrBlock=Ref(local_cidr_range),
-    Protocol=-1,
-    RuleAction="allow",
-    RuleNumber=100,
-    Egress=False
-))
-
-all_traffic_out_entry = t.add_resource(ec2.NetworkAclEntry(
-    'OutputBoundTrafficEntry',
-    NetworkAclId=Ref(local_network_acl),
-    CidrBlock='0.0.0.0/0',
-    Protocol=-1,
-    RuleAction="allow",
-    RuleNumber=100,
-    Egress=True
-))
-
-restricted_subnet_acl_association = t.add_resource(
-    ec2.SubnetNetworkAclAssociation(
-        "RestrictedSubnetAclAssociation",
-        SubnetId=Ref(restricted_subnet),
-        NetworkAclId=Ref(local_network_acl)
-    )
-)
 
 t.add_output(Output(
     'VPCId',

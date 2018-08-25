@@ -197,12 +197,13 @@ publish_notifications = IAMPolicy(
     )
 )
 
+ssm_arn_base = "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}"
 get_parameter_resources = [
-    Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/*")
+    Sub(ssm_arn_base + ":parameter/${AWS::StackName}/*")
 ]
 if environment.maturity not in ["prod", "stage"]:
     get_parameter_resources.append(
-        Sub("arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN")
+        Sub(ssm_arn_base + ":parameter/CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN")
     )
 get_parameters = IAMPolicy(
     PolicyName="GetParameters",

@@ -42,7 +42,7 @@ from tropo_env import environment
 from .hyp3_db_params import db_name, db_pass, db_user
 from .hyp3_keypairname_param import keyname
 from .hyp3_rds import hyp3_db
-from .hyp3_vpc import restricted_subnet, hyp3_vpc
+from .hyp3_vpc import public_net_1, hyp3_vpc, restricted_sg
 from .utils import get_ec2_assume_role_policy, get_map, make_s3_key
 
 source_zip = "hyp3_api.zip"
@@ -120,6 +120,11 @@ config_template = t.add_resource(ConfigurationTemplate(
             Value="t2.micro"
         ),
         OptionSettings(
+            Namespace="aws:autoscaling:launchconfiguration",
+            OptionName="SecurityGroups",
+            Value=Ref(restricted_sg)
+        ),
+        OptionSettings(
             Namespace="aws:ec2:vpc",
             OptionName="VPCId",
             Value=Ref(hyp3_vpc)
@@ -137,12 +142,12 @@ config_template = t.add_resource(ConfigurationTemplate(
         OptionSettings(
             Namespace="aws:ec2:vpc",
             OptionName="ELBSubnets",
-            Value=Ref(restricted_subnet)
+            Value=Ref(public_net_1)
         ),
         OptionSettings(
             Namespace="aws:ec2:vpc",
             OptionName="Subnets",
-            Value=Ref(restricted_subnet)
+            Value=Ref(public_net_1)
         ),
         OptionSettings(
             Namespace="aws:elasticbeanstalk:application:environment",
