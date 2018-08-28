@@ -38,18 +38,15 @@ class DBSetup(custom_resource.Base):
 
     def _process(self):
         print('connecting to hyp3_db')
-        setup_outputs = {}
         with hyp3_db.connect(*self.db_creds, commit_on_close=True) as db:
             print('connected as root user')
-            setup_outputs.update(
-                setup_db_priviliged(db)
-            )
+            root_outputs = setup_db_priviliged(db)
 
         with hyp3_db.connect(*self.db_user_creds, commit_on_close=True) as db:
             print('connected as hyp3 user')
-            setup_outputs.update(
-                setup_db_low_privileged(db)
-            )
+            user_outputs = setup_db_low_privileged(db)
+
+        setup_outputs = {**root_outputs, **user_outputs}
 
         assert 'HyP3ApiKey' in setup_outputs
         assert 'HyP3Username' in setup_outputs
