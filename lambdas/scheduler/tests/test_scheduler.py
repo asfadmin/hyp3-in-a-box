@@ -1,11 +1,11 @@
-import import_scheduler
-
 import mock
 import schedule
-import testing_utils as utils
 
 import hyp3_events
+import hyp3_db
 
+import import_scheduler
+import testing_utils as utils
 from db_cred_setup import skip_if_creds_not_available
 from scheduler_env import environment
 import scheduler_main
