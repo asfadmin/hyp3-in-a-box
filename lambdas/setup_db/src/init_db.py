@@ -94,10 +94,8 @@ def setup_db_steps(db, steps):
 
         step_output = step(db)
 
-        if not step_output:
-            continue
-
-        output.update(step_output)
+        if step_output:
+            output.update(step_output)
 
     db.session.commit()
 
