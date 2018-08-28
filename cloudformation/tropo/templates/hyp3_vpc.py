@@ -71,7 +71,7 @@ default_public_route = t.add_resource(ec2.Route(
 
 public_net_1 = t.add_resource(ec2.Subnet(
     'HyP3PublicSubnet1',
-    CidrBlock='10.0.5.0/24',
+    CidrBlock='10.0.6.0/24',
     MapPublicIpOnLaunch=True,
     VpcId=Ref(hyp3_vpc)
 ))
@@ -84,7 +84,7 @@ public_route_association_1 = t.add_resource(ec2.SubnetRouteTableAssociation(
 
 public_net_2 = t.add_resource(ec2.Subnet(
     'HyP3PublicSubnet2',
-    CidrBlock='10.0.4.0/24',
+    CidrBlock='10.0.5.0/24',
     MapPublicIpOnLaunch=True,
     VpcId=Ref(hyp3_vpc)
 ))

@@ -243,7 +243,8 @@ class ProdBuild(Build):
         ProdBuild.check_release_exists()
         self.release_options = ["--release", RELEASE_VERSION]
         self.lambda_key_prefix = "releases/{}".format(RELEASE_VERSION)
-        self.template_key = "releases/{}/{}".format(RELEASE_VERSION, TEMPLATE_NAME)
+        self.template_key = "releases/{}/{}".format(
+            RELEASE_VERSION, TEMPLATE_NAME)
         self.template_acl = "public-read"
 
     def make_release(self):
@@ -276,7 +277,8 @@ def post_build():
         TEMPLATE_CONFIG_BUCKET, MATURITY, "config/configuration.json"
     ))
 
-    subprocess.check_call(["aws", "s3", "cp", bucket_uri, "build/"] + get_s3_acl_cmd())
+    subprocess.check_call(
+        ["aws", "s3", "cp", bucket_uri, "build/"] + get_s3_acl_cmd())
 
     print("Uploading lambdas")
     subprocess.check_call([
