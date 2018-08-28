@@ -90,9 +90,7 @@ def setup_db_steps(db, steps):
     for i, step in enumerate(steps):
         count, num_steps = i + 1, len(steps)
 
-        padding, step_log = '  ', f'({count}/{num_steps})'
-        print(f'{padding}{step_log} - {step.__name__}')
-        utils.set_print_padding(len(padding + step_log))
+        print(f'{count}/{num_steps} - {step.__name__}')
 
         step_output = step(db)
 
@@ -114,7 +112,7 @@ def install_postgis(db):
     try:
         db.engine.execute(create_postgis_sql)
     except sqlalchemy.exc.ProgrammingError:
-        utils.step_print('postgis already installed')
+        print('postgis already installed')
 
 
 def add_db_user(db):
@@ -125,7 +123,7 @@ def add_db_user(db):
     )
 
     if does_db_user_exists(db, user):
-        utils.step_print(f'user {user} already exists')
+        print(f'user {user} already exists')
         return
 
     add_user_sql = sql.text(f"""
@@ -162,10 +160,10 @@ def make_hyp3_admin_user(db):
     param_paths = get_param_store_paths()
 
     if hyp3_user.is_new(db, user):
-        utils.step_print('Creating new user')
+        print('Creating new user')
         step_output = add_new_user(db, user, param_paths)
     else:
-        utils.step_print('User already exists')
+        print('User already exists')
         step_output = reference_old_user_params(param_paths)
 
     return step_output
@@ -177,7 +175,7 @@ def get_param_store_paths():
         "ParamNameHyP3Username",
         "ParamNameHyP3ApiKey"
     )
-    utils.step_print(stack_name)
+    print(stack_name)
 
     return {
         'username': '/{}/{}'.format(stack_name, username_param_name),
@@ -209,7 +207,7 @@ def add_new_user(db, user, param_paths):
 
 
 def reference_old_user_params(param_paths):
-    utils.step_print('hyp3 user already exists')
+    print('hyp3 user already exists')
 
     prefix = 'SSM Parameter Store Path -> '
 

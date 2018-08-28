@@ -1,17 +1,16 @@
 from hyp3_db import hyp3_models
 
-import setup_db_utils as utils
-
 
 def is_new(db, user):
-    utils.step_print('checking if user exists')
+    print('checking if user exists')
 
     users = db.session \
         .query(hyp3_models.User) \
         .filter(hyp3_models.User.username == user.name) \
         .all()
 
-    utils.step_print(users)
+    print(users)
+
     return len(users) == 0
 
 
