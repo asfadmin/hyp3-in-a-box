@@ -40,6 +40,8 @@
             {% if download_url is defined %}
                 <h3 style="margin: 1em 0;margin:5px 0px 5px 20px;color: #000">
                     {{ macros.download_button(download_url) }}
+                    {{ macros.download_button(download_url, color='236192', inner='Download&#160;&#160;&#160;<b>&#11015;</b>') }}
+                    {{ macros.download_button(disable_subscription, color='d9534f', inner='Disable&#160;Sub.&#160;&#160;&#160;<b>&#10005</b>') }}
                 </h3>
                 {{ macros.hr() }}
             {% endif %}
