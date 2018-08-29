@@ -69,9 +69,18 @@ default_public_route = t.add_resource(ec2.Route(
     DependsOn=net_gw_vpc_attachment
 ))
 
+
+def get_az(index):
+    return Select(
+        str(index),
+        GetAZs(Ref('AWS::Region'))
+    )
+
+
 public_net_1 = t.add_resource(ec2.Subnet(
     'HyP3PublicSubnet1',
     CidrBlock='10.0.6.0/24',
+    AvailabilityZone=get_az(0),
     MapPublicIpOnLaunch=True,
     VpcId=Ref(hyp3_vpc)
 ))
@@ -85,6 +94,7 @@ public_route_association_1 = t.add_resource(ec2.SubnetRouteTableAssociation(
 public_net_2 = t.add_resource(ec2.Subnet(
     'HyP3PublicSubnet2',
     CidrBlock='10.0.5.0/24',
+    AvailabilityZone=get_az(1),
     MapPublicIpOnLaunch=True,
     VpcId=Ref(hyp3_vpc)
 ))
@@ -98,6 +108,7 @@ public_route_association_2 = t.add_resource(ec2.SubnetRouteTableAssociation(
 public_net_3 = t.add_resource(ec2.Subnet(
     'HyP3PublicSubnet3',
     CidrBlock='10.0.3.0/24',
+    AvailabilityZone=get_az(2),
     MapPublicIpOnLaunch=True,
     VpcId=Ref(hyp3_vpc)
 ))
