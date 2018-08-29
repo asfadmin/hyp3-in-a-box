@@ -21,7 +21,9 @@ def test_scheduler_main(sns_mock, sqs_mock, testing_granules):
 @skip_if_creds_not_available
 def test_scheduler(granule_events):
     jobs = schedule.hyp3_jobs(granule_events)
+
     assert isinstance(jobs, list)
+    assert len(jobs) == 5
 
     for job in jobs:
         assert hasattr(job.sub, 'id')
