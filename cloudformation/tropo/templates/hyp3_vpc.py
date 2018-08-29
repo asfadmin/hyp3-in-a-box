@@ -136,16 +136,16 @@ restricted_sg = t.add_resource(ec2.SecurityGroup(
         ec2.SecurityGroupRule(
             "LocalVPCConnections",
             IpProtocol="tcp",
-            FromPort=-1,
-            ToPort=-1,
+            FromPort=0,
+            ToPort=65535,
             CidrIp=GetAtt(hyp3_vpc, "CidrBlock")
         ),
 
         ec2.SecurityGroupRule(
             "UserSpecifiedIps",
             IpProtocol="tcp",
-            FromPort=-1,
-            ToPort=-1,
+            FromPort=0,
+            ToPort=65535,
             CidrIp=Ref(user_cidr_range)
         )
     ],
@@ -153,8 +153,8 @@ restricted_sg = t.add_resource(ec2.SecurityGroup(
         ec2.SecurityGroupRule(
             "TCPOut",
             IpProtocol="tcp",
-            FromPort=-1,
-            ToPort=-1,
+            FromPort=0,
+            ToPort=65535,
             CidrIp="0.0.0.0/0"
         )
     ]
