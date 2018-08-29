@@ -15,8 +15,9 @@ from hyp3_db import hyp3_models
 import import_setup_db
 from init_db import setup_db
 
-TESTING_USER = 'hyp3'
-TESTING_DB = 'e2e'
+
+TESTING_USER = 'hyp3_user'
+TESTING_DB = 'setup_db_testing_db'
 TESTING_PASSWORD = 'testingpassword'
 
 
