@@ -125,7 +125,7 @@ def find_browse_path(work_dir: pl.Path, browse_patterns: str):
             work_dir
         )
 
-        if len(possible_browses) == 0:
+        if not possible_browses:
             continue
 
         return pl.Path(possible_browses[0])
