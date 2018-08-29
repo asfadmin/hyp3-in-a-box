@@ -66,10 +66,13 @@ class OneTimeAction(Base):
     user = orm.relationship('User')
 
     @classmethod
-    def new_unsub_action(cls, user_id):
+    def new_action(cls, user_id, action, params=None):
+        assert action in ('disable_subscription', 'unsubscribe')
+
         return cls(
             user_id=user_id,
-            action='unsubscribe',
+            action=action,
+            params=params,
             hash=_get_random_hash()
         )
 

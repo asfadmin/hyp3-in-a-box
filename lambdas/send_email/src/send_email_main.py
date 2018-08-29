@@ -29,35 +29,57 @@ def send_email_main(aws_event: Dict) -> None:
             print('user does not want emails, aborting...')
             return
 
-        unsub_action = get_unsub_action(db, user.id)
+        unsub_action = get_action(db, user.id, action_type='unsubscribe')
+        disable_sub_action = get_action(
+            db,
+            user.id,
+            action_type='disable_subscription',
+            params=email_event.sub_id
+        )
 
-        context = make_email_context(db, user, unsub_action, email_event)
+        context = make_email_context(
+            db, user, unsub_action, disable_sub_action, email_event)
 
         send_email_notification(user, context)
 
 
-def get_unsub_action(db, user_id) -> OneTimeAction:
-    unsub_action = queries.get_unsub_action(db, user_id)
+def get_action(db, user_id, action_type, params=None) -> OneTimeAction:
+    action = queries.get_action(db, user_id, action_type, params)
 
-    if not unsub_action:
-        unsub_action = hyp3_models.OneTimeAction.new_unsub_action(user_id)
-        db.session.add(unsub_action)
-        db.session.flush()
-        db.session.refresh(unsub_action)
+    if not action:
+        new_action = hyp3_models.OneTimeAction.new_action(
+            user_id,
+            action_type,
+            params
+        )
 
-    return unsub_action
+        action = update_obj(db, new_action)
+
+    return action
+
+
+def update_obj(db, obj):
+    db.session.add(obj)
+    db.session.flush()
+    db.session.refresh(obj)
+
+    return obj
 
 
 def make_email_context(
     db: hyp3_db.HyP3DB,
     user: User,
     unsub_action: OneTimeAction,
+    disable_sub_action: OneTimeAction,
     email_event: EmailEvent
 ) -> Dict:
     sub = queries.get_sub_by_id(db, email_event.sub_id)
 
     context = {
         'unsubscribe_url': unsub_action.url(
+            api_url=environment.api_url
+        ),
+        'disable_sub_url': disable_sub_action.url(
             api_url=environment.api_url
         ),
         'additional_info': email_event.additional_info + [{

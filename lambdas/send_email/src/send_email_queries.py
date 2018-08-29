@@ -14,9 +14,15 @@ def get_sub_by_id(db: HyP3DB, sub_id: int) -> Subscription:
         .one()
 
 
-def get_unsub_action(db: HyP3DB, user_id: int) -> OneTimeAction:
+def get_action(
+        db: HyP3DB,
+        user_id: int,
+        action_type: str,
+        params=None
+) -> OneTimeAction:
     return db.session.query(OneTimeAction) \
         .filter_by(user_id=user_id) \
-        .filter_by(action='unsubscribe') \
+        .filter_by(action=action_type) \
+        .filter(OneTimeAction.params == params)  \
         .filter_by(enabled=True) \
         .first()
