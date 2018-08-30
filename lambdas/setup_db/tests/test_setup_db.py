@@ -15,8 +15,10 @@ from hyp3_db import hyp3_models
 import import_setup_db
 from init_db import setup_db
 
+
 TESTING_USER = 'hyp3_user'
 TESTING_DB = 'setup_db_testing_db'
+TESTING_PASSWORD = 'testingpassword'
 
 
 @mock.patch('setup_db_utils.os.environ')
@@ -84,8 +86,8 @@ def environment():
     return {
         'HyP3DBUser': TESTING_USER,
         'HyP3DBName': TESTING_DB,
+        'HyP3DBPass': TESTING_PASSWORD,
 
-        'HyP3DBPass': 'testingpassword',
         'HyP3AdminUsername': 'testuser',
         'HyP3AdminEmail': 'test@alaska.edu',
 
