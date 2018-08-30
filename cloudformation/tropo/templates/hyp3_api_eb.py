@@ -42,7 +42,7 @@ from tropo_env import environment
 from .hyp3_db_params import db_name, db_pass, db_user
 from .hyp3_keypairname_param import keyname
 from .hyp3_rds import hyp3_db
-from .hyp3_vpc import public_net_1, hyp3_vpc, restricted_sg
+from .hyp3_vpc import public_net_1, hyp3_vpc
 from .utils import get_ec2_assume_role_policy, get_map, make_s3_key
 
 source_zip = "hyp3_api.zip"
@@ -118,11 +118,6 @@ config_template = t.add_resource(ConfigurationTemplate(
             Namespace="aws:autoscaling:launchconfiguration",
             OptionName="InstanceType",
             Value="t2.micro"
-        ),
-        OptionSettings(
-            Namespace="aws:autoscaling:launchconfiguration",
-            OptionName="SecurityGroups",
-            Value=Ref(restricted_sg)
         ),
         OptionSettings(
             Namespace="aws:ec2:vpc",

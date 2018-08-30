@@ -124,52 +124,9 @@ public_route_association_3 = t.add_resource(
 
 def get_public_subnets():
     return [
-        public_net_1, public_net_2
+        public_net_1, public_net_2, public_net_3
     ]
 
-
-user_cidr_range = t.add_parameter(Parameter(
-    "ApiCidrRange",
-    Description=("The IP range the hyp3 stack will be accessible from. "
-                 "Default is to allow traffic from anywhere."),
-    Type="String",
-    Default="0.0.0.0/0",
-    AllowedPattern=r"((\d{1,3})\.){3}\d{1,3}/\d{1,2}",
-    ConstraintDescription="Valid CIDR IP range"
-))
-
-
-restricted_sg = t.add_resource(ec2.SecurityGroup(
-    "UserRestrictedSecurityGroup",
-    GroupDescription="UserRestrictedAccess",
-    VpcId=Ref(hyp3_vpc),
-    SecurityGroupIngress=[
-        ec2.SecurityGroupRule(
-            "LocalVPCConnections",
-            IpProtocol="tcp",
-            FromPort=0,
-            ToPort=65535,
-            CidrIp=GetAtt(hyp3_vpc, "CidrBlock")
-        ),
-
-        ec2.SecurityGroupRule(
-            "UserSpecifiedIps",
-            IpProtocol="tcp",
-            FromPort=0,
-            ToPort=65535,
-            CidrIp=Ref(user_cidr_range)
-        )
-    ],
-    SecurityGroupEgress=[
-        ec2.SecurityGroupRule(
-            "TCPOut",
-            IpProtocol="tcp",
-            FromPort=0,
-            ToPort=65535,
-            CidrIp="0.0.0.0/0"
-        )
-    ]
-))
 
 t.add_output(Output(
     'VPCId',
