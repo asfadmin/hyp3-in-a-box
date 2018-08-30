@@ -34,11 +34,12 @@ def send_email_main(aws_event: Dict) -> None:
             db,
             user.id,
             action_type='disable_subscription',
-            params=email_event.sub_id
+            params=str(email_event.sub_id)
         )
 
         context = make_email_context(
-            db, user, unsub_action, disable_sub_action, email_event)
+            db, user, unsub_action, disable_sub_action, email_event
+        )
 
         send_email_notification(user, context)
 
