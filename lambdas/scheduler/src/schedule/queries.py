@@ -1,6 +1,7 @@
 
 from hyp3_db.hyp3_models import Subscription, User, Process
 from geoalchemy2 import WKTElement
+from geoalchemy2.functions import ST_Area, ST_Intersection
 
 
 def get_users_by_ids(db, user_ids):
@@ -21,7 +22,7 @@ def get_users_by_ids(db, user_ids):
     return users
 
 
-def get_enabled_intersecting_subs(db, polygon):
+def get_enabled_intersecting_subs(db, polygon, intersection_ratio=0.6):
     """ Get enabled subs intersecting a polygon
 
         :param HyP3DB db: The db to make the query on
@@ -31,12 +32,15 @@ def get_enabled_intersecting_subs(db, polygon):
         :rtype: list[hyp3_db.hyp3_models.Subscription]
     """
     poly = WKTElement(polygon, srid=4326)
-    intersecting = Subscription.location.intersects(poly)
+
+    intersection_area = ST_Area(ST_Intersection(Subscription.location, poly))
+    poly_area = ST_Area(poly)
 
     intersecting_subs = db.session.query(Subscription) \
         .filter_by(enabled=True) \
         .filter(Subscription.process.has(enabled=True)) \
-        .filter(intersecting) \
+        .filter(Subscription.end_date == None) \
+        .filter(intersection_area / poly_area > intersection_ratio) \
         .all()
 
     return intersecting_subs

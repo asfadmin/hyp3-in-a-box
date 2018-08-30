@@ -20,7 +20,7 @@ def new(db):
     ]
 
     for p in new_default_processes:
-        utils.step_print(f'adding new process {p.text_id}')
+        print(f'adding new process {p.text_id}')
 
     return new_default_processes
 
@@ -39,7 +39,7 @@ def get_processes():
 
     file_path = (base_path / pl.Path(key).name)
 
-    utils.step_print('downloading default processes')
+    print('downloading default processes')
     s3.Bucket(bucket) \
         .download_file(key, str(file_path))
 
