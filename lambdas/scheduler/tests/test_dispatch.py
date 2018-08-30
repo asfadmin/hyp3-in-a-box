@@ -40,12 +40,11 @@ def test_sqs_add(start_event):
         assert event_from_queue == start_event
 
 
-class FakeEvent(NamedTuple):
-    event_type: str
-
-
 @pytest.fixture
 def events():
+    class FakeEvent(NamedTuple):
+        event_type: str
+
     return  \
         [FakeEvent('EmailEvent') for _ in range(EMAIL_EVENTS_COUNT)] + \
         [FakeEvent('StartEvent') for _ in range(START_EVENTS_COUNT)]
