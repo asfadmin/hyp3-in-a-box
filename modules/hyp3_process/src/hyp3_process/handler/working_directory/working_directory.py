@@ -12,9 +12,7 @@ def create(granule: gu.SentinelGranule):
     try:
         yield working_dir
     except Exception as e:
-        _save_failed(working_dir)
-
-        raise e from None
+        raise e
     else:
         _teardown(working_dir)
 
@@ -33,19 +31,6 @@ def _make(path: pl.Path) -> None:
 
 def _teardown(directory: str) -> None:
     shutil.rmtree(directory)
-
-
-def _save_failed(directory: str) -> None:
-    failed_dir = pl.Path.home() / 'failed-jobs' / pl.Path(directory).name
-
-    _move(directory, failed_dir)
-
-
-def _move(src: str, dst: pl.Path) -> None:
-    if dst.exists():
-        shutil.rmtree(str(dst))
-
-    shutil.move(src, dst)
 
 
 def _working_dir_path(granule_id: str) -> pl.Path:

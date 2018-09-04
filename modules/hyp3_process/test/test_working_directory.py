@@ -17,15 +17,13 @@ def test_working_directory(make_mock, teardown_mock, granule):
     teardown_mock.assert_called_once()
 
 
-@mock.patch('hyp3_process.handler.working_directory.working_directory._move')
 @mock.patch('hyp3_process.handler.working_directory.working_directory._make')
-def test_failed(make_mock, copy_mock, granule):
+def test_failed(make_mock, granule):
     with pytest.raises(Exception):
         with working_directory.create(granule):
             raise Exception('Job Failed!')
 
     make_mock.assert_called_once()
-    copy_mock.assert_called_once()
 
 
 @pytest.fixture()
