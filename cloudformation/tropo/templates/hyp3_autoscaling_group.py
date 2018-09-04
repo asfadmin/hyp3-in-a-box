@@ -61,6 +61,7 @@ from awacs.s3 import GetObject, PutObject
 from awacs.sns import Publish
 from awacs.sqs import DeleteMessage, GetQueueUrl, ReceiveMessage
 from awacs.ssm import GetParameter
+from awacs import logs
 from troposphere import FindInMap, GetAtt, Join, Parameter, Ref, Sub
 from troposphere.autoscaling import (
     AutoScalingGroup,
@@ -149,21 +150,16 @@ security_group = t.add_resource(SecurityGroup(
 products_bucket_access = IAMPolicy(
     PolicyName="ProductsPutObject",
     PolicyDocument=Policy(
-        Statement=[
-            Statement(
-                Effect=Allow,
-                Action=[
-                    GetObject,
-                    PutObject
-                ],
-                Resource=[
-                    Sub(
-                        "${Arn}/*",
-                        Arn=GetAtt(products_bucket, "Arn")
-                    )
-                ]
-            )
-        ]
+        Statement=[Statement(
+            Effect=Allow,
+            Action=[
+                GetObject,
+                PutObject
+            ],
+            Resource=[
+                Sub("${Arn}/*", Arn=GetAtt(products_bucket, "Arn"))
+            ]
+        )]
     )
 )
 
@@ -197,6 +193,24 @@ publish_notifications = IAMPolicy(
     )
 )
 
+log_access = IAMPolicy(
+    PolicyName="CloudwatchAccess",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[
+                    logs.CreateLogGroup,
+                    logs.CreateLogStream,
+                    logs.PutLogEvents,
+                    logs.DescribeLogStreams
+                ],
+                Resource=["arn:aws:logs:*:*:*"]
+            )
+        ]
+    )
+)
+
 ssm_arn_base = "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}"
 get_parameter_resources = [
     Sub(ssm_arn_base + ":parameter/${AWS::StackName}/*")
@@ -205,6 +219,7 @@ if environment.maturity not in ["prod", "stage"]:
     get_parameter_resources.append(
         Sub(ssm_arn_base + ":parameter/CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN")
     )
+
 get_parameters = IAMPolicy(
     PolicyName="GetParameters",
     PolicyDocument=Policy(
@@ -228,7 +243,8 @@ role = t.add_resource(Role(
         products_bucket_access,
         poll_messages,
         publish_notifications,
-        get_parameters
+        get_parameters,
+        log_access
     ]
 ))
 
