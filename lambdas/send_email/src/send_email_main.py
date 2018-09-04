@@ -54,13 +54,13 @@ def get_action(db, user_id, action_type, params=None) -> OneTimeAction:
             params
         )
 
+        db.session.add(new_action)
         action = update_obj(db, new_action)
 
     return action
 
 
 def update_obj(db, obj):
-    db.session.add(obj)
     db.session.flush()
     db.session.refresh(obj)
 
