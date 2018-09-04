@@ -15,7 +15,7 @@
     "script":"hyp3-rtc-snap/src/procSentinelRTC-3.py",
     "output_patterns": {
         "archive": ["*/*_TC_G??.tif", "*/*.png", "*/*.txt"],
-        "browse": "*/*.png"
+        "browse": ["*/*rgb_large.png", "*/*rgb.png", "*/*large.png", "*/*.png"]
     },
     "suffix":"N/A",
     "database_info_required": false,

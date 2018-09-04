@@ -118,21 +118,22 @@ def add_files_to(
         archive.write(output_path, arcname=archive_path)
 
 
-def find_browse_path(work_dir: pl.Path, browse_pattern: str):
-    possible_browses = find_files_matching(
-        browse_pattern,
-        work_dir
-    )
+def find_browse_path(work_dir: pl.Path, browse_patterns: str):
+    for pattern in browse_patterns:
+        possible_browses = find_files_matching(
+            pattern,
+            work_dir
+        )
 
-    try:
-        browse = pl.Path(possible_browses[0])
-    except IndexError:
-        raise NoBrowseFound(
-            f"Can't find browse with pattern '{browse_pattern}' "
-            f"in dir '{work_dir}')"
-        ) from None
+        if not possible_browses:
+            continue
 
-    return browse
+        return pl.Path(possible_browses[0])
+
+    raise NoBrowseFound(
+        f"Can't find browse with patterns '{browse_patterns}' "
+        f"in dir '{work_dir}')"
+    ) from None
 
 
 class NoBrowseFound(Exception):
