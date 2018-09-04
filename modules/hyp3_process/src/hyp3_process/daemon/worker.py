@@ -33,7 +33,7 @@ class HyP3Worker(Process):
 
     def run(self):
         self._set_status(WorkerStatus.BUSY)
-        log.info("WORKER: Processed job %s", self.job)
+        log.info("WORKER: Processing job %s", self.job)
         try:
             output = self.handler(
                 self.job.data,
@@ -43,6 +43,7 @@ class HyP3Worker(Process):
 
             self.job.set_output(output)
 
+            log.info("WORKER: Processing done %s", self.job.granule)
             self._set_status(WorkerStatus.DONE)
             self.conn.send(self.job.output)
         except Exception as e:
