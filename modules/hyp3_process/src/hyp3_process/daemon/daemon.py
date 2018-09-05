@@ -248,6 +248,7 @@ class HyP3Daemon(object):
             browse_url='',
             download_url='',
         )
+
         if self.worker_conn.poll():
             error = self._poll_until(Exception)
             email_event = email_event._replace(

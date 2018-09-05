@@ -34,16 +34,18 @@ class HyP3Worker(Process):
     def run(self):
         self._set_status(WorkerStatus.BUSY)
         log.info("WORKER: Processing job %s", self.job)
+        start_event = self.job.data
+
         try:
             output = self.handler(
-                self.job.data,
+                start_event,
                 self.earthdata_creds,
                 self.products_bucket
             )
 
             self.job.set_output(output)
 
-            log.info("WORKER: Processing done %s", self.job.granule)
+            log.info("WORKER: Processing done %s", start_event.granule)
             self._set_status(WorkerStatus.DONE)
             self.conn.send(self.job.output)
         except Exception as e:

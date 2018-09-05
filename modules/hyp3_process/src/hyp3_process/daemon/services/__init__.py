@@ -23,6 +23,7 @@ class BadMessageException(Exception):
 class SQSJob(object):
     def __init__(self, message):
         self.message = message
+
         try:
             self.data = StartEvent.from_json(message.body)
         except json.JSONDecodeError:
