@@ -1,6 +1,6 @@
 .. _dev-setup:
 
-Developer Setup
+Developer Setup (Version 0.1.0)
 ===============
 
 Getting HyP3 up and running in your own AWS account is made relatively simple
@@ -25,8 +25,8 @@ details on each of these steps will be available in the following sections.
 
 Optional
 ~~~~~~~~
-7. Enable HTTPS on the HyP3 API (`recommended`)
-8. Enable EarthData login for the HyP3 API
+6. Enable HTTPS on the HyP3 API (`recommended`)
+7. Enable EarthData login for the HyP3 API
 
 1. Zipping Lambda Code With Dependencies
 ----------------------------------------
@@ -42,9 +42,12 @@ time. For creating the HyP3 Lambdas you can use the :ref: `build_lambda_script`
 helper script.
 
 To build all lambda functions in the ``lambdas/`` directory:
-  1. ``cd hyp3-in-a-box/``
-  2. ``mkdir -p build/lambdas``
-  3. ``python3 build_lambda.py -a -o build/lambdas/ lambdas/``
+
+.. code-block:: shell
+
+   cd hyp3-in-a-box/
+   mkdir -p build/lambdas
+   python3 build_lambda.py -a -o build/lambdas/ lambdas/
 
 This command will tell ``build_lambda.py`` to look through the ``lambdas/``
 directory and bundle the source for each lambda along with any dependencies
@@ -171,11 +174,18 @@ install to a virtual environment.
 **Note:** `You will need Python 3 to create the template! Make sure your
 virtual environment is using Python 3.`
 
-1. ``cd cloudformation``
-2. ``virtualenv -p python3 .venv``
-3. ``source .venv/bin/activate``
-4. ``pip install -r requirements.txt``
-5. ``python3 tropo/create_stack.py --lambda_bucket MY_BUCKET --eb_bucket MY_BUCKET --maturity prod tropo/outputs/hyp3_stack.json``
+.. code-block:: shell
+
+   cd cloudformation
+   virtualenv -p python3 .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+
+   python3 tropo/create_stack.py \
+       --lambda_bucket MY_BUCKET \
+       --eb_bucket MY_BUCKET \
+       --maturity prod \
+       tropo/outputs/hyp3_stack.json
 
 Make sure that ``MY_BUCKET`` is the bucket you created in step 1 which contains
 all of the source code for the HyP3 components. Also make sure that the maturity
