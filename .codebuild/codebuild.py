@@ -186,6 +186,7 @@ class Build(object):
         s3 = boto3.resource("s3")
         bucket = s3.Bucket(S3_SOURCE_BUCKET)
         prefix = self.lambda_key_prefix
+
         for lambda_zip in os.listdir("build/lambdas"):
             if ".zip" not in lambda_zip:
                 continue

@@ -38,12 +38,10 @@ def install_dependencies(path):
     req_file = os.path.join(path, 'requirements.txt')
     deps_dir = os.path.join(path, 'dependencies')
 
-    subprocess.check_call(
-        [
-            sys.executable, '-m', 'pip', 'install', '--compile', '-r',
-            req_file, '-t', deps_dir
-        ],
-        cwd=path
+    subprocess.check_call([
+        sys.executable, '-m', 'pip', 'install', '--compile', '-r',
+        req_file, '-t', deps_dir
+    ], cwd=path
     )
 
     if psycopg2_is_dependency(deps_dir):
@@ -58,10 +56,9 @@ def psycopg2_is_dependency(deps_dir):
 def install_lambda_compatible_psycopg2(path):
     print('installing psycopg2...')
     repo = 'psycopg2'
-    subprocess.check_call(
-        ['git', 'clone', '--depth', '1', PSYCOPG2_REPO, repo],
-        cwd=path
-    )
+    subprocess.check_call([
+        'git', 'clone', '--depth', '1', PSYCOPG2_REPO, repo
+    ], cwd=path)
 
     repo_path = os.path.join(path, repo)
 
