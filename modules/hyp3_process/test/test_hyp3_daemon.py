@@ -19,7 +19,8 @@ from hyp3_process.daemon.services import BadMessageException, SQSJob, SQSService
 
 @mock.patch('hyp3_process.daemon.daemon.SQSService')
 @mock.patch('hyp3_process.daemon.daemon.HyP3Daemon._process_job')
-def test_daemon_main(process_job_mock, SQSServiceMock, config, handler):
+@mock.patch('boto3.resource')
+def test_daemon_main(_0, process_job_mock, SQSServiceMock, config, handler):
     log.setLevel(logging.DEBUG)
     daemon = HyP3Daemon(config, handler)
     daemon.main()
@@ -37,7 +38,8 @@ def test_daemon_main(process_job_mock, SQSServiceMock, config, handler):
 
 @mock.patch('hyp3_process.daemon.daemon.SNSService')
 @mock.patch('hyp3_process.daemon.daemon.SQSService')
-def test_daemon_main_job_finished(_1, sns_mock, config, handler):
+@mock.patch('boto3.resource')
+def test_daemon_main_job_finished(_0, _1, sns_mock, config, handler):
     log.setLevel(logging.DEBUG)
     daemon = HyP3Daemon(config, handler)
 
@@ -73,7 +75,8 @@ def test_daemon_main_job_finished(_1, sns_mock, config, handler):
 @mock.patch('hyp3_process.daemon.daemon.HyP3Daemon._terminate')
 @mock.patch('hyp3_process.daemon.daemon.SNSService')
 @mock.patch('hyp3_process.daemon.daemon.SQSService')
-def test_shutdown_if_idle(_1, _2, terminate_mock, event_mock, config, handler):
+@mock.patch('boto3.resource')
+def test_shutdown_if_idle(_0, _1, _2, terminate_mock, event_mock, config, handler):
     with pytest.raises(SystemExit):
         daemon = HyP3Daemon(config, handler)
         daemon.config.MAX_IDLE_TIME_SECONDS = 1
@@ -98,37 +101,6 @@ class MockMessage(object):
 
     def delete(self):
         self.times_delete_called += 1
-
-
-@mock.patch('boto3.resource')
-@mock.patch('hyp3_process.daemon.services.SQSService.validate_message')
-@mock.patch('hyp3_process.daemon.services.SQSJob')
-def test_sqsservice_get_next_message(_, validate_mock, sqs_mock):
-    sqs_service = SQSService('')
-
-    sqs_obj = sqs_mock.return_value.get_queue_by_name.return_value
-    message_mock = MockMessage('', '')
-    sqs_obj.receive_messages.return_value = [message_mock]
-
-    sqs_service.get_next_message()
-
-    sqs_obj.receive_messages.assert_called_once()
-    validate_mock.assert_called_once_with(message_mock)
-
-
-@mock.patch('boto3.resource')
-@mock.patch('hyp3_process.daemon.services.SQSJob')
-def test_sqsservice_get_next_message_bad_checksum(_, sqs_mock):
-    sqs_service = SQSService('')
-
-    sqs_obj = sqs_mock.return_value.get_queue_by_name.return_value
-    message_mock = MockMessage('', '')
-    sqs_obj.receive_messages.return_value = [message_mock]
-
-    message = sqs_service.get_next_message()
-
-    sqs_obj.receive_messages.assert_called_once()
-    assert message is None
 
 
 def test_validate_message_successfull():

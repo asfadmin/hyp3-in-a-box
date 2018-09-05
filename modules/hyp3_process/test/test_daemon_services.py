@@ -5,7 +5,7 @@ import pytest
 import hyp3_events
 
 import import_hyp3_process
-from hyp3_process.daemon.services import SQSJob
+from hyp3_process.daemon.services import SQSJob, SQSService
 
 
 def test_sqs_job(message, correct_job_output_dict):
@@ -23,8 +23,33 @@ def test_sqs_job(message, correct_job_output_dict):
     job.delete()
     assert job.message.deleted
 
+
+def test_sqsservice_get_next_message_bad_checksum(dummy_boto3_queue):
+    sqs_service = SQSService(dummy_boto3_queue)
+
+    message = sqs_service.get_next_message()
+    assert message is None
+
+    assert sqs_service.sqs_queue.receive_messages_called
+
+
+@pytest.fixture
+def dummy_boto3_queue():
+    class DummyQueue:
+        def __init__(self):
+            self.receive_messages_called = False
+
+        def receive_messages(self, **kwargs):
+            self.receive_messages_called = True
+            assert 'MaxNumberOfMessages' in kwargs
+            assert len(kwargs.keys()) == 1
+
+    return DummyQueue()
+
+
 def test_sqs_queue():
     pass
+
 
 @pytest.fixture
 def message():

@@ -94,9 +94,15 @@ class HyP3Daemon(object):
         """ Initialize state. This creates a new HyP3DaemonConfig object."""
         self.config = config
 
-        self.job_queue = SQSService(
-            queue_name=self.config.queue_name
+        sqs = boto3.resource('sqs')
+        sqs_queue = sqs.get_queue_by_name(
+            QueueName=self.config.queue_name
         )
+
+        self.job_queue = SQSService(
+            sqs_queue=sqs_queue
+        )
+
         self.sns_topic = SNSService(
             arn=self.config.sns_arn
         )
