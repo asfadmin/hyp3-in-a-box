@@ -15,7 +15,7 @@ def send(address, subject, message):
         },
         Message={
             'Subject': {
-                'Data': '{} {}'.format(SUBJECT_PREFIX, subject)
+                'Data': f'{SUBJECT_PREFIX} {subject}'
             },
             'Body': {
                 'Html': {

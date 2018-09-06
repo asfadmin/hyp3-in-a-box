@@ -40,4 +40,4 @@ def _working_dir_path(granule_id: str) -> pl.Path:
 
 
 def _working_dir_name(granule_id: str) -> str:
-    return 'GRAN-{}'.format(granule_id)
+    return f'GRAN-{granule_id}'

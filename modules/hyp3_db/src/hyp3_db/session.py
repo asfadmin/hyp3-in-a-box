@@ -19,6 +19,4 @@ def make_engine(user, password, host, db):
 
 
 def get_connection_str(user, password, host, db):
-    return 'postgresql://{}:{}@{}:5432/{}'.format(
-        user, password, host, db
-    )
+    return f'postgresql://{user}:{password}@{host}:5432/{db}'

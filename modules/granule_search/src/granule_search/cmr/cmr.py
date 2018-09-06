@@ -24,7 +24,7 @@ class CMR(GranuleSearchAPI):
             **self._get_base_params(),
             **self.query_params
         }
-        print(json.dumps(total_query_params, indent=2))
+        print(json.dumps(total_query_params))
 
         resp = requests.get(
             self.api_url,
@@ -66,7 +66,7 @@ class CMR(GranuleSearchAPI):
             self._cmr_date_format(d) for d in (before_time, after_time)
         ]
 
-        cmr_date_range = "{},{}".format(before_str, after_str)
+        cmr_date_range = f"{before_str},{after_str}"
         create_at_params.append(cmr_date_range)
         self.query_params['created_at[]'] = create_at_params
 

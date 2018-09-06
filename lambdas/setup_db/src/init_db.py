@@ -167,14 +167,14 @@ def make_hyp3_admin_user(db):
 def get_param_store_paths():
     stack_name = utils.get_environ_params('HyP3StackName').pop()
     [username_param_name, api_key_param_name] = utils.get_environ_params(
-        "ParamNameHyP3Username",
-        "ParamNameHyP3ApiKey"
+        'ParamNameHyP3Username',
+        'ParamNameHyP3ApiKey'
     )
     print(stack_name)
 
     return {
-        'username': '/{}/{}'.format(stack_name, username_param_name),
-        'api-key': '/{}/{}'.format(stack_name, api_key_param_name)
+        'username': f'/{stack_name}/{username_param_name}',
+        'api-key': f'/{stack_name}/{api_key_param_name}'
     }
 
 
