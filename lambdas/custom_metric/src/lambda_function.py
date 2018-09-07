@@ -2,6 +2,8 @@ import os
 
 import boto3
 
+from target_calculation import calculate_metric
+
 sqs_client = boto3.client("sqs")
 asg_client = boto3.client("autoscaling")
 cw_client = boto3.client('cloudwatch')
@@ -10,7 +12,8 @@ cw_client = boto3.client('cloudwatch')
 def lambda_handler(event, context):
     """ Entry point for the lambda to run. Polls an SQS queue for unread messages
         and an AutoScalingGroup for number of active instances. It then updates
-        a custom metric with the proportion of unread messages to active instances.
+        a custom metric with the proportion of unread messages to active
+        instances.
 
         :param event: lambda event data
 
@@ -67,21 +70,13 @@ def get_num_instances(group_name):
         MaxRecords=100
     )
 
-    return len(filter_active_only(response['AutoScalingGroups'][0]['Instances']))
+    return len(active_only(response['AutoScalingGroups'][0]['Instances']))
 
 
-def filter_active_only(instances):
+def active_only(instances):
     return list(
         filter(
-            lambda x: x['LifecycleState'] == 'InService',
+            lambda instance: instance['LifecycleState'] == 'InService',
             instances
         )
     )
-
-
-def calculate_metric(num_messages, num_instances):
-    # Target tracking handles 0 instance case.
-    if num_instances == 0:
-        return num_messages + 0.1
-
-    return num_messages / num_instances
