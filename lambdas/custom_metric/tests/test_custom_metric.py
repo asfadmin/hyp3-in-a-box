@@ -4,9 +4,7 @@ import import_custom_metric
 from target_calculation import calculate_metric
 
 
-# messages / instance = 10
-
-def test_custom_metric_calculation(expected):
+def test_possible_combos(expected):
     print("\nmessages: " + str([v[1] for v in expected]))
 
     for current_instances in range(10):
@@ -20,12 +18,30 @@ def test_custom_metric_calculation(expected):
             print(metric, end=", ")
 
 
+def test_startup_messages_make_instance():
+    for m in range(1, 10):
+        metric = calculate_metric(
+            num_messages=m, num_instances=0
+        )
+
+        assert metric == 2
+
+
+def test_no_messages_no_instances():
+    for i in range(10):
+        metric = calculate_metric(
+            num_messages=0, num_instances=i
+        )
+
+        assert metric == 0
+
+
 @pytest.fixture
 def expected():
     return [
         (0, 0),
-        (1, 5),
-        (1, 10),
+        (2, 5),
+        (2, 10),
         (2, 15),
         (2, 20),
         (3, 30),
