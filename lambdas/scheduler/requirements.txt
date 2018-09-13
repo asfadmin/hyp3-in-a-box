@@ -1,3 +1,4 @@
 -i https://pypi.org/simple
 ./../../modules/hyp3_db
 ./../../modules/hyp3_events
+./../../modules/tempaws

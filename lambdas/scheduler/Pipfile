@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 "3da5cae" = {path = "./../../modules/hyp3_db"}
 "61ea59b" = {path = "./../../modules/hyp3_events"}
+"d2762ac" = {path = "./../../modules/tempaws"}
 
 [dev-packages]
 pytest = "*"
