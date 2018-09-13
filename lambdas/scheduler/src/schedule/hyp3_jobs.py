@@ -27,7 +27,7 @@ def hyp3_jobs(new_granules: List[NewGranuleEvent]):
 
         jobs = flatten_list(jobs_for_each_granule)
 
-        print('Found {} total jobs to start'.format(len(jobs)))
+        print(f'Found {len(jobs)} total jobs to start')
 
         return jobs
 
@@ -37,7 +37,7 @@ def get_jobs_for(granule: NewGranuleEvent, db) -> List[Job]:
     print(polygon)
 
     subs = queries.get_enabled_intersecting_subs(db, polygon)
-    print('Found {} subs overlapping granule'.format(len(subs)))
+    print(f'Found {len(subs)} subs overlapping granule')
 
     users = get_users_for(subs, db)
     processes = get_processes(db)
@@ -57,9 +57,9 @@ def format_polygon(point_vals):
     points = ""
 
     for lat, lon in pair_up_lat_lons(point_vals):
-        points += "{} {},".format(lon, lat)
+        points += f"{lon} {lat},"
 
-    return "POLYGON(({}))".format(points[:-1])
+    return f"POLYGON(({points[:-1]}))"
 
 
 def pair_up_lat_lons(point_vals):

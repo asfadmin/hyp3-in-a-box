@@ -18,10 +18,7 @@ def granule_events():
     prev_time = get_previous_time()
 
     request_time = dt.datetime.utcnow()
-    print('time-range: {} -> {}'.format(
-        prev_time,
-        request_time
-    ))
+    print(f'time-range: {prev_time} -> {request_time}')
 
     results = get_new_granules_between(prev_time, request_time)
     previous_time.set_time(request_time)
@@ -50,9 +47,9 @@ def get_new_granules_between(prev_time, request_time):
         :returns: response from cmr
         :rtype: hyp3_events.NewGranuleEvent
     """
-    print('making api request with: {}'.format(prev_time))
+    print(f'making api request with: {prev_time}')
     new_granule_events = make_cmr_query(prev_time, request_time)
-    print("cmr returned {} results".format(len(new_granule_events)))
+    print(f'cmr returned {len(new_granule_events)} results')
 
     return new_granule_events
 

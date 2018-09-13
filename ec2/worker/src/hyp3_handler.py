@@ -8,6 +8,6 @@ def handler(
     earthdata_creds: Dict[str, str],
     script_path: str
 ) -> None:
-    # Call your processing script here. Use subprocess.check_call so that errors
-    # will raise an Exception
+    # Call your processing script here. Use subprocess.check_call
+    # so that errors will raise an Exception
     subprocess.check_call([script_path, "arg1", "arg2"])

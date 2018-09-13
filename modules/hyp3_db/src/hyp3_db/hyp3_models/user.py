@@ -77,12 +77,7 @@ class OneTimeAction(Base):
         )
 
     def url(self, api_url):
-        return "{}/onetime/{}?id={}&key={}".format(
-            api_url,
-            self.action,
-            self.id,
-            self.hash
-        )
+        return f"{api_url}/onetime/{self.action}?id={self.id}&key={self.has}"
 
 
 def _get_random_hash():

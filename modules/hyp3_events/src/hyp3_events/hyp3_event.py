@@ -25,9 +25,11 @@ class HyP3Event(abc.ABC):
     @classmethod
     def from_type(cls, obj):
         from_fn = cls.from_impls.get(type(obj))
+
         if from_fn is None:
             raise NotImplementedError(
-                "from_type is not implemented for {}".format(type(obj)))
+                f"from_type is not implemented for {type(obj)}"
+            )
 
         return from_fn(obj)
 
