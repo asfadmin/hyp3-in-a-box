@@ -48,7 +48,7 @@ def daemon(config, handler):
 def config(queue, topic_arn):
     queue_name = queue.attributes['QueueArn'].split(':')[-1]
 
-    config = HyP3DaemonConfig(
+    daemon_config = HyP3DaemonConfig(
         queue_name=queue_name,
         sns_arn=topic_arn,
         earthdata_creds=json.dumps(
@@ -58,9 +58,9 @@ def config(queue, topic_arn):
         are_ssm_param_names=False
     )
 
-    config.MAX_IDLE_TIME_SECONDS = 1
+    daemon_config.MAX_IDLE_TIME_SECONDS = 1
 
-    return config
+    return daemon_config
 
 
 @pytest.fixture(scope="module")

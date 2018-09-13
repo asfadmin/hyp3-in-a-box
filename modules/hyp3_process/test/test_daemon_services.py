@@ -33,16 +33,6 @@ def test_sqsservice_get_next_message_bad_checksum(dummy_boto3_queue):
     assert sqs_service.sqs_queue.receive_messages_called
 
 
-class MockMessage(object):
-    def __init__(self, body, md5_of_body):
-        self.body = body
-        self.md5_of_body = md5_of_body
-        self.times_delete_called = 0
-
-    def delete(self):
-        self.times_delete_called += 1
-
-
 def test_validate_message_successfull():
     SQSService.validate_message(
         MockMessage(
@@ -110,10 +100,6 @@ def dummy_boto3_queue():
     return DummyQueue()
 
 
-def test_sqs_queue():
-    pass
-
-
 @pytest.fixture
 def message():
     g = 'S1B_IW_GRDH_1SDV_20180905T092807_20180905T092826_012578_017352_D7D2'
@@ -143,3 +129,13 @@ def correct_job_output_dict():
         "browse_url": "some-url",
         "product_url": "other-url"
     }
+
+
+class MockMessage(object):
+    def __init__(self, body, md5_of_body):
+        self.body = body
+        self.md5_of_body = md5_of_body
+        self.times_delete_called = 0
+
+    def delete(self):
+        self.times_delete_called += 1
