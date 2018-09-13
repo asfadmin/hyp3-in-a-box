@@ -145,19 +145,12 @@ class HyP3Daemon(object):
 
         if status == WorkerStatus.DONE:
             self._worker_done()
-            return
+
         elif status == WorkerStatus.FAILED:
             self._worker_failed()
-            return
-        if status not in [WorkerStatus.READY, WorkerStatus.NO_STATUS]:
-            return
 
-        new_job = self.job_queue.get_next_message()
-        if not new_job:
-            return
-
-        log.info("Staring new job %s", new_job)
-        self._process_job(new_job)
+        elif status in [WorkerStatus.READY, WorkerStatus.NO_STATUS]:
+            self._check_for_new_job()
 
     def _poll_worker_status(self):
         if self.worker and self.worker_conn.poll():
@@ -170,6 +163,14 @@ class HyP3Daemon(object):
             val = self.worker_conn.recv()
 
         return val
+
+    def _check_for_new_job(self):
+        new_job = self.job_queue.get_next_message()
+        if not new_job:
+            return
+
+        log.info("Staring new job %s", new_job)
+        self._process_job(new_job)
 
     def _process_job(self, job: SQSJob):
         if self.worker:
