@@ -22,7 +22,7 @@ def test_daemon_pulls_messages_from_queue(daemon, queue, messages):
     add_messages_to(queue, messages)
     daemon.run()
 
-    return not queue.receive_messages()
+    assert not queue.receive_messages()
 
 
 def add_messages_to(temp_queue, testing_messages):
