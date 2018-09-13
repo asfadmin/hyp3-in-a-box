@@ -1,15 +1,11 @@
-# test_hyp3_daemon.py
-# Rohan Weeden
-# Created: July 30, 2018
-
-# Tests for hyp3 glue code daemon.
-
-import logging
+import random
+import uuid
 
 import mock
 import pytest
 
-from hyp3_events import EmailEvent
+from hyp3_events import EmailEvent, StartEvent
+from tempaws import TemporaryQueue, TemporaryTopic
 
 import import_hyp3_process
 from hyp3_process.daemon import HyP3Daemon, HyP3DaemonConfig, log
@@ -17,72 +13,37 @@ from hyp3_process.daemon.worker import WorkerStatus
 from hyp3_process.daemon.services import BadMessageException, SQSJob, SQSService
 
 
-@mock.patch('hyp3_process.daemon.daemon.SQSService')
-@mock.patch('hyp3_process.daemon.daemon.HyP3Daemon._process_job')
-@mock.patch('boto3.resource')
-def test_daemon_main(_0, process_job_mock, SQSServiceMock, config, handler):
-    log.setLevel(logging.DEBUG)
-    daemon = HyP3Daemon(config, handler)
-    daemon.main()
+def test_hyp3_daemon(config, handler, messages):
+    config.MAX_IDLE_TIME_SECONDS = 1
 
-    sqsservice_mock = SQSServiceMock.return_value
-    message_mock = sqsservice_mock.get_next_message.return_value
+    with TemporaryQueue.create_fifo() as queue:
+        queue_name = queue.attributes['QueueArn'].split(':')[-1]
+        config.queue_name = queue_name
 
-    SQSServiceMock.assert_called_once()
-    sqsservice_mock.get_next_message.assert_called_once()
-    message_mock.delete.assert_not_called()
-    process_job_mock.assert_called_once_with(
-        message_mock
-    )
+        with TemporaryTopic.create() as topic_arn:
+            config.sns_arn = topic_arn
 
+            daemon = HyP3Daemon(config, handler)
+            daemon.run()
 
-@mock.patch('hyp3_process.daemon.daemon.SNSService')
-@mock.patch('hyp3_process.daemon.daemon.SQSService')
-@mock.patch('boto3.resource')
-def test_daemon_main_job_finished(_0, _1, sns_mock, config, handler):
-    log.setLevel(logging.DEBUG)
-    daemon = HyP3Daemon(config, handler)
+            add_messages_to(queue, messages)
 
-    worker_mock = mock.Mock()
-    daemon.worker = worker_mock
-    worker_mock.job = SQSJob(MockMessage('''{
-        "user_id": 0,
-        "sub_id": 0,
-        "additional_info": [],
-        "granule": "DUMMY_GRANULE",
-        "output_patterns": [],
-        "script_path": ""
-    }''', ''))
-    worker_conn_mock = mock.Mock()
-    daemon.worker_conn = worker_conn_mock
-    worker_conn_mock.poll.return_value = True
-    worker_conn_mock.recv.side_effect = [
-        WorkerStatus.DONE,
-        {
-            "browse_url": "browse_url",
-            "product_url": "product_url"
-        }
-    ]
-
-    daemon.main()
-
-    assert worker_mock.job.message.times_delete_called == 1
-    sns_mock.return_value.push.assert_called_once()
+            daemon = HyP3Daemon(config, handler)
+            daemon.run()
 
 
-@pytest.mark.timeout(5)
-@mock.patch('hyp3_process.daemon.daemon.EmailEvent')
-@mock.patch('hyp3_process.daemon.daemon.HyP3Daemon._terminate')
-@mock.patch('hyp3_process.daemon.daemon.SNSService')
-@mock.patch('hyp3_process.daemon.daemon.SQSService')
-@mock.patch('boto3.resource')
-def test_shutdown_if_idle(_0, _1, _2, terminate_mock, event_mock, config, handler):
-    with pytest.raises(SystemExit):
-        daemon = HyP3Daemon(config, handler)
-        daemon.config.MAX_IDLE_TIME_SECONDS = 1
-        daemon.run()
-
-        terminate_mock.assert_called_once()
+def add_messages_to(queue, messages):
+    for message in messages:
+        queue.send_message(
+            MessageBody=message,
+            MessageAttributes={
+                'EventType': {
+                    'StringValue': "StartEvent",
+                    'DataType': 'String'
+                }
+            },
+            MessageGroupId=str(uuid.uuid4())
+        )
 
 
 def test_status_enum():
@@ -157,16 +118,33 @@ def test_event_creation():
 
 
 @pytest.fixture
-def handler():
-    return lambda *args, **kwargs: print('processing')
-
-
-@pytest.fixture
 def config():
     return HyP3DaemonConfig(
         queue_name='queue-name',
         sns_arn='sns-arn',
-        earthdata_creds='{"username": "hello", "password": "world"}',
-        products_bucket='prodcuts',
+        earthdata_creds='{"username": "fake-user", "password": "fake-pass"}',
+        products_bucket='products-bucket',
         are_ssm_param_names=False
     )
+
+
+@pytest.fixture
+def handler():
+    def handler_func(start_event, earthdata_creds, products_bucket):
+        return {'browse_url': 'some-url', 'product_url': 'some-url'}
+
+    return handler_func
+
+
+@pytest.fixture
+def messages():
+    return [
+        StartEvent(
+            granule="SomeGranule",
+            user_id=1,
+            sub_id=random.randint(1, 100),
+            output_patterns={},
+            script_path='/some/script',
+            additional_info=[]
+        ).to_json() for _ in range(5)
+    ]

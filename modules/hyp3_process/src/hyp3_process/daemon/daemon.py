@@ -125,7 +125,7 @@ class HyP3Daemon(object):
                     log.info("Max idle time reached, terminating instance...")
                     return
                 self.main()
-                time.sleep(1)
+                time.sleep(self.config.MAX_IDLE_TIME_SECONDS/120)
             except KeyboardInterrupt:
                 log.debug("Stopping hyp3 daemon...")
                 return
@@ -194,7 +194,8 @@ class HyP3Daemon(object):
 
     def _join_worker(self):
         self.last_active_time = time.time()
-        self.worker.join()
+        if self.worker:
+            self.worker.join()
 
     def _finish_job(self):
         job = self.worker.job
