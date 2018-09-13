@@ -13,7 +13,7 @@ from hyp3_events import EmailEvent, StartEvent
 
 from ..logging import getLogger
 
-log = getLogger(__name__)
+log = getLogger(__name__, "/var/log/hyp3.log")
 
 
 class BadMessageException(Exception):
@@ -49,11 +49,8 @@ class SQSJob(object):
 
 
 class SQSService(object):
-    def __init__(self, queue_name):
-        sqs = boto3.resource('sqs')
-        self.sqs_queue = sqs.get_queue_by_name(
-            QueueName=queue_name
-        )
+    def __init__(self, sqs_queue):
+        self.sqs_queue = sqs_queue
 
     def get_next_message(self):
         log.debug('checking queue for message')

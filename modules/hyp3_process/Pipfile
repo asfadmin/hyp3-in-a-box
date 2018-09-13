@@ -13,6 +13,7 @@ asf-granule-util = "*"
 hypothesis = "*"
 mypy = "*"
 pytest-timeout = "*"
+"2647205" = {path = "./../tempaws"}
 
 [requires]
 python_version = "3.6"

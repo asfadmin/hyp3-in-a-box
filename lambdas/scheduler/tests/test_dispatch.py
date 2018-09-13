@@ -8,6 +8,7 @@ import pytest
 import mock
 
 import hyp3_events
+from tempaws import TemporaryQueue
 
 import import_scheduler
 import dispatch
@@ -28,7 +29,7 @@ def test_dispatch(sns_mock, sqs_mock, events):
 
 
 def test_sqs_add(start_event):
-    with queue() as q:
+    with TemporaryQueue.create_fifo() as q:
         env.queue_url = q.url
         sqs.add_event(start_event)
 
@@ -61,28 +62,3 @@ def start_event():
         script_path='',
         additional_info=[]
     )
-
-
-@contextlib.contextmanager
-def queue():
-    sqs_resource = boto3.resource('sqs')
-    sqs_client = boto3.client('sqs')
-
-    queue = sqs_resource.create_queue(
-        QueueName=f'test{unique_id(4)}.fifo',
-        Attributes={
-            'FifoQueue': 'true',
-            'ContentBasedDeduplication': 'true'
-        }
-    )
-
-    try:
-        yield queue
-    except Exception:
-        pass
-    finally:
-        sqs_client.delete_queue(QueueUrl=queue.url)
-
-
-def unique_id(N):
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=N))

@@ -10,7 +10,7 @@ from multiprocessing import Process
 
 from .logging import getLogger
 
-log = getLogger(__name__)
+log = getLogger(__name__,  "/var/log/hyp3.log")
 
 
 class WorkerStatus(Enum):
