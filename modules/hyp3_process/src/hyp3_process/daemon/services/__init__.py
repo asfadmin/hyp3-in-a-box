@@ -13,7 +13,7 @@ from hyp3_events import EmailEvent, StartEvent
 
 from ..logging import getLogger
 
-log = getLogger(__name__)
+log = getLogger(__name__, "/var/log/hyp3.log")
 
 
 class BadMessageException(Exception):

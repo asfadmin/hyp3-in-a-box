@@ -25,7 +25,7 @@ from .services import SNSService, SQSJob, SQSService
 from .worker import HyP3Worker, WorkerStatus
 
 ssm = boto3.client('ssm')
-log = getLogger(__name__)
+log = getLogger(__name__, "/var/log/hyp3.log")
 
 # Add implementation for conversion from SQSJob type
 EmailEvent.impl_from(
