@@ -8,13 +8,12 @@ from tempaws import TemporaryQueue, TemporaryTopic
 
 import import_hyp3_process
 from hyp3_process.daemon import HyP3Daemon, HyP3DaemonConfig
-from hyp3_process.daemon.worker import WorkerStatus
 
 
 NUM_MESSAGES = 2
 
 
-def test_daemon_shuts_down_when_no_jobs(daemon, config, handler):
+def test_daemon_stops_with_empty_queue(daemon):
     daemon.run()
 
 
@@ -22,7 +21,7 @@ def test_daemon_pulls_messages_from_queue(daemon, queue, messages):
     add_messages_to(queue, messages)
     daemon.run()
 
-    assert not queue.receive_messages()
+    assert len(queue.receive_messages()) == 0
 
 
 def add_messages_to(temp_queue, testing_messages):
@@ -58,18 +57,18 @@ def config(queue, topic_arn):
         are_ssm_param_names=False
     )
 
-    daemon_config.MAX_IDLE_TIME_SECONDS = 1
+    daemon_config.MAX_IDLE_TIME_SECONDS = 2
 
     return daemon_config
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def queue():
     with TemporaryQueue.create_fifo() as queue:
         yield queue
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def topic_arn():
     with TemporaryTopic.create() as topic_arn:
         yield topic_arn
