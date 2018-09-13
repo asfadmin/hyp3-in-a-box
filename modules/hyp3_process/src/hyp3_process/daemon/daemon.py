@@ -123,14 +123,11 @@ class HyP3Daemon(object):
             try:
                 if self._reached_max_idle_time():
                     log.info("Max idle time reached, terminating instance...")
-                    HyP3Daemon._terminate()
-                    sys.exit(0)
                     return
                 self.main()
                 time.sleep(1)
             except KeyboardInterrupt:
                 log.debug("Stopping hyp3 daemon...")
-                sys.exit(0)
                 return
             except Exception as e:
                 log.error("Fatal error thrown in main:\n%s", e)
@@ -267,14 +264,3 @@ class HyP3Daemon(object):
         self.sns_topic.push(email_event)
 
         self._reset_worker()
-
-    @staticmethod
-    def _terminate():
-        resp = requests.get(
-            "http://169.254.169.254/latest/meta-data/instance-id")
-        instance_id = resp.text
-        boto_response = boto3.client('autoscaling').terminate_instance_in_auto_scaling_group(
-            InstanceId=instance_id,
-            ShouldDecrementDesiredCapacity=True
-        )
-        log.debug("Terminating instance: \n%s", boto_response)
