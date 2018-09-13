@@ -1,40 +1,33 @@
-import random
 import uuid
+import json
 
-import mock
 import pytest
 
-from hyp3_events import EmailEvent, StartEvent
+import hyp3_events
 from tempaws import TemporaryQueue, TemporaryTopic
 
 import import_hyp3_process
-from hyp3_process.daemon import HyP3Daemon, HyP3DaemonConfig, log
+from hyp3_process.daemon import HyP3Daemon, HyP3DaemonConfig
 from hyp3_process.daemon.worker import WorkerStatus
-from hyp3_process.daemon.services import BadMessageException, SQSJob, SQSService
 
 
-def test_hyp3_daemon(config, handler, messages):
-    config.MAX_IDLE_TIME_SECONDS = 1
-
-    with TemporaryQueue.create_fifo() as queue:
-        queue_name = queue.attributes['QueueArn'].split(':')[-1]
-        config.queue_name = queue_name
-
-        with TemporaryTopic.create() as topic_arn:
-            config.sns_arn = topic_arn
-
-            daemon = HyP3Daemon(config, handler)
-            daemon.run()
-
-            add_messages_to(queue, messages)
-
-            daemon = HyP3Daemon(config, handler)
-            daemon.run()
+NUM_MESSAGES = 2
 
 
-def add_messages_to(queue, messages):
-    for message in messages:
-        queue.send_message(
+def test_daemon_shuts_down_when_no_jobs(daemon, config, handler):
+    daemon.run()
+
+
+def test_daemon_pulls_messages_from_queue(daemon, queue, messages):
+    add_messages_to(queue, messages)
+    daemon.run()
+
+    return not queue.receive_messages()
+
+
+def add_messages_to(temp_queue, testing_messages):
+    for message in testing_messages:
+        temp_queue.send_message(
             MessageBody=message,
             MessageAttributes={
                 'EventType': {
@@ -46,86 +39,40 @@ def add_messages_to(queue, messages):
         )
 
 
-def test_status_enum():
-    assert WorkerStatus.NO_STATUS
-    assert WorkerStatus.READY
-    assert WorkerStatus.BUSY
-    assert WorkerStatus.DONE
-    assert WorkerStatus.FAILED
+@pytest.fixture()
+def daemon(config, handler):
+    return HyP3Daemon(config, handler)
 
 
-class MockMessage(object):
-    def __init__(self, body, md5_of_body):
-        self.body = body
-        self.md5_of_body = md5_of_body
-        self.times_delete_called = 0
+@pytest.fixture()
+def config(queue, topic_arn):
+    queue_name = queue.attributes['QueueArn'].split(':')[-1]
 
-    def delete(self):
-        self.times_delete_called += 1
-
-
-def test_validate_message_successfull():
-    SQSService.validate_message(
-        MockMessage(
-            "This is a valid message",
-            "b9df57e64d6ad2ac628f117fb7b7f9d9"
-        )
-    )
-
-
-def test_validate_bad_message_raises():
-    with pytest.raises(BadMessageException):
-        SQSService.validate_message(
-            MockMessage(
-                "This is a valid message",
-                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            )
-        )
-
-
-def test_sqsjob_parse_successful():
-    job = SQSJob(MockMessage('''{
-        "user_id": 0,
-        "sub_id": 0,
-        "additional_info": [],
-        "granule": "DUMMY_GRANULE",
-        "output_patterns": [],
-        "script_path": ""
-    }''', ''))
-
-    assert job.data.user_id == 0
-
-
-def test_sqsjob_bad_input_raises():
-    with pytest.raises(BadMessageException):
-        SQSJob(MockMessage('Not valid json', ''))
-
-
-def test_event_creation():
-    with pytest.raises(NotImplementedError):
-        EmailEvent.from_type("A string!")
-
-    EmailEvent.from_type(
-        SQSJob(MockMessage('''{
-            "user_id": 0,
-            "sub_id": 0,
-            "additional_info": [],
-            "granule": "DUMMY_GRANULE",
-            "output_patterns": [],
-            "script_path": ""
-        }''', ''))
-    )
-
-
-@pytest.fixture
-def config():
-    return HyP3DaemonConfig(
-        queue_name='queue-name',
-        sns_arn='sns-arn',
-        earthdata_creds='{"username": "fake-user", "password": "fake-pass"}',
+    config = HyP3DaemonConfig(
+        queue_name=queue_name,
+        sns_arn=topic_arn,
+        earthdata_creds=json.dumps(
+            {"username": "fake-user", "password": "fake-pass"}
+        ),
         products_bucket='products-bucket',
         are_ssm_param_names=False
     )
+
+    config.MAX_IDLE_TIME_SECONDS = 1
+
+    return config
+
+
+@pytest.fixture(scope="module")
+def queue():
+    with TemporaryQueue.create_fifo() as queue:
+        yield queue
+
+
+@pytest.fixture(scope="module")
+def topic_arn():
+    with TemporaryTopic.create() as topic_arn:
+        yield topic_arn
 
 
 @pytest.fixture
@@ -139,12 +86,12 @@ def handler():
 @pytest.fixture
 def messages():
     return [
-        StartEvent(
+        hyp3_events.StartEvent(
             granule="SomeGranule",
             user_id=1,
-            sub_id=random.randint(1, 100),
+            sub_id=sub_id,
             output_patterns={},
             script_path='/some/script',
             additional_info=[]
-        ).to_json() for _ in range(5)
+        ).to_json() for sub_id in range(NUM_MESSAGES)
     ]
