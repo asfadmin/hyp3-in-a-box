@@ -1,7 +1,8 @@
 import pytest
 
-import import_hyp3_process
+import hyp3_events
 
+import import_hyp3_process
 from hyp3_process.daemon.process_job import process_job
 
 
@@ -9,6 +10,7 @@ def test_process_job(rtc_snap_job, worker):
     email_event = process_job(rtc_snap_job, worker)
 
     assert email_event
+    assert isinstance(email_event, hyp3_events.EmailEvent)
 
 
 @pytest.fixture

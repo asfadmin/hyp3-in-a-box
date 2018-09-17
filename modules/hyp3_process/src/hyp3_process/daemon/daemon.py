@@ -13,21 +13,6 @@ from .logging import getLogger
 
 log = getLogger(__name__, "/var/log/hyp3.log")
 
-EmailEvent.impl_from(
-    SQSJob,
-    lambda job: EmailEvent(
-        user_id=job.data.user_id,
-        sub_id=job.data.sub_id,
-        additional_info=[{
-            "name": "Processing Date",
-            "value": str(datetime.now().date())
-        }],
-        granule_name=job.data.granule,
-        browse_url=job.output['browse_url'],
-        download_url=job.output['product_url'],
-    )
-)
-
 
 class HyP3Daemon:
     MAX_IDLE_TIME_SECONDS = 120

@@ -10,8 +10,6 @@ import import_hyp3_process
 
 from hyp3_process.daemon import HyP3Daemon
 
-sns = boto3.resource('sns')
-
 NUM_MESSAGES = 2
 
 
@@ -61,6 +59,8 @@ def queue():
 
 @pytest.fixture()
 def sns_topic():
+    sns = boto3.resource('sns')
+
     with TemporaryTopic.create() as topic_arn:
         yield sns.Topic(topic_arn)
 
