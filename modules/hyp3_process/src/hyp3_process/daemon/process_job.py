@@ -28,6 +28,7 @@ def job_success(
     log.debug("Sending SNS notification")
 
     return EmailEvent(
+        status='Success',
         user_id=event.user_id,
         sub_id=event.sub_id,
         additional_info=[{
@@ -44,6 +45,7 @@ def job_failed(event: StartEvent, error: Exception) -> EmailEvent:
     log.debug("Sending SNS failure notification")
 
     return EmailEvent(
+        status='Failure',
         user_id=event.user_id,
         sub_id=event.sub_id,
         additional_info=[{

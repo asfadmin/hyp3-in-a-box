@@ -10,6 +10,7 @@ import collections
 from .hyp3_event import HyP3Event
 
 EmailData = collections.namedtuple('EmailData', [
+    'status',
     'user_id',
     'sub_id',
     'additional_info',
@@ -21,6 +22,7 @@ EmailData = collections.namedtuple('EmailData', [
 
 class EmailEvent(EmailData, HyP3Event):
     """
+        * **status** - Outcome of processing
         * **user_id** - User id to send email to
         * **sub_id** - Subscription which
         * **additional_info** - list of dict with meta data about the event
