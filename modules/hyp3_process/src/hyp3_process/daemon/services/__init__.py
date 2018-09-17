@@ -89,9 +89,8 @@ class SQSService(object):
 
 
 class SNSService(object):
-    def __init__(self, arn):
-        sns = boto3.resource('sns')
-        self.sns_topic = sns.Topic(arn)
+    def __init__(self, sns_topic):
+        self.sns_topic = sns_topic
 
     def push(self, event: EmailEvent) -> None:
         self.sns_topic.publish(

@@ -2,13 +2,16 @@ import uuid
 import json
 
 import pytest
+import boto3
 
 import hyp3_events
 from tempaws import TemporaryQueue, TemporaryTopic
 
 import import_hyp3_process
-from hyp3_process.daemon import HyP3Daemon, HyP3DaemonConfig
+from hyp3_process.daemon import HyP3Daemon, HyP3Worker
 
+
+sns = boto3.resource('sns')
 
 NUM_MESSAGES = 2
 
@@ -39,27 +42,38 @@ def add_messages_to(temp_queue, testing_messages):
 
 
 @pytest.fixture()
-def daemon(config, handler):
-    return HyP3Daemon(config, handler)
-
-
-@pytest.fixture()
-def config(queue, topic_arn):
-    queue_name = queue.attributes['QueueArn'].split(':')[-1]
-
-    daemon_config = HyP3DaemonConfig(
-        queue_name=queue_name,
-        sns_arn=topic_arn,
-        earthdata_creds=json.dumps(
-            {"username": "fake-user", "password": "fake-pass"}
-        ),
-        products_bucket='products-bucket',
-        are_ssm_param_names=False
+def daemon(queue, sns_topic, worker):
+    daemon = HyP3Daemon(
+        queue,
+        sns_topic,
+        worker
     )
 
-    daemon_config.MAX_IDLE_TIME_SECONDS = 2
+    daemon.MAX_IDLE_TIME_SECONDS = 2
 
-    return daemon_config
+    return daemon
+
+
+@pytest.fixture
+def worker(creds, bucket, handler):
+    return HyP3Worker(
+        handler=handler,
+        creds=creds,
+        bucket=bucket
+    )
+
+
+@pytest.fixture
+def creds():
+    return json.dumps({
+        "username": "fake-user",
+        "password": "fake-pass"
+    })
+
+
+@pytest.fixture
+def bucket():
+    return 'products-bucket'
 
 
 @pytest.fixture()
@@ -69,15 +83,23 @@ def queue():
 
 
 @pytest.fixture()
-def topic_arn():
+def sns_topic():
     with TemporaryTopic.create() as topic_arn:
-        yield topic_arn
+        yield sns.Topic(topic_arn)
 
 
 @pytest.fixture
 def handler():
     def handler_func(start_event, earthdata_creds, products_bucket):
         return {'browse_url': 'some-url', 'product_url': 'some-url'}
+
+    return handler_func
+
+
+@pytest.fixture
+def bad_handler():
+    def handler_func(start_event, earthdata_creds, products_bucket):
+        raise Exception("error in handler function!")
 
     return handler_func
 
