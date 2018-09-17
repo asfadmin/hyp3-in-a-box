@@ -1,5 +1,4 @@
 import uuid
-import json
 
 import pytest
 import boto3
@@ -8,8 +7,8 @@ import hyp3_events
 from tempaws import TemporaryQueue, TemporaryTopic
 
 import import_hyp3_process
-from hyp3_process.daemon import HyP3Daemon, HyP3Worker
 
+from hyp3_process.daemon import HyP3Daemon
 
 sns = boto3.resource('sns')
 
@@ -54,28 +53,6 @@ def daemon(queue, sns_topic, worker):
     return daemon
 
 
-@pytest.fixture
-def worker(creds, bucket, handler):
-    return HyP3Worker(
-        handler=handler,
-        creds=creds,
-        bucket=bucket
-    )
-
-
-@pytest.fixture
-def creds():
-    return json.dumps({
-        "username": "fake-user",
-        "password": "fake-pass"
-    })
-
-
-@pytest.fixture
-def bucket():
-    return 'products-bucket'
-
-
 @pytest.fixture()
 def queue():
     with TemporaryQueue.create_fifo() as queue:
@@ -89,30 +66,5 @@ def sns_topic():
 
 
 @pytest.fixture
-def handler():
-    def handler_func(start_event, earthdata_creds, products_bucket):
-        return {'browse_url': 'some-url', 'product_url': 'some-url'}
-
-    return handler_func
-
-
-@pytest.fixture
-def bad_handler():
-    def handler_func(start_event, earthdata_creds, products_bucket):
-        raise Exception("error in handler function!")
-
-    return handler_func
-
-
-@pytest.fixture
-def messages():
-    return [
-        hyp3_events.StartEvent(
-            granule="SomeGranule",
-            user_id=1,
-            sub_id=sub_id,
-            output_patterns={},
-            script_path='/some/script',
-            additional_info=[]
-        ).to_json() for sub_id in range(NUM_MESSAGES)
-    ]
+def messages(rtc_snap_job):
+    return [rtc_snap_job.to_json()] * NUM_MESSAGES
