@@ -70,22 +70,6 @@ def test_sqsjob_bad_input_raises():
         SQSJob(MockMessage('Not valid json', ''))
 
 
-def test_event_creation():
-    with pytest.raises(NotImplementedError):
-        hyp3_events.EmailEvent.from_type("A string!")
-
-    hyp3_events.EmailEvent.from_type(
-        SQSJob(MockMessage('''{
-            "user_id": 0,
-            "sub_id": 0,
-            "additional_info": [],
-            "granule": "DUMMY_GRANULE",
-            "output_patterns": [],
-            "script_path": ""
-        }''', ''))
-    )
-
-
 @pytest.fixture
 def dummy_boto3_queue():
     class DummyQueue:

@@ -24,7 +24,8 @@ def main():
 
 def terminate():
     resp = requests.get(
-        "http://169.254.169.254/latest/meta-data/instance-id")
+        "http://169.254.169.254/latest/meta-data/instance-id"
+    )
     instance_id = resp.text
     boto_response = \
         boto3.client('autoscaling').terminate_instance_in_auto_scaling_group(

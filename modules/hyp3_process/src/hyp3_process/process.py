@@ -3,6 +3,8 @@ import json
 import os
 import argparse
 
+import boto3
+
 from hyp3_events import StartEvent
 
 from .handler import (
@@ -11,7 +13,11 @@ from .handler import (
     ProcessingFunction
 )
 
-from .daemon import HyP3Daemon, HyP3DaemonConfig, log
+from .daemon import HyP3Daemon, HyP3Worker, log
+
+ssm = boto3.client('ssm')
+sns = boto3.resource('sns')
+sqs = boto3.resource('sqs')
 
 
 class Process:
@@ -26,16 +32,27 @@ class Process:
 
     def run(self) -> None:
         """ Run process in background as daemon process """
+        assert self.process_handler is not None
+
         args = get_arguments()
         log.debug('HyP3 Daemon Args: \n%s', json.dumps(args))
 
-        config = HyP3DaemonConfig(**args)
+        creds = json.loads(args['earthdata_creds'])
+        bucket, queue_name, sns_arn = [
+            args[k] for k in ["product_bucket", "queue_name", "sns_arn"]
+        ]
 
-        assert self.process_handler is not None
+        worker = HyP3Worker(self.process_handler, creds, bucket)
+
+        email_topic = sns.Topic(sns_arn)
+        job_queue = sqs.get_queue_by_name(
+            QueueName=queue_name
+        )
 
         process_daemon = HyP3Daemon(
-            config,
-            self.process_handler
+            job_queue,
+            email_topic,
+            worker
         )
 
         process_daemon.run()
@@ -64,7 +81,6 @@ def get_arguments():
     else:
         log.info('args from cli')
         args = get_arguments_with_cli()
-        args['are_ssm_param_names'] = False
         log.info(args)
 
     return args
@@ -81,8 +97,20 @@ def get_arguments_from_environment():
     ]
 
     return {
-        param: f"/{stack}/{param_name}" for (param, param_name) in params
+        param: load_param(f"/{stack}/{param_name}")
+        for param, param_name in params
     }
+
+
+def load_param(param):
+    val = ssm.get_parameter(
+        Name=param,
+        WithDecryption=True
+    )['Parameter']['Value']
+
+    log.debug(f"{param} -> {val}")
+
+    return val
 
 
 def get_arguments_with_cli():

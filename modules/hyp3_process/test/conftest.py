@@ -1,3 +1,4 @@
+import json
 import pathlib as pl
 
 import boto3
@@ -5,10 +6,38 @@ import pytest
 
 import hyp3_events
 
+import import_hyp3_process
+from hyp3_process.daemon import HyP3Worker
+
 
 @pytest.fixture
-def event_in_queue(rtc_snap_job):
-    pass
+def worker(creds, bucket, handler):
+    return HyP3Worker(
+        handler=handler,
+        creds=creds,
+        bucket=bucket
+    )
+
+
+@pytest.fixture
+def creds():
+    return json.dumps({
+        "username": "fake-user",
+        "password": "fake-pass"
+    })
+
+
+@pytest.fixture
+def bucket():
+    return 'products-bucket'
+
+
+@pytest.fixture
+def handler():
+    def handler_func(start_event, earthdata_creds, products_bucket):
+        return {'browse_url': 'some-url', 'product_url': 'some-url'}
+
+    return handler_func
 
 
 @pytest.fixture
