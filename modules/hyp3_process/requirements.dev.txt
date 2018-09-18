@@ -1,8 +1,7 @@
 -i https://pypi.org/simple
-./../tempaws
 atomicwrites==1.2.1
 attrs==18.2.0
-hypothesis==3.71.8
+hypothesis==3.71.10
 more-itertools==4.3.0
 mypy-extensions==0.4.1
 mypy==0.630
