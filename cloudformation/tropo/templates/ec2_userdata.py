@@ -22,11 +22,16 @@ def make_userdata_from_environment():
 
     return dedent("""
         #! /bin/bash
-        echo STACK_NAME=${{StackName}} > /home/ubuntu/env
+
+        cd /home/ubuntu
+        PROCESS=rtc_snap
 
         {UpdateCode}
 
-        sudo systemctl restart hyp3
+        cd hyp3-in-a-box/processes/$PROCESS/build/.
+
+        nohup STACK_NAME=${{StackName}} python3.6 -m hyp3_process &
+
         """).strip().format(
         UpdateCode=update_code
     )
