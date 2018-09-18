@@ -3,34 +3,34 @@ import subprocess
 import sys
 from shutil import copyfile
 
-requirements = [
+REQUIREMENTS = [
     ('src/', 'hyp3-lib', 'prod'),
 ]
 
+BUILD_DIR = pl.Path('build')
+SNAP_REPO = 'hyp3-rtc-snap'
 
 def hyp3_rtc_snap(clone_token):
-    build_dir = pl.Path('build')
-    build_dir.mkdir(exist_ok=True)
+    BUILD_DIR.mkdir(exist_ok=True)
 
-    snap_repo = 'hyp3-rtc-snap'
     clone(
         'asfadmin',
-        snap_repo,
+        SNAP_REPO,
         'master',
-        directory=build_dir,
+        directory=BUILD_DIR,
         access_token=clone_token
     )
-    snap_dir = build_dir / snap_repo / 'src'
+    snap_dir = BUILD_DIR / SNAP_REPO / 'src'
 
-    for path, repo, branch in requirements:
+    for path, repo, branch in REQUIREMENTS:
         clone(
             'asfadmin',
             repo,
             branch,
-            directory=build_dir,
+            directory=BUILD_DIR,
             access_token=clone_token
         )
-        src = build_dir / repo / path
+        src = BUILD_DIR / repo / path
         dst = snap_dir
 
         if dst.is_dir():
