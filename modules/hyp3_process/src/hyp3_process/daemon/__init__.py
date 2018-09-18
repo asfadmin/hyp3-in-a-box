@@ -1,2 +1,2 @@
-from .daemon import HyP3Daemon, log, HyP3Worker
+from .daemon import HyP3Daemon, log
 from .worker import HyP3Worker

@@ -80,7 +80,7 @@ def install():
 def install_all_requirements_txts(root_dir):
     for path, dirs, files in os.walk(root_dir):
         for name in files:
-            if "requirements" in name:
+            if "requirements" in name and name.endswith('.txt'):
                 subprocess.check_call(
                     ["pip", "install", "-U", "-r", name],
                     cwd=path
