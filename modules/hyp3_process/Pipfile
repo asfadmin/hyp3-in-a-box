@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 ordered-set = "*"
 "boto3" = "*"
-"0c4b69c" = {path = "./../hyp3_events"}
 asf-granule-util = "*"
 click = "*"
 
@@ -14,7 +13,6 @@ click = "*"
 hypothesis = "*"
 mypy = "*"
 pytest-timeout = "*"
-"2647205" = {path = "./../tempaws"}
 
 [requires]
 python_version = "3.6"
