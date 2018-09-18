@@ -1,0 +1,8 @@
+requests
+pytest
+subprocess32
+pytest-cov
+defusedxml
+pytest-xdist
+pytest-timeout
+sphinx
