@@ -13,7 +13,7 @@ def create(granule: gu.SentinelGranule):
         yield working_dir
     except Exception as e:
         raise e
-    else:
+    finally:
         _teardown(working_dir)
 
 
