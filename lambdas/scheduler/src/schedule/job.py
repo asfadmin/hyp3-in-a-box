@@ -38,6 +38,7 @@ class Job(NamedTuple):
 
     def _to_email_event(self) -> EmailEvent:
         return EmailEvent(
+            status='Success',
             user_id=self.user.id,
             sub_id=self.sub.id,
             additional_info=[],

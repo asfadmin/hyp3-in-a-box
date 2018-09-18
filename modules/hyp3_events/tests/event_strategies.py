@@ -34,6 +34,7 @@ def start_events():
 def email_events():
     return st.builds(
         hyp3_events.EmailEvent,
+        status=st.text(),
         user_id=st.integers(),
         sub_id=st.integers(),
         granule_name=granules(),
