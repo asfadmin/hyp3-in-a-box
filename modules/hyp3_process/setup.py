@@ -16,5 +16,10 @@ setup(
     license="GPLv3+",
     description=("Module for wrapping hyp3 functionality "
                  "around processing scripts"),
-    install_requires=requirements
+    install_requires=requirements,
+    entry_points={
+        'console_scripts': [
+            'hyp3_process = hyp3_process.__main__:main'
+        ]
+    }
 )
