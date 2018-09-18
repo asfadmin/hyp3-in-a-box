@@ -88,7 +88,8 @@ Launching
 
     * Download a version of the HyP3 Cloudformation template: :ref:`releases`.
     * Login to the **AWS conosle**.
-    * Go to the **Cloudformation** section and click **Create Stack**.
+    * Got the **Cloudformation** service in section.
+    * Click **Create Stack**.
     * Under **Choose a template**, select the option to **upload a file**.
     * **Upload** the HyP3 CloudFormation template then hit **next**.
     * Give the stack a name and **fill in the missing parameters**.
