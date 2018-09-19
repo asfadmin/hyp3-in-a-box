@@ -73,6 +73,10 @@ Stack Parameters
     at one time. Increasing this number will affect how much AWS charges, but allows you
     to process more data.
 
+    The max spot price can be set to the on demand price for the selected instance type.
+
+        - `EC2 Instance Pricing`_.
+
     The API CIDR range is to limit access to the API. The default (0.0.0.0/0) allows all traffic through.
 
     Solution stack name it the Elastic Beanstalk. To find the newest version go here:
@@ -94,6 +98,8 @@ Launching
     * **Upload** the HyP3 CloudFormation template then hit **next**.
     * Give the stack a name and **fill in the missing parameters**.
     * Hit next again, then click the check box to **allow IAM** and hit create!
+
+    The stack should take 20-30 minutes to create.
 
     When stack is finished creating you're ready to start using HyP3! Using the API,
     which is linked in stack outputs, create a subscription over your area of interest
@@ -127,3 +133,4 @@ Creating A Subscription
 .. _Systems Manager: https://aws.amazon.com/systems-manager/
 .. _Register for Earthdata: https://urs.earthdata.nasa.gov/profile/
 .. _Elastic Beanstalk Solution Stack: https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html#concepts.platforms.python
+.. _EC2 Instance Pricing: https://aws.amazon.com/ec2/pricing/on-demand/
