@@ -159,10 +159,13 @@ def main(args):
         log.info("Building all lambdas")
         for d in os.listdir(path):
             curr_path = os.path.join(path, d)
-            if os.path.isdir(curr_path):
+
+            lambda_file = os.path.join(curr_path, "src/lambda_function.py")
+            if os.path.isdir(curr_path) and os.path.isfile(lambda_file):
                 try:
                     build_lambda_from_path(
-                        curr_path, outfile=os.path.join(outfile, d) + ".zip")
+                        curr_path, outfile=os.path.join(outfile, d) + ".zip"
+                    )
                 except FileNotFoundError:
                     continue
     else:
