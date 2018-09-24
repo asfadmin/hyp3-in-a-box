@@ -1,7 +1,7 @@
 .. _dev-setup:
 
 Developer Setup (Version 0.1.0)
-===============
+===============================
 
 Getting HyP3 up and running in your own AWS account is made relatively simple
 through CloudFormation templates. The majority of the work will be taken care of
