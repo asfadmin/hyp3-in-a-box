@@ -29,6 +29,7 @@ paths = [
     '../lambdas/scheduler/src',
     '../lambdas/send_email/src',
     '../lambdas/setup_db/src',
+    '../lambdas/custom_metric/src',
     '../modules/hyp3_db/src',
     '../modules/hyp3_events/src',
     '../modules/granule_search/src',

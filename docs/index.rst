@@ -33,6 +33,7 @@ HyP3 In A Box's Documentation
 
    _static/releases
    _static/setup
+   _static/quickstart
    _static/dev-setup
    _static/cloudformation
    _static/lambdas-main

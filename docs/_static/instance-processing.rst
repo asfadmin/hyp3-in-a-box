@@ -7,8 +7,6 @@ AWS EC2 Processing Code
    :maxdepth: 1
    :caption: Contents:
 
-   processing/hyp3_daemon
-
 Overview
 --------
 
@@ -32,9 +30,8 @@ Orchestration Code
 The part of the code which connects the science processing code to the rest of
 the HyP3 infrastructure.
 
-The ``hyp3_handler.py`` script is imported by the ``ec2/worker/hyp3_daemon.py`` script,
-which is part of the orchestration code and is process agnostic. This script uses
-the :ref:`hyp3_process` module to wrap processing functionality around the handler
-function and then starts a daemon to pull new jobs from an SQS Queue, run processing and
+The ``hyp3_handler.py`` script is imported by the ``hyp3_process`` module,
+which is part of the orchestration code and is process agnostic. The :ref:`hyp3_process`
+module wraps processing functionality around the handler function and then starts
+a daemon to pull new jobs from an SQS Queue, run processing and
 push outputs to a SNS Topic.
-
