@@ -8,7 +8,6 @@ import os
 import sys
 
 import boto3
-import click
 import requests
 
 from .process import Process

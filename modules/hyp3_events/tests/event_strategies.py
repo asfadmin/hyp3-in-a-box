@@ -21,7 +21,6 @@ def start_events():
         user_id=st.integers(),
         sub_id=st.integers(),
         output_patterns=st.lists(st.text()),
-        script_path=st.text(),
         additional_info=st.lists(
             st.fixed_dictionaries({
                 'name': st.text(),
