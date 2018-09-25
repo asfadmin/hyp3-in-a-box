@@ -95,7 +95,8 @@ t.add_mapping("Region2Principal", get_map('region2principal'))
 
 max_instances = t.add_parameter(Parameter(
     "MaxRTCProcessingInstances",
-    Description="The maximum RTC processing instances that can run concurrently.",
+    Description=("The maximum RTC processing instances that can "
+                 "run concurrently."),
     Type="Number",
     Default=4
 ))

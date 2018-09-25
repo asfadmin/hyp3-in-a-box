@@ -30,8 +30,9 @@ def make_userdata_from_environment():
 
         cd hyp3-in-a-box/processes/$PROCESS/build/.
 
-        nohup STACK_NAME=${{StackName}} python3.6 -m hyp3_process &
-
+        STACK_NAME=${{StackName}} \
+            python3.6 -m pipenv run \
+            python -m hyp3_process
         """).strip().format(
         UpdateCode=update_code
     )
