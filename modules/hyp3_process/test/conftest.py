@@ -51,8 +51,7 @@ def rtc_snap_job():
         output_patterns={
             'archive': ["*.txt"],
             'browse': '*.png'
-        },
-        script_path='/users/script/path/here'
+        }
     )
 
 

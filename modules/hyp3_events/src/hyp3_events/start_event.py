@@ -7,7 +7,6 @@ StartEventData = collections.namedtuple('StartEventData', [
     'user_id',
     'sub_id',
     'output_patterns',
-    'script_path',
     'additional_info'
 ])
 

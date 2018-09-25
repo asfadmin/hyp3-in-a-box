@@ -14,8 +14,7 @@ from ..daemon import log
 HandlerFunction = Callable[[
     SentinelGranule,
     str,
-    Dict[str, str],
-    str
+    Dict[str, str]
 ], Dict[str, str]
 ]
 
@@ -44,8 +43,7 @@ def make_hyp3_processing_function_from(
            def handler_function(
                granule_name: str,
                work_dir: str,
-               earthdata_creds: Dict[str, str],
-               script_path: str
+               earthdata_creds: Dict[str, str]
            ):
                ...
 
@@ -82,8 +80,7 @@ def make_hyp3_processing_function_from(
             handler_function(
                 str(granule),
                 working_dir,
-                earthdata_creds,
-                job.script_path
+                earthdata_creds
             )
 
             patterns = OutputPatterns(**job.output_patterns)

@@ -3,7 +3,7 @@ import pathlib as pl
 from typing import Dict
 
 import mock
-
+import pytest
 
 import import_hyp3_process
 import rtc_snap_strategies as strats
@@ -32,27 +32,13 @@ def test_hyp3_process(
         wrk_dir_mock,
         bucket_mock,
         rtc_snap_job,
-        make_working_dir
+        make_working_dir,
+        dummy_handler
 ):
     working_dir = make_working_dir(strats.rtc_example_files())
     wrk_dir_mock.side_effect = mock_working_dir_with(working_dir)
 
-    def handler(
-        granule_name: str,
-        working_dir: str,
-        earthdata_creds: Dict[str, str],
-        script_path: str
-    ) -> None:
-        output_files = ['test.txt', 'browse.png']
-        wrk_dir = pl.Path(working_dir)
-
-        for ofile in output_files:
-            with (wrk_dir / ofile).open('w') as f:
-                f.write('test')
-
-        print('hyp3 processing code goes here!')
-
-    process = Process(handler_function=handler)
+    process = Process(handler_function=dummy_handler)
 
     resp = process.start(
         job=rtc_snap_job,
@@ -64,6 +50,25 @@ def test_hyp3_process(
         'product_url' in resp,
         'browse_url' in resp
     ])
+
+
+@pytest.fixture
+def dummy_handler():
+    def handler(
+        granule_name: str,
+        working_dir: str,
+        earthdata_creds: Dict[str, str]
+    ) -> None:
+        output_files = ['test.txt', 'browse.png']
+        wrk_dir = pl.Path(working_dir)
+
+        for ofile in output_files:
+            with (wrk_dir / ofile).open('w') as f:
+                f.write('test')
+
+        print('hyp3 processing code goes here!')
+
+    return handler
 
 
 def mock_working_dir_with(mock_directory):
