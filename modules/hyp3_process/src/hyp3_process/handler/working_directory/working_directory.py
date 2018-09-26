@@ -1,7 +1,6 @@
 import contextlib
 import pathlib as pl
 import shutil
-import os
 
 
 @contextlib.contextmanager
@@ -28,4 +27,4 @@ def link_dir_contents(link_dir, working_dir):
     for p in link_dir.iterdir():
         link_dir_item = working_dir / p.name
 
-        os.symlink(p, link_dir_item)
+        link_dir_item.symlink_to(p.resolve())
