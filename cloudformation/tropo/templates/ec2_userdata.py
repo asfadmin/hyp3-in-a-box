@@ -48,7 +48,7 @@ def update_code():
             CLONE_TOKEN=$(aws ssm get-parameter \
                 --name /CodeBuild/GITHUB_HYP3_API_CLONE_TOKEN \
                 --output text  \
-                --with-decryption | awk {'print $6'})
+                --with-decryption | awk {'print $4'})
 
             rm -rf ./hyp3-in-a-box
 
@@ -59,7 +59,8 @@ def update_code():
                 --depth=1
 
             pushd hyp3-in-a-box/processes/$PROCESS/.
-                sudo python3.6 install.py $CLONE_TOKEN
+                pipenv install
+                python3.6 install.py $CLONE_TOKEN
             popd
         """)
 
