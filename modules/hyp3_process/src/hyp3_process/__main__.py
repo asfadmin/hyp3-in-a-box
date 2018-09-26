@@ -24,7 +24,9 @@ def main():
     except AttributeError:
         print('ERROR: no function named handler in hyp3_handler.py')
     else:
-        process.run(handler_function)
+        daemon = process.make_daemon_with(handler_function)
+
+        daemon.run()
 
     try:
         terminate()

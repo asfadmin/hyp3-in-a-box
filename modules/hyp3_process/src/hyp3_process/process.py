@@ -19,7 +19,7 @@ sns = boto3.resource('sns')
 sqs = boto3.resource('sqs')
 
 
-def run(handler_function: HandlerFunction) -> None:
+def make_daemon_with(handler_function: HandlerFunction) -> HyP3Daemon:
     """ Configure and run in background as daemon process"""
 
     args = get_arguments()
@@ -33,13 +33,12 @@ def run(handler_function: HandlerFunction) -> None:
     creds = json.loads(args['earthdata_creds'])
     worker = HyP3Worker(process_handler, creds, args['product_bucket'])
 
-    process_daemon = HyP3Daemon(
+    return HyP3Daemon(
         job_queue,
         email_topic,
         worker
     )
 
-    process_daemon.run()
 
 
 def get_arguments():
