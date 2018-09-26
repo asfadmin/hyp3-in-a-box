@@ -1,3 +1,4 @@
+import pathlib as pl
 from typing import Dict, Callable
 import time
 
@@ -75,8 +76,10 @@ def make_hyp3_processing_function_from(
         start = time.time()
 
         granule = SentinelGranule(job.granule)
+        temp_path = working_dir_path(granule)
+        link_dir = pl.Path.cwd()
 
-        with working_directory.create(granule) as working_dir:
+        with working_directory.create(temp_path, link_dir) as working_dir:
             handler_function(
                 str(granule),
                 working_dir,
@@ -104,3 +107,11 @@ def make_hyp3_processing_function_from(
         }
 
     return hyp3_wrapper
+
+
+def working_dir_path(granule: SentinelGranule) -> pl.Path:
+    return pl.Path.home() / 'jobs' / working_dir_name(granule.unique_id)
+
+
+def working_dir_name(job_name: str) -> str:
+    return f'GRAN-{job_name}'

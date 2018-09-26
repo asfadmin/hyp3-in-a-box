@@ -2,42 +2,28 @@ import contextlib
 import pathlib as pl
 import shutil
 
-import asf_granule_util as gu
-
 
 @contextlib.contextmanager
-def create(granule: gu.SentinelGranule):
-    working_dir = _setup(granule)
+def create(path: pl.Path, link_dir: pl.Path):
+    path.mkdir(parents=True, exist_ok=True)
+
+    working_dir = path
+
+    link_dir_contents(link_dir, working_dir)
 
     try:
-        yield working_dir
+        yield str(working_dir)
     except Exception as e:
         raise e
     finally:
-        _teardown(working_dir)
+        shutil.rmtree(working_dir)
 
 
-def _setup(granule: gu.SentinelGranule) -> str:
-    path = _working_dir_path(granule.unique_id)
+def link_dir_contents(link_dir, working_dir):
+    for p in link_dir.iterdir():
+        link_dir_item = working_dir / p.name
 
-    _make(path)
-
-    return str(path)
-
-
-def _make(path: pl.Path) -> None:
-    path.mkdir(parents=True, exist_ok=True)
+        link_dir_item.symlink_to(p)
 
 
-def _teardown(directory: str) -> None:
-    shutil.rmtree(directory)
 
-
-def _working_dir_path(granule_id: str) -> pl.Path:
-    name = _working_dir_name(granule_id)
-
-    return pl.Path.home() / 'jobs' / name
-
-
-def _working_dir_name(granule_id: str) -> str:
-    return f'GRAN-{granule_id}'
