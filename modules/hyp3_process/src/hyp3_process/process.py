@@ -19,26 +19,37 @@ sns = boto3.resource('sns')
 sqs = boto3.resource('sqs')
 
 
+SSM_PARAMS = [
+    'StartEventQueueName',
+    'FinishEventSNSArn',
+    'EarthdataCredentials',
+    'ProductsS3Bucket'
+]
+
+
 def make_daemon_with(handler_function: HandlerFunction) -> HyP3Daemon:
     """ Configure and run in background as daemon process"""
 
     args = get_arguments()
     log.debug('HyP3 Daemon Args: \n%s', json.dumps(args))
 
-    job_queue = sqs.get_queue_by_name(QueueName=args['queue_name'])
+    queue, topic_arn, creds_json, bucket = [
+        args[k] for k in SSM_PARAMS
+    ]
 
-    email_topic = sns.Topic(args['sns_arn'])
+    job_queue = sqs.get_queue_by_name(QueueName=queue)
+
+    email_topic = sns.Topic(topic_arn)
 
     process_handler = make_hyp3_processing_function_from(handler_function)
-    creds = json.loads(args['earthdata_creds'])
-    worker = HyP3Worker(process_handler, creds, args['product_bucket'])
+    creds = json.loads(creds_json)
+    worker = HyP3Worker(process_handler, creds, bucket)
 
     return HyP3Daemon(
         job_queue,
         email_topic,
         worker
     )
-
 
 
 def get_arguments():
@@ -68,16 +79,9 @@ def parser():
 
 
 def get_arguments_for(stack: str) -> Dict[str, str]:
-    params = [
-        ('queue_name', 'StartEventQueueName'),
-        ('sns_arn', 'FinishEventSNSArn'),
-        ('earthdata_creds', 'EarthdataCredentials'),
-        ('products_bucket', 'ProductsS3Bucket')
-    ]
-
     return {
-        param: load_param(f"/{stack}/{param_name}")
-        for param, param_name in params
+        param: load_param(f"/{stack}/{param}")
+        for param in SSM_PARAMS
     }
 
 

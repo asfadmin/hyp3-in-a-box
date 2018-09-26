@@ -10,7 +10,7 @@ import sys
 import boto3
 import requests
 
-import process
+from . import process
 
 
 def main():
