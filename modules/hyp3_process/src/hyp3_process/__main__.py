@@ -10,7 +10,7 @@ import sys
 import boto3
 import requests
 
-from .process import Process
+import process
 
 
 def main():
@@ -24,10 +24,7 @@ def main():
     except AttributeError:
         print('ERROR: no function named handler in hyp3_handler.py')
     else:
-        process = Process(
-            handler_function=handler_function
-        )
-        process.run()
+        process.run(handler_function)
 
     try:
         terminate()
