@@ -5,11 +5,7 @@ import shutil
 
 @contextlib.contextmanager
 def create(path: pl.Path, link_dir: pl.Path):
-    path.mkdir(parents=True, exist_ok=True)
-
-    working_dir = path
-
-    link_dir_contents(link_dir, working_dir)
+    working_dir = setup(path, link_dir)
 
     try:
         yield str(working_dir)
@@ -19,11 +15,16 @@ def create(path: pl.Path, link_dir: pl.Path):
         shutil.rmtree(working_dir)
 
 
+def setup(path: pl.Path, link_dir: pl.Path) -> pl.Path:
+    path.mkdir(parents=True, exist_ok=True)
+
+    link_dir_contents(link_dir, path)
+
+    return path
+
+
 def link_dir_contents(link_dir, working_dir):
     for p in link_dir.iterdir():
         link_dir_item = working_dir / p.name
 
         link_dir_item.symlink_to(p)
-
-
-
