@@ -26,5 +26,5 @@ def setup(path: pl.Path, link_dir: pl.Path) -> pl.Path:
 def link_dir_contents(link_dir, working_dir):
     for p in link_dir.iterdir():
         link_dir_item = working_dir / p.name
-
+        print(f'linking {link_dir_item} -> {p.resolve()}')
         link_dir_item.symlink_to(p.resolve())
