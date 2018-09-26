@@ -9,8 +9,7 @@ from hyp3_events import StartEvent
 
 from .handler import (
     make_hyp3_processing_function_from,
-    HandlerFunction,
-    ProcessingFunction
+    HandlerFunction
 )
 
 from .daemon import HyP3Daemon, HyP3Worker, log
@@ -20,8 +19,8 @@ sns = boto3.resource('sns')
 sqs = boto3.resource('sqs')
 
 
-def run(handler_function) -> None:
-    """ Run process in background as daemon process """
+def run(handler_function: HandlerFunction) -> None:
+    """ Configure and run in background as daemon process"""
 
     args = get_arguments()
     log.debug('HyP3 Daemon Args: \n%s', json.dumps(args))
@@ -44,14 +43,29 @@ def run(handler_function) -> None:
 
 
 def get_arguments():
-    """ Get arguments for HyP3DaemonConfig"""
-
     stack = get_cli_args()['stack_name']
 
     process_args = get_arguments_for(stack)
     log.info(process_args)
 
     return process_args
+
+
+def get_cli_args():
+    cli = parser()
+
+    return vars(cli.parse_args())
+
+
+def parser():
+    cli = argparse.ArgumentParser(description='Cli for hyp3 process')
+
+    cli.add_argument(
+        f'--stack-name', dest='stack_name', type=str,
+        required=True, help='Stack name to run off of'
+    )
+
+    return cli
 
 
 def get_arguments_for(stack: str) -> Dict[str, str]:
@@ -77,19 +91,3 @@ def load_param(param):
     log.debug(f"{param} -> {val}")
 
     return val
-
-
-def get_cli_args():
-    cli = parser()
-    return vars(cli.parse_args())
-
-
-def parser():
-    cli = argparse.ArgumentParser(description='Cli for hyp3 process')
-
-    cli.add_argument(
-        f'--stack-name', dest='stack_name', type=str,
-        required=True, help='Stack name to run off of'
-    )
-
-    return cli
