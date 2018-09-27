@@ -43,7 +43,9 @@ def test_failed(new_path, link_dir):
 
 @pytest.fixture
 def new_path():
-    return pl.Path.cwd() / 'test-temp-working-dir'
+    cwd = pl.Path.home()
+
+    return cwd / 'test-temp-working-dir'
 
 
 @pytest.fixture

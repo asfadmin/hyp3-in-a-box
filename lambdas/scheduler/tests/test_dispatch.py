@@ -59,6 +59,5 @@ def start_event():
         user_id=1,
         sub_id=1,
         output_patterns=['*/*.txt'],
-        script_path='',
         additional_info=[]
     )

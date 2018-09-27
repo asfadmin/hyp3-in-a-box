@@ -12,7 +12,7 @@ def process_job(event: StartEvent, worker: HyP3Worker) -> EmailEvent:
     try:
         output = worker.process(event)
     except Exception as e:
-        log.info("Job failed to process")
+        log.info(f"Job failed to process: {e}")
 
         return job_failed(event, e)
     else:
