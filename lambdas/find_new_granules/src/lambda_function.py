@@ -25,16 +25,16 @@ def lambda_handler(event, context):
     start_scheduler_with(events_json)
 
 
+def any_new_granules(granules):
+    return len(granules) > 1
+
+
 def format_as_json(new_granules_events):
     event_dicts = [e.to_dict() for e in new_granules_events]
 
     return json.dumps({
         'new_granules': event_dicts
     })
-
-
-def any_new_granules(granules):
-    return len(granules) > 1
 
 
 def start_scheduler_with(new_granules_json):
