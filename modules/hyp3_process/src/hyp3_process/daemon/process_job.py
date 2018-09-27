@@ -5,6 +5,7 @@ from hyp3_events import StartEvent, EmailEvent
 
 from .logging import getLogger
 from .worker import HyP3Worker
+from .requeue_address import requeue
 log = getLogger(__name__, "/var/log/hyp3.log")
 
 
@@ -57,6 +58,9 @@ def job_failed(event: StartEvent, error: Exception) -> EmailEvent:
         }, {
             "name": "Reason",
             "value": str(error)
+        }, {
+            "name": "Requeue",
+            "value": requeue(event)
         }],
         granule_name=event.granule,
         browse_url='',
