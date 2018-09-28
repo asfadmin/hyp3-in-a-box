@@ -11,12 +11,12 @@ def scheduler(aws_event: Dict) -> None:
         aws_event['new_granules']
     )
 
-    new_hyp3_events = make_dispatchable()
+    new_granule_events = make_dispatchable(new_granule_events)
 
 
     # send hyp3_events to the dispatcher
     boto3.client('lambda').invoke(
         FunctionName=scheduler.environment.dispatch_lambda,
         InvocationType='Event',
-        Payload=json.dump(new_hyp3_events.to_dict())
+        Payload=json.dump(new_granule_events.to_dict())
     )
