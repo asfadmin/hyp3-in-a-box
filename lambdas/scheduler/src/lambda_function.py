@@ -25,6 +25,3 @@ def set_environment_variables():
     environment.db_creds = [
         os.environ[k] for k in ['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME']
     ]
-
-    environment.sns_arn = os.environ['SNS_ARN']
-    environment.queue_url = os.environ['QUEUE_URL']
