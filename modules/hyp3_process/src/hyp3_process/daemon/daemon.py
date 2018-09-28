@@ -18,13 +18,8 @@ class HyP3Daemon:
     MAX_IDLE_TIME_SECONDS = 120
 
     def __init__(self, job_queue, sns_topic, worker: HyP3Worker):
-        self.job_queue = SQSService(
-            sqs_queue=job_queue
-        )
-
-        self.sns_topic = SNSService(
-            sns_topic=sns_topic
-        )
+        self.job_queue = SQSService(sqs_queue=job_queue)
+        self.sns_topic = SNSService(sns_topic=sns_topic)
 
         self.worker = worker
         self.last_active_time = time.time()
@@ -32,13 +27,11 @@ class HyP3Daemon:
     def run(self):
         log.info("HyP3 Daemon starting...")
 
-        while True:
-            if self.reached_max_idle_time():
-                log.info("Max idle time reached, stopping...")
-                return
-
+        while not self.reached_max_idle_time():
             self.main()
             time.sleep(self.MAX_IDLE_TIME_SECONDS/120)
+
+        log.info("Max idle time reached, stopping...")
 
     def reached_max_idle_time(self):
         time_since_last_job = time.time() - self.last_active_time
