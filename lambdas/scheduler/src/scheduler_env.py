@@ -7,8 +7,8 @@ class Environment:
             'db name'
         ]
 
-        self.sns_arn = None
-        self.queue_url = None
+        #TODO this needs to be set for the scheduler to send the event data to the right AWS lambda
+        self.dispatch_lambda = None
         self.maturity = 'test'
 
 
