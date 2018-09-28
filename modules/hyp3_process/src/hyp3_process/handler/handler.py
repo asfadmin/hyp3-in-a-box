@@ -45,7 +45,7 @@ def make_hyp3_processing_function_from(
 
         .. code-block:: python
 
-           def handler_function(
+           def handler(
                granule_name: str,
                earthdata_creds: Dict[str, str]
            ):
