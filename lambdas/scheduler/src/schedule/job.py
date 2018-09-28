@@ -32,7 +32,6 @@ class Job(NamedTuple):
             user_id=self.user.id,
             sub_id=self.sub.id,
             output_patterns=self.process.output_patterns,
-            script_path=self.process.script,
             additional_info=[]
         )
 
