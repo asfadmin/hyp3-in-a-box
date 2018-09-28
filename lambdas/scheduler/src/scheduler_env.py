@@ -7,8 +7,7 @@ class Environment:
             'db name'
         ]
 
-        #TODO this needs to be set for the scheduler to send the event data to the right AWS lambda
-        self.dispatch_lambda = None
+        self.dispatcher_lambda = None
         self.maturity = 'test'
 
 

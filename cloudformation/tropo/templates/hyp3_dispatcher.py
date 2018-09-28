@@ -1,46 +1,17 @@
-# hyp3_scheduler.py
-# Rohan Weeden
-# Created: June 12, 2018
-
-"""
-Troposphere template responsible for generating :ref:`scheduler_lambda`.
-
-Requires
-~~~~~~~~
-* :ref:`db_params_template`
-* :ref:`kms_key_template`
-* :ref:`sns_template`
-* :ref:`sqs_template`
-
-Resources
-~~~~~~~~~
-
-* **Lambda Function:** Python 3.6 lambda function, code is pulled from s3
-* **IAM Role:**
-
-  * Lambda basic execution policy
-  * SNS publish policy
-  * SQS send message policy
-"""
-
-from template import t
+import template as t
 from tropo_env import environment
 from troposphere import GetAtt, Ref
 from troposphere.awslambda import Environment, VPCConfig
-from troposphere.iam import Policy, Role
+from troposphere .iam import Policy, Role
+from .hyp3_kms_key import kms_key
 
 from . import utils
-from .hyp3_db_params import db_name, db_pass, db_user
-from .hyp3_kms_key import kms_key
 from .hyp3_sns import finish_sns
 from .hyp3_sqs import start_events
 
-from . import hyp3_dispatcher
+source_zip = "dispatcher.zip"
 
-source_zip = "scheduler.zip"
-
-
-print('  adding scheduler lambda')
+print("adding dispatcher lambda")
 
 sns_policy = Policy(
     PolicyName='EmailEventSNSPublish',
@@ -66,9 +37,8 @@ sqs_policy = Policy(
     }
 )
 
-
 lambda_role = t.add_resource(Role(
-    "SchedulerExecutionRole",
+    "DispatcherExecutionRole",
     Path="/service-role/",
     ManagedPolicyArns=[
         "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -78,18 +48,14 @@ lambda_role = t.add_resource(Role(
     AssumeRolePolicyDocument=utils.get_static_policy('lambda-policy-doc'),
 ))
 
-
-scheduler = utils.make_lambda_function(
-    name="scheduler",
+dispatcher = utils.make_lambda_function(
+    name="dispatcher",
     role=lambda_role,
     lambda_params={
         "Environment": Environment(
             Variables={
-                'DB_HOST': utils.get_host_address(),
-                'DB_USER': Ref(db_user),
-                'DB_PASSWORD': Ref(db_pass),
-                'DB_NAME': Ref(db_name),
-                'DISPATCHER_LAMBDA_NAME': Ref(hyp3_dispatcher.dispatcher)
+                'SNS_ARN': Ref(finish_sns),
+                'QUEUE_URL': Ref(start_events)
             }
         ),
         "KmsKeyArn": GetAtt(kms_key, "Arn"),
@@ -99,7 +65,7 @@ scheduler = utils.make_lambda_function(
 )
 
 if 'unittest' in environment.maturity:
-    scheduler.VpcConfig = VPCConfig(
+    dispatcher.VpcConfig = VPCConfig(
         SecurityGroupIds=[
             'sg-0d8cdb7c',
             'sg-72f8c803'
@@ -111,4 +77,4 @@ if 'unittest' in environment.maturity:
         ]
     )
 
-t.add_resource(scheduler)
+t.add_resource(dispatcher)

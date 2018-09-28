@@ -25,3 +25,4 @@ def set_environment_variables():
     environment.db_creds = [
         os.environ[k] for k in ['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME']
     ]
+    environment.dispatcher_lambda = os.environ['DISPATCHER_LAMBDA_NAME']
