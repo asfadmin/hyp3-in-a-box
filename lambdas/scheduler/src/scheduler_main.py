@@ -1,8 +1,8 @@
 from typing import Dict
 import json
 import boto3
-# from .NewEvent_to_StartEvent import make_dispatchable
-import make_dispatchable
+from NewEvent_to_StartEvent import make_dispatchable
+
 
 def scheduler(aws_event: Dict) -> None:
     """ Wrapper around scheduler lambda that can be imported by pytest."""
