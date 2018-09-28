@@ -6,7 +6,6 @@ import pytest
 import hyp3_events
 from hyp3_db import hyp3_models
 import import_scheduler
-from schedule import Job
 
 data_path = pl.Path(__file__).parent / 'data'
 
