@@ -1,39 +1,36 @@
-from typing import Dict, List
+from typing import Union, List, Dict
 
+from schedule import queries
+from scheduler_env import environment
+from hyp3_events import EmailEvent, StartEvent, NewGranuleEvent
 import hyp3_db
 from hyp3_db.hyp3_models import Process, User
-from hyp3_events import NewGranuleEvent
-from scheduler_env import environment
-
-from . import queries
-from .job import Job
 
 
-def hyp3_jobs(new_granules: List[NewGranuleEvent]):
-    """ Get all the hyp3 jobs from the new granules
-
-        :param list[dict] new_granules: New granules from cmr
-
-        :return: A named tuple of the form Job(sub, process, user, granule)
-        :rtype: list[Job]
+def make_dispatchable(events: List[NewGranuleEvent]
+                      ) -> Union[StartEvent, EmailEvent]:
+    """
+    :param events: a list of NewGranuleEvents to be turned into StartEvents
+    or EmailEvents
+    :return: a list of both StartEvents and EmailEvents
     """
     host, name, password, db = environment.db_creds
 
     with hyp3_db.connect(host, name, password, db) as db:
-        print('finding jobs for each granule')
-        jobs_for_each_granule = [
-            get_jobs_for(granule, db) for granule in new_granules
-        ]
+        print("""converting NewGranuleEvents to Start and Email Events for
+              before sending to the dispatcher""")
+        new_events = [
+            convert(e, db) for e in events
+            ]
 
-        jobs = flatten_list(jobs_for_each_granule)
+        # turns a list of lists into a single list
+        new_events = flatten_list(new_events)
 
-        print(f'Found {len(jobs)} total jobs to start')
-
-        return jobs
+        return new_events
 
 
-def get_jobs_for(granule: NewGranuleEvent, db) -> List[Job]:
-    polygon = format_polygon(granule.polygon)
+def convert(event: NewGranuleEvent, db) -> Union[StartEvent, EmailEvent]:
+    polygon = format_polygon(event.polygon)
     print(polygon)
 
     subs = queries.get_enabled_intersecting_subs(db, polygon)
@@ -42,15 +39,7 @@ def get_jobs_for(granule: NewGranuleEvent, db) -> List[Job]:
     users = get_users_for(subs, db)
     processes = get_processes(db)
 
-    return [
-        Job(
-            sub=sub,
-            process=processes[sub.process_id],
-            user=users[sub.user_id],
-            granule=granule
-        )
-        for sub in subs
-    ]
+    return
 
 
 def format_polygon(point_vals):
@@ -84,7 +73,6 @@ def dict_indexed_by_id(objs: List):
     return {
         obj.id: obj for obj in objs
     }
-
 
 def flatten_list(l):
     return sum(l, [])

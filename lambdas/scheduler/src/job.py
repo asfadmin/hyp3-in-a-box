@@ -12,7 +12,7 @@ class Job(NamedTuple):
     process: Process
     """ The process for the subscription"""
     user: User
-    """ The user who the subscritpion belongs to"""
+    """ The user who the subscription belongs to"""
     granule: NewGranuleEvent
     """ A new granule to schedule a job for"""
 

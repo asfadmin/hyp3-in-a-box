@@ -1,5 +1,3 @@
-from .schedule import job
-import events
 from hyp3_events import StartEvent
 import dispatch
 
