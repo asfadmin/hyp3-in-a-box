@@ -1,7 +1,7 @@
 import boto3
 from hyp3_events import HyP3Event
 
-from scheduler_env import environment
+from dispatcher_env import environment
 
 sns = boto3.client('sns')
 

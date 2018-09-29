@@ -3,7 +3,7 @@ import uuid
 import boto3
 
 from hyp3_events import StartEvent
-from scheduler_env import environment
+from dispatcher_env import environment
 
 sqs = boto3.client('sqs')
 

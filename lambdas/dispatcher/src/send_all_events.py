@@ -3,7 +3,7 @@ from typing import List
 
 from hyp3_events import HyP3Event
 
-from lambdas.dispatcher.src import scheduler_sns as sns, scheduler_sqs as sqs
+from lambdas.dispatcher.src import dispatcher_sns as sns, dispatcher_sqs as sqs
 
 
 def all_events(new_hyp3_events: List[HyP3Event]) -> None:
