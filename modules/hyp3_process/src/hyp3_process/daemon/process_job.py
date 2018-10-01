@@ -1,4 +1,5 @@
 from datetime import datetime
+import traceback
 from typing import Dict
 
 from hyp3_events import StartEvent, EmailEvent
@@ -16,7 +17,11 @@ def process_job(event: StartEvent, worker: HyP3Worker) -> EmailEvent:
     except (HandlerError, PatternNotMatched) as e:
         log.info(f"Handler failed to process: {e}")
 
-        return job_failed(event, e)
+        return job_failed(event, str(e))
+    except Exception as e:
+        log.info(f"Error in processing code: {e}")
+
+        return job_failed(event, traceback.format_exc(), fatal=True)
     else:
         log.info("Job succeeded to process")
 
@@ -43,11 +48,11 @@ def job_success(
     )
 
 
-def job_failed(event: StartEvent, error: Exception) -> EmailEvent:
+def job_failed(event: StartEvent, error: str, fatal=False) -> EmailEvent:
     log.debug("Sending SNS failure notification")
 
     return EmailEvent(
-        status='Failure',
+        status='Failure' if not fatal else 'Fatal Error',
         user_id=event.user_id,
         sub_id=event.sub_id,
         additional_info=[{
@@ -58,7 +63,7 @@ def job_failed(event: StartEvent, error: Exception) -> EmailEvent:
             "value": "Failed"
         }, {
             "name": "Reason",
-            "value": str(error)
+            "value": error
         }],
         granule_name=event.granule,
         browse_url='',
