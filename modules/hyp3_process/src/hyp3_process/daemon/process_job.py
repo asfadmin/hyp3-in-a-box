@@ -5,14 +5,16 @@ from hyp3_events import StartEvent, EmailEvent
 
 from .logging import getLogger
 from .worker import HyP3Worker
+from ..handler.package import PatternNotMatched
+
 log = getLogger(__name__, "/var/log/hyp3.log")
 
 
 def process_job(event: StartEvent, worker: HyP3Worker) -> EmailEvent:
     try:
         output = worker.process(event)
-    except Exception as e:
-        log.info(f"Job failed to process: {e}")
+    except (HandlerError, PatternNotMatched) as e:
+        log.info(f"Handler failed to process: {e}")
 
         return job_failed(event, e)
     else:

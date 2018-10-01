@@ -52,13 +52,13 @@ def find_output_files(
     for pattern in file_patterns:
         paths_matching_pattern = find_files_matching(pattern, work_dir)
 
-        if paths_matching_pattern == []:
-            raise NoFilesFoundForOutputPattern(
+        if paths_matching_pattern:
+            output_files += paths_matching_pattern
+        else:
+            raise PatternNotMatched(
                 f"pattern '{pattern}' has no "
                 f"matching files in working directory {work_dir}"
             )
-
-        output_files.extend(paths_matching_pattern)
 
     return output_files
 
@@ -130,15 +130,11 @@ def find_browse_path(work_dir: pl.Path, browse_patterns: str):
 
         return pl.Path(possible_browses[0])
 
-    raise NoBrowseFound(
+    raise PatternNotMatched(
         f"Can't find browse with patterns '{browse_patterns}' "
         f"in dir '{work_dir}')"
     ) from None
 
 
-class NoBrowseFound(Exception):
-    pass
-
-
-class NoFilesFoundForOutputPattern(Exception):
+class PatternNotMatched(Exception):
     pass

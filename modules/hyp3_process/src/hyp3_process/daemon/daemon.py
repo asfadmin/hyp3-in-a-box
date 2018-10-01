@@ -48,9 +48,12 @@ class HyP3Daemon:
         start_event = job.data
 
         self.last_active_time = time.time()
-        email_event = process_job(start_event, self.worker)
+        try:
+            email_event = process_job(start_event, self.worker)
+        except Exception as e:
+            raise e
+        finally:
+            log.debug("Deleting job %s from queue", job)
+            job.delete()
 
-        log.debug("Deleting job %s from queue", job)
-        job.delete()
-
-        self.sns_topic.push(email_event)
+            self.sns_topic.push(email_event)

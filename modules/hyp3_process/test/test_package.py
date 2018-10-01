@@ -25,11 +25,11 @@ valid_cases = [({
 error_cases = [({
     'input_files': ['hello.txt', 'test.png'],
     'patterns': OutputPatterns(archive=['*/*.txt'], browse=['*.png']),
-    'expected': package.NoFilesFoundForOutputPattern
+    'expected': package.PatternNotMatched
 }), ({
     'input_files': ['dir/hello.txt'],
     'patterns': OutputPatterns(archive=['*/*.txt'], browse=['*.png']),
-    'expected': package.NoBrowseFound
+    'expected': package.PatternNotMatched
 })]
 
 

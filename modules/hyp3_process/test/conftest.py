@@ -36,8 +36,8 @@ def bucket():
 
 
 @pytest.fixture
-def handler():
-    def handler_func(granule, creds):
+def handler_func():
+    def h(granule, creds):
         assert gu.SentinelGranule(granule), creds
         assert set(creds.keys()) == set(['username', 'password'])
 
@@ -45,7 +45,7 @@ def handler():
         browse_path.touch()
         print('path', browse_path)
 
-    return handler_func
+    return h
 
 
 @pytest.fixture

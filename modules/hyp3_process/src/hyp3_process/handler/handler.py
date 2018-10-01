@@ -1,4 +1,5 @@
 import os
+import contextlib
 import pathlib as pl
 from typing import Dict, Callable
 import time
@@ -84,10 +85,14 @@ def make_hyp3_processing_function_from(
 
         with wd.create(temp_path, link_dir) as working_dir:
             os.chdir(working_dir)
-            handler_function(
-                str(granule),
-                earthdata_creds
-            )
+
+            try:
+                handler_function(
+                    str(granule),
+                    earthdata_creds
+                )
+            except Exception as e:
+                raise HandlerError("Users handler function threw") from e
 
             patterns = OutputPatterns(**job.output_patterns)
 
@@ -118,3 +123,7 @@ def working_dir_path(granule: SentinelGranule) -> pl.Path:
 
 def working_dir_name(job_name: str) -> str:
     return f'GRAN-{job_name}'
+
+
+class HandlerError(Exception):
+    pass
