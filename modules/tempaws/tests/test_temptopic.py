@@ -11,7 +11,6 @@ def test_tempqueue(sns):
         topic.load()
 
         assert topic.arn
-        print(topic)
 
 
 @pytest.fixture

@@ -27,5 +27,4 @@ class TemporaryBucket:
 
 def clear(bucket):
     for obj in bucket.objects.all():
-        print(obj)
         obj.delete()
