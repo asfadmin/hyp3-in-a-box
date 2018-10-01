@@ -28,7 +28,11 @@ class HyP3Daemon:
         log.info("HyP3 Daemon starting...")
 
         while not self.reached_max_idle_time():
-            self.main()
+            job = self.job_queue.get_next_message()
+
+            if job:
+                self.start_processing(job)
+
             time.sleep(self.MAX_IDLE_TIME_SECONDS/120)
 
         log.info("Max idle time reached, stopping...")
@@ -39,15 +43,12 @@ class HyP3Daemon:
 
         return time_since_last_job >= timeout
 
-    def main(self):
-        job = self.job_queue.get_next_message()
-        if not job:
-            return
-
-        log.info("Staring new job %s", job)
+    def start_processing(self, job):
         start_event = job.data
+        log.info("Staring new job %s", job)
 
         self.last_active_time = time.time()
+
         try:
             email_event = process_job(start_event, self.worker)
         except Exception as e:

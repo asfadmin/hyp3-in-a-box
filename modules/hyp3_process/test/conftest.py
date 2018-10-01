@@ -50,7 +50,12 @@ def handler_func():
 
 @pytest.fixture
 def processing_func():
-    return lambda *args, **kwargs: {"browse_url": "", "product_url": ""}
+    def processing_func(*args, **kwargs):
+        print('fake processing function')
+
+        return {"browse_url": "", "product_url": ""}
+
+    return processing_func
 
 
 @pytest.fixture

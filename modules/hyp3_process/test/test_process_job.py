@@ -31,6 +31,7 @@ def bad_worker(worker, bad_func):
 @pytest.fixture
 def bad_func():
     def processing_func(*args):
+        print('this is a bad function!')
         raise PatternNotMatched("error in handler function!")
 
     return processing_func
