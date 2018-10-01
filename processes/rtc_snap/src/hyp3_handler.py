@@ -15,9 +15,9 @@ def handler(
         earthdata_creds
     )
 
-    subprocess.check_call([
+    print(subprocess.check_output([
         'python2', 'hyp3-rtc-snap/src/procSentinelRTC-3.py',
         '--ls',
         '-r', '30',
         f'{granule_name}.zip'
-    ])
+    ]))
