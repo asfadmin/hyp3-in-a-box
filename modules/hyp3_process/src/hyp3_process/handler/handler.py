@@ -84,28 +84,27 @@ def make_hyp3_processing_function_from(
         link_dir = pl.Path.cwd()
 
         with wd.create(temp_path, link_dir) as working_dir:
-            os.chdir(working_dir)
+            with pushd(working_dir):
+                try:
+                    handler_function(
+                        str(granule),
+                        earthdata_creds
+                    )
+                except Exception as e:
+                    raise HandlerError("Users handler function threw") from e
 
-            try:
-                handler_function(
-                    str(granule),
-                    earthdata_creds
+                patterns = OutputPatterns(**job.output_patterns)
+
+                process_outputs = package.outputs(
+                    archive_name=f'{granule}-rtc-snap',
+                    working_dir=working_dir,
+                    output_patterns=patterns
                 )
-            except Exception as e:
-                raise HandlerError("Users handler function threw") from e
 
-            patterns = OutputPatterns(**job.output_patterns)
-
-            process_outputs = package.outputs(
-                archive_name=f'{granule}-rtc-snap',
-                working_dir=working_dir,
-                output_patterns=patterns
-            )
-
-            product_zip_url, browse_url = products.upload(
-                outputs=process_outputs,
-                bucket_name=products_bucket
-            )
+                product_zip_url, browse_url = products.upload(
+                    outputs=process_outputs,
+                    bucket_name=products_bucket
+                )
 
         log.info(f'total processing time: {time.time() - start}')
 
@@ -115,6 +114,14 @@ def make_hyp3_processing_function_from(
         }
 
     return hyp3_wrapper
+
+
+@contextlib.contextmanager
+def pushd(new_dir):
+    previous_dir = os.getcwd()
+    os.chdir(new_dir)
+    yield
+    os.chdir(previous_dir)
 
 
 def working_dir_path(granule: SentinelGranule) -> pl.Path:
