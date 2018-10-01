@@ -4,6 +4,7 @@ import hyp3_events
 
 import import_hyp3_process
 from hyp3_process.daemon.process_job import process_job
+from hyp3_process.handler.package import PatternNotMatched
 
 
 def test_process_job(rtc_snap_job, worker):
@@ -21,15 +22,16 @@ def test_process_job_with_bad_worker(rtc_snap_job, bad_worker):
 
 
 @pytest.fixture
-def bad_worker(worker, bad_handler):
-    worker.handler = bad_handler
+def bad_worker(worker, bad_func):
+    worker.processing_func = bad_func
 
     return worker
 
 
 @pytest.fixture
-def bad_handler():
-    def handler_func(start_event, earthdata_creds, products_bucket):
-        raise Exception("error in handler function!")
+def bad_func():
+    def processing_func(*args):
+        print('this is a bad function!')
+        raise PatternNotMatched("error in handler function!")
 
-    return handler_func
+    return processing_func

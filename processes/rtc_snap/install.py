@@ -10,6 +10,7 @@ REQUIREMENTS = [
 BUILD_DIR = pl.Path('build')
 SNAP_REPO = 'hyp3-rtc-snap'
 
+
 def hyp3_rtc_snap(clone_token):
     BUILD_DIR.mkdir(exist_ok=True)
 
@@ -40,6 +41,15 @@ def hyp3_rtc_snap(clone_token):
             print(f'copying file {src} -> {dst}')
             dest = snap_dir / pl.Path(path).name
             copyfile(src, dest)
+
+    print('copying hyp3_handler.py')
+    copy_handler_to(BUILD_DIR)
+
+
+def copy_handler_to(path):
+    handler_path = pl.Path('src/hyp3_handler.py')
+
+    copyfile(handler_path, path / handler_path.name)
 
 
 def copy_dir(src_dir, dst, file_types=('.py')):

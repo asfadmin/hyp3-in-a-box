@@ -79,7 +79,7 @@ from troposphere.iam import PolicyType, Role
 from template import t
 from tropo_env import environment
 
-from .ec2_userdata import user_data
+from .ec2_userdata import user_data_for
 from .hyp3_keypairname_param import keyname
 from .hyp3_s3 import products_bucket
 from .hyp3_sns import finish_sns
@@ -95,7 +95,8 @@ t.add_mapping("Region2Principal", get_map('region2principal'))
 
 max_instances = t.add_parameter(Parameter(
     "MaxRTCProcessingInstances",
-    Description="The maximum RTC processing instances that can run concurrently.",
+    Description=("The maximum RTC processing instances that can "
+                 "run concurrently."),
     Type="Number",
     Default=4
 ))
@@ -263,7 +264,7 @@ launch_config = t.add_resource(LaunchConfiguration(
     KeyName=Ref(keyname),
     SecurityGroups=[Ref(security_group)],
     InstanceType=Ref(instance_type),
-    UserData=user_data,
+    UserData=user_data_for('rtc_snap'),
     IamInstanceProfile=Ref(instance_profile),
     DependsOn=net_gw_vpc_attachment,
     SpotPrice=Ref(spot_price)

@@ -58,8 +58,7 @@ def test_sqsjob_parse_successful():
         "sub_id": 0,
         "additional_info": [],
         "granule": "DUMMY_GRANULE",
-        "output_patterns": [],
-        "script_path": ""
+        "output_patterns": []
     }''', ''))
 
     assert job.data.user_id == 0
@@ -92,7 +91,6 @@ def message():
         'user_id': 1,
         'sub_id': 1,
         'output_patterns': {},
-        'script_path': '/some/path',
         'additional_info': []
     }
 

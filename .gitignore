@@ -7,6 +7,7 @@ lambdas/upload_lambda.sh
 db_creds.sh
 template.json
 *creds.json
+updated-dashboard.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
