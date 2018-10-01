@@ -21,10 +21,9 @@ se = hyp3_events.StartEvent(
     sub_id=1,
     output_patterns={
         "archive": ["*/*_TC_G??.tif", "*/*.png", "*/*.txt"],
-        "browse": "*/*.png"
+        "browse": ["*/*rgb_large.png", "*/*rgb.png", "*/*large.png", "*/*.png"]
+
     },
-    script_path=('/home/ubuntu/hyp3-in-a-box/processes/rtc_snap/build/'
-                 'hyp3-rtc-snap/src/procSentinelRTC-3.py'),
     additional_info=[{
         'name': 'test',
         'value': rand(5)

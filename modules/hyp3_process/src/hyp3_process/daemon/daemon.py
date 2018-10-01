@@ -32,8 +32,8 @@ class HyP3Daemon:
 
             if job:
                 self.start_processing(job)
-
-            time.sleep(self.MAX_IDLE_TIME_SECONDS/120)
+            else:
+                time.sleep(self.MAX_IDLE_TIME_SECONDS/120)
 
         log.info("Max idle time reached, stopping...")
 
@@ -47,12 +47,12 @@ class HyP3Daemon:
         start_event = job.data
         log.info("Staring new job %s", job)
 
-        self.last_active_time = time.time()
-
         try:
             email_event = process_job(start_event, self.worker)
         except Exception as e:
             raise e
+        else:
+            self.last_active_time = time.time()
         finally:
             log.debug("Deleting job %s from queue", job)
             job.delete()
