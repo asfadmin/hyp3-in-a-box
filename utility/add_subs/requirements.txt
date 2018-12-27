@@ -5,5 +5,5 @@ chardet==3.0.4
 idna==2.7
 pygeoif==0.7
 pyshp==1.2.12
-requests==2.19.1
+requests==2.20.0
 urllib3==1.23
