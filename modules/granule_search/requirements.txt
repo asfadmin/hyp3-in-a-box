@@ -3,6 +3,6 @@ asf-granule-util==0.0.57
 certifi==2018.4.16
 chardet==3.0.4
 idna==2.7
-requests==2.19.1
+requests==2.20.0
 tqdm==4.23.4
 urllib3==1.23
