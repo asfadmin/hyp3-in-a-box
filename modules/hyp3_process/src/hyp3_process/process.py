@@ -1,7 +1,11 @@
-from typing import Dict
-import json
-import os
 import argparse
+import contextlib
+from datetime import datetime
+import pathlib as pl
+import sys
+import json
+from typing import Dict
+import os
 
 import boto3
 
@@ -17,6 +21,7 @@ from .daemon import HyP3Daemon, HyP3Worker, log
 ssm = boto3.client('ssm')
 sns = boto3.resource('sns')
 sqs = boto3.resource('sqs')
+s3_client = boto3.client('s3')
 
 
 SSM_PARAMS = [
@@ -38,16 +43,19 @@ def make_daemon_with(handler_function: HandlerFunction) -> HyP3Daemon:
     ]
 
     job_queue = sqs.get_queue_by_name(QueueName=queue)
-
     email_topic = sns.Topic(topic_arn)
+
+    logger = Logger(bucket=bucket)
 
     process_handler = make_hyp3_processing_function_from(handler_function)
     creds = json.loads(creds_json)
+
     worker = HyP3Worker(process_handler, creds, bucket)
 
     return HyP3Daemon(
         job_queue,
         email_topic,
+        logger,
         worker
     )
 
@@ -94,3 +102,27 @@ def load_param(param):
     log.debug(f"{param} -> {val}")
 
     return val
+
+
+class Logger:
+    def __init__(self, name, bucket):
+        self.bucket = bucket
+
+    @contextlib.contextmanager
+    def stdout_to_file(self, name):
+        old_stdout = sys.stdout
+        log = pl.Path.home() / 'log'
+
+        if not log.exists():
+            log.mkdir(parents=True)
+
+        log_file = log / name
+
+        with log_file.open('w') as log:
+            sys.stdout = log
+            yield
+            sys.stdout = old_stdout
+
+        bucket_path = str(pl.Path('log') / self.name)
+
+        s3_client.upload_file(str(log_file), self.bucket, bucket_path)

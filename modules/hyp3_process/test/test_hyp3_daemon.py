@@ -1,3 +1,4 @@
+import contextlib
 import uuid
 
 import pytest
@@ -39,16 +40,27 @@ def add_messages_to(temp_queue, testing_messages):
 
 
 @pytest.fixture()
-def daemon(queue, sns_topic, worker):
+def daemon(queue, sns_topic, logger, worker):
     daemon = HyP3Daemon(
         queue,
         sns_topic,
+        logger,
         worker
     )
 
     daemon.MAX_IDLE_TIME_SECONDS = 2
 
     return daemon
+
+
+@pytest.fixture
+def logger():
+    class DummyLogger:
+        @contextlib.contextmanager
+        def stdout_to(self, name):
+            yield
+
+    return DummyLogger()
 
 
 @pytest.fixture()

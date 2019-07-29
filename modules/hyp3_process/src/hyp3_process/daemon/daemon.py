@@ -2,6 +2,7 @@ import time
 import json
 from datetime import datetime
 
+import asf_granule_util as gu
 import boto3
 
 from hyp3_events import EmailEvent, StartEvent
@@ -17,9 +18,14 @@ log = getLogger(__name__, "/var/log/hyp3.log")
 class HyP3Daemon:
     MAX_IDLE_TIME_SECONDS = 120
 
-    def __init__(self, job_queue, sns_topic, worker: HyP3Worker):
+    def __init__(
+        self, job_queue, sns_topic, logger, worker: HyP3Worker
+    ) -> None:
+
         self.job_queue = SQSService(sqs_queue=job_queue)
         self.sns_topic = SNSService(sns_topic=sns_topic)
+
+        self.logger = logger
 
         self.worker = worker
         self.last_active_time = time.time()
@@ -47,14 +53,24 @@ class HyP3Daemon:
         start_event = job.data
         log.info("Staring new job %s", job)
 
-        try:
-            email_event = process_job(start_event, self.worker)
-        except Exception as e:
-            raise e
-        else:
-            self.last_active_time = time.time()
-        finally:
-            log.debug("Deleting job %s from queue", job)
-            job.delete()
+        log_name = log_file_name(start_event)
 
-            self.sns_topic.push(email_event)
+        with self.logger.stdout_to(log_name):
+            email_event = process_job(start_event, self.worker)
+
+        log.debug("Deleting job %s from queue", job)
+        job.delete()
+
+        self.sns_topic.push(email_event)
+
+        if 'Fatal' not in email_event.status:
+            self.last_active_time = time.time()
+        else:
+            raise Exception('Processing code falure')
+
+
+def log_file_name(event):
+    granule_id = gu.SentinelGranule(event.granule).unique_id
+    date = str(datetime.now()).replace(" ", "")
+
+    return f'{granule_id}--{date}.log'
